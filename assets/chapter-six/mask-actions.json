@@ -5,10 +5,12 @@
   "anchorY": 143,
   "bodyHeight": 108,
   "sourceFacing": "right",
+  "source": "assets/chapter-six/source/mask-actions-2026-11-14-original.jpg",
+  "sourceSha256": "f3b860cf2ba3c4e1309ed427547a7561d54eeb87147309a8b9e17a37d7b8cfa2",
   "frames": {
     "idle": {
       "row": 0,
-      "count": 8
+      "count": 7
     },
     "walk": {
       "row": 1,
@@ -16,7 +18,7 @@
     },
     "attack": {
       "row": 2,
-      "count": 7
+      "count": 6
     },
     "hurt": {
       "row": 3,

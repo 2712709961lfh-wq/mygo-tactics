@@ -610,7 +610,7 @@
       }
       if(customAtk&&a.id==='masked_stranger'){
         atkState=t>=.18&&t<.74?'attack':'idle';
-        atkFrame=atkState==='attack'?Math.min(6,Math.floor(clamp01((t-.18)/.5)*7)):Math.floor(t*(this.duration||1800)/180)%8;
+        atkFrame=atkState==='attack'?MyGO.MaskedCourtArt.frameAt('attack',(t-.18)/.5):Math.floor(t*(this.duration||1800)/180)%MyGO.MaskedCourtArt.specs.idle[1];
       }
       if (customAtk && a.id === 'anon') {
         atkState = 'idle';
@@ -752,6 +752,10 @@
         }else if(!hit&&impactAge>=0&&impactAge<500){
           defState='jump';defFrame=Math.min(4,Math.floor(impactAge/100));defY=feetY;defLean=0;
         }
+      } else if (customDef&&b.id==='masked_stranger') {
+        defState='idle';defFrame=Math.floor(t*(this.duration||1800)/180)%MyGO.MaskedCourtArt.specs.idle[1];
+        if(hit&&impactAge>=0&&impactAge<360){defState='hurt';defFrame=MyGO.MaskedCourtArt.frameAt('hurt',impactAge/360);defY=feetY;defLean=0;}
+        if(!hit){defY=feetY;defLean=0;}
       } else if (customDef&&b.id==='nijika') {
         defFrame=Math.floor(t*(this.duration||1800)/160)%8;
         if(defState==='hurt')defFrame=Math.min(2,Math.floor(impactAge/110));

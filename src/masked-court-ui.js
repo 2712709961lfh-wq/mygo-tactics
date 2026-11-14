@@ -32,9 +32,9 @@
         // Close view of the supplied boss pose, alongside the actual reinforcement area.
         c.fillStyle='rgba(5,10,22,.54)';c.fillRect(0,0,440,500);A.throne(c,210,400,2.6);
         A.circle(c,210,420,285,88,Math.min(.99,t),.9);
-        if(escape){c.save();c.globalAlpha=boss._escapeAlpha;A.action(c,210,413,230,'idle',Math.floor(now/180)%8,'right',now);c.restore();
+        if(escape){c.save();c.globalAlpha=boss._escapeAlpha;A.action(c,210,413,230,'idle',Math.floor(now/180)%A.specs.idle[1],'right',now);c.restore();
           const beam=c.createLinearGradient(210,80,210,440);beam.addColorStop(0,'rgba(170,110,231,0)');beam.addColorStop(1,'rgba(180,101,242,'+Math.sin(Math.PI*t)*.55+')');c.fillStyle=beam;c.fillRect(150,80,120,360);
-        }else A.action(c,190,420,238,'summon',Math.min(6,Math.floor(t*8)),'right',now);
+        }else A.action(c,190,420,238,'summon',A.frameAt('summon',t*1.14),'right',now);
         c.fillStyle='#f0d3ef';c.font='bold 24px sans-serif';c.textAlign='center';c.fillText(escape?'“留你们一命。”':'“回应我的召唤。”',218,52);
         const v=ui.renderer.projection,s=ui.renderer.scale,p=M.MapProjection.project(v,(center.x+.5)*32,(center.y+.5)*32);
         const sourceSize=350*s,left=Math.max(0,Math.min(ui.renderer.canvas.width-sourceSize,(p.x-175)*s)),top=Math.max(0,Math.min(ui.renderer.canvas.height-sourceSize,(p.y-175)*s));

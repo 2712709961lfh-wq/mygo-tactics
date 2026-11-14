@@ -20,7 +20,9 @@
     for(let i=0;i<7;i++){const a=now/1300+i*1.7;c.globalAlpha=.25+.3*(1+Math.sin(a))/2;c.beginPath();c.arc(x+Math.cos(a)*h*.45,y-h*.45+Math.sin(a*1.3)*h*.45,h*.015,0,Math.PI*2);c.fill();}
     c.restore();
   }
-  const specs={idle:[0,8],walk:[1,7],run:[1,7],attack:[2,7],summon:[2,7],hurt:[3,3],down:[3,3]};
+  const specs={idle:[0,7],walk:[1,7],run:[1,7],attack:[2,6],summon:[2,6],hurt:[3,3],down:[4,4]};
+  for(const spec of Object.values(specs))Object.freeze(spec);Object.freeze(specs);
+  function frameAt(state,progress){const count=(specs[state]||specs.idle)[1];return Math.max(0,Math.min(count-1,Math.floor(progress*count)));}
   function action(c,x,y,h,state,frame,facing='right',now=0){
     if(!images.actions)return false;
     const spec=specs[state]||specs.idle,k=Math.max(0,Math.min(spec[1]-1,Math.floor(frame||0))),scale=h/108;
@@ -36,7 +38,7 @@
       if(a==='park-armor'||a==='park-pegasus')return M.WatercourtArt.draw(c,a==='park-armor'?'court-armor-n':'court-pegasus-guard-n',x,y,h,now,u._walking?'walk':'idle',u.facing);
       return map(c,u,x,y,h,now,opts);
     }
-    if(u._casting)return action(c,x,y-8,h*1.1,'summon',Math.min(6,Math.floor(u._casting*7)),'right',now);
+    if(u._casting)return action(c,x,y-8,h*1.1,'summon',frameAt('summon',u._casting),'right',now);
     if(!images.idle)return false;
     aura(c,x,y-8,h,now);c.save();c.imageSmoothingEnabled=true;
     const dir={down:0,up:1,left:2,right:3}[u.facing]||0;
@@ -85,5 +87,5 @@
       const g=c.createLinearGradient(p.x,p.y-hh,p.x,p.y);g.addColorStop(0,'rgba(133,64,205,0)');g.addColorStop(1,'rgba(188,119,242,.6)');c.fillStyle=g;c.fillRect(p.x-w/2,p.y-hh,w,hh);c.restore();
     }
   }
-  M.MaskedCourtArt={load,images,action,aura,circle,throne,drawMapEffects};M.MaskedCourtMap=art;
+  M.MaskedCourtArt={load,images,specs,frameAt,action,aura,circle,throne,drawMapEffects};M.MaskedCourtMap=art;
 })(window);

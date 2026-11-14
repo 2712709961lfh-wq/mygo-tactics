@@ -2,9 +2,9 @@
 from pathlib import Path
 from collections import deque
 from PIL import Image,ImageDraw,ImageOps
-import shutil,json
+import shutil,json,runpy
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'assets/chapter-six';SRC=OUT/'source';SRC.mkdir(parents=True,exist_ok=True)
-files={'actions':'v0yc14v0yc14v0yc','walk':'3n8ots3n8ots3n8o','idle':'lftf6qlftf6qlftf','portrait':'2ka2xo2ka2xo2ka2'}
+files={'walk':'3n8ots3n8ots3n8o','idle':'lftf6qlftf6qlftf','portrait':'2ka2xo2ka2xo2ka2'}
 for k,v in files.items():shutil.copyfile(Path('D:/')/('Gemini_Generated_Image_'+v+'.jpg'),SRC/('mask-'+k+'-original.jpg'))
 def key(im,white=False):
  im=im.convert('RGBA');p=im.load();w,h=im.size
@@ -43,27 +43,9 @@ def clean(im,left_cut=None):
    if len(group)<10 or left_cut is not None and max(xx for xx,yy in group)<left_cut:
     for xx,yy in group:im.putpixel((xx,yy),(0,0,0,0))
  return im
-src=key(Image.open(SRC/'mask-actions-original.jpg'));print('battle',src.size)
-rows=[('idle',101,226,[235,370,505,640,775,910,1045,1180],219),('walk',270,391,[235,370,505,640,775,910,1045],382),
- ('attack',417,550,[234,370,505,638,771,906,1073],536),('hurt',574,700,[235,370,505],686),('down',735,852,[238,397,531,661],838)]
-CW,CH,AX,AY=256,160,64,143;atlas=Image.new('RGBA',(CW*8,CH*5));meta={}
-for row,(name,top,bottom,centers,floor) in enumerate(rows):
- for col,cx in enumerate(centers):
-  left=cx-47;right=cx+58
-  if name=='attack':right=([285,420,555,715,881,1019,1236][col])
-  if name=='down':left=cx-70;right=cx+74
-  # Late spell frames contain the previous column's detached projectile.
-  # Keep the connected character and rightward spell; remove left-only groups.
-  crop=clean(src.crop((left,top,right,bottom)),47 if name=='attack' and col>=5 else None)
-  if name=='attack' and col==6:
-   # The previous projectile touches this final pose at the upper-left edge.
-   # Exclude that measured overlap while retaining the extended left hand below.
-   for xx in range(27):
-    for yy in range(62):crop.putpixel((xx,yy),(0,0,0,0))
-  cell=Image.new('RGBA',(CW,CH));cell.alpha_composite(crop,(AX+left-cx,AY+top-floor));atlas.alpha_composite(cell,(col*CW,row*CH))
- meta[name]={'row':row,'count':len(centers)}
-atlas.save(OUT/'mask-actions.png',optimize=True)
-(OUT/'mask-actions.json').write_text(json.dumps({'cellWidth':CW,'cellHeight':CH,'anchorX':AX,'anchorY':AY,'bodyHeight':108,'sourceFacing':'right','frames':meta},indent=2),encoding='utf8')
+# The dated replacement is stored in the repository and extracted by one shared tool.
+atlas=runpy.run_path(str(ROOT/'tools/prepare-mask-actions.py'))['prepare']()
+
 def fit(im,w,h,body):
  im=clean(im);im=im.crop(im.getbbox());k=body/im.height;im=im.resize((round(im.width*k),body),Image.Resampling.LANCZOS);out=Image.new('RGBA',(w,h));out.alpha_composite(im,((w-im.width)//2,h-5-body));return out
 walksrc=key(Image.open(SRC/'mask-walk-original.jpg'));walk=Image.new('RGBA',(128*3,144*4))
@@ -80,7 +62,7 @@ furniture=Image.open(SRC/'furniture/LPC_city_inside/city_inside.png').convert('R
 lamp=Image.open(SRC/'lamps/PNG/32x32/lamp-1-post-1/lamp-1-post-1-tall-twin-U-bronze.png').convert('RGBA');lamp.save(OUT/'palace-lamp.png')
 # Recolour the complete 16-frame CC0 circle sheet from blue to violet, preserve alpha.
 im=Image.open(SRC/'teleport.png').convert('RGBA');alpha=im.getchannel('A');gray=ImageOps.grayscale(im);fx=ImageOps.colorize(gray,'#491b76','#f2b3ff').convert('RGBA');fx.putalpha(alpha);fx.save(OUT/'void-circle.png',optimize=True)
-preview=Image.new('RGB',(2048,800),'#192537');preview.paste(atlas,(0,0),atlas);preview.save(ROOT/'docs/previews/mask-actions.png')
+preview=Image.new('RGB',atlas.size,'#192537');preview.paste(atlas,(0,0),atlas);preview.save(ROOT/'docs/previews/mask-actions.png')
 preview=Image.new('RGB',(1000,650),'#192537');preview.paste(portrait,(10,15),portrait);preview.paste(idleout,(460,30),idleout);preview.paste(walk,(480,190),walk);preview.paste(throne.resize((64,96)),(890,40),throne.resize((64,96)));preview.save(ROOT/'docs/previews/mask-materials.png')
 print('Prepared four user images, LPC throne/lamps, and sixteen portal frames.')
 

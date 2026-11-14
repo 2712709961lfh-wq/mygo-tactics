@@ -14,6 +14,24 @@ for(const n of ['equipment-data','magic-data','inventory','class-data','config',
  c.fillStyle='#e7d3b2';c.font='21px Microsoft YaHei';c.fillText('北端：18 盏宫廷立灯环绕王座',710,550);c.fillText('初始：两名巡守与王座上的面具人',710,595);c.fillText('推进：四个区段召来 3 / 4 / 4 / 5 名敌军',710,640);c.fillText('混编：普通幻兵、天马骑士、重装兵',710,685);c.fillText('召唤：队伍附近法阵现身，当轮不行动',710,730);c.fillText('终幕：锁血 1 HP，传送离场',710,775);
  M.MaskedCourtArt.circle(c,980,930,300,130,.65);c.fillStyle='#e5b4f3';c.font='bold 35px Microsoft YaHei';c.fillText('“留你们一命。”',805,1040);
  fs.writeFileSync(path.join(out,'chapter-06-guide.png'),guide.toBuffer('image/png'));
- const probe=createCanvas(450,260),pc=probe.getContext('2d');for(const state of ['idle','walk','attack','summon','hurt'])for(let frame=0;frame<(state==='idle'?8:state==='hurt'?3:7);frame++){pc.clearRect(0,0,450,260);assert(M.MaskedCourtArt.action(pc,130,220,150,state,frame,'right',1600));assert(pc.getImageData(0,0,450,260).data.some((v,i)=>i%4===3&&v));}
- console.log('Sixth chapter map, throne, guide and all boss action cells rendered.');
+ const probe=createCanvas(450,260),pc=probe.getContext('2d');
+ for(const [state,spec] of Object.entries(M.MaskedCourtArt.specs)){
+  const unique=new Set();for(let frame=0;frame<spec[1];frame++){
+   pc.clearRect(0,0,450,260);assert(M.MaskedCourtArt.action(pc,130,220,150,state,frame,'right',1600));
+   assert(pc.getImageData(0,0,450,260).data.some((v,i)=>i%4===3&&v));
+   unique.add(require('crypto').createHash('sha256').update(probe.toBuffer('image/png')).digest('hex'));
+  }assert.equal(unique.size,spec[1],'each '+state+' pose must be distinct');
+ }
+ // Full production battle clocks: cast on the left, receive a nonlethal hit on the right.
+ const N=40,W=1152,H=324,strip=createCanvas(W,H*N),bc=strip.getContext('2d');
+ for(let f=0;f<N;f++)for(let panel=0;panel<2;panel++){
+  const t=f/(N-1),scene=Object.create(M.BattleScene.prototype),boss=g.getUnit('masked_stranger'),hero=g.getUnit('tomori');
+  Object.assign(scene,{attacker:panel?hero:boss,defender:panel?boss:hero,duration:1800,particles:[],
+   result:{hit:true,crit:false,finalDamage:8,hpAfter:10},palette:{core:'#fff',mid:'#e5b4f3',glow:'#9855cf'}});
+  bc.save();bc.translate(panel*576,f*H);M.ParkMap.drawBattleBackground(bc,576,H,true);
+  scene._drawParticles=()=>{};scene._drawImpact=()=>{};scene._drawBattle(bc,t,(t-.58)*1800);
+  bc.fillStyle='#f1ddba';bc.font='18px Microsoft YaHei';bc.fillText(panel?'受击 · 三帧连续姿势':'神秘面具人 · 新版施法',20,30);bc.restore();
+ }
+ fs.writeFileSync(path.join(out,'chapter-06-mask-animation-strip.png'),strip.toBuffer('image/png'));
+ console.log('Sixth chapter map, throne, distinct boss cells and 40 production battle frames rendered.');
 })().catch(e=>{console.error(e);process.exitCode=1;});
