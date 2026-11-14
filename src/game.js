@@ -902,7 +902,7 @@
           soyoBossBonus:this.soyoBossBonus,enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===5?{openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===6?{summonedWaves:this.summonedWaves.slice(),lastSummonTurn:this.lastSummonTurn,maskRetreatPending:this.maskRetreatPending,maskEscaped:this.maskEscaped,enemyScaleLevel:this.enemyScaleLevel}:{}),
-        ...(this.stage===7?{nijikaJoined:this.nijikaJoined,livehouseEndingShown:this.livehouseEndingShown,enemyScaleLevel:this.enemyScaleLevel}:{}),
+        ...(this.stage===7?{nijikaJoined:this.nijikaJoined,nijikaLevelVersion:1,livehouseEndingShown:this.livehouseEndingShown,enemyScaleLevel:this.enemyScaleLevel}:{}),
         recruited: this.recruited.slice(),
         recruitmentVersion: 1,
         recruitmentShown: this.recruitmentShown,
@@ -986,6 +986,7 @@
       if(this.stage===7){
         if(snapshot.livehouseEndingShown!==undefined&&typeof snapshot.livehouseEndingShown!=='boolean'||this.livehouseEndingShown&&snapshot.phase!=='victory')throw Error('Live House 战后剧情状态无效');
         if(typeof snapshot.nijikaJoined!=='boolean'||this.nijikaJoined!==this.recruited.includes('nijika'))throw Error('虹夏入队状态无效');
+        if(snapshot.nijikaLevelVersion!==undefined&&snapshot.nijikaLevelVersion!==1)throw Error('虹夏等级版本无效');
         if(!Number.isInteger(snapshot.enemyScaleLevel)||snapshot.enemyScaleLevel<1||snapshot.enemyScaleLevel>97)throw Error('存档敌军等级无效');
         const expected=unitsForStage(this.stage,this.recruited);
         if(snapshot.units.length!==expected.length||snapshot.units.some(u=>!expected.some(t=>t.id===u.id)))throw Error('第七关单位数据无效');
@@ -1024,7 +1025,17 @@
         unit.x = saved.x;
         unit.y = saved.y;
         unit.growthRngState=MyGO.Growth.seed(unit.id,snapshot.rngState);
-        MyGO.Growth.restore(unit,saved.growth);
+        if(this.stage===7&&unit.id==='nijika'&&saved.growth){
+          // The free level has no growth. Keep the old validation allowance so
+          // a migrated Lv.99 save can retain every previously earned stat.
+          unit.growthBase.level=8;
+          MyGO.Growth.restore(unit,saved.growth);
+          unit.growthBase.level=C.NIJIKA.level;
+          if(snapshot.nijikaLevelVersion===undefined){
+            unit.level=Math.min(MyGO.Growth.MAX_LEVEL,unit.level+1);
+            if(unit.level===MyGO.Growth.MAX_LEVEL)unit.exp=0;
+          }else if(unit.level<C.NIJIKA.level)throw Error('虹夏存档等级无效');
+        }else MyGO.Growth.restore(unit,saved.growth);
         MyGO.Classes.restore(unit,saved.classState);
         if(!Number.isFinite(Grid.movementCost(this.map,unit,saved.x,saved.y)))throw Error('存档停留在阻挡地形');
         unit.hp = Math.max(0, Math.min(unit.maxHp, Number(saved.hp) || 0));

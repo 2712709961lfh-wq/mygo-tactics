@@ -20,7 +20,7 @@
   level:9,boss:false,key:false,hpFloor:0,dormant:false,drops:[],carriedItems:[],facing:'down',
   name:'失真回声·'+(id.includes('mage')?'咒':base.includes('bow')?'弓':base.includes('axe')?'斧':base.includes('lance')?'枪':'剑'),shortName:'失真回声',
   ...(id.includes('mage')?{weapon:'miasma',spells:['miasma'],maxHp:24,str:3,mag:10,def:4,res:7}:{}),quote:'失真的噪音，正吞没整间演出厅。'}));
- C.NIJIKA={id:'nijika',name:'伊地知虹夏',shortName:'虹夏',gender:'女',side:'ally',classId:'monk',className:'修道士',level:8,
+ C.NIJIKA={id:'nijika',name:'伊地知虹夏',shortName:'虹夏',gender:'女',side:'ally',classId:'monk',className:'修道士',level:9,
   maxHp:30,str:7,mag:11,dex:10,spd:11,lck:13,def:7,res:9,hit:0,move:4,tags:[],weapon:'nosferatu',spells:['nosferatu','heal'],x:14,y:20,facing:'up',
   quote:'谢谢你们回应我！我叫伊地知虹夏，这次就让我和大家一起守住这里吧。',
   art:{kind:'girl',hair:'#e6c455',hairDark:'#aa792f',hairStyle:'pony',outfit:'#30334a',outfitDark:'#1c2232',accent:'#9f3743',skin:'#f8dfc5',eye:'#a95931'}};

@@ -16,16 +16,22 @@
   root.classList.add('livehouse-intro','livehouse-ending');root.classList.remove('is-leaving');
   const scene=document.createElement('div');scene.className='livehouse-opening live-ending';
   scene.innerHTML='<div class="live-opening-head"><small>CHAPTER 07 / AFTER STORY</small><h2>一同寻找归途</h2><span>STARRY · 战斗后的 Live House</span></div>'+
-   '<canvas class="live-opening-canvas live-ending-scene" width="1200" height="660" aria-label="战斗结束，虹夏走向主角团，众人在真实 Live House 地图中交谈"></canvas>'+
+   '<canvas class="live-opening-canvas live-ending-scene" width="1200" height="660" aria-label="战斗结束，众人留在最后交战的位置，虹夏在舞台附近向大家道谢"></canvas>'+
    '<div class="live-opening-caption live-ending-dialogue" aria-live="polite"><canvas width="110" height="125" aria-hidden="true"></canvas><div><small><strong></strong></small><p></p></div></div>'+
    '<div class="live-ending-controls"><span class="live-ending-progress"></span><span>自动播放 · 点击画面 / Enter 下一句</span><button type="button" data-confirm>下一句</button><button type="button" data-live-ending-skip>跳过剧情 · Esc</button></div>';
   root.appendChild(scene);root.hidden=false;void root.offsetWidth;root.classList.add('is-visible');
   const canvas=scene.querySelector('.live-ending-scene'),ctx=canvas.getContext('2d'),face=scene.querySelector('.live-ending-dialogue canvas'),speaker=scene.querySelector('.live-ending-dialogue strong'),line=scene.querySelector('.live-ending-dialogue p');
-  const party=game.living('player'),places={nijika:[14,20],anon:[13,21.5],soyo:[15,21.5],tomori:[13,23],rana:[15,23],taki:[14,24],xueyue:[12,24.5],nina:[16,24.5]};
-  const saved=party.map(u=>({u,facing:u.facing,walking:u._walking,walkUntil:u._walkUntil,visual:{...r.visuals.get(u.id)}}));
+  const party=game.living('player');
+  // Continue from the battle's actual positions. Only the camera moves.
+  const points=party.map(u=>({id:u.id,x:(r.visuals.get(u.id)?.px??u.x*32)/32+.5,y:(r.visuals.get(u.id)?.py??u.y*32)/32+.5}));
+  const frame=positions=>{
+   const xs=positions.map(p=>p.x),ys=positions.map(p=>p.y),w=Math.min(game.map.cols,Math.max(18,Math.max(...xs)-Math.min(...xs)+7)),h=Math.min(game.map.rows,Math.max(12,Math.max(...ys)-Math.min(...ys)+7));
+   return {x:Math.max(0,Math.min(game.map.cols-w,(Math.min(...xs)+Math.max(...xs)-w)/2)),y:Math.max(0,Math.min(game.map.rows-h,(Math.min(...ys)+Math.max(...ys)-h)/2)),w,h};
+  };
+  const overview=frame([...points,{x:7,y:1},{x:23,y:9}]);
   const oldView=r.view;r.setView({mode:'idle'});
   return new Promise(resolve=>{
-   let page=0,state='playing',raf=0,fade=0,start=performance.now(),beatStart=start,previous=start,camera={x:5,y:15.5,w:20,h:12.5};
+   let page=0,state='playing',raf=0,fade=0,start=performance.now(),beatStart=start,previous=start,camera={...overview};
    const duration=[3600,3500,3900,4300,4700,4200];
    const settle=completed=>{
     if(state==='done')return;state='done';clearTimeout(fade);cancelAnimationFrame(raf);
@@ -39,7 +45,6 @@
     state='leaving';cancelAnimationFrame(raf);ui.chapterOpen=false;
     delete game._liveEnding;
     ui._livehouseEndingAdvance=null;ui._livehouseEndingSkip=null;
-    for(const s of saved){s.u.facing=s.facing;s.u._walking=s.walking;s.u._walkUntil=s.walkUntil;if(ui.game===game)r.visuals.set(s.u.id,s.visual);}
     if(ui.game===game)r.setView(oldView);
     if(completed){root.classList.add('is-leaving');fade=setTimeout(()=>settle(true),650);}else settle(false);
    };
@@ -58,14 +63,9 @@
    const draw=now=>{
     if(state!=='playing')return;if(ui.game!==game){finish(false);return;}
     const elapsed=now-start,talk=ending[page].id,dt=Math.min(100,now-previous);previous=now;
-    for(const [i,u] of party.entries()){
-     const target=places[u.id]||[12+i,24],v=r.visuals.get(u.id),progress=Math.max(0,Math.min(1,(elapsed-i*70)/1700)),ease=1-Math.pow(1-progress,2);
-     if(v){v.px=(target[0]+(i%2?.35:-.35)*(1-ease))*32;v.py=(target[1]+1.8*(1-ease))*32;v.moving=progress<1;}
-     u._walking=progress<1;u._walkUntil=now+120;
-     u.facing=progress<1?'up':u.id==='nijika'?'down':u.id===talk?'up':u.id==='soyo'?'left':'up';
-    }
     r.render(now);ctx.fillStyle='#0f101a';ctx.fillRect(0,0,1200,660);
-    const target={x:talk==='soyo'?8.2:talk==='anon'?7.4:7.8,y:17.2,w:13.5,h:10},blend=1-Math.exp(-dt/650);
+    const focus=points.find(p=>p.id===talk),nearby=focus?points.filter(p=>['nijika','anon','soyo'].includes(p.id)||Math.hypot(p.x-focus.x,p.y-focus.y)<=6):points;
+    const target=elapsed<1400?overview:frame(nearby.length?nearby:[{x:15,y:6}]),blend=1-Math.exp(-dt/650);
     for(const k of ['x','y','w','h'])camera[k]+=(target[k]-camera[k])*blend;
     const s=r.scale,p=M.MapProjection.project(r.projection,camera.x*32,camera.y*32),sw=camera.w*32*s,sh=camera.h*32*s,fit=Math.min(1200/sw,660/sh),ww=sw*fit,hh=sh*fit,dx=(1200-ww)/2,dy=(660-hh)/2;
     ctx.drawImage(r.canvas,p.x*s,p.y*s,sw,sh,dx,dy,ww,hh);
