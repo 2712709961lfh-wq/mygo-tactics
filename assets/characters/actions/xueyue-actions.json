@@ -1,0 +1,51 @@
+{
+  "cellWidth": 192,
+  "cellHeight": 144,
+  "anchorX": 72,
+  "anchorY": 124,
+  "bodyHeight": 76,
+  "frames": {
+    "idle": {
+      "row": 0,
+      "count": 6
+    },
+    "idle2": {
+      "row": 1,
+      "count": 8
+    },
+    "walk": {
+      "row": 2,
+      "count": 8
+    },
+    "run": {
+      "row": 3,
+      "count": 8
+    },
+    "rush": {
+      "row": 4,
+      "count": 7
+    },
+    "jump": {
+      "row": 5,
+      "count": 8
+    },
+    "attack": {
+      "row": 6,
+      "count": 4
+    },
+    "attack2": {
+      "row": 7,
+      "count": 4
+    },
+    "hurt": {
+      "row": 8,
+      "count": 3
+    },
+    "down": {
+      "row": 9,
+      "count": 5
+    }
+  },
+  "sourceFacing": "right",
+  "source": "source/xueyue-sword-original.jpg"
+}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第二关 · 星铃花镇 · 沉睡的花语</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#1e293f;color:#e6e2ef;font:15px/1.8 system-ui,"Microsoft YaHei",sans-serif}main{max-width:1160px;margin:auto;padding:28px 24px 46px}small{color:#aabdd1;letter-spacing:3px}h1{font:38px/1.4 serif;margin:8px 0}p{color:#b9c9d8;margin:6px 0 18px}nav{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}button,a{font:inherit;color:#e4dfef;background:#34435e;border:1px solid #7783a2;border-radius:5px;padding:7px 16px;text-decoration:none;cursor:pointer}button[aria-pressed=true]{background:#d1c5df;color:#303953}.primary{margin-left:auto;color:#eee0bd}.frame{padding:7px;background:#142338;border:1px solid #7c89a6;border-radius:5px;box-shadow:0 14px 50px #1118}canvas{width:100%;height:auto;display:block}.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;margin-top:22px}.notes b{color:#e0c9e4}.notes p{font-size:14px;margin-top:5px}.credits{border-top:1px solid #4a5a75;padding-top:16px;font-size:12px;color:#a8bbd0}.credits a{padding:0;border:0;background:none;text-decoration:underline}
+</style></head><body><main>
+<small>CHAPTER 02 / STARBELL VILLAGE</small><h1>星铃花镇 · 沉睡的花语</h1>
+<p>五处星铃，任选三处；沿花屋与集市寻找前路。40 × 28 格 · 24 名敌人 · 无倾斜方格 / 立体房舍</p>
+<nav aria-label="预览方式"><button id="terrain" aria-pressed="false">纯地图</button><button id="deployment" aria-pressed="true">部署预览</button><button id="grid" aria-pressed="true">战棋网格</button><button id="bells" aria-pressed="false">星铃：沉睡</button><button id="detail" aria-pressed="false">放大看细节</button><a id="export" download="chapter-02-moon-garden.png">导出 PNG</a><a class="primary" href="index.html?stage=2">进入第二关 →</a></nav>
+<div class="frame" style="overflow:auto;max-height:76vh"><canvas id="board" aria-label="第二关星铃花镇地图"></canvas></div>
+<div class="notes">
+<div><b>01 / 非对称花镇</b><p>参考《火焰纹章 if》暗夜第 8 章的分散村落访问。五间花屋错落布置，林地与小池塘分隔街区，中央集市连接南北支路。</p></div>
+<div><b>02 / 五铃择三</b><p>停在编号星铃格，选择「唤醒星铃」，消耗一次行动并回复自身 30% HP，同时惊动当地警戒队。可以分兵访问，也可以选择三处集中推进。</p></div>
+<div><b>03 / 东北露台</b><p>三处星铃 + 击败指挥家即可通关，无需全灭敌军。使用端正方格、立体贴图房屋与树木前后遮挡；部署含通关第一关后加入的雪月。</p></div>
+</div>
+<p class="credits">草地、石材与水面：Flare Grassland / Old Ruins，CC BY-SA 3.0；花树与花丛：Leonard Pabin · Whispers of Avalon，CC BY 3.0。组合衍生图集按 CC BY-SA 3.0 提供。<a href="assets/terrain/moon-dream/README.md">完整来源与修改说明</a>。预览独立运行，不写入游戏存档。</p>
+</main>
+<script src="src/equipment-data.js?v=5.3"></script>
+  <script src="src/magic-data.js?v=5.3"></script>
+  <script src="src/inventory.js?v=5.3"></script>
+  <script src="src/class-data.js?v=5.3"></script><script src="src/config.js?v=4.9"></script><script src="src/map-projection.js?v=4.6.2"></script><script src="src/rng.js"></script><script src="src/growth-data.js?v=5.4.2"></script><script src="src/growth.js?v=5.3"></script><script src="src/grid.js"></script><script src="src/pathfinding.js"></script><script src="src/combat.js?v=5.3"></script><script src="src/game.js?v=5.3"></script><script src="src/assets.js"></script><script src="src/moon-map.js?v=4.5"></script><script src="src/characters.js"></script><script src="src/renderer.js?v=4.6.2"></script>
+<script>
+(async()=>{
+ await Promise.all([MyGO.MoonMap.load(),MyGO.Characters.load()]);
+ const game=new MyGO.Game({stage:2,seed:101,recruited:['xueyue']}), units=game.units;
+ const renderer=new MyGO.Renderer(document.getElementById('board'),game);cancelAnimationFrame(renderer._raf);
+ const terrain=document.getElementById('terrain'),deployment=document.getElementById('deployment'),grid=document.getElementById('grid');
+ function render(){renderer.render(0);document.getElementById('export').href=renderer.canvas.toDataURL('image/png');}
+ terrain.onclick=()=>{game.units=[];terrain.setAttribute('aria-pressed','true');deployment.setAttribute('aria-pressed','false');render();};
+ deployment.onclick=()=>{game.units=units;terrain.setAttribute('aria-pressed','false');deployment.setAttribute('aria-pressed','true');render();};
+ grid.onclick=()=>{renderer.showGrid=renderer.showGrid===false;grid.setAttribute('aria-pressed',String(renderer.showGrid));render();};
+ const bells=document.getElementById('bells'),detail=document.getElementById('detail');
+ bells.onclick=()=>{game.awakenedBells=game.awakenedBells.length?[]:game.mission.bells.map(b=>b.id);bells.setAttribute('aria-pressed',String(!!game.awakenedBells.length));bells.textContent='星铃：'+(game.awakenedBells.length?'已唤醒':'沉睡');render();};
+ detail.onclick=()=>{const active=detail.getAttribute('aria-pressed')!=='true';detail.setAttribute('aria-pressed',String(active));renderer.canvas.style.width=active?'200%':'100%';detail.textContent=active?'还原全图':'放大看细节';};render();
+})();
+</script></body></html>

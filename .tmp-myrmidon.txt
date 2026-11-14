@@ -1,0 +1,471 @@
+Title: Myrmidon
+
+URL Source: https://fireemblemwiki.org/wiki/Myrmidon
+
+Markdown Content:
+| Site News |
+| --- |
+| **Warning:** This wiki contains **spoilers**. Read at your own risk! |
+| **Leaks:** Datamines of upcoming content of _Fortune's Weave_ that are not officially confirmed by Nintendo should not be added to the wiki. |
+
+From Fire Emblem Wiki, your source on Fire Emblem information. By fans, for fans.
+
+_Not to be confused with the [Sword Fighter](https://fireemblemwiki.org/wiki/Sword\_Fighter "Sword Fighter"), which is called "Myrmidon" in some fan translations._
+
+| Myrmidon |
+| --- |
+| [![Image 1](https://cdn.fireemblemwiki.org/6/61/Generic_portrait_myrmidon_enemy_fe15.png)](https://fireemblemwiki.org/wiki/File:Generic_portrait_myrmidon_enemy_fe15.png) Portrait of a Myrmidon in _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_. * * * _Especially swift, with high avoidance, the Myrmidon deftly wields the sword._ |
+| Unit type(s) | * Infantry (all titles) * Swordsman (_The Blazing Blade_, _The Sacred Stones_, _New Mystery of the Emblem_) * Beorc (_Path of Radiance_) |
+| --- |
+| Weapon(s) | * [Sword](https://fireemblemwiki.org/wiki/Sword "Sword")(all titles, specialty in _Three Houses_) * Various (_Three Houses_) |
+| Skill(s) | * [Shove](https://fireemblemwiki.org/wiki/Shove "Shove"), [Critical +5](https://fireemblemwiki.org/wiki/Critical_%2B5 "Critical +5")(_Radiant Dawn_) * [Avoid +10](https://fireemblemwiki.org/wiki/Avoid_%2B10 "Avoid +10"), [Vantage](https://fireemblemwiki.org/wiki/Vantage "Vantage")(_Awakening_) * [Speed +2](https://fireemblemwiki.org/wiki/Speed_%2B2 "Speed +2"), [Swap](https://fireemblemwiki.org/wiki/Swap "Swap")(_Three Houses_) * [Sword Crit +3](https://fireemblemwiki.org/wiki/Sword_Critical_%2B10 "Sword Critical +10"), [Combat Arts +1](https://fireemblemwiki.org/wiki/Combat_Arts_%2B1 "Combat Arts +1"), [Ravaging Arts](https://fireemblemwiki.org/w/index.php?title=Ravaging_Arts&action=edit&redlink=1 "Ravaging Arts (page does not exist)")(_Fortune's Weave_) |
+
+The **Myrmidon** (Japanese: 剣士 _Sword Fighter_) is a sword-wielding class present in the [_Fire Emblem_ series](https://fireemblemwiki.org/wiki/Fire_Emblem_(series) "Fire Emblem (series)"). Their first appearance was in _[Fire Emblem Gaiden](https://fireemblemwiki.org/wiki/Fire\_Emblem\_Gaiden "Fire Emblem Gaiden")_. They appear in most game of the series. _[Fire Emblem Fates](https://fireemblemwiki.org/wiki/Fire\_Emblem\_Fates "Fire Emblem Fates")_ does not include myrmidons in core gameplay, instead featuring the functionally-identical [Samurai](https://fireemblemwiki.org/wiki/Samurai "Samurai") class; the Myrmidon class itself does, however, appear in the [DLC](https://fireemblemwiki.org/wiki/Downloadable_content_in_Fire_Emblem_Fates "Downloadable content in Fire Emblem Fates") chapter [Hidden Truths 1](https://fireemblemwiki.org/wiki/Hidden_Truths_1 "Hidden Truths 1") as the class used by [Owain](https://fireemblemwiki.org/wiki/Owain "Owain") in that chapter.
+
+The class originated as a promotion of the [Mercenary](https://fireemblemwiki.org/wiki/Mercenary "Mercenary"), akin to the [Hero](https://fireemblemwiki.org/wiki/Hero "Hero") of most other games. In most games from _[The Binding Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Binding\_Blade "Fire Emblem: The Binding Blade")_ onward, the Myrmidon has been depicted as something of a counterpart to the Mercenary, with lower strength and defense in exchange for higher skill and speed.
+
+Their initial strength and defense are lower than those of Mercenaries. To counter this, Myrmidons focus more in skill and speed, making critical hits their trademark; in some games, there are unique swords with higher critical rate (such as the [Wo Dao](https://fireemblemwiki.org/wiki/Wo_Dao "Wo Dao") and the [Shamshir](https://fireemblemwiki.org/wiki/Shamshir "Shamshir")) that can be wielded only by this class and its promotions.
+
+Myrmidons, in most games, can be promoted to Swordmasters. Special cases are seen in _[Gaiden](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Gaiden "Fire Emblem: Gaiden")_, _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_, and _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_; in the former, myrmidons are a second-tier class and can be promoted to [Dread Fighters](https://fireemblemwiki.org/wiki/Dread_Fighter "Dread Fighter"), while in the latter two they can be promoted either to Swordmasters or [Assassins](https://fireemblemwiki.org/wiki/Assassin "Assassin").
+
+In the [Elibe](https://fireemblemwiki.org/wiki/Elibe "Elibe") and [Magvel](https://fireemblemwiki.org/wiki/Magvel "Magvel") games, and _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_, Myrmidons were in general strongly associated with a particular region of the continents ([Sacae](https://fireemblemwiki.org/wiki/Sacae "Sacae"), [Jehanna](https://fireemblemwiki.org/wiki/Jehanna "Jehanna"), and [Chon'sin](https://fireemblemwiki.org/wiki/Chon%27sin "Chon'sin") respectively) and almost all units of the class are from these places. In other games, however, they can come from any land.
+
+## Stats
+
+* * *
+
+_**This section is missing [stats](https://fireemblemwiki.org/wiki/Category:Stats "Category:Stats"), calculations, or [growth rates](https://fireemblemwiki.org/wiki/Growth\_rate "Growth rate") which may be currently unknown.** If this information is available, please help improve the page by adding it._
+
+* * *
+
+### Base stats
+
+| Game | [HP](https://fireemblemwiki.org/wiki/HP "HP") | [Strength](https://fireemblemwiki.org/wiki/Strength "Strength") | [Magic](https://fireemblemwiki.org/wiki/Magic_(stat) "Magic (stat)") | [Skill](https://fireemblemwiki.org/wiki/Skill_(stat) "Skill (stat)") | [Speed](https://fireemblemwiki.org/wiki/Speed "Speed") | [Luck](https://fireemblemwiki.org/wiki/Luck "Luck") | [Defense](https://fireemblemwiki.org/wiki/Defense "Defense") | [Resistance](https://fireemblemwiki.org/wiki/Resistance "Resistance") | [Movement](https://fireemblemwiki.org/wiki/Movement "Movement") | [Constitution](https://fireemblemwiki.org/wiki/Constitution "Constitution") | [Weapon level](https://fireemblemwiki.org/wiki/Weapon_level "Weapon level") |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| _[Gaiden](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Gaiden "Fire Emblem: Gaiden")_ | 30 | 11 | -- | 11 | 14 | 0 | 7 | 6 | 5 | -- | [Sword](https://fireemblemwiki.org/wiki/Sword "Sword") |
+| _[The Binding Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Binding\_Blade "Fire Emblem: The Binding Blade")_ | 16/15 | 4/3 | -- | 9 | 9/10 | 0 | 2/1 | 0/1 | 5 | 8/5 | [![Image 2: Swords](https://cdn.fireemblemwiki.org/3/39/GBARankSword.gif)](https://fireemblemwiki.org/wiki/Sword "Swords") D |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ | 16/15 | 4/3 | -- | 9 | 9/10 | 0 | 2/1 | 0/1 | 5 | 8/5 | [![Image 3: Swords](https://cdn.fireemblemwiki.org/3/39/GBARankSword.gif)](https://fireemblemwiki.org/wiki/Sword "Swords") D |
+| _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ | 16/15 | 4/3 | -- | 9 | 9/10 | 0 | 2/1 | 0/1 | 5 | 8/5 | [![Image 4: Swords](https://cdn.fireemblemwiki.org/3/39/GBARankSword.gif)](https://fireemblemwiki.org/wiki/Sword "Swords") D |
+| _[Path of Radiance](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Path\_of\_Radiance "Fire Emblem: Path of Radiance")_ | 17/15 | 4/3 | 0 | 5 | 5/6 | 0 | 3 | 0/1 | 6 | 10/7 | [![Image 5: Swords](https://cdn.fireemblemwiki.org/thumb/a/ad/FE9RankSword.png/16px-FE9RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") D |
+| _[Radiant Dawn](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Radiant\_Dawn "Fire Emblem: Radiant Dawn")_ | 18 | 6 | 0 | 10 | 11 | 0 | 4 | 0 | 6 | 10 | [![Image 6: Swords](https://cdn.fireemblemwiki.org/thumb/2/28/FE10RankSword.png/16px-FE10RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") D |
+| _[Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_ | 16 | 3 | 0 | 9 | 11 | 0 | 4 | 0 | 7 | -- | [![Image 7: Swords](https://cdn.fireemblemwiki.org/1/1e/FE11RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") E |
+| _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_ | 16 | 3 | 0 | 9 | 11 | 0 | 4 | 0 | 7 | -- | [![Image 8: Swords](https://cdn.fireemblemwiki.org/9/94/FE12RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") E |
+| _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_ | 16 | 4 | 1 | 9 | 10 | 0 | 4 | 1 | 5 | -- | [![Image 9: Swords](https://cdn.fireemblemwiki.org/0/01/FE13RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") E |
+| _[Fates](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fates "Fire Emblem: Fates")_ | ? | ? | ? | ? | ? | ? | ? | ? | ? | -- | [![Image 10: Swords/Katanas](https://cdn.fireemblemwiki.org/9/9b/FE14RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords/Katanas")? |
+| _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_ | 30 | 11 | -- | 11 | 14 | 0 | 7 | 6 | 5 | -- | [![Image 11: Swords](https://cdn.fireemblemwiki.org/c/cb/FE15RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | 20 | 7 | 3 | 6 | 6 | 4 | 5 | 2 | 4 | -- | -- |
+| _[Warriors](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors "Fire Emblem: Warriors")_ ([Owain](https://fireemblemwiki.org/wiki/Owain "Owain")) | 51 | 7 | 7 | 9 | 8 | 6 | 5 | 5 | 5 | -- | [![Image 12: Swords](https://cdn.fireemblemwiki.org/thumb/7/79/Is_fewa_sword.png/20px-Is_fewa_sword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") E |
+
+### Max stats
+
+| Game | [HP](https://fireemblemwiki.org/wiki/HP "HP") | [Strength](https://fireemblemwiki.org/wiki/Strength "Strength") | [Magic](https://fireemblemwiki.org/wiki/Magic_(stat) "Magic (stat)") | [Skill](https://fireemblemwiki.org/wiki/Skill_(stat) "Skill (stat)") | [Speed](https://fireemblemwiki.org/wiki/Speed "Speed") | [Luck](https://fireemblemwiki.org/wiki/Luck "Luck") | [Defense](https://fireemblemwiki.org/wiki/Defense "Defense") | [Resistance](https://fireemblemwiki.org/wiki/Resistance "Resistance") | [Movement](https://fireemblemwiki.org/wiki/Movement "Movement") | [Constitution](https://fireemblemwiki.org/wiki/Constitution "Constitution") | [Weapon level](https://fireemblemwiki.org/wiki/Weapon_level "Weapon level") |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| _[Gaiden](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Gaiden "Fire Emblem: Gaiden")_ | 52 | 40 | -- | 40 | 40 | 40 | 40 | 40 | -- | -- | [Sword](https://fireemblemwiki.org/wiki/Sword "Sword") |
+| _[The Binding Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Binding\_Blade "Fire Emblem: The Binding Blade")_ | 60 | 20 | -- | 20 | 20 | 30 | 20 | 20 | 15 | 20 | [![Image 13: Swords](https://cdn.fireemblemwiki.org/3/39/GBARankSword.gif)](https://fireemblemwiki.org/wiki/Sword "Swords") A |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ | 60 | 20 | -- | 20 | 20 | 30 | 20 | 20 | 15 | 20 | [![Image 14: Swords](https://cdn.fireemblemwiki.org/3/39/GBARankSword.gif)](https://fireemblemwiki.org/wiki/Sword "Swords") A |
+| _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ | 60 | 20 | -- | 20 | 20 | 30 | 20 | 20 | 15 | 20 | [![Image 15: Swords](https://cdn.fireemblemwiki.org/3/39/GBARankSword.gif)](https://fireemblemwiki.org/wiki/Sword "Swords") A |
+| _[Path of Radiance](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Path\_of\_Radiance "Fire Emblem: Path of Radiance")_ | 40 | 20 | 15 | 20 | 20 | 40 | 20 | 20 | 20 | 99 | [![Image 16: Swords](https://cdn.fireemblemwiki.org/thumb/a/ad/FE9RankSword.png/16px-FE9RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") A |
+| _[Radiant Dawn](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Radiant\_Dawn "Fire Emblem: Radiant Dawn")_ | 30 | 20 | 10 | 20 | 20 | 30 | 20 | 10 | 20 | 99 | [![Image 17: Swords](https://cdn.fireemblemwiki.org/thumb/2/28/FE10RankSword.png/16px-FE10RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") A |
+| _[Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_ | 60 | 20 | 20 | 20 | 20 | 20 | 20 | 20 | 32 | -- | [![Image 18: Swords](https://cdn.fireemblemwiki.org/1/1e/FE11RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") A |
+| _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_ | 60 | 20 | 20 | 20 | 20 | 20 | 20 | 20 | -- | -- | [![Image 19: Swords](https://cdn.fireemblemwiki.org/9/94/FE12RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") A |
+| _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_ | 60 | 24 | 22 | 27 | 28 | 30 | 22 | 24 | 7 | -- | [![Image 20: Swords](https://cdn.fireemblemwiki.org/0/01/FE13RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") A |
+| _[Fates](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fates "Fire Emblem: Fates")_ | 40 | ? | ? | ? | ? | ? | ? | ? | ? | -- | [![Image 21: Swords/Katanas](https://cdn.fireemblemwiki.org/9/9b/FE14RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords/Katanas")? |
+| _[Warriors](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors "Fire Emblem: Warriors")_ ([Owain](https://fireemblemwiki.org/wiki/Owain "Owain")) | 966 | 130 | 130 | 152 | 148 | 99 | 89 | 81 | 5 | -- | [![Image 22: Swords](https://cdn.fireemblemwiki.org/thumb/7/79/Is_fewa_sword.png/20px-Is_fewa_sword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") S |
+
+### Miscellaneous data
+
+| Game | Tier | [Movement type](https://fireemblemwiki.org/wiki/Terrain "Terrain") | [Weakness](https://fireemblemwiki.org/wiki/Bonus_damage "Bonus damage") | [Experience](https://fireemblemwiki.org/wiki/Experience "Experience") | [CRP](https://fireemblemwiki.org/wiki/Class_relative_power "Class relative power") | [Gold](https://fireemblemwiki.org/wiki/Gold "Gold") | [Vision](https://fireemblemwiki.org/wiki/Vision "Vision") | [Weight](https://fireemblemwiki.org/wiki/Weight_(unit) "Weight (unit)")mod. | [Capacity](https://fireemblemwiki.org/wiki/Capacity "Capacity") | Size | [Unit type](https://fireemblemwiki.org/wiki/Unit_type "Unit type") |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| _[Gaiden](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Gaiden "Fire Emblem: Gaiden")_ | -- | -- | -- | 80 | 4 | -- | -- | -- | -- | -- | -- |
+| _[The Binding Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Binding\_Blade "Fire Emblem: The Binding Blade")_ | -- | -- | -- | -- | 3 | -- | -- | -- | -- | -- | -- |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ | -- | -- | -- | -- | 3 | -- | 3 | -- | -- | -- | -- |
+| _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ | -- | -- | -- | -- | 3 | -- | 3 | -- | -- | -- | -- |
+| _[Path of Radiance](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Path\_of\_Radiance "Fire Emblem: Path of Radiance")_ | -- | -- | -- | -- | -- | -- | 3 | +0 | 20 | -- | -- |
+| _[Radiant Dawn](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Radiant\_Dawn "Fire Emblem: Radiant Dawn")_ | -- | -- | -- | -- | -- | -- | 3 | +0 | 15 | -- | -- |
+| _[Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_ | -- | -- | -- | -- | -- | -- | 2 | -- | -- | -- | -- |
+| _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_ | -- | -- | -- | -- | -- | -- | 2 | -- | -- | -- | -- |
+| _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_ | -- | -- | -- | 80 | 4 | -- | -- | -- | -- | -- | -- |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | -- | -- | -- | -- | -- | -- | -- | -- | -- | 1 | -- |
+
+### Autolevel growth rates
+
+| Game | [HP](https://fireemblemwiki.org/wiki/HP "HP") | [Strength](https://fireemblemwiki.org/wiki/Strength "Strength") | [Magic](https://fireemblemwiki.org/wiki/Magic_(stat) "Magic (stat)") | [Skill](https://fireemblemwiki.org/wiki/Skill_(stat) "Skill (stat)") | [Speed](https://fireemblemwiki.org/wiki/Speed "Speed") | [Luck](https://fireemblemwiki.org/wiki/Luck "Luck") | [Defense](https://fireemblemwiki.org/wiki/Defense "Defense") | [Resistance](https://fireemblemwiki.org/wiki/Resistance "Resistance") | [Charm](https://fireemblemwiki.org/wiki/Charm_(stat) "Charm (stat)") | [Constitution](https://fireemblemwiki.org/wiki/Constitution "Constitution")* | [Movement](https://fireemblemwiki.org/wiki/Movement "Movement")* | [Weapon level](https://fireemblemwiki.org/wiki/Weapon_level "Weapon level") |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| _[Gaiden](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Gaiden "Fire Emblem: Gaiden")_ | 150% | 50% | -- | 50% | 50% | 0% | 50% | 0% | -- | -- | -- | -- |
+| _[The Binding Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Binding\_Blade "Fire Emblem: The Binding Blade")_ | 70% | 35% | -- | 40% | 40% | 30% | 15% | 17% | -- | -- | -- | -- |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ | 70% | 35% | -- | 40% | 40% | 30% | 15% | 20% | -- | -- | -- | -- |
+| _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ | 70% | 35% | -- | 40% | 40% | 30% | 15% | 20% | -- | -- | -- | -- |
+| _[Path of Radiance](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Path\_of\_Radiance "Fire Emblem: Path of Radiance")_ | 65/60% | 50/45% | 10% | 60% | 65% | 30% | 30/25% | 25/30% | -- | -- | -- | -- |
+| _[Radiant Dawn](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Radiant\_Dawn "Fire Emblem: Radiant Dawn")_ | 65% | 40% | 20% | 45% | 50% | 30% | 40% | 40% | -- | -- | -- | -- |
+| _[Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_ | 80% | 20% | 0% | 30% | 30% | 0% | 20% | 10% | -- | -- | -- | -- |
+| _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_ | 80% | 20% | 0% | 30% | 30% | 0% | 20% | 10% | -- | -- | -- | -- |
+| _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_ | 70% | 30% | 0% | 40% | 40% | 40% | 20% | 20% | -- | -- | -- | -- |
+| _[Fates](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fates "Fire Emblem: Fates")_ | ??% | ??% | ??% | ??% | ??% | ??% | ??% | ??% | -- | -- | -- | -- |
+| _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_ | 90% | 50% | -- | 50% | 50% | 0% | 35% | 0% | -- | -- | -- | -- |
+
+See [class growth rate](https://fireemblemwiki.org/wiki/Class_growth_rate "Class growth rate") for more details on the mechanics of class growths in each game.
+
+### Growth rate modifiers
+
+| Game | [HP](https://fireemblemwiki.org/wiki/HP "HP") | [Strength](https://fireemblemwiki.org/wiki/Strength "Strength") | [Magic](https://fireemblemwiki.org/wiki/Magic_(stat) "Magic (stat)") | [Skill](https://fireemblemwiki.org/wiki/Skill_(stat) "Skill (stat)") | [Speed](https://fireemblemwiki.org/wiki/Speed "Speed") | [Luck](https://fireemblemwiki.org/wiki/Luck "Luck") | [Defense](https://fireemblemwiki.org/wiki/Defense "Defense") | [Resistance](https://fireemblemwiki.org/wiki/Resistance "Resistance") | [Charm](https://fireemblemwiki.org/wiki/Charm_(stat) "Charm (stat)") | [Constitution](https://fireemblemwiki.org/wiki/Constitution "Constitution")* | [Movement](https://fireemblemwiki.org/wiki/Movement "Movement")* | [Weapon level](https://fireemblemwiki.org/wiki/Weapon_level "Weapon level") |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| _[Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_ | 50% | 10% | −10% | 20% | 25% | 0% | 5% | −5% | -- | -- | -- | -- |
+| _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_ | 40% | 10% | −10% | 20% | 30% | 0% | 5% | −5% | -- | -- | -- | -- |
+| _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_ | 40% | 20% | 0% | 25% | 25% | 0% | 5% | 5% | -- | -- | -- | -- |
+| _[Fates](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fates "Fire Emblem: Fates")_ | ??% | ??% | ??% | ??% | ??% | ??% | ??% | ??% | -- | -- | -- | -- |
+| _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_ | 0% | −5% | -- | 5% | 5% | 0% | −5% | 0% | -- | -- | -- | -- |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | 10% | 0% | 0% | 0% | 5/10% | 0% | 0% | −5/−10% | 5% | -- | -- | [![Image 23: Swords](https://cdn.fireemblemwiki.org/thumb/2/24/FE16RankSword.png/20px-FE16RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") +1 |
+| _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_ | 10% | 0% | 0% | 0% | 10% | 0% | 0% | 0% | 5% | -- | -- | -- |
+| _[Fortune's Weave](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fortune%27s\_Weave "Fire Emblem: Fortune's Weave")_ | 10% | 0% | 0% | 10% | 15% | 5% | 0% | 0% | 5% | -- | -- | [![Image 24: Sword](https://cdn.fireemblemwiki.org/thumb/a/a6/FE18RankSword.png/20px-FE18RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Sword") +2 ![Image 25: Infantry](https://cdn.fireemblemwiki.org/thumb/f/f5/FE18RankInfantry.png/20px-FE18RankInfantry.png) +1 |
+
+See [class growth rate](https://fireemblemwiki.org/wiki/Class_growth_rate "Class growth rate") for more details on the mechanics of class growths in each game.
+
+### Stat modifiers
+
+| Game | [HP](https://fireemblemwiki.org/wiki/HP "HP") | [Strength](https://fireemblemwiki.org/wiki/Strength "Strength") | [Magic](https://fireemblemwiki.org/wiki/Magic_(stat) "Magic (stat)") | [Skill](https://fireemblemwiki.org/wiki/Skill_(stat) "Skill (stat)") | [Speed](https://fireemblemwiki.org/wiki/Speed "Speed") | [Luck](https://fireemblemwiki.org/wiki/Luck "Luck") | [Defense](https://fireemblemwiki.org/wiki/Defense "Defense") | [Resistance](https://fireemblemwiki.org/wiki/Resistance "Resistance") | [Charm](https://fireemblemwiki.org/wiki/Charm_(stat) "Charm (stat)") | [Movement](https://fireemblemwiki.org/wiki/Movement "Movement") |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_ | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+
+### Class skills
+
+| Game | Skill | Learning conditions |
+| --- | --- | --- |
+| _[Path of Radiance](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Path\_of\_Radiance "Fire Emblem: Path of Radiance")_ _[Radiant Dawn](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Radiant\_Dawn "Fire Emblem: Radiant Dawn")_ | [![Image 26](https://cdn.fireemblemwiki.org/d/df/Is_wii_shove.png)](https://fireemblemwiki.org/wiki/Shove "Shove")[Shove](https://fireemblemwiki.org/wiki/Shove "Shove") | Innate; hidden and unnamed in _Path of Radiance_. |
+| _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_ | [![Image 27](https://cdn.fireemblemwiki.org/8/87/Is_fe13_avoid_%2B10.png)](https://fireemblemwiki.org/wiki/Avoid_%2B10 "Avoid +10")[Avoid +10](https://fireemblemwiki.org/wiki/Avoid_%2B10 "Avoid +10") | Learned at [level](https://fireemblemwiki.org/wiki/Level "Level")1. |
+| _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_ | [![Image 28](https://cdn.fireemblemwiki.org/5/51/Is_fe13_vantage.png)](https://fireemblemwiki.org/wiki/Vantage "Vantage")[Vantage](https://fireemblemwiki.org/wiki/Vantage "Vantage") | Learned at [level](https://fireemblemwiki.org/wiki/Level "Level")10. |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | [![Image 29](https://cdn.fireemblemwiki.org/thumb/8/86/Is_fe16_speed_%2B2.png/20px-Is_fe16_speed_%2B2.png)](https://fireemblemwiki.org/wiki/Speed_%2B2 "Speed +2")[Speed +2](https://fireemblemwiki.org/wiki/Speed_%2B2 "Speed +2") | [Class mastery](https://fireemblemwiki.org/wiki/Class_mastery "Class mastery"). (60 class Exp required) |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | [![Image 30](https://cdn.fireemblemwiki.org/thumb/a/a5/Is_fe16_combat_art.png/20px-Is_fe16_combat_art.png)](https://fireemblemwiki.org/wiki/Swap "Swap")[Swap](https://fireemblemwiki.org/wiki/Swap "Swap") | [Class mastery](https://fireemblemwiki.org/wiki/Class_mastery "Class mastery"). (60 class Exp required) |
+| _[Fortune's Weave](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fortune%27s\_Weave "Fire Emblem: Fortune's Weave")_ | [![Image 31](https://cdn.fireemblemwiki.org/thumb/a/ab/Is_fe18_combat_arts_%2B1.png/20px-Is_fe18_combat_arts_%2B1.png)](https://fireemblemwiki.org/wiki/Combat_Arts_%2B1 "Combat Arts +1")[Combat Arts +1](https://fireemblemwiki.org/wiki/Combat_Arts_%2B1 "Combat Arts +1") | Innate |
+| _[Fortune's Weave](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fortune%27s\_Weave "Fire Emblem: Fortune's Weave")_ | [![Image 32](https://cdn.fireemblemwiki.org/thumb/f/f2/Is_fe18_sword_crit_%2B3.png/20px-Is_fe18_sword_crit_%2B3.png)](https://fireemblemwiki.org/wiki/Sword_Crit_%2B3 "Sword Crit +3")[Sword Crit +3](https://fireemblemwiki.org/w/index.php?title=Sword_Crit_%2B3&action=edit&redlink=1 "Sword Crit +3 (page does not exist)") | Innate |
+| _[Fortune's Weave](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fortune%27s\_Weave "Fire Emblem: Fortune's Weave")_ | [![Image 33](https://cdn.fireemblemwiki.org/thumb/6/67/Is_fe18_ravaging_arts.png/20px-Is_fe18_ravaging_arts.png)](https://fireemblemwiki.org/wiki/Ravaging_Arts "Ravaging Arts")[Ravaging Arts](https://fireemblemwiki.org/w/index.php?title=Ravaging_Arts&action=edit&redlink=1 "Ravaging Arts (page does not exist)") | [Class mastery](https://fireemblemwiki.org/wiki/Class_mastery "Class mastery") (x class Exp required) |
+| _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_ | [![Image 34](https://cdn.fireemblemwiki.org/thumb/4/4c/Is_fewa2_axe_buster_lv_1.png/20px-Is_fewa2_axe_buster_lv_1.png)](https://fireemblemwiki.org/wiki/Axe_Buster_Lv_1 "Axe Buster Lv 1")[Axe Buster Lv 1](https://fireemblemwiki.org/wiki/Axe_Buster_Lv_1 "Axe Buster Lv 1") | Innate. |
+
+Additionally, in _[Gaiden](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Gaiden "Fire Emblem: Gaiden")_, Myrmidons are capable of performing [critical hits](https://fireemblemwiki.org/wiki/Critical_hit "Critical hit").
+
+## Class change
+
+### _Gaiden_
+
+| Trainee-like class | Method | Basic class | Method | Promoted class | Method | Promoted class | Method | Trainee-like class |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| [![Image 35](https://cdn.fireemblemwiki.org/6/6f/Bs_fe02_villager_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe02_villager_sword.png) [Villager](https://fireemblemwiki.org/wiki/Villager "Villager") | After reaching [level](https://fireemblemwiki.org/wiki/Level "Level")3, at [Mila Shrine](https://fireemblemwiki.org/wiki/Mila_Shrine "Mila Shrine"). | [![Image 36](https://cdn.fireemblemwiki.org/b/b3/Bs_fe02_mercenary_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe02_mercenary_sword.png) [Mercenary](https://fireemblemwiki.org/wiki/Mercenary "Mercenary") | After reaching [level](https://fireemblemwiki.org/wiki/Level "Level")7, at [Mila Shrine](https://fireemblemwiki.org/wiki/Mila_Shrine "Mila Shrine"). | [![Image 37](https://cdn.fireemblemwiki.org/2/2a/Bs_fe02_myrmidon_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe02_myrmidon_sword.png) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | After reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10, at [Mila Shrine](https://fireemblemwiki.org/wiki/Mila_Shrine "Mila Shrine"). | [![Image 38](https://cdn.fireemblemwiki.org/d/dc/Bs_fe02_dread_fighter_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe02_dread_fighter_sword.png) [Dread Fighter](https://fireemblemwiki.org/wiki/Dread_Fighter "Dread Fighter") | After reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10, at [Mila Shrine](https://fireemblemwiki.org/wiki/Mila_Shrine "Mila Shrine"). | [![Image 39](https://cdn.fireemblemwiki.org/6/6f/Bs_fe02_villager_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe02_villager_sword.png) [Villager](https://fireemblemwiki.org/wiki/Villager "Villager") |
+
+### _The Binding Blade_
+
+| Base class | Promotion method | Advanced class |
+| --- | --- | --- |
+| [![Image 40](https://cdn.fireemblemwiki.org/d/dd/Bs_fe06_rutger_myrmidon_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe06_rutger_myrmidon_sword.png) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | Using a [![Image 41](https://cdn.fireemblemwiki.org/1/14/Is_gba_hero_crest.png)](https://fireemblemwiki.org/wiki/Hero_Crest "Hero Crest")[Hero Crest](https://fireemblemwiki.org/wiki/Hero_Crest "Hero Crest") after reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10. | [![Image 42](https://cdn.fireemblemwiki.org/5/5f/Bs_fe06_rutger_swordmaster_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe06_rutger_swordmaster_sword.png) [Swordmaster](https://fireemblemwiki.org/wiki/Swordmaster "Swordmaster") |
+
+### _The Blazing Blade_
+
+| Base class | Promotion method | Advanced class |
+| --- | --- | --- |
+| [![Image 43](https://cdn.fireemblemwiki.org/8/8e/Bs_fe07_guy_myrmidon_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe07_guy_myrmidon_sword.png) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | Using a [![Image 44](https://cdn.fireemblemwiki.org/1/14/Is_gba_hero_crest.png)](https://fireemblemwiki.org/wiki/Hero_crest "Hero crest")[Hero crest](https://fireemblemwiki.org/wiki/Hero_crest "Hero crest") or [![Image 45](https://cdn.fireemblemwiki.org/0/0b/Is_gba_earth_seal.png)](https://fireemblemwiki.org/wiki/Earth_seal "Earth seal")[Earth seal](https://fireemblemwiki.org/wiki/Earth_seal "Earth seal") after reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10. | [![Image 46](https://cdn.fireemblemwiki.org/2/22/Bs_fe07_guy_swordmaster_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe07_guy_swordmaster_sword.png) [Swordmaster](https://fireemblemwiki.org/wiki/Swordmaster "Swordmaster") |
+
+### _The Sacred Stones_
+
+| Base class | Promotion method | Advanced class |
+| --- | --- | --- |
+| [![Image 47](https://cdn.fireemblemwiki.org/7/77/Bs_fe08_joshua_myrmidon_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe08_joshua_myrmidon_sword.png) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | Using a [![Image 48](https://cdn.fireemblemwiki.org/1/14/Is_gba_hero_crest.png)](https://fireemblemwiki.org/wiki/Hero_Crest "Hero Crest")[Hero Crest](https://fireemblemwiki.org/wiki/Hero_Crest "Hero Crest") or [![Image 49](https://cdn.fireemblemwiki.org/4/48/Is_gba_master_seal.png)](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal")[Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10. | [![Image 50](https://cdn.fireemblemwiki.org/3/3a/Bs_fe08_joshua_assassin_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe08_joshua_assassin_sword.png) [Assassin](https://fireemblemwiki.org/wiki/Assassin "Assassin") _or_ [![Image 51](https://cdn.fireemblemwiki.org/a/a0/Bs_fe08_joshua_swordmaster_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe08_joshua_swordmaster_sword.png) [Swordmaster](https://fireemblemwiki.org/wiki/Swordmaster "Swordmaster") |
+| **Promotion choice criteria:** The player can freely choose. |
+
+### _Path of Radiance_
+
+| Base class | Promotion method | Advanced class |
+| --- | --- | --- |
+| [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | Using a [![Image 52](https://cdn.fireemblemwiki.org/d/dc/Is_gcn_master_seal.png)](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal")[Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10, or reaching level 21. | [Swordmaster](https://fireemblemwiki.org/wiki/Swordmaster "Swordmaster") |
+
+### _Radiant Dawn_
+
+| Base class | Promotion method | Advanced class | Promotion method | Master class |
+| --- | --- | --- | --- | --- |
+| [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | Using a [![Image 53](https://cdn.fireemblemwiki.org/3/30/Is_wii_master_seal.png)](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal")[Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10, or reaching level 21. | [Swordmaster](https://fireemblemwiki.org/wiki/Swordmaster "Swordmaster") | Using a [![Image 54](https://cdn.fireemblemwiki.org/b/b9/Is_wii_master_crown.png)](https://fireemblemwiki.org/wiki/Master_Crown "Master Crown")[Master Crown](https://fireemblemwiki.org/wiki/Master_Crown "Master Crown") after reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10, or reaching level 21. | [Trueblade](https://fireemblemwiki.org/wiki/Trueblade "Trueblade") |
+
+### _Shadow Dragon_
+
+| Base class | Promotion method | Advanced class |
+| --- | --- | --- |
+| [![Image 55](https://cdn.fireemblemwiki.org/f/fc/Bs_fe11_brown_myrmidon_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe11_brown_myrmidon_sword.png) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | Using a [![Image 56](https://cdn.fireemblemwiki.org/b/b7/Is_ds_master_seal.png)](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal")[Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10. | [![Image 57](https://cdn.fireemblemwiki.org/c/c0/Bs_fe11_brown_swordmaster_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe11_brown_swordmaster_sword.png) [Swordmaster](https://fireemblemwiki.org/wiki/Swordmaster "Swordmaster") |
+
+### _New Mystery of the Emblem_
+
+| Base class | Promotion method | Advanced class |
+| --- | --- | --- |
+| [![Image 58](https://cdn.fireemblemwiki.org/f/fc/Bs_fe11_brown_myrmidon_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe11_brown_myrmidon_sword.png) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | Using a [![Image 59](https://cdn.fireemblemwiki.org/b/b7/Is_ds_master_seal.png)](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal")[Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10. | [![Image 60](https://cdn.fireemblemwiki.org/c/c0/Bs_fe11_brown_swordmaster_sword.png)](https://fireemblemwiki.org/wiki/File:Bs_fe11_brown_swordmaster_sword.png) [Swordmaster](https://fireemblemwiki.org/wiki/Swordmaster "Swordmaster") |
+
+### _Awakening_
+
+| Base class | Promotion method | Advanced class |
+| --- | --- | --- |
+| [![Image 61](https://cdn.fireemblemwiki.org/e/eb/Ma_fe13_myrmidon_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe13_myrmidon_playable.gif) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | Using a [![Image 62](https://cdn.fireemblemwiki.org/0/0a/Is_fe13_master_seal.png)](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal")[Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10. | [![Image 63](https://cdn.fireemblemwiki.org/e/e3/Ma_fe13_swordmaster_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe13_swordmaster_playable.gif) [Swordmaster](https://fireemblemwiki.org/wiki/Swordmaster "Swordmaster") _or_ [![Image 64](https://cdn.fireemblemwiki.org/3/38/Ma_fe13_assassin_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe13_assassin_playable.gif) [Assassin](https://fireemblemwiki.org/wiki/Assassin "Assassin") |
+| **Promotion choice criteria:** The player can freely choose. |
+
+### _Fates_
+
+| Base class |
+| --- |
+| [![Image 65](https://cdn.fireemblemwiki.org/d/dd/Ma_fe13_myrmidon_owain_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe13_myrmidon_owain_playable.gif) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) |
+
+### _Echoes: Shadows of Valentia_
+
+| Trainee-like class | Method | Basic class | Method | Promoted class | Method | Promoted class | Method | Trainee-like class |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| [![Image 66](https://cdn.fireemblemwiki.org/1/1f/Ma_fe15_villager_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe15_villager_playable.gif) [Villager](https://fireemblemwiki.org/wiki/Villager "Villager") | After reaching [level](https://fireemblemwiki.org/wiki/Level "Level")3, at [Mila Shrine](https://fireemblemwiki.org/wiki/Mila_Shrine "Mila Shrine"). | [![Image 67](https://cdn.fireemblemwiki.org/6/63/Ma_fe15_mercenary_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe15_mercenary_playable.gif) [Mercenary](https://fireemblemwiki.org/wiki/Mercenary "Mercenary") | After reaching [level](https://fireemblemwiki.org/wiki/Level "Level")7, at [Mila Shrine](https://fireemblemwiki.org/wiki/Mila_Shrine "Mila Shrine"). | [![Image 68](https://cdn.fireemblemwiki.org/9/9d/Ma_fe15_myrmidon_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe15_myrmidon_playable.gif) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | After reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10, at [Mila Shrine](https://fireemblemwiki.org/wiki/Mila_Shrine "Mila Shrine"). | [![Image 69](https://cdn.fireemblemwiki.org/3/35/Ma_fe15_dread_fighter_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe15_dread_fighter_playable.gif) [Dread Fighter](https://fireemblemwiki.org/wiki/Dread_Fighter "Dread Fighter") | After reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10, at [Mila Shrine](https://fireemblemwiki.org/wiki/Mila_Shrine "Mila Shrine"). | [![Image 70](https://cdn.fireemblemwiki.org/1/1f/Ma_fe15_villager_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe15_villager_playable.gif) [Villager](https://fireemblemwiki.org/wiki/Villager "Villager") |
+| After reaching [level](https://fireemblemwiki.org/wiki/Level "Level")20, at the [Altar of the Ogre](https://fireemblemwiki.org/wiki/Altar_of_the_Ogre "Altar of the Ogre"). | [![Image 71](https://cdn.fireemblemwiki.org/c/cb/Ma_fe15_yasha_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe15_yasha_playable.gif) [Yasha](https://fireemblemwiki.org/wiki/Yasha "Yasha") |
+
+### _Three Houses_
+
+| Base class | Certification requirements | Beginner class |
+| --- | --- | --- |
+| Any class | [Level](https://fireemblemwiki.org/wiki/Level "Level") 5 [![Image 72](https://cdn.fireemblemwiki.org/thumb/7/76/Is_fe16_seal.png/20px-Is_fe16_seal.png)](https://fireemblemwiki.org/wiki/Beginner_Seal "Beginner Seal")[Beginner Seal](https://fireemblemwiki.org/wiki/Beginner_Seal "Beginner Seal") [![Image 73: Swords](https://cdn.fireemblemwiki.org/thumb/2/24/FE16RankSword.png/20px-FE16RankSword.png)](https://fireemblemwiki.org/wiki/Sword "Swords") D | [![Image 74](https://cdn.fireemblemwiki.org/e/e4/Ma_fe16_myrmidon_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe16_myrmidon_playable.gif) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) |
+| This class is available for any unit. |
+
+### _Tokyo Mirage Sessions ♯FE_
+
+| Base class | Promotion method | Advanced class |
+| --- | --- | --- |
+| [![Image 75](https://cdn.fireemblemwiki.org/thumb/b/ba/Portrait_navarre_01_tmsfe.png/75px-Portrait_navarre_01_tmsfe.png)](https://fireemblemwiki.org/wiki/File:Portrait_navarre_01_tmsfe.png) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | Using a [Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") while talking to [Tiki](https://fireemblemwiki.org/wiki/Tiki "Tiki"). | [![Image 76](https://cdn.fireemblemwiki.org/thumb/3/39/Portrait_navarre_02_tmsfe.png/75px-Portrait_navarre_02_tmsfe.png)](https://fireemblemwiki.org/wiki/File:Portrait_navarre_02_tmsfe.png) [Hero](https://fireemblemwiki.org/wiki/Hero "Hero") _or_ [![Image 77](https://cdn.fireemblemwiki.org/thumb/a/a3/Portrait_navarre_03_tmsfe.png/75px-Portrait_navarre_03_tmsfe.png)](https://fireemblemwiki.org/wiki/File:Portrait_navarre_03_tmsfe.png) [Swordmaster](https://fireemblemwiki.org/wiki/Swordmaster "Swordmaster") |
+| **Promotion choice criteria:** The player can freely choose. |
+
+### _Warriors_
+
+| Base class | Promotion method | Advanced class |
+| --- | --- | --- |
+| [![Image 78](https://cdn.fireemblemwiki.org/c/cc/Ma_fewa_myrmidon_owain_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa_myrmidon_owain_playable.gif) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | Using a [Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after reaching [level](https://fireemblemwiki.org/wiki/Level "Level")15. | [![Image 79](https://cdn.fireemblemwiki.org/c/cc/Ma_fewa_myrmidon_owain_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa_myrmidon_owain_playable.gif) [Swordmaster](https://fireemblemwiki.org/wiki/Swordmaster "Swordmaster") |
+
+### _Warriors: Three Hopes_
+
+| Beginner class | Method | Intermediate class | Method | Advanced class | Method | Master class |
+| --- | --- | --- | --- | --- | --- | --- |
+| [![Image 80](https://cdn.fireemblemwiki.org/d/dd/Ma_fewa2_myrmidon_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa2_myrmidon_playable.gif) [Myrmidon](https://fireemblemwiki.org/wiki/Myrmidon) | Using an [![Image 81](https://cdn.fireemblemwiki.org/thumb/0/0b/Is_fewa2_seal.png/20px-Is_fewa2_seal.png)](https://fireemblemwiki.org/wiki/Intermediate_Seal "Intermediate Seal")[Intermediate Seal](https://fireemblemwiki.org/wiki/Intermediate_Seal "Intermediate Seal") after mastering Myrmidon. | [![Image 82](https://cdn.fireemblemwiki.org/b/b8/Ma_fewa2_thief_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa2_thief_playable.gif) [Thief](https://fireemblemwiki.org/wiki/Thief "Thief") | Using an [![Image 83](https://cdn.fireemblemwiki.org/thumb/0/0b/Is_fewa2_seal.png/20px-Is_fewa2_seal.png)](https://fireemblemwiki.org/wiki/Advanced_Seal "Advanced Seal")[Advanced Seal](https://fireemblemwiki.org/wiki/Advanced_Seal "Advanced Seal") after mastering Thief. | [![Image 84](https://cdn.fireemblemwiki.org/2/20/Ma_fewa2_assassin_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa2_assassin_playable.gif) [Assassin](https://fireemblemwiki.org/wiki/Assassin "Assassin") | Using a [![Image 85](https://cdn.fireemblemwiki.org/thumb/0/0b/Is_fewa2_seal.png/20px-Is_fewa2_seal.png)](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal")[Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after mastering Assassin. | [![Image 86](https://cdn.fireemblemwiki.org/3/3f/Ma_fewa2_trickster_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa2_trickster_playable.gif) [Trickster](https://fireemblemwiki.org/wiki/Trickster "Trickster") |
+|  |  |  | Using a [![Image 87](https://cdn.fireemblemwiki.org/thumb/0/0b/Is_fewa2_seal.png/20px-Is_fewa2_seal.png)](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal")[Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after mastering Assassin or Swordmaster. | [![Image 88](https://cdn.fireemblemwiki.org/2/24/Ma_fewa2_dancer_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa2_dancer_playable.gif) [Dancer](https://fireemblemwiki.org/wiki/Dancer "Dancer") |
+| [![Image 89](https://cdn.fireemblemwiki.org/5/5e/Ma_fewa2_mercenary_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa2_mercenary_playable.gif) [Mercenary](https://fireemblemwiki.org/wiki/Mercenary "Mercenary") | Using an [![Image 90](https://cdn.fireemblemwiki.org/thumb/0/0b/Is_fewa2_seal.png/20px-Is_fewa2_seal.png)](https://fireemblemwiki.org/wiki/Advanced_Seal "Advanced Seal")[Advanced Seal](https://fireemblemwiki.org/wiki/Advanced_Seal "Advanced Seal") after mastering Mercenary. | [![Image 91](https://cdn.fireemblemwiki.org/1/1f/Ma_fewa2_swordmaster_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa2_swordmaster_playable.gif) [Swordmaster](https://fireemblemwiki.org/wiki/Swordmaster "Swordmaster") | Using a [![Image 92](https://cdn.fireemblemwiki.org/thumb/0/0b/Is_fewa2_seal.png/20px-Is_fewa2_seal.png)](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal")[Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after mastering Swordmaster. | [![Image 93](https://cdn.fireemblemwiki.org/c/c3/Ma_fewa2_mortal_savant_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa2_mortal_savant_playable.gif) [Mortal Savant](https://fireemblemwiki.org/wiki/Mortal_Savant "Mortal Savant") |
+| **Promotion choice criteria:** The dancer class only becomes available upon visiting a survey spot in [Chapter 12](https://fireemblemwiki.org/wiki/The_Rising_Darkness "The Rising Darkness")![Image 94: Scarlet Blaze](https://cdn.fireemblemwiki.org/thumb/5/5d/Crimson_Flower.png/12px-Crimson_Flower.png), [Chapter 12](https://fireemblemwiki.org/wiki/A_Trick_of_the_Goddess "A Trick of the Goddess")![Image 95: Azure Gleam](https://cdn.fireemblemwiki.org/thumb/3/30/Azure_Moon.png/12px-Azure_Moon.png) or [Chapter 13](https://fireemblemwiki.org/wiki/Darkness_Attacks "Darkness Attacks")![Image 96: Golden Wildfire](https://cdn.fireemblemwiki.org/thumb/6/6c/Verdant_Wind.png/12px-Verdant_Wind.png). |
+
+## Playable Myrmidons
+
+| Playable units |
+| --- |
+| Name | Game |
+| [Deen](https://fireemblemwiki.org/wiki/Deen_(Gaiden) "Deen (Gaiden)") | _[Gaiden](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Gaiden "Fire Emblem: Gaiden")_, _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_ |
+| [Rutger](https://fireemblemwiki.org/wiki/Rutger "Rutger") | _[The Binding Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Binding\_Blade "Fire Emblem: The Binding Blade")_ |
+| [Fir](https://fireemblemwiki.org/wiki/Fir "Fir") | _[The Binding Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Binding\_Blade "Fire Emblem: The Binding Blade")_ |
+| [Guy](https://fireemblemwiki.org/wiki/Guy "Guy") | _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ |
+| [Joshua](https://fireemblemwiki.org/wiki/Joshua "Joshua") | _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ |
+| [Marisa](https://fireemblemwiki.org/wiki/Marisa "Marisa") | _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ |
+| [Mia](https://fireemblemwiki.org/wiki/Mia "Mia") | _[Path of Radiance](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Path\_of\_Radiance "Fire Emblem: Path of Radiance")_ |
+| [Zihark](https://fireemblemwiki.org/wiki/Zihark "Zihark") | _[Path of Radiance](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Path\_of\_Radiance "Fire Emblem: Path of Radiance")_ |
+| [Edward](https://fireemblemwiki.org/wiki/Edward "Edward") | _[Radiant Dawn](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Radiant\_Dawn "Fire Emblem: Radiant Dawn")_ |
+| [Navarre](https://fireemblemwiki.org/wiki/Navarre "Navarre") | _[Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_*, _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_* |
+| [Athena](https://fireemblemwiki.org/wiki/Athena "Athena") | _[Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_, _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_ |
+| [Radd](https://fireemblemwiki.org/wiki/Radd "Radd") | _[Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_*, _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_* |
+| [Samuel](https://fireemblemwiki.org/wiki/Samuel "Samuel") | _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_* |
+| [Malice](https://fireemblemwiki.org/wiki/Malice "Malice") | _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_* |
+| [Lon'qu](https://fireemblemwiki.org/wiki/Lon%27qu "Lon'qu") | _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_ |
+| [Owain](https://fireemblemwiki.org/wiki/Owain "Owain") | _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_, _[Fates](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fates "Fire Emblem: Fates")_([DLC](https://fireemblemwiki.org/wiki/Downloadable_content_in_Fire_Emblem_Fates "Downloadable content in Fire Emblem Fates") chapter [Hidden Truths 1](https://fireemblemwiki.org/wiki/Hidden_Truths_1 "Hidden Truths 1")), _[Warriors](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors "Fire Emblem: Warriors")_ |
+| [Anna](https://fireemblemwiki.org/wiki/Anna_(Three_Houses) "Anna (Three Houses)") | _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ |
+| [Yashiro Tsurugi](https://fireemblemwiki.org/wiki/Yashiro_Tsurugi "Yashiro Tsurugi") | _[Tokyo Mirage Sessions ♯FE](https://fireemblemwiki.org/wiki/Tokyo\_Mirage\_Sessions\_%E2%99%AFFE "Tokyo Mirage Sessions ♯FE")_ |
+| [Shez](https://fireemblemwiki.org/wiki/Shez "Shez") | _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_(Chapter 0) |
+| [Petra](https://fireemblemwiki.org/wiki/Petra "Petra") | _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_![Image 97: Black Eagles](https://cdn.fireemblemwiki.org/thumb/5/58/FETH_Black_Eagles_symbol.png/10px-FETH_Black_Eagles_symbol.png) |
+| [Felix](https://fireemblemwiki.org/wiki/Felix "Felix") | _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_![Image 98: Blue Lions](https://cdn.fireemblemwiki.org/thumb/3/31/FETH_Blue_Lions_symbol.png/10px-FETH_Blue_Lions_symbol.png) |
+| Playable Myrmidon units in the _[Fire Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem\_(series) "Fire Emblem (series)")_ series. |
+
+## Notable enemy Myrmidons
+
+| Enemy units |
+| --- |
+| Name | Game |
+| [Blake](https://fireemblemwiki.org/wiki/Blake "Blake") | _[Gaiden](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Gaiden "Fire Emblem: Gaiden")_, _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_ |
+| [Deen](https://fireemblemwiki.org/wiki/Deen_(Gaiden) "Deen (Gaiden)") | _[Gaiden](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Gaiden "Fire Emblem: Gaiden")_, _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_ |
+| [Isaiya](https://fireemblemwiki.org/wiki/Isaiya "Isaiya") | _[Radiant Dawn](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Radiant\_Dawn "Fire Emblem: Radiant Dawn")_ |
+| [Sirocco](https://fireemblemwiki.org/wiki/Sirocco "Sirocco") | _[Fortune's Weave](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fortune%27s\_Weave "Fire Emblem: Fortune's Weave")_ |
+| [Gervasio](https://fireemblemwiki.org/wiki/Gervasio "Gervasio") | _[Fortune's Weave](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fortune%27s\_Weave "Fire Emblem: Fortune's Weave")_ |
+| [Garrick](https://fireemblemwiki.org/wiki/Garrick "Garrick") | _[Tokyo Mirage Sessions ♯FE](https://fireemblemwiki.org/wiki/Tokyo\_Mirage\_Sessions\_%E2%99%AFFE "Tokyo Mirage Sessions ♯FE")_ |
+| [Gangrel](https://fireemblemwiki.org/wiki/Gangrel "Gangrel") | _[Tokyo Mirage Sessions ♯FE](https://fireemblemwiki.org/wiki/Tokyo\_Mirage\_Sessions\_%E2%99%AFFE "Tokyo Mirage Sessions ♯FE")_ |
+| [Yashiro Tsurugi](https://fireemblemwiki.org/wiki/Yashiro_Tsurugi "Yashiro Tsurugi") | _[Tokyo Mirage Sessions ♯FE](https://fireemblemwiki.org/wiki/Tokyo\_Mirage\_Sessions\_%E2%99%AFFE "Tokyo Mirage Sessions ♯FE")_ |
+| [Lon'qu](https://fireemblemwiki.org/wiki/Lon%27qu "Lon'qu") | _[Tokyo Mirage Sessions ♯FE](https://fireemblemwiki.org/wiki/Tokyo\_Mirage\_Sessions\_%E2%99%AFFE "Tokyo Mirage Sessions ♯FE")_ |
+| Enemy Myrmidon units in the _[Fire Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem\_(series) "Fire Emblem (series)")_ series. |
+
+## Notable neutral Myrmidons
+
+| Other units |
+| --- |
+| Name | Game |
+| [Owain](https://fireemblemwiki.org/wiki/Owain "Owain") | _[Warriors](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors "Fire Emblem: Warriors")_ |
+| Neutral Myrmidon units in the _[Fire Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem\_(series) "Fire Emblem (series)")_ series. |
+
+## Flavor text
+
+* * *
+
+_**This section has been marked as a [stub](https://en.wikipedia.org/wiki/Wikipedia:Stub "wikipedia:Wikipedia:Stub").** Please help improve the page by adding information._
+
+* * *
+
+| Game | Text (English) | Text (Japanese) |
+| --- | --- | --- |
+| _[The Binding Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Binding\_Blade "Fire Emblem: The Binding Blade")_ (class roll) | Swordsmen from the eastern lands. Specialized in swift killing strokes.* | 東方よりやってきた 剣の使い手たち 技・速さに優れ 必殺の一撃を得意とする |
+| _[The Binding Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Binding\_Blade "Fire Emblem: The Binding Blade")_ (help) | Swordfighters with superior skill. Swift at killing strokes.* | 技・速さに優れる 剣の使い手 必殺の一撃を得意とする |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ (class roll) | Swordsmen from the eastern lands. Specialized in swift killing strokes. | 東方よりやってきた 剣の使い手たち 技・速さに優れ 必殺の一撃を得意とする |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ (help) | Swordfighters with superior skill. Swift at killing strokes. | 技・速さに優れる 剣の使い手 必殺の一撃を得意とする |
+| _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ (class roll) | Swordsmen who possess superior speed and technique. They specialize in killing strokes. | 舞うがごとく剣をあつかう 剣の使い手たち 技・速さに優れ 必殺の一撃を得意とする |
+| _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ (help) | Talented swordsmen skilled in swift killing stokes. Equip: Swords. | 技・速さに優れ 必殺の一撃を放つ 装備『剣』 |
+| _[Path of Radiance](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Path\_of\_Radiance "Fire Emblem: Path of Radiance")_ | Fighters who live and die by the skill of their sword arms. Their speed and skills are superior to almost any other swordfighter. | 剣のうでをたよりに 戦場をかけめぐります 技、速さにすぐれます |
+| _[Radiant Dawn](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Radiant\_Dawn "Fire Emblem: Radiant Dawn")_ (class roll) | Fighters who specialize in sword fighting. Their superior speed and skill result in more critical hits. | 剣一筋に修行を積む者たち 技・速さに優れ 必殺の一撃を得意とする |
+| _[Radiant Dawn](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Radiant\_Dawn "Fire Emblem: Radiant Dawn")_ (help) | Fighters dedicated to the sword. Their superior speed and skills are deadly in combat. | 剣一筋に修行を積む者たち 技・速さに優れ 必殺の一撃を得意とする |
+| _[Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_ | Swift and skilled warriors who specialize in the blade. They often deal critical hits. | 剣を専門にあつかう武人。 技・速さに優れ、必殺の一撃を得意とする。 |
+| _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_ (class roll) | Swift and skilled warriors who specialize in the blade. They often deal critical hits.* | 剣を専門にあつかう武人。 技・速さに優れ、必殺の一撃が得意。 |
+| _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_ (avatar creation) | Swift and skilled warriors dedicated to the blade.* | 剣を専門にあつかう武人。技・速さに優れる。 |
+| _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_ | A swift specialist in the blade who makes for a tricky target. | 剣の扱いが得意な武人。 素早い動きで敵の攻撃をかわす。 |
+| _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_ (class roll) | Swordfighting experts with remarkable skill who have honed their lethality over the course of myriad battles. | すぐれた技を持つ 剣の達人。 数々の戦いを通じて 磨きぬかれた剣技は 確実に敵の 息の根を止める。 |
+| _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_ (help) | A swordfighting expert with remarkable skill. | 優れた技を持つ 剣の達人 |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | Especially swift with high avoidance, the Myrmidon deftly wields the sword. | 剣の扱いが得意な者。 素早い動きで攻撃を当て、 敵の攻撃をかわす。 |
+| _[Fortune's Weave](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fortune%27s\_Weave "Fire Emblem: Fortune's Weave")_ |  | 剣の扱いに特化した戦士 素早い剣さばきで敵を攻撃する |
+| _[Warriors](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors "Fire Emblem: Warriors")_ | A class that specializes in swordplay. Myrmidons are strong against axes but weak against lances. Myrmidons have limited range, but their defense is strong, and they leave few openings when they attack. | ?? |
+| _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_ | Especially swift, with high avoidance, the Myrmidon deftly wields the sword. | ?? |
+|  |
+
+## Etymology and other languages
+
+| Names, etymology, and in other regions |
+| --- |
+| Language | Name | Definition, etymology, and notes |
+| English | Myrmidon | From the [Myrmidons](https://en.wikipedia.org/wiki/Myrmidons "wikipedia:Myrmidons"), a legendary warrior people of ancient Greece. |
+| Japanese | • 剣士 • 剣士 (ブレイド | • Officially romanized as **Swordfighter** outside of _The Binding Blade_ and _Awakening_, in which it is romanized as **Myrmidon** and **Sword Fighter**, respectively. Rendered in hiragana as けんし in _Gaiden_. This name is also used in dialogue and ending titles in the Jugdral games. • Officially romanized as **Blade**; literally "swordsman". In _Radiant Dawn_, all Japanese class names are spelled primarily in kanji (i.e. 剣士), with a foreign-language name in katakana applied as [furigana](https://en.wikipedia.org/wiki/Furigana "wikipedia:Furigana") (i.e. ブレイド) and used as the basis for the romanized name in the class roll. |
+| Spanish | • Esbirro • Mirmidón • Mirmidona | • Minion, henchman. Used in _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_. • Myrmidon; a straight translation of the English name, used in every other game. • Feminine variant of the former, used for female Myrmidons in _Path of Radiance_. |
+| French | • Myrmidon • Épéiste | • As above. Used in _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_. • Swordsman. Used in every game from _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ onward. Spelled "Epéiste" prior to _Awakening_. |
+| German | Myrmidone | Myrmidon; a straight translation of the English name |
+| Italian | Mirmidone | Myrmidon; a straight translation of the English name |
+| Dutch | Zwaardvechter | Swordfighter |
+| Korean | 검사 | Sword fighter |
+| Simplified Chinese | 剑客 | Swordsman |
+| Traditional Chinese | 劍客 | Swordsman |
+|  |
+
+## Gallery
+
+### Portraits
+
+*   [![Image 99: The generic Myrmidon portrait in the Game Boy Advance games.](https://cdn.fireemblemwiki.org/4/47/Generic_portrait_myrmidon_fe06.png)](https://fireemblemwiki.org/wiki/File:Generic_portrait_myrmidon_fe06.png "The generic Myrmidon portrait in the Game Boy Advance games.")
+
+The generic Myrmidon portrait in the [Game Boy Advance](https://fireemblemwiki.org/wiki/Game_Boy_Advance "Game Boy Advance") games. 
+*   [![Image 100: The generic Myrmidon portrait in Shadow Dragon.](https://cdn.fireemblemwiki.org/c/c5/Generic_portrait_myrmidon_fe11.png)](https://fireemblemwiki.org/wiki/File:Generic_portrait_myrmidon_fe11.png "The generic Myrmidon portrait in Shadow Dragon.")
+
+The generic Myrmidon portrait in _[Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_. 
+*   [![Image 101: The generic Myrmidon portrait in New Mystery of the Emblem.](https://cdn.fireemblemwiki.org/5/59/Generic_portrait_myrmidon_fe12.png)](https://fireemblemwiki.org/wiki/File:Generic_portrait_myrmidon_fe12.png "The generic Myrmidon portrait in New Mystery of the Emblem.")
+
+The generic Myrmidon portrait in _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_. 
+*   [![Image 102: The generic Myrmidon portrait in Awakening.](https://cdn.fireemblemwiki.org/thumb/e/e4/Generic_portrait_myrmidon_fe13.png/80px-Generic_portrait_myrmidon_fe13.png)](https://fireemblemwiki.org/wiki/File:Generic_portrait_myrmidon_fe13.png "The generic Myrmidon portrait in Awakening.")
+
+The generic Myrmidon portrait in _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_.
+
+*   [![Image 103: The generic Risen Myrmidon portrait in Awakening.](https://cdn.fireemblemwiki.org/thumb/0/09/Generic_portrait_myrmidon_risen_fe13.png/80px-Generic_portrait_myrmidon_risen_fe13.png)](https://fireemblemwiki.org/wiki/File:Generic_portrait_myrmidon_risen_fe13.png "The generic Risen Myrmidon portrait in Awakening.")
+
+The generic [Risen](https://fireemblemwiki.org/wiki/Risen "Risen") Myrmidon portrait in _Awakening_.
+
+*   [![Image 104: The generic Myrmidon portrait in Echoes: Shadows of Valentia.](https://cdn.fireemblemwiki.org/thumb/6/61/Generic_portrait_myrmidon_enemy_fe15.png/79px-Generic_portrait_myrmidon_enemy_fe15.png)](https://fireemblemwiki.org/wiki/File:Generic_portrait_myrmidon_enemy_fe15.png "The generic Myrmidon portrait in Echoes: Shadows of Valentia.")
+
+The generic Myrmidon portrait in _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_. 
+*   [![Image 105: The generic Specter/Death Mask Myrmidon portrait in Echoes: Shadows of Valentia.](https://cdn.fireemblemwiki.org/thumb/d/d0/Generic_portrait_myrmidon_possessed_fe15.png/79px-Generic_portrait_myrmidon_possessed_fe15.png)](https://fireemblemwiki.org/wiki/File:Generic_portrait_myrmidon_possessed_fe15.png "The generic Specter/Death Mask Myrmidon portrait in Echoes: Shadows of Valentia.")
+
+The generic Specter/[Death Mask](https://fireemblemwiki.org/wiki/Death_Mask "Death Mask") Myrmidon portrait in _Echoes: Shadows of Valentia_.
+
+*   [![Image 106: One of the generic male Myrmidon portraits in Three Houses.](https://cdn.fireemblemwiki.org/thumb/5/5e/Generic_small_portrait_myrmidon_01_fe16.png/120px-Generic_small_portrait_myrmidon_01_fe16.png)](https://fireemblemwiki.org/wiki/File:Generic_small_portrait_myrmidon_01_fe16.png "One of the generic male Myrmidon portraits in Three Houses.")
+
+One of the generic male Myrmidon portraits in _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_.
+
+*   [![Image 107: One of the generic female Myrmidon portraits in Three Houses.](https://cdn.fireemblemwiki.org/thumb/b/b4/Generic_small_portrait_myrmidon_female_03_fe16.png/120px-Generic_small_portrait_myrmidon_female_03_fe16.png)](https://fireemblemwiki.org/wiki/File:Generic_small_portrait_myrmidon_female_03_fe16.png "One of the generic female Myrmidon portraits in Three Houses.")
+
+One of the generic female Myrmidon portraits in _Three Houses_.
+
+| _Click "Expand" to view all_[Three Houses](https://fireemblemwiki.org/wiki/Fire_Emblem:_Three_Houses "Fire Emblem: Three Houses")_portraits_ |
+| --- |
+
+| _Click "Expand" to view all_[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire_Emblem:_Warriors:_Three_Hopes "Fire Emblem: Warriors: Three Hopes")_portraits_ |
+| --- |
+
+### Concept artwork
+
+*   [![Image 108: Concept artwork of a Myrmidon and a Wyvern Lord from Path of Radiance.](https://cdn.fireemblemwiki.org/thumb/e/e9/FEPR_Myrmidon_and_Wyvern_Lord_beta.png/111px-FEPR_Myrmidon_and_Wyvern_Lord_beta.png)](https://fireemblemwiki.org/wiki/File:FEPR_Myrmidon_and_Wyvern_Lord_beta.png "Concept artwork of a Myrmidon and a Wyvern Lord from Path of Radiance.")
+
+Concept artwork of a Myrmidon and a [Wyvern Lord](https://fireemblemwiki.org/wiki/Wyvern_Lord "Wyvern Lord") from _[Path of Radiance](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Path\_of\_Radiance "Fire Emblem: Path of Radiance")_. 
+*   [![Image 109: Concept artwork of a Myrmidon from Warriors.](https://cdn.fireemblemwiki.org/thumb/3/3d/FEWA_Myrmidon_concept.png/114px-FEWA_Myrmidon_concept.png)](https://fireemblemwiki.org/wiki/File:FEWA_Myrmidon_concept.png "Concept artwork of a Myrmidon from Warriors.")
+
+Concept artwork of a Myrmidon from _[Warriors](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors "Fire Emblem: Warriors")_.
+
+### Screenshots
+
+*   [![Image 110: An enemy Myrmidon in Path of Radiance.](https://cdn.fireemblemwiki.org/thumb/8/86/Ss_fe09_enemy_myrmidon_sword.png/104px-Ss_fe09_enemy_myrmidon_sword.png)](https://fireemblemwiki.org/wiki/File:Ss_fe09_enemy_myrmidon_sword.png "An enemy Myrmidon in Path of Radiance.")
+
+An enemy Myrmidon in _[Path of Radiance](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Path\_of\_Radiance "Fire Emblem: Path of Radiance")_. 
+*   [![Image 111: An enemy Myrmidon Specter in Echoes: Shadows of Valentia.](https://cdn.fireemblemwiki.org/thumb/1/15/Ss_fe15_enemy_myrmidon_specter.png/120px-Ss_fe15_enemy_myrmidon_specter.png)](https://fireemblemwiki.org/wiki/File:Ss_fe15_enemy_myrmidon_specter.png "An enemy Myrmidon Specter in Echoes: Shadows of Valentia.")
+
+An enemy Myrmidon Specter in _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_. 
+
+### _[Cipher](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Cipher "Fire Emblem: Cipher")_ artwork
+
+*   [![Image 112: Artwork of Gray as a Myrmidon.](https://cdn.fireemblemwiki.org/thumb/a/a5/TCGCipher_Gray_01.jpg/88px-TCGCipher_Gray_01.jpg)](https://fireemblemwiki.org/wiki/File:TCGCipher_Gray_01.jpg "Artwork of Gray as a Myrmidon.")
+
+Artwork of [Gray](https://fireemblemwiki.org/wiki/Gray "Gray") as a Myrmidon.
+
+*   [![Image 113: Artwork of Petra as a Myrmidon.](https://cdn.fireemblemwiki.org/thumb/6/6c/TCGCipher_Petra_04.jpg/88px-TCGCipher_Petra_04.jpg)](https://fireemblemwiki.org/wiki/File:TCGCipher_Petra_04.jpg "Artwork of Petra as a Myrmidon.")
+
+Artwork of [Petra](https://fireemblemwiki.org/wiki/Petra "Petra") as a Myrmidon.
+
+*   [![Image 114: Artwork of Catherine as a Myrmidon.](https://cdn.fireemblemwiki.org/thumb/4/4b/TCGCipher_Catherine_01.png/88px-TCGCipher_Catherine_01.png)](https://fireemblemwiki.org/wiki/File:TCGCipher_Catherine_01.png "Artwork of Catherine as a Myrmidon.")
+
+Artwork of [Catherine](https://fireemblemwiki.org/wiki/Catherine "Catherine") as a Myrmidon. 
+
+## See also
+
+*   [Mercenary](https://fireemblemwiki.org/wiki/Mercenary "Mercenary")
+*   [Hero](https://fireemblemwiki.org/wiki/Hero "Hero")
+*   [Sword Fighter](https://fireemblemwiki.org/wiki/Sword_Fighter "Sword Fighter")
+*   [Forrest](https://fireemblemwiki.org/wiki/Forrest_(class) "Forrest (class)")
+*   [Swordmaster](https://fireemblemwiki.org/wiki/Swordmaster "Swordmaster")
+*   [Samurai](https://fireemblemwiki.org/wiki/Samurai "Samurai")
+
+[![Image 115](https://cdn.fireemblemwiki.org/thumb/4/41/Project_Classes.png/80px-Project_Classes.png)](https://fireemblemwiki.org/wiki/File:Project_Classes.png)This article is part of **[Project Classes](https://fireemblemwiki.org/wiki/Fire_Emblem_Wiki:Project_Classes "Fire Emblem Wiki:Project Classes")**, a project focused in writing articles for every class present in the _Fire Emblem_ series.
+
+| [Classes in _Fire Emblem Gaiden_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem_Gaiden "List of classes in Fire Emblem Gaiden") |
+| --- |
+
+| [Classes in _Fire Emblem: The Binding Blade_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem:_The_Binding_Blade "List of classes in Fire Emblem: The Binding Blade") |
+| --- |
+
+| [Classes in _Fire Emblem: The Blazing Blade_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem:_The_Blazing_Blade "List of classes in Fire Emblem: The Blazing Blade") |
+| --- |
+
+| [Classes in _Fire Emblem: The Sacred Stones_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem:_The_Sacred_Stones "List of classes in Fire Emblem: The Sacred Stones") |
+| --- |
+
+| [Classes in _Fire Emblem: Path of Radiance_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem:_Path_of_Radiance "List of classes in Fire Emblem: Path of Radiance") |
+| --- |
+
+| [Classes in _Fire Emblem: Radiant Dawn_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem:_Radiant_Dawn "List of classes in Fire Emblem: Radiant Dawn") |
+| --- |
+
+| [Classes in _Fire Emblem: Shadow Dragon_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem:_Shadow_Dragon "List of classes in Fire Emblem: Shadow Dragon") |
+| --- |
+
+| [Classes in _Fire Emblem: New Mystery of the Emblem_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem:_New_Mystery_of_the_Emblem "List of classes in Fire Emblem: New Mystery of the Emblem") |
+| --- |
+
+| [Classes in _Fire Emblem Awakening_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem_Awakening "List of classes in Fire Emblem Awakening") |
+| --- |
+
+| [Classes in _Fire Emblem Echoes: Shadows of Valentia_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem_Echoes:_Shadows_of_Valentia "List of classes in Fire Emblem Echoes: Shadows of Valentia") |
+| --- |
+
+| [Classes in _Fire Emblem: Three Houses_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem:_Three_Houses "List of classes in Fire Emblem: Three Houses") |
+| --- |
+
+| [Classes in _Fire Emblem: Fortune's Weave_](https://fireemblemwiki.org/wiki/Category:Classes_in_Fire_Emblem:_Fortune%27s_Weave "Category:Classes in Fire Emblem: Fortune's Weave") |
+| --- |
+
+| [Classes in _Fire Emblem Warriors_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem_Warriors "List of classes in Fire Emblem Warriors") |
+| --- |
+
+| [Classes in _Fire Emblem Warriors: Three Hopes_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem_Warriors:_Three_Hopes "List of classes in Fire Emblem Warriors: Three Hopes") |
+| --- |

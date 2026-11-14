@@ -1,0 +1,101 @@
+Title: Growth Rates - Serenes Forest
+
+URL Source: https://serenesforest.net/three-houses/classes/growth-rates/
+
+Published Time: Thu, 08 May 2025 23:15:48 GMT
+
+Markdown Content:
+| View | Player | Enemy |
+| --- |
+
+#### Player
+
+These are added to the [Character Growth Rates](https://serenesforest.net/three-houses/characters/growth-rates/) to obtain the character’s **total** growth rates.
+
+##### Unique
+
+| Name | HP | Str | Mag | Dex | Spd | Lck | Def | Res | Cha |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Noble |  |  |  |  |  |  |  |  | 5 |
+| Commoner |  |  |  |  |  |  |  |  |  |
+| Dancer | 20 | -5 |  |  |  |  | -5 | -5 | 10 |
+| (Protagonist’s final class) |
+| (House leaders’ Part 2 classes) |
+
+##### Beginner
+
+| Name | HP | Str | Mag | Dex | Spd | Lck | Def | Res | Cha |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Myrmidon | 10 |  |  |  | 5 |  |  | -5 | 5 |
+| Soldier | 10 |  |  | 5 |  |  |  | -5 | 5 |
+| Fighter | 10 | 5 |  |  |  |  |  | -5 | 5 |
+| Monk | 5 |  |  |  |  |  |  | 5 | 5 |
+
+##### Intermediate
+
+| Name | HP | Str | Mag | Dex | Spd | Lck | Def | Res | Cha |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Lord | 20 |  |  | 10 |  |  |  |  | 10 |
+| Mercenary | 20 | 5 |  |  | 5 |  |  | -5 | 5 |
+| Thief | 20 |  |  | 10 | 10 |  |  |  | 5 |
+| Armored Knight | 20 |  |  |  | -10 |  | 10 | -5 | 5 |
+| Cavalier | 20 | 5 |  | 5 | -10 |  | 5 |  | 5 |
+| Brigand | 30 | 10 |  |  |  |  |  | -5 | 5 |
+| Archer | 5 |  |  | 10 |  | 5 |  |  | 5 |
+| Brawler | 30 |  | -10 | 10 | 10 |  |  | -10 | 5 |
+| Mage | 5 | -5 | 10 | 5 |  |  | -5 | 5 | 5 |
+| Dark Mage | 5 | -5 | 10 | 5 |  |  | -5 | 5 |  |
+| Priest | 5 | -5 | 5 | 5 |  |  | -5 | 10 | 10 |
+| Pegasus Knight | 15 |  |  |  | 10 |  |  | 5 | 10 |
+
+##### Advanced
+
+| Name | HP | Str | Mag | Dex | Spd | Lck | Def | Res | Cha |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Hero | 30 | 10 |  |  | 10 |  |  | -5 | 5 |
+| Swordmaster | 25 | 10 |  |  | 20 |  |  | -5 | 5 |
+| Assassin | 20 |  |  | 20 | 20 |  |  |  |  |
+| Fortress Knight | 30 | 10 |  |  | -10 |  | 15 |  | 5 |
+| Paladin | 30 | 10 |  | 5 | -10 | 5 | 5 | 5 | 5 |
+| Wyvern Rider | 30 | 10 | -5 |  |  |  | 5 | -5 | 5 |
+| Warrior | 40 | 15 | -5 |  |  |  |  |  | 5 |
+| Sniper | 10 | 5 |  | 20 |  | 10 |  |  | 5 |
+| Grappler | 40 | 10 |  | 10 | 10 |  |  |  | 5 |
+| Warlock | 10 |  | 10 |  |  |  | -5 | 5 | 5 |
+| Dark Bishop | 10 |  | 10 |  |  |  | -5 | 5 |  |
+| Bishop | 10 |  | 10 |  |  | 10 | -5 | 5 | 10 |
+
+##### Master
+
+| Name | HP | Str | Mag | Dex | Spd | Lck | Def | Res | Cha |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Falcon Knight | 30 | 10 |  |  | 20 |  |  | 5 | 10 |
+| Wyvern Lord | 30 | 15 | -5 |  | 10 |  | 5 |  | 5 |
+| Mortal Savant | 20 | 10 | 10 |  | -10 | 10 |  |  | 5 |
+| Great Knight | 30 | 10 |  |  | -10 |  | 5 | -5 | 5 |
+| Bow Knight | 10 |  |  |  | -5 |  |  |  | 5 |
+| Dark Knight | 10 | 5 | 10 |  | -5 |  | 5 | 10 | 5 |
+| Holy Knight | 10 |  | 10 |  | -5 | 10 | 5 | 10 | 10 |
+| War Master | 40 | 15 |  |  | 10 |  |  |  | 5 |
+| Gremory | 10 |  | 10 | 10 |  |  |  | 5 | 10 |
+
+##### DLC Exclusive
+
+| Name | HP | Str | Mag | Dex | Spd | Lck | Def | Res | Cha |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Trickster | 20 |  |  | 15 | 20 | 10 |  | 5 |  |
+| War Monk/Cleric | 40 | 10 | 5 | 10 |  |  |  | 5 | 5 |
+| Dark Flier | 20 |  |  |  | 10 |  |  | 10 | 10 |
+| Valkyrie | 5 |  | 5 |  | -5 | 5 | 5 | 10 | 10 |
+| Death Knight | 30 | 10 | 10 |  | -5 |  | 5 | 5 |  |
+
+##### Enemy/NPC
+
+| Name | HP | Str | Mag | Dex | Spd | Lck | Def | Res | Cha |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Archbishop | 40 | 10 | 10 |  |  |  |  | 10 | 10 |
+| Death Knight | 20 |  | 10 |  | -5 |  |  | 5 |  |
+| Flame Emperor | 30 | 10 | 10 |  |  |  | 5 | 5 | 10 |
+| Agastya | 30 |  | 10 |  |  |  |  | 10 | 10 |
+| Saint | 40 | 10 | 10 |  |  |  |  | 10 | 10 |
+| Verrat | 10 |  | 10 |  |  |  | -5 | 5 | 5 |

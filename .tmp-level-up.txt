@@ -1,0 +1,115 @@
+Title: Level
+
+URL Source: https://fireemblemwiki.org/wiki/Level_up
+
+Final URL: https://fireemblemwiki.org/wiki/Level
+
+Markdown Content:
+(Redirected from [Level up](https://fireemblemwiki.org/w/index.php?title=Level_up&redirect=no "Level up"))
+
+[![Image 1](https://cdn.fireemblemwiki.org/b/b9/Ss_fe11_level_up.png)](https://fireemblemwiki.org/wiki/File:Ss_fe11_level_up.png)
+
+[Frey](https://fireemblemwiki.org/wiki/Frey "Frey")'s level increases after collecting 100 experience points in _[Fire Emblem: Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_.
+
+| “ | Unit level. The unit becomes stronger as it gains levels. | ” | —In-game help text |
+| --- | --- |
+
+A **level** (Japanese: レベル _level_), often abbreviated **Lv**, **LV**, **Lv.**, or **Lvl**, is a measure of a [unit](https://fireemblemwiki.org/wiki/Unit "Unit")'s growth and current relative strength. Levels are directly tied to unit [experience](https://fireemblemwiki.org/wiki/Experience "Experience"), and every time a unit gains a certain amount—typically 100—they **level up** (Japanese: レベルアップ _level up_) and [gain increased stats](https://fireemblemwiki.org/wiki/Growth_rate "Growth rate").
+
+## Overview
+
+All units start at a pre-set level, which tend to get progressively higher when units are recruited later and later in the game. Having units gain experience and increase their level is central to their growth and continued use, as every time a unit levels up, they gain stat increases depending on their personal [growth rates](https://fireemblemwiki.org/wiki/Growth_rate "Growth rate"). Units who are not given opportunities to gain experience and levels will quickly fall behind and be less useful as the game wears on and begins to set the player against progressively stronger enemies.
+
+Just as levels require experience gain, experience gain is also affected by a unit's level. The lower a unit's level, the more experience they will obtain from performing the same action as a higher-leveled unit. The main effect of this is to encourage using weaker units to fight weaker enemies, as they will benefit much more from the experience than their stronger allies. For most units, defeating a [boss](https://fireemblemwiki.org/wiki/Boss "Boss") with a higher level than themselves will usually be enough to gain a full 100 experience and guarantee a level increase.
+
+In most games in the series, reaching Level 10 allows units in [base classes](https://fireemblemwiki.org/wiki/Category:Base_classes "Category:Base classes") to [change class](https://fireemblemwiki.org/wiki/Class_change "Class change"), or promote, into [advanced classes](https://fireemblemwiki.org/wiki/Category:Advanced_classes "Category:Advanced classes") by using certain items. When a unit promotes, their current level is reset to Level 1, and they are able to continue gaining even more levels and growing even stronger.
+
+### Maximum level
+
+Across most of the series, the highest possible level a unit can reach is 20. As soon as a unit reaches Level 20, experience gain completely ceases. For base units, it is possible to continue to gain experience after this point by promoting, effectively giving units forty levels of potential growth. Once an advanced or special unit reaches their maximum level, though, there is usually no way to grow any further.
+
+There are several games in the series which have applied a different approach, either game-wide or specific to certain class types. In later games in particular, it is common for certain types of classes to have a higher maximum level than ordinary [human](https://fireemblemwiki.org/wiki/Human "Human") classes, often as compensation for that class's inability to promote.
+
+*   In _[Genealogy of the Holy War](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Genealogy\_of\_the\_Holy\_War "Fire Emblem: Genealogy of the Holy War")_, the maximum level for all units is 30. Levels also do not reset upon class changing.
+*   In _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_, the initial [Journeyman](https://fireemblemwiki.org/wiki/Journeyman "Journeyman"), [Recruit](https://fireemblemwiki.org/wiki/Recruit "Recruit"), and [Pupil](https://fireemblemwiki.org/wiki/Pupil "Pupil") classes have a maximum level of 10.
+*   In _[Radiant Dawn](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Radiant\_Dawn "Fire Emblem: Radiant Dawn")_, [laguz](https://fireemblemwiki.org/wiki/Laguz "Laguz") units have a maximum level of 40.
+*   In _[Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_, _[New Mystery of the Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_New\_Mystery\_of\_the\_Emblem "Fire Emblem: New Mystery of the Emblem")_, and _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_, units in [special classes](https://fireemblemwiki.org/wiki/Category:Special_classes "Category:Special classes") have a maximum level of 30.
+*   In _[Fates](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fates "Fire Emblem: Fates")_, units in [special classes](https://fireemblemwiki.org/wiki/Category:Special_classes "Category:Special classes") have a maximum level of 40. Units in [advanced](https://fireemblemwiki.org/wiki/Category:Advanced_classes "Category:Advanced classes") or special classes can increase their maximum level with [Eternal Seals](https://fireemblemwiki.org/wiki/Eternal_Seal "Eternal Seal"), by 5 per use and up to 99; [Felicia](https://fireemblemwiki.org/wiki/Felicia "Felicia") and [Jakob](https://fireemblemwiki.org/wiki/Jakob "Jakob") have the effect of 4 uses (i.e. +20 maximum) and [Gunter](https://fireemblemwiki.org/wiki/Gunter "Gunter") of 2 (i.e. +10 maximum).
+*   In _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_, all units have a maximum level of 99. Levels do not reset upon class changing.
+*   In _[Engage](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Engage "Fire Emblem: Engage")_, units in [special classes](https://fireemblemwiki.org/wiki/Category:Special_classes "Category:Special classes") have a maximum level of 40.
+
+_[Fire Emblem Heroes](https://fireemblemwiki.org/wiki/Fire\_Emblem\_Heroes "Fire Emblem Heroes")_ has a maximum level of 40 for all units. Unlike other games in the series, the experience threshold required for a level up increases each time a unit's level increases. In addition to earning experience in battle, a unit's level can also be increased by spending [Shards and Crystals](https://fireemblemwiki.org/wiki/Shards_and_Crystals "Shards and Crystals") on the Level Up menu equivalent to the amount of experience required. A unit's level is reset to 1 when their [rarity](https://fireemblemwiki.org/wiki/Rarity "Rarity") is increased by unlocking their potential.
+
+_[Tokyo Mirage Sessions ♯FE](https://fireemblemwiki.org/wiki/Tokyo\_Mirage\_Sessions\_%E2%99%AFFE "Tokyo Mirage Sessions ♯FE")_ has a maximum level of 99 for all playable characters. The highest leveled character, usually [Itsuki](https://fireemblemwiki.org/wiki/Itsuki "Itsuki"), determines the type of [Savage Mirage](https://fireemblemwiki.org/wiki/Enemies_in_Tokyo_Mirage_Sessions_%E2%99%AFFE/Savage_Encounters "Enemies in Tokyo Mirage Sessions ♯FE/Savage Encounters") battle encountered in the field at 5 level intervals.
+
+_[Fire Emblem Warriors](https://fireemblemwiki.org/wiki/Fire\_Emblem\_Warriors "Fire Emblem Warriors")_ had a maximum level of 99 for all units on launch, with this later being increased to 110, 130, and finally 150 as of version 1.5.0. In addition to earning experience in battle, a unit's level can be increased by spending [gold](https://fireemblemwiki.org/wiki/Gold "Gold") in the [Training Grounds](https://fireemblemwiki.org/wiki/Training_Grounds "Training Grounds"). Levels gained by this method, however, cannot exceed that of the currently highest-leveled unit.
+
+In _[Fire Emblem Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem\_Warriors:\_Three\_Hopes "Fire Emblem Warriors: Three Hopes")_, the system remains the same as in _[Fire Emblem Warriors](https://fireemblemwiki.org/wiki/Fire\_Emblem\_Warriors "Fire Emblem Warriors")_, but each unit now has a maximum level of 120. However, enemy units are not bound by this limitation, as on [Maddening](https://fireemblemwiki.org/wiki/Difficulty "Difficulty"), enemies can reach levels up to 200.
+
+In _[Fire Emblem Shadows](https://fireemblemwiki.org/wiki/Fire\_Emblem\_Shadows "Fire Emblem Shadows")_, characters can be leveled up using [Crystals](https://fireemblemwiki.org/w/index.php?title=Crystals&action=edit&redlink=1 "Crystals (page does not exist)") as well as character-specific [Medals](https://fireemblemwiki.org/wiki/Medals "Medals"), which increase in amount per level. Leveling up a character also increases the level of their associated magic. A maximum level is set by the player's current rank with the character on either the Light or Shadow side. If a character's level exceeds the level set by the current rank, their level, and the level of all their equipped [Magic Skills](https://fireemblemwiki.org/wiki/Magic_Skills "Magic Skills"), is decreased to the maximum during matches.
+
+### Internal levels
+
+As the [reclassing](https://fireemblemwiki.org/wiki/Reclass "Reclass") mechanism of _[Fire Emblem Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem\_Awakening "Fire Emblem Awakening")_, _[Fire Emblem Fates](https://fireemblemwiki.org/wiki/Fire\_Emblem\_Fates "Fire Emblem Fates")_, and _[Fire Emblem Engage](https://fireemblemwiki.org/wiki/Fire\_Emblem\_Engage "Fire Emblem Engage")_ theoretically allows for infinite [experience](https://fireemblemwiki.org/wiki/Experience "Experience") and level gains, the game also implements a special checking mechanism to discourage excessive grinding by slowing experience gain after a certain point. This is accomplished through what are known as **internal levels**, a hidden value maintained for each character which keeps track of how many levels they have gained and penalizes their further experience gain accordingly. Internal level is defined using the formula below.[[1]](https://fireemblemwiki.org/wiki/Level#cite_note-SF13-1)
+
+| Game | Formula | Notes |
+| --- | --- | --- |
+| _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_ | Displayed level + Promotion bonus + Cumulative level | Promotion bonus is 20 if the unit is in a promoted class, 0 otherwise. Cumulative level is initially 0. Each time the unit uses a [Second Seal](https://fireemblemwiki.org/wiki/Second_Seal "Second Seal"), [(Displayed level + Promotion bonus − 1) / 2] is added to this value. Cumulative level caps at 20 on Normal mode, 30 on Hard mode, and 50 on Lunatic(+) mode. |
+| _[Fates](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fates "Fire Emblem: Fates")_ | Displayed level + Cumulative level | Cumulative level is initially 0. When a unit uses a [Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal"), it is increased by [(Displayed level + 20) / 2], rounded down. |
+| _[Engage](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Engage "Fire Emblem: Engage")_ | Displayed level + Cumulative level | Cumulative level is initially 0. When a unit uses a Master or Second Seal, it is increased by (displayed level − new level), where new level is the unit's level post-class change. Cumulative level caps at 30 on Normal mode, 40 on Hard mode, and 50 on Maddening mode. |
+
+## Items affecting level
+
+| Items affecting level |
+| --- |
+
+## Flavor text
+
+* * *
+
+_**This section has been marked as a [stub](https://en.wikipedia.org/wiki/Wikipedia:Stub "wikipedia:Wikipedia:Stub").** Please help improve the page by adding information._
+
+* * *
+
+| Game | Text (English) | Text (Japanese) |
+| --- | --- | --- |
+| _[The Binding Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Binding\_Blade "Fire Emblem: The Binding Blade")_ | Unit level. The level max is 20.* | ユニットのレベルです 最高２０レベルです |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ | Unit level. The level max is 20. | ユニットのレベルです 最高２０レベルです |
+| _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ | Unit level. The unit becomes stronger as it gains levels. | ユニットのレベルです 上がると強くなります |
+| _[Path of Radiance](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Path\_of\_Radiance "Fire Emblem: Path of Radiance")_ | The unit's current level. The max unit level is twenty. | ユニットのレベルです 最高２０ |
+| _[Radiant Dawn](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Radiant\_Dawn "Fire Emblem: Radiant Dawn")_ | The unit's current level. | 現在のレベル |
+| _[Awakening](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Awakening "Fire Emblem: Awakening")_ | Shows how seasoned a unit is in his or her current class. | この兵種になって どれだけ経験を積んだかの目安 |
+| _[Fates](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fates "Fire Emblem: Fates")_ | Shows how seasoned a unit is in his or her current class. | この兵種になって どれだけ経験を積んだかの目安 |
+| _[Echoes: Shadows of Valentia](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Echoes:\_Shadows\_of\_Valentia "Fire Emblem: Echoes: Shadows of Valentia")_ | Shows how seasoned a unit is in his or her current class. | この兵種になって どれだけ経験を積んだかの目安 |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | A representation of the unit's overall experience gained in battle. | どれだけ経験を積んだかの目安。 |
+| _[Engage](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Engage "Fire Emblem: Engage")_ | Indicates the unit's overall strength. Increases with experience. | どれだけ強くなったかの目安 経験を積むと上昇する |
+| _[Fortune's Weave](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Fortune%27s\_Weave "Fire Emblem: Fortune's Weave")_ | Represents the unit's experience gained in battle. Stats increase with levels. (Next Lv: # Exp) | ?? |
+|  |
+
+## Etymology and other languages
+
+| Names, etymology, and in other regions |
+| --- |
+| Language | Name | Definition, etymology, and notes |
+| English | Level | -- |
+| Japanese | レベル | Level |
+| Spanish | Nivel | Level |
+| French | Niveau | Level |
+| German | Level | As above. |
+| Italian | Livello | Level |
+| Dutch | Niveau | Level |
+|  |
+
+## Gallery
+
+*   [![Image 2: A level up in Shadow Dragon.](https://cdn.fireemblemwiki.org/thumb/b/b9/Ss_fe11_level_up.png/120px-Ss_fe11_level_up.png)](https://fireemblemwiki.org/wiki/File:Ss_fe11_level_up.png "A level up in Shadow Dragon.")
+
+A level up in _[Shadow Dragon](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Shadow\_Dragon "Fire Emblem: Shadow Dragon")_. 
+*   [![Image 3: A level up in Heroes.](https://cdn.fireemblemwiki.org/thumb/8/84/Ss_feh_level_up.png/67px-Ss_feh_level_up.png)](https://fireemblemwiki.org/wiki/File:Ss_feh_level_up.png "A level up in Heroes.")
+
+## References
+
+1.   [↑](https://fireemblemwiki.org/wiki/Level#cite_ref-SF13_1-0 "Jump up")[Awakening - Calculations](https://serenesforest.net/awakening/miscellaneous/calculations/), Serenes Forest, _Retrieved: August 25, 2021_
+
+| [Game mechanics](https://fireemblemwiki.org/wiki/Category:Game_mechanics "Category:Game mechanics") |
+| --- |

@@ -1,0 +1,51 @@
+{
+  "cellWidth": 160,
+  "cellHeight": 144,
+  "anchorX": 64,
+  "anchorY": 124,
+  "bodyHeight": 84,
+  "frames": {
+    "idle": {
+      "row": 0,
+      "count": 6
+    },
+    "walk": {
+      "row": 1,
+      "count": 8
+    },
+    "run": {
+      "row": 2,
+      "count": 8
+    },
+    "jump": {
+      "row": 3,
+      "count": 8
+    },
+    "attack": {
+      "row": 4,
+      "count": 4
+    },
+    "attack2": {
+      "row": 5,
+      "count": 3
+    },
+    "attack3": {
+      "row": 6,
+      "count": 4
+    },
+    "shield": {
+      "row": 7,
+      "count": 2
+    },
+    "hurt": {
+      "row": 8,
+      "count": 3
+    },
+    "down": {
+      "row": 9,
+      "count": 3
+    }
+  },
+  "sourceFacing": "right",
+  "source": "source/nina-battle-original.jpg"
+}

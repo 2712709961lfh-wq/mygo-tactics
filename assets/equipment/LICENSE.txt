@@ -1,0 +1,18 @@
+Equipment illustrations: CC0-1.0
+
+Source: Free Game Assets, Fantasy RPG Icons
+https://www.freegameassets.com/fantasy-rpg-icons
+The source detail pages declare: "Created using AI. Released as CC0."
+Retrieved: 2026-11-10
+
+CC0 1.0 Universal public domain dedication:
+https://creativecommons.org/publicdomain/zero/1.0/
+Full legal text:
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+Original asset URLs and SHA-256 hashes are recorded in manifest.json.
+Local derivatives: resized transparent PNGs; three filename aliases.
+See SOURCES.md for provenance and derivation details.
+
+This license notice covers these illustrations only, not Fire Emblem game
+names, characters, text or other assets elsewhere in this project.

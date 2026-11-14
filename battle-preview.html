@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>战斗演出预览（暴击定格） — MYGO!!!!! TACTICS</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#05060c}</style>
+</head>
+<body class="modal-open">
+  <div class="battle-scene active" id="battle-scene" aria-hidden="false">
+    <div class="bs-viewport" id="battle-viewport">
+      <canvas id="battle-canvas" width="896" height="640" aria-label="角色战斗演出"></canvas>
+      <div class="bs-grain" aria-hidden="true"></div>
+      <div class="bs-vignette" aria-hidden="true"></div>
+      <div class="bs-flash" id="battle-flash" aria-hidden="true"></div>
+
+      <div class="bs-top">
+        <div class="bs-nameplate bs-nameplate-atk" id="battle-atk-plate">
+          <span class="bs-role" id="cutin-atk-role">PLAYER · ATTACKER</span>
+          <strong id="cutin-atk-name">高松灯</strong>
+          <small id="cutin-atk-class">剑士</small>
+        </div>
+        <div class="bs-chapter">
+          <span>MISSION 01</span>
+          <b>黄昏的迷途庭院</b>
+        </div>
+        <div class="bs-nameplate bs-nameplate-def" id="battle-def-plate">
+          <span class="bs-role" id="cutin-def-role">ENEMY · TARGET</span>
+          <strong id="cutin-def-name">迷途回声</strong>
+          <small id="cutin-def-class">影斧兵</small>
+        </div>
+      </div>
+
+      <div class="bs-center-tag" id="battle-center-tag">物理 · 无克制</div>
+      <div class="bs-announce" id="battle-announce" role="status" aria-live="polite"></div>
+      <div class="bs-crit" id="battle-crit">CRITICAL</div>
+
+      <div class="bs-hud" id="battle-hud">
+        <section class="bs-panel bs-panel-atk is-player" id="battle-panel-atk">
+          <div class="bs-panel-head">
+            <span class="bs-weapon-icon" id="battle-atk-icon">剑</span>
+            <b id="cutin-atk-weapon">星屑之剑</b>
+            <span class="bs-side-tag" data-side-tag>我方</span>
+          </div>
+          <div class="bs-metrics">
+            <div><span data-m1-label>HIT</span><b data-m1>90</b></div>
+            <div><span data-m2-label>DMG</span><b data-m2>10</b></div>
+            <div><span data-m3-label>CRT</span><b data-m3>15</b></div>
+          </div>
+          <div class="bs-hp">
+            <span id="battle-atk-hp-text">26 / 26</span>
+            <div class="bs-hp-track"><i id="battle-atk-hp-fill"></i></div>
+          </div>
+        </section>
+
+        <div class="bs-emblem" aria-hidden="true"><span></span><b>VS</b><span></span></div>
+
+        <section class="bs-panel bs-panel-def is-enemy" id="battle-panel-def">
+          <div class="bs-panel-head">
+            <span class="bs-side-tag" data-side-tag>敌方</span>
+            <b id="cutin-def-weapon">残缺之斧</b>
+            <span class="bs-weapon-icon" id="battle-def-icon">斧</span>
+          </div>
+          <div class="bs-metrics">
+            <div><span data-m1-label>AVO</span><b data-m1>15</b></div>
+            <div><span data-m2-label>DEF</span><b data-m2>6</b></div>
+            <div><span data-m3-label>RES</span><b data-m3>1</b></div>
+          </div>
+          <div class="bs-hp">
+            <span id="battle-def-hp-text">26 / 26</span>
+            <div class="bs-hp-track"><i id="battle-def-hp-fill"></i></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="bs-skip">暴击定格预览 · 点击返回游戏</div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('error', function (event) {
+      var box = document.createElement('pre');
+      box.id = 'error-box';
+      box.style.cssText = 'position:fixed;z-index:9999;left:16px;top:16px;right:16px;color:#ff9aa8;background:rgba(0,0,0,.88);padding:16px;font:13px/1.5 monospace;white-space:pre-wrap';
+      box.textContent = 'RUNTIME ERROR: ' + event.message + '\n' + (event.filename || '') + ':' + (event.lineno || '');
+      document.body.appendChild(box);
+    });
+  </script>
+  <script src="src/equipment-data.js?v=5.3"></script>
+  <script src="src/magic-data.js?v=5.3"></script>
+  <script src="src/inventory.js?v=5.3"></script>
+  <script src="src/class-data.js?v=5.3"></script>
+  <script src="src/config.js?v=4.9"></script>
+  <script src="src/rng.js"></script>
+  <script src="src/growth-data.js?v=5.0"></script>
+  <script src="src/growth.js?v=5.3"></script>
+  <script src="src/grid.js"></script>
+  <script src="src/pathfinding.js"></script>
+  <script src="src/combat.js?v=5.3"></script>
+  <script src="src/game.js?v=5.3"></script>
+  <script src="src/ai.js"></script>
+  <script src="src/save.js"></script>
+  <script src="src/assets.js"></script>
+  <script src="src/characters.js?v=4.0"></script>
+  <script src="src/renderer.js"></script>
+  <script src="src/battle.js?v=4.0"></script>
+  <script>
+    (function () {
+      function run() {
+        try {
+        const game = new MyGO.Game({ seed: 12345 });
+        const attacker = game.getUnit('tomori');
+        const defender = game.getUnit('shadow_axe');
+        const preview = MyGO.Combat.preview(attacker, defender, game.map);
+        const result = Object.assign({}, preview, {
+          hit: true,
+          crit: true,
+          hitChance: preview.hit,
+          critChance: preview.crit,
+          hitRoll: 17,
+          critRoll: 3,
+          finalDamage: preview.damage * 2,
+          hpAfter: Math.max(0, defender.hp - preview.damage * 2)
+        });
+        const scene = new MyGO.BattleScene(document.getElementById('battle-scene'));
+        scene.play(attacker, defender, result, { freezeAt: 0.62 });
+        document.getElementById('battle-scene').addEventListener('click', function () {
+          window.location.href = 'index.html';
+        });
+        } catch (err) {
+          var box = document.createElement('pre');
+          box.style.cssText = 'position:fixed;z-index:9999;left:16px;top:16px;right:16px;color:#ff9aa8;background:rgba(0,0,0,.9);padding:16px;font:13px/1.5 monospace;white-space:pre-wrap';
+          box.textContent = 'BOOT ERROR: ' + (err && err.stack ? err.stack : err);
+          document.body.appendChild(box);
+        }
+      }
+      if (MyGO.Characters) MyGO.Characters.load().then(run, run);
+      else run();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "cellWidth": 224,
+  "cellHeight": 144,
+  "anchorX": 88,
+  "anchorY": 124,
+  "bodyHeight": 110,
+  "frames": {
+    "idle": {
+      "row": 0,
+      "count": 6
+    },
+    "walk": {
+      "row": 1,
+      "count": 8
+    },
+    "attack": {
+      "row": 2,
+      "count": 7
+    },
+    "hurt": {
+      "row": 3,
+      "count": 3
+    },
+    "down": {
+      "row": 4,
+      "count": 5
+    }
+  },
+  "sourceFacing": "right",
+  "source": "source/anon-bow-original.jpg",
+  "projectile": "anon-arrow.png"
+}

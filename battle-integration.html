@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>战斗演出调试入口 — MYGO!!!!! TACTICS</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0; min-height: 100vh; display: grid; place-items: center;
+      background: radial-gradient(circle at 50% 20%, #251a35, #07080f 70%);
+      color: #f7e9df; font-family: "Microsoft YaHei", system-ui, sans-serif;
+    }
+    main { width: min(560px, calc(100% - 40px)); padding: 32px; border: 1px solid #423350; background: #0e0d17; box-shadow: 0 20px 60px #0008; }
+    h1 { margin: 0 0 6px; font-size: 24px; letter-spacing: .08em; }
+    p { color: #b9aec6; line-height: 1.7; font-size: 14px; }
+    a { display: block; margin-top: 10px; padding: 12px 16px; border: 1px solid #5b446e; color: #ffe0a8; text-decoration: none; background: #171222; }
+    a:hover { border-color: #ffd166; background: #20182e; }
+    small { color: #776e86; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>战斗演出调试入口</h1>
+    <p>正式游戏请直接打开 <strong>index.html</strong>，点击我方单位并攻击敌人即可触发战斗演出。</p>
+    <a href="index.html?battle-demo=1">播放普通攻击演出</a>
+    <a href="index.html?battle-demo=crit">播放暴击演出</a>
+    <a href="index.html?battle-demo=freeze">定格命中瞬间（用于截图）</a>
+    <a href="index.html?battle-demo=axe">斧 · 劈砍</a>
+    <a href="index.html?battle-demo=lance">枪 · 戳刺</a>
+    <a href="index.html?battle-demo=bow">弓 · 射箭</a>
+    <a href="index.html?battle-demo=ice">魔法 · 冰蓝魔法球</a>
+    <a href="index.html?battle-demo=fire">魔法 · 火红魔法球</a>
+    <a href="index.html?battle-demo=tomori">灯 · 新版持剑动作</a>
+    <a href="index.html?battle-demo=tomori-heavy">灯 · 举剑劈斩</a>
+    <a href="index.html?battle-demo=tomori-crit">灯 · 冲刺拔剑暴击</a>
+    <a href="index.html?battle-demo=tomori-crit-freeze">灯 · 冲刺斩击定格</a>
+    <a href="index.html?battle-demo=tomori-dodge-freeze">灯 · 新版跳跃闪避</a>
+    <a href="index.html?battle-demo=tomori-freeze">灯 · 挥剑定格</a>
+    <a href="index.html?battle-demo=tomori-hurt">灯 · 受伤</a>
+    <a href="index.html?battle-demo=tomori-down-freeze">灯 · 倒地定格</a>
+    <a href="index.html?battle-demo=rana">乐奈 · 持枪冲刺与突刺</a>
+    <a href="index.html?battle-demo=rana-crit-freeze">乐奈 · 暴击突刺定格</a>
+    <a href="index.html?battle-demo=rana-dodge-freeze">乐奈 · 跳跃闪避定格</a>
+    <a href="index.html?battle-demo=rana-down-freeze">乐奈 · 倒地定格</a>
+    <a href="index.html?battle-demo=anon">爱音 · 新弓手动作</a>
+    <a href="index.html?battle-demo=anon-freeze">爱音 · 箭矢飞行定格</a>
+    <a href="index.html?battle-demo=anon-hurt-freeze">爱音 · 受伤定格</a>
+    <a href="index.html?battle-demo=anon-down-freeze">爱音 · 倒地定格</a>
+    <a href="index.html?battle-demo=taki">立希 · 横扫挥斧</a>
+    <a href="index.html?battle-demo=taki-heavy">立希 · 举斧下劈</a>
+    <a href="index.html?battle-demo=taki-crit">立希 · 暴击回旋挥斧</a>
+    <a href="index.html?battle-demo=taki-crit-freeze">立希 · 暴击定格</a>
+    <a href="index.html?battle-demo=taki-hurt-freeze">立希 · 受伤定格</a>
+    <a href="index.html?battle-demo=taki-dodge-freeze">立希 · 跳跃闪避定格</a>
+    <a href="index.html?battle-demo=taki-down-freeze">立希 · 倒地定格</a>
+    <a href="index.html?battle-demo=xueyue">雪月 · 拔剑横斩</a>
+    <a href="index.html?battle-demo=xueyue-heavy">雪月 · 举剑劈斩</a>
+    <a href="index.html?battle-demo=xueyue-crit-freeze">雪月 · 冲刺斩击定格</a>
+    <a href="index.html?battle-demo=xueyue-dodge-freeze">雪月 · 跳跃闪避定格</a>
+    <a href="index.html?battle-demo=xueyue-down-freeze">雪月 · 倒地定格</a>
+    <a href="index.html?recruit-demo=1">雪月 · 击败加入流程（独立内存存档）</a>
+    <a href="battle-preview.html">打开战斗画面单页预览</a>
+    <p><small>这些入口只用于调试，不会修改对局或存档。</small></p>
+  </main>
+</body>
+</html>

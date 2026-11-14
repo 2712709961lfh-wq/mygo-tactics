@@ -1,0 +1,224 @@
+Title: Monk
+
+URL Source: https://fireemblemwiki.org/wiki/Monk
+
+Markdown Content:
+From Fire Emblem Wiki, your source on Fire Emblem information. By fans, for fans.
+
+_For the class from_ Fire Emblem Fates _, see_[_Monk (_ Fates _)_](https://fireemblemwiki.org/wiki/Monk_(Fates) "Monk (Fates)")_._
+
+| Monk |
+| --- |
+| [![Image 1](https://cdn.fireemblemwiki.org/8/81/Bs_fe08_artur_monk_light.png)](https://fireemblemwiki.org/wiki/File:Bs_fe08_artur_monk_light.png) [Artur](https://fireemblemwiki.org/wiki/Artur "Artur") as a Monk in _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_. * * * _Well balanced, the Monk uses magic for both offense and defense._ |
+| Unit type(s) | Infantry |
+| --- |
+| Weapon(s) | * [Light](https://fireemblemwiki.org/wiki/Light_(magic) "Light (magic)")(_The Blazing Blade_, _The Sacred Stones_) * Various, including [magic](https://fireemblemwiki.org/wiki/Magic_(element) "Magic (element)")(_Three Houses_) * [Black magic](https://fireemblemwiki.org/wiki/Black_magic "Black magic"), [White magic](https://fireemblemwiki.org/wiki/White_magic "White magic")(_Three Houses_; specialty) |
+| Skill(s) | [Magic +2](https://fireemblemwiki.org/wiki/Magic_%2B2 "Magic +2"), [Draw Back](https://fireemblemwiki.org/wiki/Draw_Back "Draw Back")(_Three Houses_) |
+
+The **Monk** (Japanese: 修道士 _Monk_) is a [basic](https://fireemblemwiki.org/wiki/Category:Base_classes "Category:Base classes") magical [class](https://fireemblemwiki.org/wiki/Class "Class") which debuted in _[Fire Emblem: The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_. In _The Blazing Blade_ and _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_, Monk is an offensive magical class which wields [light magic](https://fireemblemwiki.org/wiki/Light_magic "Light magic"), and is a male-exclusive class.[[1]](https://fireemblemwiki.org/wiki/Monk#cite_note-1) In _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ and _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_, the Monk is an entry-level magic-user, able to wield both [black](https://fireemblemwiki.org/wiki/Black_magic "Black magic") and [white magic](https://fireemblemwiki.org/wiki/White_magic "White magic"), and is not restricted by gender.
+
+Compared to other offensive magic classes, the Monk possesses lower [magic](https://fireemblemwiki.org/wiki/Magic_(stat) "Magic (stat)"), but higher [skill](https://fireemblemwiki.org/wiki/Skill_(stat) "Skill (stat)") and [speed](https://fireemblemwiki.org/wiki/Speed "Speed"); in conjunction with the typically lightweight and accurate [light magic](https://fireemblemwiki.org/wiki/Light_magic "Light magic"), Monks have excellent [accuracy](https://fireemblemwiki.org/wiki/Accuracy "Accuracy") and [attack speed](https://fireemblemwiki.org/wiki/Attack_speed "Attack speed").
+
+In _The Blazing Blade_, Monks [promote](https://fireemblemwiki.org/wiki/Class_change "Class change") to the [Bishop](https://fireemblemwiki.org/wiki/Bishop "Bishop") class, gaining the use of [staves](https://fireemblemwiki.org/wiki/Staves "Staves"). In _The Sacred Stones_, Monks have the option to promote to Bishop or [Sage](https://fireemblemwiki.org/wiki/Sage "Sage").
+
+## Stats
+
+### Base stats
+
+| Game | [HP](https://fireemblemwiki.org/wiki/HP "HP") | [Strength](https://fireemblemwiki.org/wiki/Strength "Strength") | [Magic](https://fireemblemwiki.org/wiki/Magic_(stat) "Magic (stat)") | [Skill](https://fireemblemwiki.org/wiki/Skill_(stat) "Skill (stat)") | [Speed](https://fireemblemwiki.org/wiki/Speed "Speed") | [Luck](https://fireemblemwiki.org/wiki/Luck "Luck") | [Defense](https://fireemblemwiki.org/wiki/Defense "Defense") | [Resistance](https://fireemblemwiki.org/wiki/Resistance "Resistance") | [Movement](https://fireemblemwiki.org/wiki/Movement "Movement") | [Constitution](https://fireemblemwiki.org/wiki/Constitution "Constitution") | [Weapon level](https://fireemblemwiki.org/wiki/Weapon_level "Weapon level") |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ | 18 | -- | 1 | 1 | 2 | 0 | 1 | 5 | 5 | 6 | [![Image 2: Light magic](https://cdn.fireemblemwiki.org/6/65/GBARankLight.gif)](https://fireemblemwiki.org/wiki/Light_(magic) "Light magic") E |
+| _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ | 18 | -- | 1 | 1 | 2 | 0 | 1 | 5 | 5 | 6 | [![Image 3: Light magic](https://cdn.fireemblemwiki.org/6/65/GBARankLight.gif)](https://fireemblemwiki.org/wiki/Light_(magic) "Light magic") E |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | 20 | 4 | 8 | 6 | 6 | 4 | 3 | 4 | 4 | -- | -- |
+
+### Max stats
+
+| Game | [HP](https://fireemblemwiki.org/wiki/HP "HP") | [Strength](https://fireemblemwiki.org/wiki/Strength "Strength") | [Magic](https://fireemblemwiki.org/wiki/Magic_(stat) "Magic (stat)") | [Skill](https://fireemblemwiki.org/wiki/Skill_(stat) "Skill (stat)") | [Speed](https://fireemblemwiki.org/wiki/Speed "Speed") | [Luck](https://fireemblemwiki.org/wiki/Luck "Luck") | [Defense](https://fireemblemwiki.org/wiki/Defense "Defense") | [Resistance](https://fireemblemwiki.org/wiki/Resistance "Resistance") | [Movement](https://fireemblemwiki.org/wiki/Movement "Movement") | [Constitution](https://fireemblemwiki.org/wiki/Constitution "Constitution") | [Weapon level](https://fireemblemwiki.org/wiki/Weapon_level "Weapon level") |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ | 60 | -- | 20 | 20 | 20 | 30 | 20 | 20 | 15 | 20 | [![Image 4: Light magic](https://cdn.fireemblemwiki.org/6/65/GBARankLight.gif)](https://fireemblemwiki.org/wiki/Light_(magic) "Light magic") A |
+| _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ | 60 | -- | 20 | 20 | 20 | 30 | 20 | 20 | 15 | 20 | [![Image 5: Light magic](https://cdn.fireemblemwiki.org/6/65/GBARankLight.gif)](https://fireemblemwiki.org/wiki/Light_(magic) "Light magic") A |
+
+### Miscellaneous data
+
+| Game | Tier | [Movement type](https://fireemblemwiki.org/wiki/Terrain "Terrain") | [Weakness](https://fireemblemwiki.org/wiki/Bonus_damage "Bonus damage") | [Experience](https://fireemblemwiki.org/wiki/Experience "Experience") | [CRP](https://fireemblemwiki.org/wiki/Class_relative_power "Class relative power") | [Gold](https://fireemblemwiki.org/wiki/Gold "Gold") | [Vision](https://fireemblemwiki.org/wiki/Vision "Vision") | [Weight](https://fireemblemwiki.org/wiki/Weight_(unit) "Weight (unit)")mod. | [Capacity](https://fireemblemwiki.org/wiki/Capacity "Capacity") | Size | [Unit type](https://fireemblemwiki.org/wiki/Unit_type "Unit type") |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ | -- | -- | -- | -- | 3 | -- | 3 | -- | -- | -- | -- |
+| _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ | -- | -- | -- | -- | 3 | -- | 3 | -- | -- | -- | -- |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | -- | -- | -- | -- | -- | -- | -- | -- | -- | 1 | -- |
+
+### Class growth rates
+
+| Game | [HP](https://fireemblemwiki.org/wiki/HP "HP") | [Strength](https://fireemblemwiki.org/wiki/Strength "Strength") | [Magic](https://fireemblemwiki.org/wiki/Magic_(stat) "Magic (stat)") | [Skill](https://fireemblemwiki.org/wiki/Skill_(stat) "Skill (stat)") | [Speed](https://fireemblemwiki.org/wiki/Speed "Speed") | [Luck](https://fireemblemwiki.org/wiki/Luck "Luck") | [Defense](https://fireemblemwiki.org/wiki/Defense "Defense") | [Resistance](https://fireemblemwiki.org/wiki/Resistance "Resistance") | [Charm](https://fireemblemwiki.org/wiki/Charm_(stat) "Charm (stat)") | [Constitution](https://fireemblemwiki.org/wiki/Constitution "Constitution")* | [Movement](https://fireemblemwiki.org/wiki/Movement "Movement")* | [Weapon level](https://fireemblemwiki.org/wiki/Weapon_level "Weapon level") |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ | 50% | -- | 30% | 35% | 32% | 45% | 8% | 40% | -- | -- | -- | -- |
+| _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ | 50% | -- | 30% | 35% | 32% | 45% | 8% | 40% | -- | -- | -- | -- |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | 5/10% | 0% | 0% | 0% | 0% | 0% | 0% | 5/20% | 5% | -- | -- | [![Image 6: Reason](https://cdn.fireemblemwiki.org/thumb/b/b7/FE16RankReason.png/20px-FE16RankReason.png)](https://fireemblemwiki.org/wiki/Black_magic "Reason") +1 [![Image 7: Faith](https://cdn.fireemblemwiki.org/thumb/5/57/FE16RankFaith.png/20px-FE16RankFaith.png)](https://fireemblemwiki.org/wiki/White_magic "Faith") +1 |
+| _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_ | 5% | 0% | 0% | 0% | 0% | 0% | 0% | 10% | 10% | -- | -- | -- |
+
+See [class growth rate](https://fireemblemwiki.org/wiki/Class_growth_rate "Class growth rate") for more details on the mechanics of class growths in each game.
+
+### Stat modifiers
+
+| Game | [HP](https://fireemblemwiki.org/wiki/HP "HP") | [Strength](https://fireemblemwiki.org/wiki/Strength "Strength") | [Magic](https://fireemblemwiki.org/wiki/Magic_(stat) "Magic (stat)") | [Skill](https://fireemblemwiki.org/wiki/Skill_(stat) "Skill (stat)") | [Speed](https://fireemblemwiki.org/wiki/Speed "Speed") | [Luck](https://fireemblemwiki.org/wiki/Luck "Luck") | [Defense](https://fireemblemwiki.org/wiki/Defense "Defense") | [Resistance](https://fireemblemwiki.org/wiki/Resistance "Resistance") | [Charm](https://fireemblemwiki.org/wiki/Charm_(stat) "Charm (stat)") | [Movement](https://fireemblemwiki.org/wiki/Movement "Movement") |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+| _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_ | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |
+
+### Class skills
+
+| Game | Skill | Learning conditions |
+| --- | --- | --- |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | [![Image 8](https://cdn.fireemblemwiki.org/thumb/6/6b/Is_fe16_magic_%2B2.png/20px-Is_fe16_magic_%2B2.png)](https://fireemblemwiki.org/wiki/Magic_%2B2 "Magic +2")[Magic +2](https://fireemblemwiki.org/wiki/Magic_%2B2 "Magic +2") | [Class mastery](https://fireemblemwiki.org/wiki/Class_mastery "Class mastery"). (60 class Exp required) |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | [![Image 9](https://cdn.fireemblemwiki.org/thumb/a/a5/Is_fe16_combat_art.png/20px-Is_fe16_combat_art.png)](https://fireemblemwiki.org/wiki/Draw_Back "Draw Back")[Draw Back](https://fireemblemwiki.org/wiki/Draw_Back "Draw Back") | [Class mastery](https://fireemblemwiki.org/wiki/Class_mastery "Class mastery"). (60 class Exp required) |
+| _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_ | [![Image 10](https://cdn.fireemblemwiki.org/thumb/a/a4/Is_fewa2_bow_buster_lv_1.png/20px-Is_fewa2_bow_buster_lv_1.png)](https://fireemblemwiki.org/wiki/Bow_Buster_Lv_1 "Bow Buster Lv 1")[Bow Buster Lv 1](https://fireemblemwiki.org/wiki/Bow_Buster_Lv_1 "Bow Buster Lv 1") | Innate. |
+
+## Class change
+
+### _The Blazing Blade_
+
+| Base class | Promotion method | Advanced class |
+| --- | --- | --- |
+| [![Image 11](https://cdn.fireemblemwiki.org/a/a0/Bs_fe07_lucius_monk_light.png)](https://fireemblemwiki.org/wiki/File:Bs_fe07_lucius_monk_light.png) [Monk](https://fireemblemwiki.org/wiki/Monk) | Using a [![Image 12](https://cdn.fireemblemwiki.org/7/70/Is_gba_guiding_ring.png)](https://fireemblemwiki.org/wiki/Guiding_ring "Guiding ring")[Guiding ring](https://fireemblemwiki.org/wiki/Guiding_ring "Guiding ring") or [![Image 13](https://cdn.fireemblemwiki.org/0/0b/Is_gba_earth_seal.png)](https://fireemblemwiki.org/wiki/Earth_seal "Earth seal")[Earth seal](https://fireemblemwiki.org/wiki/Earth_seal "Earth seal") after reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10. | [![Image 14](https://cdn.fireemblemwiki.org/e/eb/Bs_fe07_lucius_bishop_magic.png)](https://fireemblemwiki.org/wiki/File:Bs_fe07_lucius_bishop_magic.png) [Bishop](https://fireemblemwiki.org/wiki/Bishop "Bishop") |
+
+### _The Sacred Stones_
+
+| Base class | Promotion method | Advanced class |
+| --- | --- | --- |
+| [![Image 15](https://cdn.fireemblemwiki.org/8/81/Bs_fe08_artur_monk_light.png)](https://fireemblemwiki.org/wiki/File:Bs_fe08_artur_monk_light.png) [Monk](https://fireemblemwiki.org/wiki/Monk) | Using a [![Image 16](https://cdn.fireemblemwiki.org/7/70/Is_gba_guiding_ring.png)](https://fireemblemwiki.org/wiki/Guiding_Ring "Guiding Ring")[Guiding Ring](https://fireemblemwiki.org/wiki/Guiding_Ring "Guiding Ring") or [![Image 17](https://cdn.fireemblemwiki.org/4/48/Is_gba_master_seal.png)](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal")[Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after reaching [level](https://fireemblemwiki.org/wiki/Level "Level")10. | [![Image 18](https://cdn.fireemblemwiki.org/e/ea/Bs_fe08_artur_bishop_staff.png)](https://fireemblemwiki.org/wiki/File:Bs_fe08_artur_bishop_staff.png) [Bishop](https://fireemblemwiki.org/wiki/Bishop "Bishop") _or_ [![Image 19](https://cdn.fireemblemwiki.org/d/d5/Bs_fe08_artur_sage_anima.png)](https://fireemblemwiki.org/wiki/File:Bs_fe08_artur_sage_anima.png) [Sage](https://fireemblemwiki.org/wiki/Sage "Sage") |
+| **Promotion choice criteria:** The player can freely choose. |
+
+### _Three Houses_
+
+| Base class | Certification requirements | Beginner class |
+| --- | --- | --- |
+| Any class | [Level](https://fireemblemwiki.org/wiki/Level "Level") 5 [![Image 20](https://cdn.fireemblemwiki.org/thumb/7/76/Is_fe16_seal.png/20px-Is_fe16_seal.png)](https://fireemblemwiki.org/wiki/Beginner_Seal "Beginner Seal")[Beginner Seal](https://fireemblemwiki.org/wiki/Beginner_Seal "Beginner Seal") [![Image 21: Reason](https://cdn.fireemblemwiki.org/thumb/b/b7/FE16RankReason.png/20px-FE16RankReason.png)](https://fireemblemwiki.org/wiki/Black_magic "Reason") D _or_[![Image 22: Faith](https://cdn.fireemblemwiki.org/thumb/5/57/FE16RankFaith.png/20px-FE16RankFaith.png)](https://fireemblemwiki.org/wiki/White_magic "Faith") D | [![Image 23](https://cdn.fireemblemwiki.org/1/1e/Ma_fe16_monk_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe16_monk_playable.gif) [Monk](https://fireemblemwiki.org/wiki/Monk) |
+| This class is available for any unit. |
+
+### _Warriors: Three Hopes_
+
+| Beginner class | Method | Intermediate class | Method | Advanced class | Method | Master class |
+| --- | --- | --- | --- | --- | --- | --- |
+| [![Image 24](https://cdn.fireemblemwiki.org/6/69/Ma_fewa2_monk_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa2_monk_playable.gif) [Monk](https://fireemblemwiki.org/wiki/Monk) | Using an [![Image 25](https://cdn.fireemblemwiki.org/thumb/0/0b/Is_fewa2_seal.png/20px-Is_fewa2_seal.png)](https://fireemblemwiki.org/wiki/Intermediate_Seal "Intermediate Seal")[Intermediate Seal](https://fireemblemwiki.org/wiki/Intermediate_Seal "Intermediate Seal") after mastering Monk. | [![Image 26](https://cdn.fireemblemwiki.org/4/44/Ma_fewa2_priest_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa2_priest_playable.gif) [Priest](https://fireemblemwiki.org/wiki/Priest "Priest") | Using an [![Image 27](https://cdn.fireemblemwiki.org/thumb/0/0b/Is_fewa2_seal.png/20px-Is_fewa2_seal.png)](https://fireemblemwiki.org/wiki/Advanced_Seal "Advanced Seal")[Advanced Seal](https://fireemblemwiki.org/wiki/Advanced_Seal "Advanced Seal") after mastering Priest. | [![Image 28](https://cdn.fireemblemwiki.org/c/ca/Ma_fe16_bishop_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe16_bishop_playable.gif) [Bishop](https://fireemblemwiki.org/wiki/Bishop "Bishop") | Using a [![Image 29](https://cdn.fireemblemwiki.org/thumb/0/0b/Is_fewa2_seal.png/20px-Is_fewa2_seal.png)](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal")[Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after mastering Bishop or Warlock. (Female units only) | [![Image 30](https://cdn.fireemblemwiki.org/6/69/Ma_fe16_gremory_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe16_gremory_playable.gif) [Gremory](https://fireemblemwiki.org/wiki/Gremory "Gremory") |
+| [![Image 31](https://cdn.fireemblemwiki.org/4/45/Ma_fewa2_mage_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fewa2_mage_playable.gif) [Mage](https://fireemblemwiki.org/wiki/Mage "Mage") | Using an [![Image 32](https://cdn.fireemblemwiki.org/thumb/0/0b/Is_fewa2_seal.png/20px-Is_fewa2_seal.png)](https://fireemblemwiki.org/wiki/Advanced_Seal "Advanced Seal")[Advanced Seal](https://fireemblemwiki.org/wiki/Advanced_Seal "Advanced Seal") after mastering Mage. | [![Image 33](https://cdn.fireemblemwiki.org/b/b2/Ma_fe16_warlock_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe16_warlock_playable.gif) [Warlock](https://fireemblemwiki.org/wiki/Warlock "Warlock") |  |
+| Using an [![Image 34](https://cdn.fireemblemwiki.org/thumb/0/0b/Is_fewa2_seal.png/20px-Is_fewa2_seal.png)](https://fireemblemwiki.org/wiki/Advanced_Seal "Advanced Seal")[Advanced Seal](https://fireemblemwiki.org/wiki/Advanced_Seal "Advanced Seal") after mastering Mage. (Male units only) | [![Image 35](https://cdn.fireemblemwiki.org/e/ea/Ma_fe16_dark_mage_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe16_dark_mage_playable.gif) [Dark Mage](https://fireemblemwiki.org/wiki/Dark_Mage "Dark Mage") | Using a [![Image 36](https://cdn.fireemblemwiki.org/thumb/0/0b/Is_fewa2_seal.png/20px-Is_fewa2_seal.png)](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal")[Master Seal](https://fireemblemwiki.org/wiki/Master_Seal "Master Seal") after mastering Bishop, Warlock, or Dark Mage. (Male units only) | [![Image 37](https://cdn.fireemblemwiki.org/8/85/Ma_fe16_dark_bishop_playable.gif)](https://fireemblemwiki.org/wiki/File:Ma_fe16_dark_bishop_playable.gif) [Dark Bishop](https://fireemblemwiki.org/wiki/Dark_Bishop "Dark Bishop") |
+
+## Playable Monks
+
+| Playable units |
+| --- |
+| Name | Game |
+| [Lucius](https://fireemblemwiki.org/wiki/Lucius "Lucius") | _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ |
+| [Artur](https://fireemblemwiki.org/wiki/Artur "Artur") | _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ |
+| [Aelfric](https://fireemblemwiki.org/wiki/Aelfric "Aelfric") | _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_![Image 38: Cindered Shadows](https://cdn.fireemblemwiki.org/thumb/6/68/FETH_Ashen_Wolves_banner.png/14px-FETH_Ashen_Wolves_banner.png) |
+| [Hubert](https://fireemblemwiki.org/wiki/Hubert "Hubert") | _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_![Image 39: Black Eagles](https://cdn.fireemblemwiki.org/thumb/5/58/FETH_Black_Eagles_symbol.png/10px-FETH_Black_Eagles_symbol.png) |
+| [Linhardt](https://fireemblemwiki.org/wiki/Linhardt "Linhardt") | _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_![Image 40: Black Eagles](https://cdn.fireemblemwiki.org/thumb/5/58/FETH_Black_Eagles_symbol.png/10px-FETH_Black_Eagles_symbol.png) |
+| [Dorothea](https://fireemblemwiki.org/wiki/Dorothea "Dorothea") | _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_![Image 41: Black Eagles](https://cdn.fireemblemwiki.org/thumb/5/58/FETH_Black_Eagles_symbol.png/10px-FETH_Black_Eagles_symbol.png) |
+| [Mercedes](https://fireemblemwiki.org/wiki/Mercedes "Mercedes") | _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_![Image 42: Blue Lions](https://cdn.fireemblemwiki.org/thumb/3/31/FETH_Blue_Lions_symbol.png/10px-FETH_Blue_Lions_symbol.png) |
+| [Annette](https://fireemblemwiki.org/wiki/Annette "Annette") | _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_![Image 43: Blue Lions](https://cdn.fireemblemwiki.org/thumb/3/31/FETH_Blue_Lions_symbol.png/10px-FETH_Blue_Lions_symbol.png) |
+| [Lysithea](https://fireemblemwiki.org/wiki/Lysithea "Lysithea") | _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_![Image 44: Golden Deer](https://cdn.fireemblemwiki.org/thumb/4/44/FETH_Golden_Deer_symbol.png/10px-FETH_Golden_Deer_symbol.png) |
+| [Marianne](https://fireemblemwiki.org/wiki/Marianne "Marianne") | _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_![Image 45: Golden Deer](https://cdn.fireemblemwiki.org/thumb/4/44/FETH_Golden_Deer_symbol.png/10px-FETH_Golden_Deer_symbol.png) |
+| [Monica](https://fireemblemwiki.org/wiki/Monica "Monica") | _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_![Image 46: Black Eagles](https://cdn.fireemblemwiki.org/thumb/5/58/FETH_Black_Eagles_symbol.png/10px-FETH_Black_Eagles_symbol.png) |
+| Playable Monk units in the _[Fire Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem\_(series) "Fire Emblem (series)")_ series. |
+
+## Notable NPC Monks
+
+| Other units |
+| --- |
+| Name | Game |
+| [Monica](https://fireemblemwiki.org/wiki/Monica "Monica") | _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_ |
+| Neutral Monk units in the _[Fire Emblem](https://fireemblemwiki.org/wiki/Fire\_Emblem\_(series) "Fire Emblem (series)")_ series. |
+
+## Flavor text
+
+* * *
+
+_**This section has been marked as a [stub](https://en.wikipedia.org/wiki/Wikipedia:Stub "wikipedia:Wikipedia:Stub").** Please help improve the page by adding information._
+
+* * *
+
+| Game | Text (English) | Text (Japanese) |
+| --- | --- | --- |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_, _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ (class roll) | Ascetic wielders of sacred light magic. Superior ability to hit but low in power. | 聖なる力『光』の魔道書を使う修行僧 命中率に優れるが 威力は弱い |
+| _[The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_ (help) | Ascetics who wield light magic, but can't use staves. | 聖なる光魔法を行使する 聖職者 杖は使えない |
+| _[The Sacred Stones](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Sacred\_Stones "Fire Emblem: The Sacred Stones")_ (help) | Users of light magic with high resistance. Equip: Light. | 光魔法をあやつり 魔防に優れる 装備『光』 |
+| _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_ | Well balanced, the Monk uses magic for both offense and defense. | 人々を癒やしたり、 魔法で戦ったりする者。 魔法が使える兵種。 |
+| _[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Warriors:\_Three\_Hopes "Fire Emblem: Warriors: Three Hopes")_ | Well-balanced, the Monk uses magic for both offense and defense. | ?? |
+|  |
+
+## Etymology and other languages
+
+| Names, etymology, and in other regions |
+| --- |
+| Language | Name | Definition, etymology, and notes |
+| English | Monk | A member of a religious order who lives an existence of cloistered religious practice, alone or in a monastery. |
+| Japanese | 修道士 | Officially romanized as **Monk**. |
+| Spanish | Monje | Monk |
+| French | Moine | Monk |
+| German | Mönch | Monk |
+| Italian | Monaco | Monk |
+| Korean | 수도사 | Monk |
+| Simplified Chinese | 修道士 | Monk |
+| Traditional Chinese | 修道士 | Monk |
+|  |
+
+## Gallery
+
+| Sprite Gallery |
+| --- |
+
+### Portraits
+
+*   [![Image 47: Portrait of a male Monk in Three Houses.](https://cdn.fireemblemwiki.org/thumb/e/e5/Generic_small_portrait_monk_01_fe16.png/120px-Generic_small_portrait_monk_01_fe16.png)](https://fireemblemwiki.org/wiki/File:Generic_small_portrait_monk_01_fe16.png "Portrait of a male Monk in Three Houses.")
+
+Portrait of a male Monk in _[Three Houses](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Three\_Houses "Fire Emblem: Three Houses")_. 
+*   [![Image 48: Portrait of a female Monk in Three Houses.](https://cdn.fireemblemwiki.org/thumb/7/7d/Generic_small_portrait_monk_female_01_fe16.png/120px-Generic_small_portrait_monk_female_01_fe16.png)](https://fireemblemwiki.org/wiki/File:Generic_small_portrait_monk_female_01_fe16.png "Portrait of a female Monk in Three Houses.")
+
+Portrait of a female Monk in _Three Houses_.
+
+| _Click "Expand" to view all_[Three Houses](https://fireemblemwiki.org/wiki/Fire_Emblem:_Three_Houses "Fire Emblem: Three Houses")_portraits_ |
+| --- |
+
+| _Click "Expand" to view all_[Warriors: Three Hopes](https://fireemblemwiki.org/wiki/Fire_Emblem:_Warriors:_Three_Hopes "Fire Emblem: Warriors: Three Hopes")_portraits_ |
+| --- |
+
+### _[Cipher](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_Cipher "Fire Emblem: Cipher")_ artwork
+
+*   [![Image 49: Artwork of Mercedes as a Monk.](https://cdn.fireemblemwiki.org/thumb/9/97/TCGCipher_Mercedes_02.jpg/88px-TCGCipher_Mercedes_02.jpg)](https://fireemblemwiki.org/wiki/File:TCGCipher_Mercedes_02.jpg "Artwork of Mercedes as a Monk.")
+
+Artwork of [Mercedes](https://fireemblemwiki.org/wiki/Mercedes "Mercedes") as a Monk. 
+*   [![Image 50: Artwork of Annette as a Monk.](https://cdn.fireemblemwiki.org/thumb/8/8f/TCGCipher_Annette_01.jpg/88px-TCGCipher_Annette_01.jpg)](https://fireemblemwiki.org/wiki/File:TCGCipher_Annette_01.jpg "Artwork of Annette as a Monk.")
+
+Artwork of [Annette](https://fireemblemwiki.org/wiki/Annette "Annette") as a Monk.
+
+*   [![Image 51: Artwork of Lysithea as a Monk.](https://cdn.fireemblemwiki.org/thumb/6/6e/TCGCipher_Lysithea_03.png/88px-TCGCipher_Lysithea_03.png)](https://fireemblemwiki.org/wiki/File:TCGCipher_Lysithea_03.png "Artwork of Lysithea as a Monk.")
+
+Artwork of [Lysithea](https://fireemblemwiki.org/wiki/Lysithea "Lysithea") as a Monk. 
+*   [![Image 52: Artwork of Marianne as a Monk.](https://cdn.fireemblemwiki.org/thumb/5/5e/TCGCipher_Marianne_05.jpg/88px-TCGCipher_Marianne_05.jpg)](https://fireemblemwiki.org/wiki/File:TCGCipher_Marianne_05.jpg "Artwork of Marianne as a Monk.")
+
+Artwork of [Marianne](https://fireemblemwiki.org/wiki/Marianne "Marianne") as a Monk. 
+*   [![Image 53: Artwork of Poe as a Monk.](https://cdn.fireemblemwiki.org/thumb/d/d3/TCGCipher_Poe_06.png/88px-TCGCipher_Poe_06.png)](https://fireemblemwiki.org/wiki/File:TCGCipher_Poe_06.png "Artwork of Poe as a Monk.")
+
+Artwork of [Poe](https://fireemblemwiki.org/wiki/Poe "Poe") as a Monk.
+
+## References
+
+1.   [↑](https://fireemblemwiki.org/wiki/Monk#cite_ref-1 "Jump up")"But...to be a monk, don't you have to... be a... Well...a guy?" — [Serra](https://fireemblemwiki.org/wiki/Serra "Serra"), _[Fire Emblem: The Blazing Blade](https://fireemblemwiki.org/wiki/Fire\_Emblem:\_The\_Blazing\_Blade "Fire Emblem: The Blazing Blade")_
+
+## See also
+
+*   [Light Mage](https://fireemblemwiki.org/wiki/Light_Mage "Light Mage")
+*   [Priest](https://fireemblemwiki.org/wiki/Priest "Priest")
+
+[![Image 54](https://cdn.fireemblemwiki.org/thumb/4/41/Project_Classes.png/80px-Project_Classes.png)](https://fireemblemwiki.org/wiki/File:Project_Classes.png)This article is part of **[Project Classes](https://fireemblemwiki.org/wiki/Fire_Emblem_Wiki:Project_Classes "Fire Emblem Wiki:Project Classes")**, a project focused in writing articles for every class present in the _Fire Emblem_ series.
+
+| [Classes in _Fire Emblem: The Blazing Blade_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem:_The_Blazing_Blade "List of classes in Fire Emblem: The Blazing Blade") |
+| --- |
+
+| [Classes in _Fire Emblem: The Sacred Stones_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem:_The_Sacred_Stones "List of classes in Fire Emblem: The Sacred Stones") |
+| --- |
+
+| [Classes in _Fire Emblem: Three Houses_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem:_Three_Houses "List of classes in Fire Emblem: Three Houses") |
+| --- |
+
+| [Classes in _Fire Emblem Warriors: Three Hopes_](https://fireemblemwiki.org/wiki/List_of_classes_in_Fire_Emblem_Warriors:_Three_Hopes "List of classes in Fire Emblem Warriors: Three Hopes") |
+| --- |

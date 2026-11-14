@@ -1,0 +1,29 @@
+{
+  "cellWidth": 320,
+  "cellHeight": 208,
+  "anchorX": 86,
+  "anchorY": 180,
+  "bodyHeight": 136,
+  "frames": {
+    "fireball": {
+      "row": 0,
+      "count": 7
+    },
+    "flame": {
+      "row": 1,
+      "count": 7
+    },
+    "jump": {
+      "row": 2,
+      "count": 8
+    },
+    "hurt": {
+      "row": 3,
+      "count": 7
+    },
+    "down": {
+      "row": 4,
+      "count": 6
+    }
+  }
+}

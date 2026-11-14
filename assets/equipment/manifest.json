@@ -1,0 +1,1360 @@
+[
+  {
+    "id": "crude-sword",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/crude-sword-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "eda48eaa548c82adca3c13bf9edf38f8c2770a3a43661a76f24a71374691a086",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "iron-sword",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/iron-sword-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "29a20d63bd7b3fc8f2eea828ec848b14adc389fa2e74de551f11e9afca2518ed",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "greatsword",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/greatsword-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "6df807a49d87662b9d88cec4bbf1810564e36a9dcf21950a593db3ffc2b46375",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "holy-sword",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/holy-sword-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "2db3370d9b8fe02937efb5fc2a7b36c4bd65c42bef1b60fafcea72d33a6767cc",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "katana",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/katana-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "8e00f021d2b854f2383d3b6b65382048b6a3375fd0d837fa6b161b5df037276d",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "rapier",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/rapier-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "54f1607737798ed4febe620ac37aca63afe7cba02e4a28df4d6967ec38987970",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "crystal-sword",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/crystal-sword-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "45a1d49a8c86383376baa8a1cc5a06eb4e545202f6aaf8441accba75ddcfa9f5",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "bone-sword",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/bone-sword-001.png",
+    "sha256": "ab2b4d29cb58791bf2ec759d5afdc0784116ab80f2fc49bd081065322c8d365c",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "crude-spear",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/crude-spear-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "7c456596430a9bf2e771e272e1948a342d49263f9eb3c40630e7dbac81185d75",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "iron-spear",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/iron-spear-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "f8cefffe10e21c2a0b75114c4b695c28dd5345f5d19bda151f8efab1501765a6",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "glaive",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/glaive-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "d29ceef9f41369cfa7ea37640e9a9e21a60c0d86fcdea95ff08058b94c78134d",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "holy-spear",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/holy-spear-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "4a3ad3d3f0e0af752f430aaf7d4e50fda94c14474f6e8d580e5aee8d41a3238d",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "javelin",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/javelin-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "2288c9267ad68e8ccbf9c10f302df11507d8af4a32394ec2a1c1c0c46dd8bbe1",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "shadow-spear",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/shadow-spear-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "a31e61baaee619e55ef475b8a4fb6057ce1a2f0b195073d97568802ed1e06b1d",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "crude-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/crude-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "da128f9498d2b3adf7d5d71ef6ea7687b150f80ad3f22dcb3af81bbd1d3a6dfc",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "iron-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/iron-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "29c554c73854f389d60bd119986c3732590f4f62bd6272e1a82f4bed848d8631",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "battle-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/battle-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "a049677376c8cb54e22bc45d98c1a7aa9310b7a26fac869691f8a1a24752cd4b",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "double-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/double-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "6c973cd165a2414d809cadf6d7114d85892e9c91bf8b92f90dbf74ccd48bab8a",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "hand-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/hand-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "cd4961b7b3d869fb53179076a5e053b0ec2daf75be834a5be18a5a69e1f97baa",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "lightning-warhammer",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/lightning-warhammer-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "e4af9e2b9f5732336e250bf3b8ece2ef9ef1633d622f42c187ec0918210693b2",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "crude-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/crude-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "6f0274434eff890d79aab1624e3bc1e2ca7118c2fcedec64e69c1c80a4d5f1ce",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "hunter-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/hunter-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "85c71bdc82c85ed3bde4e149188243ba105b6db17f5207c2a15edfde74c2d152",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "long-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/long-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "cca60db370f57a86744e579ef98e04457b05d289ac68c4bb12fea4d8c0a4c983",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "elven-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/elven-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "32af699d51ac5e44686ff9d4870cde4b0d0afea75abf693a6ddc5c9744caf9da",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "shadow-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/shadow-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "6afdb1a047b34c1582bdd6d6e1a71224751839dd16551d0b0aad527f68a1a6a2",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "arcane-staff",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/arcane-staff-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "a873d69be1a9ef86b3f512e08aa1692a9b2fe2d68e72a5f1da5c1e52e02a7373",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "holy-staff",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/holy-staff-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b8b0a6e984bac1e78a6a33c53647c7981c04db8c4ef7ecd2e27d5da466773245",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "iron-gauntlets",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/iron-gauntlets-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "dc69eba0a53fbd52969e360c065af857a326fb0eaa2abd81e6ce7ebfdb978988",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "steel-gauntlets",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/steel-gauntlets-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "54513a64d61f0b3309f3cfa068833fcf883c86d5e04655337e6c4258fab4997b",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "crystal-shield",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/crystal-shield-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "d3ca71929c55b604a51d06a9ba5288ed0d293ab1a54bef00b58b7eb3566811d5",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "iron-shield",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/iron-shield-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "f33f2879c7c507145be3f9337b60cdc69eff66bbdec8aa6cbbcde5a82e7ba91d",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "wooden-shield",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/wooden-shield-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "f01852427c05c8ae68fda080699b9c7fa1021bbc9ffa4ec71acb5b12bc451a47",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "steel-tower-shield",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/steel-tower-shield-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "6b8d31d9dc052575ff275938904eb35b847f223263701d01d6e811822f0c9661",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "sapphire-ring",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/sapphire-ring-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b809a3f1f689b632a9a51bf693468047afee14d9a8f691dd653df69157df86eb",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "ruby-ring",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/ruby-ring-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "26dfe9ea354178d16d6b6e47ef1f829986074a6da9832a86b997d054e4b119c8",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "emerald-ring",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/emerald-ring-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "23b190dee2d7e33f4f3adfe09117bf6a93dc34184d78e12f4870dd2f3c18a257",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "holy-amulet",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/holy-amulet-001.png",
+    "sha256": "550078f67bc525b59c8d514ccae343095638a11c5f9caaa27bc4c591d4a00b03",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "crystal-heart-amulet",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/crystal-heart-amulet-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "49cf9dab10749f45d3d146824d51fca0b7e3d8189577b374bb753a0510123ec8",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "air-essence",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/air-essence-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "387f675842ef13cb6f50d04d8bc2d663fb6f0bcfbeb54f424fd18e513f97db98",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "amethyst-gem",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/amethyst-gem-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "a71b722e65742bfe7c6e1040a61461530df57d22a784942124289b6038e29a03",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "angel-ring",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/angel-ring-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "4d3d73ec8f0881a79f0f956a903af074bb355a1b78c402173a917c7fe9cb58b7",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "arcane-orb",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/arcane-orb-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "956e67e27d586abda74328a1160b56419c3d21518da315a6ad2b3a17dc1f47b3",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "archery",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/archery-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "3fa0fe8dc99f237d78d1fca0791490d3079edfc2e6d1fa4c26ba96685d5de7ea",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "banishment-scroll",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/banishment-scroll-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "afae98e1fb5b343173091f9ed37eae73803748f88959cd1affd9605bdafce29e",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "bearded-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/bearded-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "863345cc692c01984175d733a160483193ab8dbf9ebf35f2040f9b287932c49e",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "blackened-iron-sword",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/blackened-iron-sword-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "5f59028ea84fa450bc9ef5465ae3c908a5f0ebe4e88c5fc923ef39605374c299",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "blood-orb",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/blood-orb-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "3a634336acfe9e61bacb6974cf53d83928156bded32f8a49c52b1c2bd28393d8",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "boar-spear",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/boar-spear-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "c902a0e74ee61a73f5c343909d398fbfc3a75648bc0d8179327883dbfc6c2953",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "bone-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/bone-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "f00b7ecbec1ccd16e3a7cc16c70893cdf22a4ef697cf5d4ee37adcb605c0a722",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "bone-bracers",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/bone-bracers-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "0ea2b9247d12b046a98947944aa931a1d893996f7c74aaa2016ecd5e1b3cddc7",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "bone-recurve-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/bone-recurve-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "e5c559d0a80269038c6fc22a0e5c8df33f33d784699b4f4f919683b8a5989e86",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "bone-shield",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/bone-shield-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "56f0b705648c9593774f4ac0bdfae49177ca4b0126e13e4f682b3d600a87aa64",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "buckler-shield",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/buckler-shield-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "1d7aad17bf5134017b1e26b01c25790f3c2507e6d062049b6fdc589074692d57",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "chain-gloves",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/chain-gloves-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "f858c9bdd919651cfc432efff91c829b1c35399cf3f550ceb6ae9e9712e4c7cc",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "claymore",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/claymore-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "a3cadfeb3b92cac7eaf25141330b269e04c3ddb70c32db9fbc5a33732f78a269",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "composite-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/composite-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "ac6899071e7a1b17d86cb99e2d6c9c521ad9842453c5b8e6464064de0c0008ec",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "copper-sword",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/copper-sword-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b9d72db4b5dbadd00709dfd6f6989f7731d97f6ad3a2b7b9d35f32e0bc8cb94c",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "crystal-bracers",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/crystal-bracers-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "55ba98ebcfbd58beaf5a1f87c3dc49049962bf78ed98c9f9fd494ebff56f31f7",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "crystal-hammer",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/crystal-hammer-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "7e12b28fdeae2c8578c9221e1831e1e972339211367c62ffc35d1a3ba7d516e7",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "cursed-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/cursed-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "e24837b4fb37032cbaf025dcab9d8c6ae456a33fc85f38cbc5db6c301b493676",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "cursed-bracers",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/cursed-bracers-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "7695a7764b8ab9530ed98400deb0bfd7bd6ed287907fd80d77593355ae60a1d0",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "cursed-gloves",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/cursed-gloves-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "5da76705fac15fac3aa8fce608ef91bcc6960eafb1b8c22cbfa51f5b81fc6669",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "cursed-shield-armor",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/cursed-shield-armor-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "5592bf3ba89b26a5c1c932ca4657282f9f8effecff3bafe1c431be37c148e861",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "dispel-scroll",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/dispel-scroll-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "99e09e4a935ddc95f68f2286978e59305b15ac5cd2a16294a0c45d129b9b99f6",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "dragon-scale-gloves",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/dragon-scale-gloves-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b409f05957c9716d277087d21ab54c22d5ac2b2c7dc81a07463a476b5877791c",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "dragon-spear",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/dragon-spear-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "f212ad35be53cdf39383d5925964dd126f9940b64c013a128e0923e94a984699",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "dragon-staff",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/dragon-staff-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "4cf4fe3a0db441d9c95c900b97ef6d61ccd100a019584b1c02a084df5a31406c",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "executioner-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/executioner-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "23f5143534f2beca0686fc07ca6d702ba96d9d86bb0c04c60c7357ef21b96e6c",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "falchion",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/falchion-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "68f1a28db00151bf31891cbabf1267ff0c30ce049876bec78aa911145a877e07",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "fire-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/fire-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b4544769b633439a518ef5882cb0638ecc2adf99e9faa5c505de4fa0037f893e",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "fire-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/fire-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "2c75bc4222f283fd378571f8bd6d644ed99d490e71b080bec1d9740ac90981ef",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "fire-crystal",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/fire-crystal-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "9ed82b498766f918c7d8251ba88a79421aaed9a14e492d6d0936ed8489579ac0",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "fire-orb",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/fire-orb-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b0529bfa3ad1afaa30358a52e4e3872066b3dc1e1993e3cfcb174b6f003efee1",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "fire-scroll",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/fire-scroll-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "612454892ceac7eeaae124e9960a5ababfc6d30cf665fae3c562df6562541e64",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "fire-shield-armor",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/fire-shield-armor-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "0665d185a16ea7927e4a2e478d4a5fea51aa8b241d2b280e650d0169a68da48b",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "fire-spear",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/fire-spear-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "ecd6a6e17f9967bf7c75ec6ff8be0c029abfc23dca631498caf4d59addda53aa",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "flare-torch",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/flare-torch-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "0c7397e31278b5c86a5750c6fcb1b3145e90ecbc986157751a97d23d84485f2b",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "frost-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/frost-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "c73d7bd35caf6cd53285b326b4ffbd88d85a6e9462f37e5a18809513e8a13aaf",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "frost-hammer",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/frost-hammer-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b70e3ad579b90fb2b3d2db7c7cfe7188127b9aae3478044bd3dd7f5735a7dc6b",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "frost-lance",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/frost-lance-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "01adc0da9bb33232dfc4f1f77cfa1b0576a82e42a862c1a971c7cc3c8a2749ff",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "frost-shield-armor",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/frost-shield-armor-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "8e2ce7be9c77ba41144f7f94579484e4e50ce2d390b8ce44749457eabaf53f3d",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "gold-bracelet",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/gold-bracelet-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "57d7fbedb107a3ed920882dc27086af813812d45fae716f74ee7721b240e1b1a",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "halberd",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/halberd-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "877b94660933b3ace40132d5efd805c4b919355ec1775418bb13934e07e88879",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "healing-scroll",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/healing-scroll-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "9142d21c874711f36e564d97f3e438ab930ca1d7cea1af61375299763d27fe9a",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "holy-bracers",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/holy-bracers-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "88ffe11992fed0b6ac7bc1b355302337dad3498027aa9108e103ca6812d6b2fc",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "holy-crystal",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/holy-crystal-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "a36aabbe877ad10f629e4858bc390ff76e39e1e53ddafb01ca21ac4f026048f8",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "holy-orb",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/holy-orb-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "0463f628af3336c38142ae270eb8d44cbc030408f6d2bcfa2324a80fabaca2ff",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "holy-shield-armor",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/holy-shield-armor-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "9c9da0bae4e1c9bef439735305cf00ea66a55418429b44413b23817864837650",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "holy-wand",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/holy-wand-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "dd9dfe5813e20f431012e3f5eef435a3e541fec9e98b3c41c9dc8b7fce4ea2e1",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "hunting-spear",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/hunting-spear-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "096d76ae4a987c232ecdfddb04919fc010c76d774d86d22743912dfc79986423",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "ice-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/ice-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "4281ee5f1e7c1ca3ca42b8f618af89cf99227cbe8a44fcdd03de17f5ac1a66d0",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "ice-orb",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/ice-orb-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "d9013e97151991e6068d74c4c9db3905af9cf7e51fbb91e5c890146a1f28fdc5",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "ice-scroll",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/ice-scroll-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "559990a44013a46ef5caae800a341e054ff9129f97d5a58d50cdac7f4da6c26d",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "iron-bracers",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/iron-bracers-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "642a3d6061072f33ed6fc2b9d521f2a148776f8eedc873c0c1c1a75c3f2cc2c3",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "iron-pike",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/iron-pike-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "92a6fc33dc6154518da504f2f56f9a8792de62be0386399f9df95cd9536ae1e9",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "jeweled-chalice",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/jeweled-chalice-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "e39bf307f0956908545a1be4743472c1c808759cd887ebea1360c77d55682c8f",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "kite-shield",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/kite-shield-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "e29a7ac2558c2be526aa06f9d4eecd587f064edb8752b4c3c856063a0e204c73",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "leather-gloves",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/leather-gloves-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "1ddee82f510751175f5b53ca095066e99b57a5a611b615376c1b3d8d81f07f1d",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "life-essence",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/life-essence-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "4355c3b6274a6f148a6f955eefa5df629946a67468e08721b41baee0d9e91813",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "lightning-scroll",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/lightning-scroll-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b82ee5fb355c6084ee9541e0422e97267e598c5d1d4bb15f9be5a87d5dd3b784",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "meteor-scroll",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/meteor-scroll-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "d5088f2951361977284c31225b025f787246d84cfd9fb331af2014d2628bb9ae",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "moon-crystal",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/moon-crystal-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "9a19bc7469dee1d1dbc70e8db73c21a038805ba1ae8b9c72a01cddb73c2e4b91",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "moonstone-ring",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/moonstone-ring-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "2336fd277908838aee7350177cbae584df3bad277df2bb1f99dede4cda731e7e",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "nature-orb",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/nature-orb-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "4be64b5df70e7641e11d32f6673b8c497816f8bda29297b5f021977210cc4b5c",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "necromancer-amulet",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/necromancer-amulet-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "a886b8c6e9b9f08a83461c138b095eacfedecad6a86ebd1bca649bbb1c7cba3e",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "necromancer-grimoire",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/necromancer-grimoire-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "42bca1f3e0aef35f5a4cebd1a55b2299fb1093488e4e3b452ff1fe7b6349df96",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "opal-gem",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/opal-gem-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "1958f1e04de25ab8b638b1a10b2cd179d24f507e9a91b46f819aeb68e3cc5f10",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "paladin-prayer-book",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/paladin-prayer-book-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "da10db5673f5a890267dc95027fd4a929c3009dac9da51d2b02581a37c0b485a",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "partisan",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/partisan-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "c8fb1d3d28f2e3b4d07900af16f5cc157b7bd249cc70e9aa2c0877a0afae8607",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "poison-vial",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/poison-vial-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "09b6b00e841f471322279c9ca6ded0ad6ce742b811e3ff99dfff3c7cb783e6a6",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "portal-scroll",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/portal-scroll-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "f6d68fa0a2644664c5f48fb3c29152250b1e7844ce5ccd2b5df41ad3b4d871e3",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "power-shot",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/power-shot-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b4903ecbde5146862134f5905d37a673a42f86e0d29125890a880be3d6448ecd",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "priest-gloves",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/priest-gloves-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "21e38a9400e595ab7a41a3d1aeac08ce37a31a5cecfb3d68ef8abe14e6086713",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "protection-scroll",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/protection-scroll-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "cf16a4eea75b4e965bda3fbcad3bfcd4c768d7194f5dd953dc15500692bd5d4b",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "ranger-gloves",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/ranger-gloves-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "5009b732cd5dff41ddc10142af652bd08e48ac3d9715ca4cbcd62399f5d109e6",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "raven-amulet",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/raven-amulet-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "7dc730feb70e123d5a7e78468d68ee0557aad7526c988565aa522f977e203450",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "recurve-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/recurve-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "69a297de22c9389a8cb7eade3cf2eda3c8d5151643c4e650ea78fcac0ea16132",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "round-shield",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/round-shield-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "152d6052771ae94a41a458c019186333873e291161defa46dd540cb713ba5801",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "rune-bracelet",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/rune-bracelet-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b6817cbfba6bc1457792c12323e54231b657bf282aa1ad7747b799c18ab05794",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "runed-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/runed-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b2c53d1460fe4aae0bf56c53b59159fcd3c12f268ad00696ddf412a27ab8cca1",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "runed-sword",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/runed-sword-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "6ae8c019506e1e74403cdd028eeae1843d0c3a5a2c23386f0fdd13d8a7c8a2f1",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "sabre",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/sabre-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "bb27ba2b5bbc49c4338b6f03b43cddad08bb4d29bf843850dc078db34872e052",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "sapphire-brooch",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/sapphire-brooch-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b620efdb0e4b90e56ba24bba08557b875dbd58a6d8f678238421fea4cd4b8940",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "scimitar",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/scimitar-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "827245f4b80903764fb7abe1a1d5dc8ae985045c7d429cad1ea22f5a98ef81dc",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "serpent-staff",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/serpent-staff-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "81059c9e759b096aad339f1e5730f710c8dfd496f5b460eb4e550223024e1a3a",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "shadow-crystal",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/shadow-crystal-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "425ade14e4e45d8ec1b24a9756aed11d46707eb906a14a0bb17e427f0b222101",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "shadow-orb",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/shadow-orb-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "9dc54b3e5c7ae04c2f3aee3f5d7500ce3ad1a59c9e44ac8a4bd47d734686da0b",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "short-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/short-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "008a2c29746d31a561da277186036a96a15d0aff8dbc6e9d09145ad59f9b95e5",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "siege-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/siege-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "670d52371a937edd951f22ecae6c57163f2d476caeaaa929e0a0be54a5e143bf",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "silver-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/silver-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "5f62b9b7c7687ed856aeb193670e089e745d454fb94f35458d3173e17542c906",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "silver-spear",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/silver-spear-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "dc3fafaa08a239a9cda6995a3095fa88c934aa2f03b370c27f336cce08093cce",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "silver-sword",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/silver-sword-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "c64c18716b1d035a07939aea621a9919da7f9e18777fae87caeb682f8e13ffc2",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "skull-ring",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/skull-ring-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "a94ca1430837f85d1430d1cf7d67e02d3cb89556c0c8f56942846322d2a8930a",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "spirit-flask",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/spirit-flask-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "991263e1def5012dc91bb15dd8289b40e0a6b3d573e20826b7a08b7eaae71ca9",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "steel-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/steel-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "55ca26385ef4d50c425525758f3fa0e1388c9d888cc8fe1d08a2949d9e0e3a19",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "steel-bracers",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/steel-bracers-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "d189961ac92185710aeac84393be8037292bf6edf352a8387cbcea7b33086e77",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "steel-lance",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/steel-lance-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "8c4ef5120aa29605ec8bd4f04e8d3df3fc49af19f608b65c40684903ffddfd90",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "steel-sword",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/steel-sword-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "cba54d8d78ed9da0c07e69ea5e3fb24730e4b9c90fc77afe162f98b2270d2d93",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "storm-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/storm-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b3554dd2ab6d54503bbd2ee8efa75613c46c4fbad14116634bea4eeefaa4db10",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "storm-crystal",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/storm-crystal-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "41540bc75b1ef88a2e65b3fd5ef6c4c225c256c041b46ca736f2e0cc4b580d71",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "storm-orb",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/storm-orb-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "b7def9ec5a2284b0a08a7df510eeca5857d550854b62015d47ca64eda37b2658",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "storm-rune-ring",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/storm-rune-ring-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "e35daf26410660da781f91f9fe44c826d0831329bf67e55aeb14860126151d92",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "storm-sword",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/storm-sword-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "64333a07033c4d94b8dce41a96eaee6a696a448a8b5b61173b8e497c3b338ae9",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "sun-crystal",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/sun-crystal-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "e9b5e88204518f58a9cd6121bc2cf1cdb8a56c0e2e2d90839ffa2103852c3522",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "throwing-axe",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/throwing-axe-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "dad220bc76bde759373903fbd1b90a20f74f19ec5ff784213a0ccc25ea8aaa76",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "throwing-spear",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/throwing-spear-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "cd6642799d53457910cf23053643f1e10e5ff0e69e17623c5bde9ab1e3b20ba9",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "topaz-gem",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/topaz-gem-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "a97e1c531447b9399a18200dcae749c69fa560771e8f4e14aaa5df1059452cb8",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "topaz-ring",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/topaz-ring-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "9fe4954eeaa5cd990ae37a664895de57a46a94b9c3a2af40131464bf095952a5",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "traveler-cloak",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/traveler-cloak-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "3ffde2e0e0a1e716712e3fcfc2a0663f1a82d6c7233d48eb95a8ff94f3d9325c",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "trident",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/trident-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "c580e35c99b3054b18e4c75f0831d69024556f600ca86dc7a19738ba18d24985",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "void-crystal",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/void-crystal-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "5c4e1586679b51db13f2ea294a1deb1aff9721aafb8d6d4d5d6815d742a642c2",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "war-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/war-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "3a82dc2ce72e22209a292657410388f1e13a777b4cb95dad12fbc3a3931832ee",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "war-cleaver",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/war-cleaver-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "5ef86ef9bf89b476175bd6dbdc115500e25d8baba8c12adff0ac87afd6712331",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "warhammer",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/warhammer-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "a57aac2808704750d18ef0eed04259fb33c5f2161f2668383cdf63e909a7df5e",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "wind-scroll",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/wind-scroll-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "72ebb3ce8d2ed45c7a0be2912f83d9379369c4f572daf920bb2dacaaf1cba10c",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "yumi-bow",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/yumi-bow-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "5d15f9b3530f39eb0b0cefb93cb65db44be2f3abc459bfaaa0482d3c7a224bff",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "bowyer",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/bowyer-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "671522080cd81f47baed56b010b34b73bc4b887653b0ef016a05eff3790442df",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "leafblade",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/leafblade-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "53faadd930071a5112411ee441a5235c3498ed1ed7d3a26ced6fe6f14a8bfd85",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "antidote-potion",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/antidote-potion-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "e53dababb390d9db06fe39206066b41e021d80e92f9880bee3a374de731af077",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "bronze-signet-ring",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/bronze-signet-ring-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "9c3614d6b76e9450dddf1a5dc03371ea7bf20d3bc8df1d923aee55a1fb0e25cd",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "greater-health-potion",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/greater-health-potion-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "f286b9dcbd192431cd5c82cf5e9b599da7d73af1b6ad346f91e064a8cbb5e307",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "health-potion",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/health-potion-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "6a685c4053991d7fdb76ddc2b1d9ae1b0f817c69209aef0263779eed316a34a5",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "iron-signet-ring",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/iron-signet-ring-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "49e2bbd501fd009130743a4d2fe7ac2cb1e54b017f4535adbb1660e2683c750e",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "obsidian-ring",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/obsidian-ring-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "df4c44978681b1e018a5099e4586a91a635074f849419d41012b2fdd9b6e0ef6",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "phoenix-elixir",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/phoenix-elixir-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "4208dcadcb4b1daf9fcc2f9a33092d88ee1fc2d31894e7db75bcffd045c8746e",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "rose-brooch",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/rose-brooch-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "0c8ad06dcd3ad1ed161ddd1abcdda4a20844a4acbe70ad88b6824a5ceb53a53b",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "royal-seal-ring",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/royal-seal-ring-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "9ea102a67239d89d107c63a51932ce3e62ce0b1428e27731b18fb25b397b9ee2",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "royal-signet",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/royal-signet-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "ae27304308892e472e9e8dcd5a367737a17273492bad95a481772d7cb95eefd3",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "skull-key",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/skull-key-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "e363896c7f4f8b2792caaee5a9fd19fff931b049bde5475ab935bb93b01ef5e3",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  },
+  {
+    "id": "water-flask",
+    "source": "https://media.freegameassets.com/icons/fantasy-rpg-core/v1/icons/512/water-flask-001.png",
+    "catalogue": "https://www.freegameassets.com/fantasy-rpg-icons",
+    "sha256": "f6ab07baba7f08f31f87072c2645147774898fa0ef6a1c7039ddfa16d1bd228e",
+    "license": "CC0-1.0",
+    "generatedWithAI": true
+  }
+]

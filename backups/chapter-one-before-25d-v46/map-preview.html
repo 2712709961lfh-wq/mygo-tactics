@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>第一关重制 · 黄昏的迷途庭院</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#171f25;color:#e4e5d8;font:15px/1.7 system-ui,"Microsoft YaHei",sans-serif}
+    main{max-width:1180px;margin:auto;padding:32px 24px 50px}.eyebrow{color:#c4ad78;font-size:12px;letter-spacing:3px}
+    h1{font-family:serif;font-weight:500;font-size:clamp(26px,4vw,40px);margin:8px 0}p{color:#aebeb6;margin:8px 0 20px}
+    nav{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0}button,a{font:inherit;color:inherit;border:1px solid #52635e;border-radius:5px;padding:7px 15px;background:#25332f;text-decoration:none;cursor:pointer}
+    button[aria-pressed=true]{background:#c4ad78;color:#202b28;border-color:#c4ad78}a.primary{margin-left:auto;color:#e6cc90}
+    .map{padding:8px;background:#101a1d;border:1px solid #52635e;border-radius:6px;box-shadow:0 18px 50px #0005}
+    canvas{display:block;width:100%;height:auto;image-rendering:auto}.legend{display:flex;flex-wrap:wrap;gap:10px 26px;padding:16px 0;color:#c3cdc1;font-size:13px}.legend i{display:inline-block;width:11px;height:11px;margin-right:7px}
+    .notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:22px;margin-top:12px;border-top:1px solid #3b4d48;padding-top:20px}.notes b{color:#d7c08c}.notes p{font-size:14px;margin:5px 0}.credits{font-size:12px;color:#8fa198;margin-top:28px}.credits a{border:0;padding:0;background:none;color:#bfcca7}
+  </style>
+</head>
+<body><main>
+  <div class="eyebrow">CHAPTER 01 / MAP REMASTER</div>
+  <h1>黄昏的迷途庭院</h1>
+  <p>穿过水声与树影，把未完成的旋律夺回来。36 × 24 格 · 五人出击 · 18 名敌人 · 三路渡河与分区警戒</p>
+  <nav aria-label="预览方式">
+    <button id="terrain" aria-pressed="false">纯地图</button>
+    <button id="deployment" aria-pressed="true">部署预览</button>
+    <button id="gate" aria-pressed="false">南门：锁闭</button>
+    <button id="resonance" aria-pressed="false">中央浅滩：未开启</button>
+    <a id="export" download="chapter-01-garden.png">导出 PNG</a>
+    <a href="index.html" class="primary">进入游戏 →</a>
+  </nav>
+  <div class="map"><canvas id="board" aria-label="第一关重制地图"></canvas></div>
+  <div class="legend">
+    <span><i style="background:#74875c"></i>草地 / 小径：移动 1</span>
+    <span><i style="background:#42643e"></i>树林：移动 2，闪避 +20</span>
+    <span><i style="background:#8f9b88"></i>岩地：移动 2，守备 +3</span>
+    <span><i style="background:#3b7074"></i>水渠 / 城墙：不可通行</span>
+    <span><i style="background:#c4ad78"></i>共鸣碑 (7,13)：消耗行动开浅滩</span>
+    <span><i style="background:#9bab9b"></i>据点：守备 +2 / 闪避 +10 / 每回合回复 20%</span>
+  </div>
+  <div class="notes">
+    <div><b>01 / 西岸遗迹</b><p>先处理西岸三人警戒队，可向北争取安全的恢复点，也可直接南桥推进。</p></div>
+    <div><b>02 / 三路渡河</b><p>北桥接林地侧翼，南桥有弓手交叉掩护；西岸共鸣碑能永久开启中央四格浅滩（移动 2）。</p></div>
+    <div><b>03 / 钥匙守卫</b><p>击破携带金钥匙的影弓，开启北侧内庭的双格南门。</p></div>
+    <div><b>04 / 内庭决战</b><p>开门前在废弃哨所据点整队。内庭四人醒来，利用水池分路迎击；雪月战败后加入。</p></div>
+  </div>
+  <div class="credits">A 方案 · Flare 旧石堡垒与荒野。素材：<a href="https://opengameart.org/content/grassland-tileset">Clint Bellanger 等 · Grassland</a>、<a href="https://opengameart.org/content/old-ruins-tileset">rubberduck · Old Ruins</a>，CC BY-SA 3.0；本项目进行了裁切、透视展开、缩放和统一调色。<a href="assets/terrain/flare/README.md">完整来源与署名</a>。预览独立运行，不写入游戏存档。</div>
+</main>
+<script src="src/config.js?v=4.1"></script>
+<script src="src/map-projection.js?v=4.4"></script><script src="src/rng.js"></script><script src="src/grid.js"></script><script src="src/pathfinding.js"></script>
+<script src="src/combat.js"></script><script src="src/game.js?v=4.1"></script>
+<script src="src/assets.js"></script><script src="src/garden-map.js?v=4.2"></script>
+<script src="src/characters.js"></script><script src="src/renderer.js?v=4.1"></script>
+<script>
+  (async function(){
+    await Promise.all([MyGO.GardenMap.load(),MyGO.Characters.load()]);
+    const game=new MyGO.Game({seed:101});
+    const renderer=new MyGO.Renderer(document.getElementById('board'),game);
+    cancelAnimationFrame(renderer._raf);
+    const units=game.units;
+    const terrain=document.getElementById('terrain'), deployment=document.getElementById('deployment'),gate=document.getElementById('gate');
+    function render(){
+      renderer.render(0);
+      document.getElementById('export').href=renderer.canvas.toDataURL('image/png');
+    }
+    terrain.onclick=()=>{game.units=[];terrain.setAttribute('aria-pressed','true');deployment.setAttribute('aria-pressed','false');render();};
+    deployment.onclick=()=>{game.units=units;terrain.setAttribute('aria-pressed','false');deployment.setAttribute('aria-pressed','true');render();};
+    gate.onclick=()=>{game.gateOpen=!game.gateOpen;game._syncGateTiles();gate.setAttribute('aria-pressed',String(game.gateOpen));gate.textContent='南门：'+(game.gateOpen?'已开启':'锁闭');render();};
+    const resonance=document.getElementById('resonance');
+    resonance.onclick=()=>{
+      game.resonanceOpen=!game.resonanceOpen;
+      for(const p of MyGO.CONFIG.FORD_CELLS)game.map.tiles[p.y][p.x]=game.resonanceOpen?'ford':'water';
+      renderer.terrainLayer=null;resonance.setAttribute('aria-pressed',String(game.resonanceOpen));
+      resonance.textContent='中央浅滩：'+(game.resonanceOpen?'已开启':'未开启');render();
+    };
+    render();
+  })();
+</script>
+</body></html>

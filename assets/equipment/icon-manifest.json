@@ -1,0 +1,1496 @@
+[
+  {
+    "icon": "training_sword",
+    "sourceId": "crude-sword",
+    "extraction": null,
+    "sha256": "1823a1430a21d048b7a02a66c6e99e52a2dc3b69c2c1dc426edfcf5a0e663cac",
+    "pixelSha256": "b706c77b18f93ef955079da1e691aad0809ae61415fc12544205bf61d676aa84",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "training_sword_plus",
+    "sourceId": "copper-sword",
+    "extraction": null,
+    "sha256": "2c347c2650907f8a9d65b279a06d7e71f2d413dd6aa82236a98468ba39db4a78",
+    "pixelSha256": "bc33b115d941bfb2bee39326bbcd4b3373bb1004b143fb3cf9de33a24b95a792",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "iron_sword",
+    "sourceId": "iron-sword",
+    "extraction": null,
+    "sha256": "754ed87dc8058a5b8774a3a13248fef97d5b6b26f2b57f29cd684f960bf89ef3",
+    "pixelSha256": "5532bf8b553ba2e9ffe1deebe4424caf78098522d867ce0d144224dc6c2b292f",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "iron_sword_plus",
+    "sourceId": "blackened-iron-sword",
+    "extraction": null,
+    "sha256": "ba49d95efea0a3ea6a81bc0608bb653b8b1c60bd14905b1db91f45587426a336",
+    "pixelSha256": "2b60e7dfee7d1272eb6ac9e96bdf56dac3a1d24f8f943928d4e582ad45cb5007",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "steel_sword",
+    "sourceId": "steel-sword",
+    "extraction": null,
+    "sha256": "48cb421fd5cd832adeac9e51355c6c81c9e37c2034d83ec530b5f5b9db2b7969",
+    "pixelSha256": "2adbe521bff27019eb802910c44b63225023dada95a0e2ac3153d6c547082488",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "steel_sword_plus",
+    "sourceId": "greatsword",
+    "extraction": null,
+    "sha256": "2da979065c784491710605a83304817ff344fcdc41f4134f4af8dba9640823d2",
+    "pixelSha256": "4ffe4a94ab43cb8f519d42fe5240841fac530b66edfa73242976e54e9eff769a",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "silver_sword",
+    "sourceId": "silver-sword",
+    "extraction": null,
+    "sha256": "302644bf2fece5be4c6fc6b9f44c3d7365ba77dce8c09564b04c34c6ac2a60b8",
+    "pixelSha256": "da460b374df37f37940d6b8167b9fe052cf81e3d1db25b4acfe0915876662f7d",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "silver_sword_plus",
+    "sourceId": "holy-sword",
+    "extraction": null,
+    "sha256": "df49a1fe92944ae58450a316676ff72c90aff29370869a3cf9d339fb6f5d55fe",
+    "pixelSha256": "633eca56777d6f09e985d8a03ba568d2610b03f983c9c301a11f5f3c3bb41f0b",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "killing_edge",
+    "sourceId": "katana",
+    "extraction": null,
+    "sha256": "1ee3f6b105d1ae6426fb132721c6303030c810d13f84b063929ca4c780d08e1b",
+    "pixelSha256": "b8b0e8d87d7e0d2e6989ea7978acb65aea45d89e216caa356302d85195b375e3",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "killing_edge_plus",
+    "sourceId": "sabre",
+    "extraction": null,
+    "sha256": "ee231361754bf9bac610663cf0c171086f07371269e86043d866f24fffaf3fd9",
+    "pixelSha256": "7cf39b7f261adfdbd491479d187c8415bc5714b4ec2ba7b4351a85fd1d112732",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "brave_sword",
+    "sourceId": "claymore",
+    "extraction": null,
+    "sha256": "44dc03375ee24580b534b6c9af2652ca5f8d0e76bc3bcc4d5cbfd7e5a7d76fde",
+    "pixelSha256": "641e5d31c364aaca0ed8a1a3158fcda5e55a9369fe0c01d1fda0d3163922b722",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "brave_sword_plus",
+    "sourceId": "runed-sword",
+    "extraction": null,
+    "sha256": "ec5d320fd50d3a32f258710e6fbe52dd4076a92350488953d1113a6b913ab955",
+    "pixelSha256": "6ff28bd3f5a9cffd099345b7efb8855b4b0f987c3e873aa48ca05f6d39ce2b7e",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "armorslayer",
+    "sourceId": "falchion",
+    "extraction": null,
+    "sha256": "e64c26b8eaf350939c26022b4fae977273bcaf96858247453014fbbfcfc5e6cc",
+    "pixelSha256": "3a6b49337c56ebd72b3223236935b65f4f326e628f3ed0ed03bcd4bbf2059ae8",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "armorslayer_plus",
+    "sourceId": "leafblade",
+    "extraction": null,
+    "sha256": "445b8c68a4c9b8012a2dda4c9c27146e6e84a5c56e574c4480998cbb2bee15da",
+    "pixelSha256": "709a46b4aec8d2ac34ece3725b615e39ee054ad2c9cbaaa387ada54330299011",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "rapier",
+    "sourceId": "rapier",
+    "extraction": null,
+    "sha256": "db03896c65daa9470b58733cb64cce404e237a0be12de75ace8e146b3c13d060",
+    "pixelSha256": "b2585239fad4fc59578a76beec23874fa3d24abb1782a1fd3ef0e1800f4a459c",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "rapier_plus",
+    "sourceId": "scimitar",
+    "extraction": null,
+    "sha256": "b16194f9c37cbb4799ec6f027c99a993342f85e3ba467c6a1041c1186609ef8c",
+    "pixelSha256": "9fe4c0e8a15d312af8668822475c8839a644bcff9c8bfa75290f5eafba30539a",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "levin_sword",
+    "sourceId": "crystal-sword",
+    "extraction": null,
+    "sha256": "951cb84dc255217b4456e4d62b3ca97ab8b16ab3eadcbc5796755d792e2e85b0",
+    "pixelSha256": "86da45ebad09eb36cfd6f95abb3d9ae13fecbb9ecbb8db9d93d3054391cad28a",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "levin_sword_plus",
+    "sourceId": "storm-sword",
+    "extraction": null,
+    "sha256": "87a9375eae8dcbd70838a45689cb4368fbef45ba993c8a39c024485726e9da4b",
+    "pixelSha256": "eaefb5bbce3b3118b1c3f35b269ebf6426a93945ba991f2b8fb3d45a2ff4ad5f",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "training_lance",
+    "sourceId": "crude-spear",
+    "extraction": null,
+    "sha256": "2bd60e23756c9a5b3447f9adaa9aba5f42ed5fd98546bb43132eab9b001f05cd",
+    "pixelSha256": "a496c4322185dbcf2f7cf2cf25c67320870a50a904d00a8306d76d529bb50a22",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "training_lance_plus",
+    "sourceId": "hunting-spear",
+    "extraction": null,
+    "sha256": "dcc4dfb578dad47ad8f5cb15bd27d73a0add62a5b649f9cc0c75e7b241ceac92",
+    "pixelSha256": "3421636f7dff70667416be3016787fa59d6c9353f77aa06d841e750addb86958",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "iron_lance",
+    "sourceId": "iron-spear",
+    "extraction": null,
+    "sha256": "31ddd1d3feff7a141d94c9eb03877d7132be80670ecd8b9ade0b468b68c1ef1d",
+    "pixelSha256": "b6e61e85a79a540fc7f54f8a1b785db62f937d79c7242ce1746035e165eea8ba",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "iron_lance_plus",
+    "sourceId": "iron-pike",
+    "extraction": null,
+    "sha256": "7ed08ba92984b09599629ce06a237c78c8737fe53c31ec2dab3c058109d38689",
+    "pixelSha256": "04c8ab0a1e5725164b5807c24cb340c8c5036bc9e8c725a2d34ea94e781fd260",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "steel_lance",
+    "sourceId": "steel-lance",
+    "extraction": null,
+    "sha256": "3673d97c4599312b5cfa981b728de9cb6233cd8578f58252e96723d8d0c92525",
+    "pixelSha256": "833c2272a63292a43d4cd6a7e11c166fa1e2edb4d5c6709d71bc62b678a21a58",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "steel_lance_plus",
+    "sourceId": "glaive",
+    "extraction": null,
+    "sha256": "d1acb75acf926f82a9a4b1f6fd9397f60b437fb57a6d08ff9a5919c6961fc2f5",
+    "pixelSha256": "5e3f237f6380ae0c0d2d80ae44f2faa1d30848ea3f0c2825ccb8886b42dbf30c",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "silver_lance",
+    "sourceId": "silver-spear",
+    "extraction": null,
+    "sha256": "32258f659cc64482cdb3cb6dc26d4d0cde2c211d30c6345c0f311dfb64b456a7",
+    "pixelSha256": "355ada7811180ccec4b999909fa2bfe46f11c423b125b4d351eeb779641fa63c",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "silver_lance_plus",
+    "sourceId": "holy-spear",
+    "extraction": null,
+    "sha256": "665f9d2c3f83a9321845e6373e757a26ccd43f35d906246bedc5f53f56d131e5",
+    "pixelSha256": "742042a8dab959af01e98f8dcf5937b47d3947282011f21876d314ef9f6ce8b5",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "killer_lance",
+    "sourceId": "shadow-spear",
+    "extraction": null,
+    "sha256": "c872d7d4877194b2528be370e060df6a941a72f3912aa38457202ac221611697",
+    "pixelSha256": "d016e0ef6c61bfed36e7dbcb21eda34d82e8f5bdeea256fce64bbbfdb3f8dab6",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "killer_lance_plus",
+    "sourceId": "trident",
+    "extraction": null,
+    "sha256": "7dd5d5de1a482d9bf9ce13a60bc2252d506b4e391f2da7e5f8c2be7b2c3d378b",
+    "pixelSha256": "f411dc95800360728f2ecfbd6a439176944261e55bce3bf5df0ad16f85994a24",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "brave_lance",
+    "sourceId": "partisan",
+    "extraction": null,
+    "sha256": "e6eef9079e569436efcdff431d6aeb57eb87bdfb1d92a97b0bb7f52e79b2f405",
+    "pixelSha256": "47d9c48d345bbb98d62840cfc5cfda3ef0427c65a37aa7ad622f38adaf275c56",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "brave_lance_plus",
+    "sourceId": "dragon-spear",
+    "extraction": null,
+    "sha256": "0091d8e1f2b94fc6a9b7d29fc1c46e5a9703981360dc273193bd0c87b22136e7",
+    "pixelSha256": "1abd46107765554ca9d999d4e258ad45c3e868116161d9fcf1458899b4cce891",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "javelin",
+    "sourceId": "javelin",
+    "extraction": null,
+    "sha256": "b6df5d6cb3004f53f12af1bdf3da0f864c65521dbf44a8a1a3b26402f4fa8e47",
+    "pixelSha256": "b7be22d50758637f9620c14c24c10857a150d1ed5e7a9bd15865a461182bce54",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "javelin_plus",
+    "sourceId": "throwing-spear",
+    "extraction": null,
+    "sha256": "738686678911e434acf169b48b4b0d30bf8243967bfd7a342c4939a44c7e29eb",
+    "pixelSha256": "75d603d89e9a1063ede1debdbc5bedc1cb05ed4d20e2cbdaec5d57c9ff2ec809",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "horseslayer",
+    "sourceId": "boar-spear",
+    "extraction": null,
+    "sha256": "144959b7f79914d9138ffa9fe3acc81a1e02e476e4ef0edaf280b817d9efd0ad",
+    "pixelSha256": "3b31a88e69f7ee70cfbaabcb203df83ed1ca5efc22b542c7cb8b3562f22c14f3",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "horseslayer_plus",
+    "sourceId": "halberd",
+    "extraction": null,
+    "sha256": "7e52cd6d9e40b3682e48165c9e21ba6844e6030d6338dd85978046c05fb9acd1",
+    "pixelSha256": "445169d5711ba6d74785fde655a448496b715a858764760aed643d94cc40319c",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "arrow_of_indra",
+    "sourceId": "fire-spear",
+    "extraction": null,
+    "sha256": "84940c38a81d5f3a893c2039a2c6658475b563814e05b9b471fa468fc0c090dd",
+    "pixelSha256": "0c4b8fb1855fadc153653de6f9e746c680fc38a4665d57dba9e3c97f81d5e718",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "arrow_of_indra_plus",
+    "sourceId": "frost-lance",
+    "extraction": null,
+    "sha256": "c067287a425a93e3b6245ed0d858abc1102e023bf06bf875309088cdd0d4d243",
+    "pixelSha256": "a891f1a4fb04b719e6d45465daec31f53e497b57c48772dff9f46e2dea74c821",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "training_axe",
+    "sourceId": "crude-axe",
+    "extraction": null,
+    "sha256": "e2b76d41d39cb2f7c0fd120133d0bf6ba50fe84cb60032c9ac08b9aff630c378",
+    "pixelSha256": "a13285f22fa1cdad7bcb9d969fef6a8a56d2cef15d4b18a8aaf7a301e0a212e2",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "training_axe_plus",
+    "sourceId": "bearded-axe",
+    "extraction": null,
+    "sha256": "2b9d92cd7a4b88f9473359d7ffc65a8bc6dad2d216e4af153487e5a6617cd9b8",
+    "pixelSha256": "88b2b23e3a1246cf474d7a1825ae4ffe74a1d8cd7787849444c32781ce14a94e",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "iron_axe",
+    "sourceId": "iron-axe",
+    "extraction": null,
+    "sha256": "c8e4a049a7d091eb3c6ce00bd697bc082409cd49c4d3faacb777583a65e47a3b",
+    "pixelSha256": "5178dbcd45a3b4e561a69c2c1db3ca5ef837bf84cba8e7a676b670368f9a9496",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "iron_axe_plus",
+    "sourceId": "steel-axe",
+    "extraction": null,
+    "sha256": "f90e14b95f2a77fa45f338284887eed5f856f6057bf04b9d4739664c596470c6",
+    "pixelSha256": "52fb78e41de0287f2c64d4472d421f7743f19b4b8d91a6339c6e034b720f2da4",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "steel_axe",
+    "sourceId": "battle-axe",
+    "extraction": null,
+    "sha256": "9a8a84ac94f0c8e1bb50848baf76b9cc8a21a755ca01bdd337e1ed2593f17cb7",
+    "pixelSha256": "d25d5bc31ed5f780a4853cc45bc753b644ff225c8ce8bc6a9149f9cd3eea9f67",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "steel_axe_plus",
+    "sourceId": "executioner-axe",
+    "extraction": null,
+    "sha256": "233b7ee60cd6a91d7bcb351a34767c8e6e5ecb1efdccf5570ff36a1d5c6d6479",
+    "pixelSha256": "129701ecdbcc644e0a6ca7b947f2e95c37225a79bdffbc45b6625542774bb037",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "silver_axe",
+    "sourceId": "silver-axe",
+    "extraction": null,
+    "sha256": "ad1125fcf909238428da2e749ec68726700a2811a9bcea93d0bbbb7b85743525",
+    "pixelSha256": "cb620d4733b87cb1798519913086a6acd196d3b1c81b895ca6e147e8ab70857c",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "silver_axe_plus",
+    "sourceId": "double-axe",
+    "extraction": null,
+    "sha256": "53d1aef4a1624c6b9da193aa797c02e99e688f86a4750fda3860db181ed6e1ef",
+    "pixelSha256": "24bfbaf4f55989d637334ee648b9fd4af993558bc23c2ffeafb40034b8633e6b",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "killer_axe",
+    "sourceId": "cursed-axe",
+    "extraction": null,
+    "sha256": "e2104d3668359c198cadeea1e8b64dacdac0bfe475c445f2351eea47a203801b",
+    "pixelSha256": "6225191796006990fefca6aa9cdf98d14a0ec87d96f01f266e288cdacb0263a2",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "killer_axe_plus",
+    "sourceId": "runed-axe",
+    "extraction": null,
+    "sha256": "4c382ff8f514b007fc1293e25d414a0866454ae43056629237bf9ac07a3aadd1",
+    "pixelSha256": "43287a541f828dc326aac9245adbaf1fe3677a55bcf4bbff9fd9b922926aae14",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "brave_axe",
+    "sourceId": "fire-axe",
+    "extraction": null,
+    "sha256": "f819fe85bf70114b3e9f5e133137291ca4cf34d7da6fb659801736ae4ba72b9c",
+    "pixelSha256": "07f38b31794a4308bff7e649d40185dd4674670156fe2257a4e3a7f1f3724165",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "brave_axe_plus",
+    "sourceId": "ice-axe",
+    "extraction": null,
+    "sha256": "6f52733584c06d1232dfdab1cba64241fdbf90dad38a4792348c750a7a1b231b",
+    "pixelSha256": "391bf853b62a748ce99b53b72b10a784190286dbc2596fa60e204dc96c99c6c7",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "hand_axe",
+    "sourceId": "hand-axe",
+    "extraction": null,
+    "sha256": "1faecd84a87a0696eacea8f72a165459f4ac084f1e2871a09aae296952320412",
+    "pixelSha256": "e914bc954ba4043f3576d46310fafe8fc3c2478c5183466cb8cfbb430cecfc47",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "hand_axe_plus",
+    "sourceId": "throwing-axe",
+    "extraction": null,
+    "sha256": "45b2137d187acd67fd0b9b8f11a93a64cd2a91199952359d6bb22681a250c258",
+    "pixelSha256": "f4b348dccb922c33ba7c6c0c883da58bb66a0d982c0e5aff0280c69674e25851",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "hammer",
+    "sourceId": "warhammer",
+    "extraction": null,
+    "sha256": "8dd56fcb12878d415fb148822556544847f61c87114d11c31089d7cc6094cb84",
+    "pixelSha256": "83b86026f382550e09bb071aea11330644db3b6634baf7744733e844cbb14a5e",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "hammer_plus",
+    "sourceId": "crystal-hammer",
+    "extraction": null,
+    "sha256": "d63c8f05fe075deafbadd6298bd2d1fd1e26e24c8c85a1dfdc27a97eadab801b",
+    "pixelSha256": "998bee24a9b218def23cbfbbdcd6b0ae391ddc0134ac4dd4104354a73699e16b",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "bolt_axe",
+    "sourceId": "lightning-warhammer",
+    "extraction": null,
+    "sha256": "bd252f7d06889a6cc890df92160577199faf860f3b4c564c1f350d6f4a42d46b",
+    "pixelSha256": "510931bd5e4a926bbe01cf53c4f7c7af8fc4b85dcaf463542ca2bf2a248142a8",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "bolt_axe_plus",
+    "sourceId": "frost-hammer",
+    "extraction": null,
+    "sha256": "b4cca061d084448a6a9d773e142c8c65572a751f22c0adcf2ca5c56844751c6a",
+    "pixelSha256": "abc8f0c119438c2c46759dfdc14a33986177c161a7739eb52259f9091f8b6714",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "training_bow",
+    "sourceId": "crude-bow",
+    "extraction": null,
+    "sha256": "98c5dde1d4bd41022e887807f77d8b49cbd6c47029def6141ddbe923292e420c",
+    "pixelSha256": "e9de928ab038fe5f3c39fa7a41ae6647b39a0a4cf4e34ed5ec81a6b6a7500e11",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "training_bow_plus",
+    "sourceId": "archery",
+    "extraction": "bow",
+    "sha256": "46469d030e3a6e87a5c1390d1e35a3179257f3ed9dfba49ab5109f22d7376879",
+    "pixelSha256": "b6bf6d29fbda9dcedd212a546ee461b9df4a1007c5f788019f922a8f05a90bf0",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "iron_bow",
+    "sourceId": "hunter-bow",
+    "extraction": null,
+    "sha256": "e4cf3d4f252ca5be513436f0ede20925d4f848ffb3ec86bbb1948b46d699c51a",
+    "pixelSha256": "89f6769fd585e6cf11cbfbc48b241982a5da3319ba0d68fe7b1a6f32378aa997",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "iron_bow_plus",
+    "sourceId": "recurve-bow",
+    "extraction": null,
+    "sha256": "564f36d0f53029b7c5da65a7a0f1d7022bb7a1cba0087bf4a21ec99af50de6c3",
+    "pixelSha256": "d5772cbd30c240de6cb67514e175a35554c985cf195598cde3471ee32581f2b0",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "steel_bow",
+    "sourceId": "long-bow",
+    "extraction": null,
+    "sha256": "bf7b8b730360780e331b873a3f396be19945dc652fc35875af5770839f75de0c",
+    "pixelSha256": "9a92f24dba8bce0b2225101d2ee70fc04b9cc29c9d6cebb3643fddb27a354f28",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "steel_bow_plus",
+    "sourceId": "war-bow",
+    "extraction": null,
+    "sha256": "9d1b9e68228139cd0500201702cab3cec3824811ae82dce8366e8016ff990c68",
+    "pixelSha256": "901ddfdd351d1004e8adb8088999599b3ffba3f0b2e4ede4c6198bf0a640f4f0",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "silver_bow",
+    "sourceId": "elven-bow",
+    "extraction": null,
+    "sha256": "1edd1513d3e6dbedd8cf88f72d11324c6a8bc782d8feb9c703c734dcb49d8980",
+    "pixelSha256": "9d6c8a41d47c40c20666182488b344ccb9575068ffd6c928e8e3122126673458",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "silver_bow_plus",
+    "sourceId": "composite-bow",
+    "extraction": null,
+    "sha256": "c9851a67c18c3cb06dced66ea5b50b76b412183cef6d629384a789adc53c3d66",
+    "pixelSha256": "f53188ae31740a3cf9dc477305a76e99f0a26df5e189aa49284e4bcc7811f9f9",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "killer_bow",
+    "sourceId": "shadow-bow",
+    "extraction": null,
+    "sha256": "b67a1632273a11d31471982f82662f0346e0f44f539f4517b89e7ae9b6b52b54",
+    "pixelSha256": "9e94b03f4a3b630eaa81645d2dd05e09d62276dbe2db6303fb6222d3f21d9feb",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "killer_bow_plus",
+    "sourceId": "bone-recurve-bow",
+    "extraction": null,
+    "sha256": "8832ffd2d5ff76079e72c9975388e7e013f62a377c25f6be722cff0ef10f0198",
+    "pixelSha256": "d63574d26b412a0e18b99b9c86dfd80db1964aa8389467ef208e4c38302d273f",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "brave_bow",
+    "sourceId": "bowyer",
+    "extraction": "bow",
+    "sha256": "cfcdf9ea2c838eb303a9247c3a4a629ddb9876f02edd46fee30c245d8244396a",
+    "pixelSha256": "06d49ab261ca5fd2459d59cb71b72546690a34c177668ce052d21c5149a365c9",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "brave_bow_plus",
+    "sourceId": "yumi-bow",
+    "extraction": null,
+    "sha256": "baeb29561a1ea5ada97b65089f700368b9b31e6a1190302804742bcfebb597d3",
+    "pixelSha256": "ac949ce5625cb2b84ee5b5a8461caa0d622da42edc65dabef3873e60dfc33491",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "mini_bow",
+    "sourceId": "short-bow",
+    "extraction": null,
+    "sha256": "58584440c227e2199222ed224631b9b354b2ed3fccd89f8531c5745b769a730b",
+    "pixelSha256": "75882fed0f050c568c3786fc809aa245ff46903464ddea5a19d96578a59648d8",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "mini_bow_plus",
+    "sourceId": "bone-bow",
+    "extraction": null,
+    "sha256": "6e67265425f6a6048de680e48a6ef338fa25d982a106d4f662c7ba3a09aa4281",
+    "pixelSha256": "83fcbcec20e148c6d00b0cd77db6b96ec334880397a77db300b52f688d0eb66f",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "longbow",
+    "sourceId": "frost-bow",
+    "extraction": null,
+    "sha256": "68a768fdb0636ce9a1fce047607c8354cd00295eafb9944ae8d63c0a31116665",
+    "pixelSha256": "9014b7340fb5bd197113bcc60dc3180c89f973e646cdf87595061d7b3405ff6f",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "longbow_plus",
+    "sourceId": "fire-bow",
+    "extraction": null,
+    "sha256": "c6d2c325d2221a8feda2d9730d908b95c865f0d37264601a961764d3f71df166",
+    "pixelSha256": "de66ed7414768955653ba12972e32f461f5c7394173ae71f591b5818ca9e7bc0",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "magic_bow",
+    "sourceId": "storm-bow",
+    "extraction": null,
+    "sha256": "ab386a3f5e7f896ddc863a5bf95fff8ac0901f2a9e2a51c31da189f383c5bd83",
+    "pixelSha256": "1a4a8d0af0fc852adaf765b8633b3668f0596b8b9e618a926c10fed7e23848b6",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "magic_bow_plus",
+    "sourceId": "power-shot",
+    "extraction": "bow",
+    "sha256": "d45aebb91a91a4ff123f1bda2284dc6b2c624ea608851a93f1f6451c4c810291",
+    "pixelSha256": "abeaf5f3537d5108a4e0c31a93cb5cc3772f957ee50061b63aa4cb922a651a34",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "training_gauntlets",
+    "sourceId": "leather-gloves",
+    "extraction": null,
+    "sha256": "3e5843bf400caf035b9a08f52cc3a5d45a19bc2529dbba9214f7efbd6d0c4ef6",
+    "pixelSha256": "b80f0bc3940ba9e586824517104e419765ac04f2800e9bd41440d463bf324c63",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "training_gauntlets_plus",
+    "sourceId": "ranger-gloves",
+    "extraction": null,
+    "sha256": "e73c0b6ba5d3656aca615e21ba7d6fcd3c0311b5b8a4e811e8c7cb9f7cf09e0f",
+    "pixelSha256": "0f927fa4e8b58c05732441dd4d048f87bbcaed307f3dd4f54d961573f632104f",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "iron_gauntlets",
+    "sourceId": "iron-gauntlets",
+    "extraction": null,
+    "sha256": "84df4f655620ad97da4bf7ad3e38be6135afc2577701fd174357d7b76f3b7fed",
+    "pixelSha256": "48e36bd2b4b8040a30cb4df1a616f18f14844fada2c590ea1637cbc3b3c27624",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "iron_gauntlets_plus",
+    "sourceId": "chain-gloves",
+    "extraction": null,
+    "sha256": "08c0bcc969741bb86c09c5ff5f46101ac3d1e64bdab157947961f447c5e71835",
+    "pixelSha256": "1934fa53a1eb4396c92a50056fc8ec259d717b428d0ac35f4d6657552831a02a",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "steel_gauntlets",
+    "sourceId": "steel-gauntlets",
+    "extraction": null,
+    "sha256": "d8078c58ec3709002ad2f52adc0c96c2ea2ef16c3428c0ec42c4624c2c121f6e",
+    "pixelSha256": "a03a0d7242540def44235af73cd033f2e179cfd29e1e40dd555aa5df539c507d",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "steel_gauntlets_plus",
+    "sourceId": "iron-bracers",
+    "extraction": null,
+    "sha256": "3394fcea6a735d5944552335518b752cfa25ee4240e842b896b8164576020a0a",
+    "pixelSha256": "46fa9f92b475c95b2a6f187577f653a31fbd0f94f74653a727cccc0bcf0e6f05",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "silver_gauntlets",
+    "sourceId": "crystal-bracers",
+    "extraction": null,
+    "sha256": "6a6481e669ef19a2c41f14b6b3fc2cd00ac432b65cf455a67e53f1e913d66165",
+    "pixelSha256": "1bd09fff45a7a702df63f219211abe842ca30719dd337f2a8434e9a0ea0d0194",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "silver_gauntlets_plus",
+    "sourceId": "steel-bracers",
+    "extraction": null,
+    "sha256": "9273f312e4c4fedcbab346b06964504641e7259b5fbed9bcd3492698466d1024",
+    "pixelSha256": "24292d97be8022732f71377f38f85a75970901735e819675ca95678a6988ccbf",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "killer_gauntlets",
+    "sourceId": "cursed-gloves",
+    "extraction": null,
+    "sha256": "5f171a4d089b56b8388f607d62a77bd2adb875e6072d4f549d66e240bf0d8cb0",
+    "pixelSha256": "7215fc2eb30141f629522b5e52095a41ec9c393422e37b0737fa1fe9c7d234f6",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "killer_gauntlets_plus",
+    "sourceId": "cursed-bracers",
+    "extraction": null,
+    "sha256": "277eb1da0bb40efde02f68f7938b3dbba467a4f69cd54cefa5d774cd4608c044",
+    "pixelSha256": "9fb2db7a6ceba189fe0cb1c20e025b4b70a3a4fee19a393ebbcd7df717ee3717",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "aura_knuckles",
+    "sourceId": "priest-gloves",
+    "extraction": null,
+    "sha256": "3f580c28aa6480f6af89c7b0e0558461c1df4740e515e162db636c0db490260f",
+    "pixelSha256": "a476a2a58582f859898cf3cf65987b52b750c01590b3e1f38552641b246f9b24",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "aura_knuckles_plus",
+    "sourceId": "holy-bracers",
+    "extraction": null,
+    "sha256": "aa66f39fcb3a9a0451bfbe3dd7fab9312567f2fa1cbe6da95357a88953aba3dd",
+    "pixelSha256": "4e4571442f5c0d92d70ba206601f3fba8986d598775bd59997ed8224f2ae3a15",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "dragon_claws",
+    "sourceId": "dragon-scale-gloves",
+    "extraction": null,
+    "sha256": "21922253ce09fc849d5e00b42e8a0f232ae77d751026729b2361d1790d8d18ca",
+    "pixelSha256": "328982351f621fb34b6193d9db5a158bda688fc6adc277563e609f5570c131e0",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "dragon_claws_plus",
+    "sourceId": "bone-bracers",
+    "extraction": null,
+    "sha256": "f34794e9cc091bbb12e546fc7429cb73076ec4c9b065b39273628d318f1b1c55",
+    "pixelSha256": "d1048da44bec0606aeb3e858e1751bb00166b0413f340e0ef3f26b72e7359c85",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "accuracy_ring",
+    "sourceId": "sapphire-ring",
+    "extraction": null,
+    "sha256": "2a3bf9976dd054faca091063e217c9fdd3b6ecc35e046d12fadd32caf70e82dc",
+    "pixelSha256": "ff37d47102e74b6be80ee30c7a4aadbd890c5ab40d9ab7e99393f928938285a6",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "aurora_shield",
+    "sourceId": "holy-shield-armor",
+    "extraction": null,
+    "sha256": "dcff975bcb7b49a8f22d4844916d126757fb013eb52e3a14b470906be43ecbd9",
+    "pixelSha256": "28cab249b515dff7a5126ef55aef1f45ee8a7bca254f5c0d078cd2ccf56a761e",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "black_eagles_pendant",
+    "sourceId": "raven-amulet",
+    "extraction": null,
+    "sha256": "9677b0087e5b2083ff27f487bd66bf7ae971cef39078500ba0621156f5060abe",
+    "pixelSha256": "faed8477cbae86e280e769fb31feb0355e246ebbc85e107e447cdd6824af742d",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "blue_lion_brooch",
+    "sourceId": "sapphire-brooch",
+    "extraction": null,
+    "sha256": "8b89c15d921e2b4c42c2fb8a357942f87502929a890f7f82b9e8e6e2efb65002",
+    "pixelSha256": "4264810a43c0a736dfaa5b32b28b0a98f66c0932803e60b68fec6833eb2aa342",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "chalice_of_beginnings",
+    "sourceId": "jeweled-chalice",
+    "extraction": null,
+    "sha256": "bcc5756bf713d717fa7addf5a594813ce690d38f968378a92c51c696b9a5c133",
+    "pixelSha256": "fca112fac2c5be2a754fd8d63b3d62c92aafa07a3edca712644fed0f35249408",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "critical_ring",
+    "sourceId": "ruby-ring",
+    "extraction": null,
+    "sha256": "47ef9ffadc5dce1bee17c29540dbb88a5ca8b82fef4763b135624983ec5fb1a2",
+    "pixelSha256": "3905b78c6483290ddabed4e3822c37b17abb75007ae608d384ec5c149bc7256c",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "evasion_ring",
+    "sourceId": "emerald-ring",
+    "extraction": null,
+    "sha256": "acd5e433718a2d819aaa54ef9e98caffdba912b99e88ed79a6df7db1ce753812",
+    "pixelSha256": "136b3258308ad295986d9676c758c3f7aee1376332c455709137317962c22761",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "experience_gem",
+    "sourceId": "topaz-gem",
+    "extraction": null,
+    "sha256": "7275dacfbf0e1200f4eaf120199e67105e72b468f6b07a743e34e2b8e4df3874",
+    "pixelSha256": "e8fa034448bdf2f22df43df7c590d9a6e9ed0a530a26cb2a86685738e5c920dc",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "goddess_ring",
+    "sourceId": "angel-ring",
+    "extraction": null,
+    "sha256": "873bba44d006629dc6fb3a2ac9e8ba6a16162923b4d9614f612cf0dc5538cd1d",
+    "pixelSha256": "303bd79b17a21eb22fc599f343778a8b171dbfb2607eb708a8ccfd15cf946cb5",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "golden_deer_bracelet",
+    "sourceId": "gold-bracelet",
+    "extraction": null,
+    "sha256": "5a5eb15978fb2029d815e9b0f2e1bf672d6a1e5275291f94b2d8aefa2d65a733",
+    "pixelSha256": "2b1c5baa5e49800e4a6ef9d0296f99ca25b05da15e42f49c86f20382c0bb3146",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "healing_staff",
+    "sourceId": "holy-staff",
+    "extraction": null,
+    "sha256": "fbb35adf612cfede40c1f33e8a49cb5414a18715f594df48e4f80afe3556d7da",
+    "pixelSha256": "165ef74c3871778e8511714c680aecfdcf340515d8c9a07d7ecde48f52948589",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "hexlock_shield",
+    "sourceId": "crystal-shield",
+    "extraction": null,
+    "sha256": "b5b7540edb2ccf7c1ba8dc60b4a338d5a9fdc17c6f496eea173e5f5d1736432c",
+    "pixelSha256": "01b8db10c7e30d3e1cd7386466425f015fa89e8807f3701f84d5b0ed7531a08b",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "iron_shield",
+    "sourceId": "iron-shield",
+    "extraction": null,
+    "sha256": "edb14f8cb19a372d1ae9beeb4f93b4486401daea1aa9973cb312f4d77e686d9b",
+    "pixelSha256": "5a0b7a275e816aa774d2f8d75b5fae4948652624101297d18f30b6ac463774fa",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "kadmos_shield",
+    "sourceId": "kite-shield",
+    "extraction": null,
+    "sha256": "e1a68a4f46d58148d3a3089b905ff7bf63f66f8dbae4e935f0a93649b90f9833",
+    "pixelSha256": "089a1d71a21b31b30a39dab3abf0d89c3423b3dd1ed1873b50a3559c1b8eee86",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "knowledge_gem",
+    "sourceId": "amethyst-gem",
+    "extraction": null,
+    "sha256": "544394dd8724dbcdcc11e1fa07568fcebed72bfec5610544c648979f2b32fd90",
+    "pixelSha256": "f535fa58054a2f40b780a3abd55e2887bd505218f970bfade108d0ec090c6473",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "lampos_shield",
+    "sourceId": "round-shield",
+    "extraction": null,
+    "sha256": "1bdd1a7bc6abee75c2a17805dd9fe1aee984a1ae85d67e3ee680163f8072c2fa",
+    "pixelSha256": "7cd05da15b724c608b4b7204a794493241a7869938b7153161952e1c4dd3bba8",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "leather_shield",
+    "sourceId": "wooden-shield",
+    "extraction": null,
+    "sha256": "adfeaf2caf9786ad4efe1049b7b0fa1a1309aeeef44789abbd5a00bded986d32",
+    "pixelSha256": "0f54e1d41182b869d2786824d34ecf419d2880051c8a2228d972523121ea688d",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "magic_staff",
+    "sourceId": "arcane-staff",
+    "extraction": null,
+    "sha256": "557b757607c7e1ef71e35f0c1b9f97626459a0cf2803f07238b9ef5ae689d2d6",
+    "pixelSha256": "b9d94c7cc8985e4ea3ee64c1785f264ec5934b5fb8c0c68cf7b95ea3bd7f3642",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "march_ring",
+    "sourceId": "topaz-ring",
+    "extraction": null,
+    "sha256": "e073b0629d0d8bb6a069b9232cfd2a89460ab21f4a6d340b821153cc7cdf5070",
+    "pixelSha256": "4c821b18a12145378b428386059d53d035a7d1111300ca9552e8bec45740fa3d",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "prayer_ring",
+    "sourceId": "moonstone-ring",
+    "extraction": null,
+    "sha256": "5bb1ef0d1b8b1a62c56776fea15c8dca8f22e1467d1da1cab7ee5d0a0344cd17",
+    "pixelSha256": "c63dc9bbadf59d4aac1e5a1d30bcb087db8cea73a9318821ab73e88047065587",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "silver_shield",
+    "sourceId": "buckler-shield",
+    "extraction": null,
+    "sha256": "79d5a6446db2150d508c033a8c1bc272bcb7786a1f3dc90a2933344dff886d64",
+    "pixelSha256": "0e11c72ca7d98a460ad41dd37e245dab112a039f9a2ab7112f179229e77c680e",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "speed_ring",
+    "sourceId": "storm-rune-ring",
+    "extraction": null,
+    "sha256": "1ed3f1c4cff7c0b8093418ca965039be677f792a1081b7011bc9d62aa267e6c6",
+    "pixelSha256": "912af7ec84034bd9a2ef3a1b7db6728a45f5115fd56e55b519524034bd93ff69",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "steel_shield",
+    "sourceId": "steel-tower-shield",
+    "extraction": null,
+    "sha256": "3c6e372363bac2686bdd52cc9ca8f874c373defc6917c81725ad2bb0366d42c5",
+    "pixelSha256": "bd59b3e52ccb1c28ffea39638cffc2c69d8bffd7ec4e63d28c8d5eff61fa2285",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "talisman_shield",
+    "sourceId": "bone-shield",
+    "extraction": null,
+    "sha256": "23f8b652b8bbf1c10a2a4a4665147af2e588d9a9717e68fb3d175aecee427a9c",
+    "pixelSha256": "15a36239e69ae3ee702811996723c1ac64ccf2262cd3aa42ab0a7b8e10e032b0",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "white_dragon_scarf",
+    "sourceId": "traveler-cloak",
+    "extraction": null,
+    "sha256": "14f655c06f530ec16840714c527fdc13e5aff452a973f0a8ca150ccd4fb48277",
+    "pixelSha256": "7c19c4896aee4c447c344756b9143ba3957e3c3746093d8bdd71e44bf8bed332",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "caduceus_staff",
+    "sourceId": "serpent-staff",
+    "extraction": null,
+    "sha256": "10caa5bbb64ba898f48b6403b1d7f3dcca609addd2ae8ec5be4d80400de01f22",
+    "pixelSha256": "39fed13249c0f4a94c678bbd391b3053d0e7dea40ce7bdeed376a80b4272efa3",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "ochain_shield",
+    "sourceId": "cursed-shield-armor",
+    "extraction": null,
+    "sha256": "b2a80995d9522299ecd8f83a4225b49d04132ab29669106d96fec756dff048cc",
+    "pixelSha256": "73b8aee337e443ebd6922c01beb0f42c0e0b4fcf34fac6d9c74098e948b89722",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "seiros_shield",
+    "sourceId": "fire-shield-armor",
+    "extraction": null,
+    "sha256": "13a15325ee0c5396d11c1c5066d3618a9c8cd138c0510de0b83b28a4c07abd64",
+    "pixelSha256": "92ef70556c1e4a3ff4517b5b8069178cf3fd0ae5a48b495ba6e44066a3d872d5",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "aegis_shield",
+    "sourceId": "frost-shield-armor",
+    "extraction": null,
+    "sha256": "822c976a79722bde94a389a762ca288fceb440dda773d3c6c129adc7877f9adb",
+    "pixelSha256": "00728250cbf0d444bc1d9e21f56790abbe4b165f7a1c5816e0ec75854e145ad1",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "fetters_of_dromi",
+    "sourceId": "rune-bracelet",
+    "extraction": null,
+    "sha256": "cf9bd4a586fadb5f8dae18b9d0068d5b59ecf555e180aa1b7e26036d4b9ee4f2",
+    "pixelSha256": "12014f85a8ce8fe9745396c1b10ac0fb86c4348a669825941e6d35f5f9e33340",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "rafail_gem",
+    "sourceId": "opal-gem",
+    "extraction": null,
+    "sha256": "b9e3fca45e924dc0a621c2b05108bf2463207849cda92b1cb55c431f868a92f0",
+    "pixelSha256": "1ca69fdd3643a3f3ade2b0d9e1f087a5e9b8f851a79494e186f9ec37ca667565",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "thyrsus",
+    "sourceId": "dragon-staff",
+    "extraction": null,
+    "sha256": "913294b52c27597b0575b22b1d4a813ebf0fcba29a30eb5d35ad234b94e88bf7",
+    "pixelSha256": "230549a1a5a9635686d0f20f02467229aaef0ef4b623a4ff0fd5001c4fc193fb",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_fire",
+    "sourceId": "fire-orb",
+    "extraction": null,
+    "sha256": "d35a9d500888e2eb72595aca19da32f2bf5d481bc63cc3add188880bddc55f35",
+    "pixelSha256": "c379253cc90c67e5c5ea6e1d893727b33bde58ff43be5903bfee7573a7e24df3",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_bolganone",
+    "sourceId": "fire-crystal",
+    "extraction": null,
+    "sha256": "f8e2d3fc73222d3a061035da9ed58d456e7e855974a25a89a0f6b4e9d540bef2",
+    "pixelSha256": "bbb175d3eccb400d02ff5badad1b475e90f686145acea61cc03f36c9580f911c",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_ragnarok",
+    "sourceId": "fire-scroll",
+    "extraction": null,
+    "sha256": "b062f097334d8748457a4ff12cdda2ada562612b35f5c691e1e28e4350be5409",
+    "pixelSha256": "b56688c9f81ef540eec3a687ec6acf35f3bc5661a6b603891deccc9bf499d355",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_thunder",
+    "sourceId": "lightning-scroll",
+    "extraction": null,
+    "sha256": "4278334c5bd9b99c0439e7796b0dbb0b58657c5ea5a0362f2bc9b5a0dcfa91b4",
+    "pixelSha256": "950016ac7982574d5a0108a58c46fbc1ec930cc37487529f11ff3452f3b7c90a",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_thoron",
+    "sourceId": "storm-orb",
+    "extraction": null,
+    "sha256": "a9dd4b4a5f0db9eac40255fd3b1d424e758b91d930ae7f7205ecfe10e7f8aceb",
+    "pixelSha256": "23a6dfc0fb456a2ec6cae4079ed1bf7ce3c0e4959f4dfd44ee18dd1fed0323ab",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_bolting",
+    "sourceId": "storm-crystal",
+    "extraction": null,
+    "sha256": "b1627bb4b95612909d571951e36be9cbad799083eb1a34290cbb30375e80eb10",
+    "pixelSha256": "88667aab23a4a338d9a5146e95a9144249865845dc1f87f78a6ed26396a915a1",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_wind",
+    "sourceId": "wind-scroll",
+    "extraction": null,
+    "sha256": "edc6b306ea8c634bb73a2661e779ecda1e8bcfe0eeee5628d92d1a2db0b4dcc7",
+    "pixelSha256": "4b40843213b3a577a2b59a4b7ac5da65d85235eb6e62f117951949cf7492f180",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_cutting_gale",
+    "sourceId": "air-essence",
+    "extraction": null,
+    "sha256": "0319980c1fc136d9072b0f6e4bd1d47eb020191185b852df960c57625d5ea1f8",
+    "pixelSha256": "258ea113f3c4235364bee02124f2ee0830c413d0542354925baca324c31d0968",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_excalibur",
+    "sourceId": "nature-orb",
+    "extraction": null,
+    "sha256": "250df06419338a34f89a549763546527d010b4dee8434b2ec9bed40b2fe0e05e",
+    "pixelSha256": "220b349c674915d9ad96a794086df127e389e5d6125d6e339545703963114bd8",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_blizzard",
+    "sourceId": "ice-orb",
+    "extraction": null,
+    "sha256": "8240864d283f8a82de106170b648dffc15aabdd65fec0f0e754ca9514dac3dc6",
+    "pixelSha256": "0f9232bc771154d2ab7614468230b11418aad5cd3bce4a7ec0acf464aeb2699c",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_fimbulvetr",
+    "sourceId": "ice-scroll",
+    "extraction": null,
+    "sha256": "9f14c769db9fde34bfb83ca822257e1b1bf3fb821c4940566ce52811021fdbda",
+    "pixelSha256": "879b459d34ee47bd907a2155556aaec62590d9cd128f4584d2bf9161dd5ffcbf",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_sagittae",
+    "sourceId": "arcane-orb",
+    "extraction": null,
+    "sha256": "f37dc84463641048a9e7829e5dca3687dd24683d0ee267bb687fae780fec7c54",
+    "pixelSha256": "cde188e8393aca0ad36dabddd8a10735545d65fba5902a29701337c90821f14b",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_meteor",
+    "sourceId": "meteor-scroll",
+    "extraction": null,
+    "sha256": "93e85705cedf7665512d94877a65673f101e5446e72be99527ea2fce3f7e29bf",
+    "pixelSha256": "a5f69f3ca55733b9a4422679cfb962aa0577e6264b10de4ec24326ad12082914",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_agneas_arrow",
+    "sourceId": "holy-orb",
+    "extraction": null,
+    "sha256": "ddad191d44081244af0a980c0f2a6e187fad1b2d83c2363782043c2adced3610",
+    "pixelSha256": "8546b7995be84301a8a51b0b3a59444d62940bfbe546337bfac9cda26ab2ff89",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_miasma",
+    "sourceId": "shadow-orb",
+    "extraction": null,
+    "sha256": "bdbbbc7fe7a5738393a2729d8e9eb2c1fbc93e0b943d1f37f3dbbbdd8c4fc152",
+    "pixelSha256": "8250964331d19e15e8f5b769f7c2b27734a969e425661a0e3f80c6c1ca099acd",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_mire",
+    "sourceId": "shadow-crystal",
+    "extraction": null,
+    "sha256": "4a502c935328075e31cbd17e2def7bf17228d7ce9d13639a0d72bb733d87c917",
+    "pixelSha256": "817f2b1b3856cc3dbeaafa1d429cf0d7759004ca2923acdd1611deece06333ce",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_swarm",
+    "sourceId": "poison-vial",
+    "extraction": null,
+    "sha256": "d12d0c15ce5b600c6b1e5520947c63f8426c4a577dc49ba04c045b6bc1602cc7",
+    "pixelSha256": "da0b4d556351c15720adccc6018311c67010ad80e70f0123625d536e4c65ee44",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_banshee",
+    "sourceId": "necromancer-amulet",
+    "extraction": null,
+    "sha256": "f86799ed972efdd029e38763b4b06623a3e8bd810feb3df7258eced17993ce9d",
+    "pixelSha256": "4bb0b4448895fae72efc5bb116dd1bdfbcadff2badfd3925b456042c34a9def3",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_death",
+    "sourceId": "skull-ring",
+    "extraction": null,
+    "sha256": "e7b0f463ef2a122ee939c08ea1bdb70d81d9f469c782396d6a9c09e9e2a20cb0",
+    "pixelSha256": "7b727c0d0f400f480ceadde18524f29a1a636b70194ca73ac91347405d7ef97d",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_luna",
+    "sourceId": "moon-crystal",
+    "extraction": null,
+    "sha256": "e7f096c5017700b94c16a0cde4f82a73db7057933b7f881a1bb0401088f5a843",
+    "pixelSha256": "0758392618022bf7fbf877a8105b3b82bf4cca8c10f971cd6bb6a95eaad0d392",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_dark_spikes",
+    "sourceId": "void-crystal",
+    "extraction": null,
+    "sha256": "6f28f064bccc46c1a693ed71c2588b4f559048c9d0af3c8e6d5d2de7c1ae2514",
+    "pixelSha256": "4d65cc4d3fe6db774796a8fb96651d9deb58a74dfdcef24dbd328c60a2dd1a8f",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_hades",
+    "sourceId": "necromancer-grimoire",
+    "extraction": null,
+    "sha256": "c2a4836f9a2ee93bbfd5cd2a7139c7b5a5a1e1266bb4ee6d41e682220190d9f3",
+    "pixelSha256": "b06117cf1ea50a14771c51a0a973f20b7005a3abccfd3db93e1b2e21a9587782",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_heal",
+    "sourceId": "life-essence",
+    "extraction": null,
+    "sha256": "e66d158da380e544977f79d5945d336e9c8b6a501feb92bc52106448ffb7e0c8",
+    "pixelSha256": "d72067e89399506aea74308e84a38cd927807dedccff4c3deec5fb2d87985123",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_recover",
+    "sourceId": "healing-scroll",
+    "extraction": null,
+    "sha256": "27cf83aa500535e5e2f8167c918c7d9d86b070018ec26af7cf8014bd544a54d6",
+    "pixelSha256": "e4787ad66b4ce5d9f829bba13b2b955b389d1c3f02d4c9f0e265c9ffe64544c9",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_physic",
+    "sourceId": "crystal-heart-amulet",
+    "extraction": null,
+    "sha256": "b62793ff31b29fb15a80a9fc23bb51518bebaf5a7a294ce1a4ca32b7571ecd51",
+    "pixelSha256": "29af8de4d875bf4e55885972cb53bb069b83242dcc37fe75b70f0deea9420808",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_fortify",
+    "sourceId": "holy-crystal",
+    "extraction": null,
+    "sha256": "eaea14fee127f2935ed7d8d14b95373036ce7cd61b45d23d014128b10b4864c2",
+    "pixelSha256": "897ff28840c83cd9fbaa850a25d15c18e83c5c6933c746b861a3b6f8d7247500",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_nosferatu",
+    "sourceId": "blood-orb",
+    "extraction": null,
+    "sha256": "ffb1d5bcd6d48b75d8c0eb0f57f1e969fd91ea7e423b59bf03076669de21c6ac",
+    "pixelSha256": "5e6c8c48d1122d17e3c786e41eaaabc4b867255c30c41f251039ac55ce991297",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_seraphim",
+    "sourceId": "holy-wand",
+    "extraction": null,
+    "sha256": "6ac1215fb18648be64eaf0f68e6bbffdeae3f0f7ef1ee0925a4223656a777722",
+    "pixelSha256": "dc45c2e88e19c4a850028e0eafa9be8e6d76e8d8a525c161a2ebc917764c4d75",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_aura",
+    "sourceId": "sun-crystal",
+    "extraction": null,
+    "sha256": "ad6ddd0731839a583996f5e0617d6144249e8663bf792d733a80013b9f619846",
+    "pixelSha256": "ce87d4bc18cb40759336b0f072e583a54c46a1ca69bf3aa66a7777c72706b9d8",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_abraxas",
+    "sourceId": "paladin-prayer-book",
+    "extraction": null,
+    "sha256": "9c70c756055e5172a0b5159fb8b9279e73f9790af7024af8470eb2b818a31c29",
+    "pixelSha256": "c2bad5422b611de8577fb415c8e2e660d3cb8e6e23c8c7fb5803886696d4855c",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_torch",
+    "sourceId": "flare-torch",
+    "extraction": null,
+    "sha256": "10a6cf7adba5d63a249754e7e7aad77d632997b871ba78c9874f37e289bf21e4",
+    "pixelSha256": "50fd06efec3073838a71576362566b09e5d879e03d04e197fc4dcb7dd7d7baf1",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_restore",
+    "sourceId": "dispel-scroll",
+    "extraction": null,
+    "sha256": "51307d4b2b92d1a8452285f8ac6afb157d395580bacb1ea2e7cc3547ebd4694d",
+    "pixelSha256": "80645dbc8895a07f78c297c0df1cb0e4c12e837dba95c3a599aa15602ec7f031",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_ward",
+    "sourceId": "protection-scroll",
+    "extraction": null,
+    "sha256": "d8f5d4d3dca42fe7e5a8ead1bca1f414526ca93b56d12338f6a6f4b0f2d3443c",
+    "pixelSha256": "0376ee92f480aef8724c898bbd80ad69be2f839077f6ec49b7a2dda156991a18",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_silence",
+    "sourceId": "banishment-scroll",
+    "extraction": null,
+    "sha256": "0262bf5bc2963e7ba8dfd5c8410d3f346693a855d03047a63d4bfc7c78e1f459",
+    "pixelSha256": "fa986db17aa121f352c8b90deba9f52fe44df792e740edf572a4a0bc713d43d7",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_rescue",
+    "sourceId": "spirit-flask",
+    "extraction": null,
+    "sha256": "634c4dd6d1cb6c23b28f454282aa4946bf11f210e20f77e286bcdf604f8b133e",
+    "pixelSha256": "56b27176c585cb3b0c0e20d7db47a933e39afe0878c514c6e4cf09badbf25c23",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "spell_warp",
+    "sourceId": "portal-scroll",
+    "extraction": null,
+    "sha256": "2aae51d4f9d79c254e5149147026c2f1cb53887661cc69988a2586b3b106176a",
+    "pixelSha256": "a068ce890d3b6fd5077d3fa0f5f1c6ea992916e63966926cbd462f8508775a31",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "vulnerary",
+    "sourceId": "health-potion",
+    "extraction": null,
+    "sha256": "74eab5926d9d1be15fcbaba09669df69df23e815a6a4408cd8877916422a8a7f",
+    "pixelSha256": "1be64f1df525815ea2c0caca27971a506c1973ae1d4d7063bc66923cb0ced16c",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "concoction",
+    "sourceId": "greater-health-potion",
+    "extraction": null,
+    "sha256": "063e2397960f3ccb6e2acc869a15232009001ea616efd84c91774fbfb038ac1d",
+    "pixelSha256": "c03f77387dba96f46ee5fd5c284c9a92248f29956788eea94c4ef188a93838e7",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "elixir",
+    "sourceId": "phoenix-elixir",
+    "extraction": null,
+    "sha256": "f881c20023423545d3a996f688f1cbaa3fec96773a81f25a1a3b8c7053dc371f",
+    "pixelSha256": "0956ffe461c8265764daf54d414c93994e6f5fcacb2ecc0a18c13d5d884d355d",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "antitoxin",
+    "sourceId": "antidote-potion",
+    "extraction": null,
+    "sha256": "852d977d5e37df53aba76a485a34421584944e26737012c9c6283855266aa1ba",
+    "pixelSha256": "dbe1666c23d4740d5b607c5463097d26b7265c93822d647ea2076de8576e8b14",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "pure_water",
+    "sourceId": "water-flask",
+    "extraction": null,
+    "sha256": "3bf0cb50d0e9f178f1dc9c2a3e398dc5b07d9b8fed8095b1b0dec15c6f02098c",
+    "pixelSha256": "68e1840e458e1216ba5f48aa9b889c79335508e896cec7745f55faaa09df83ff",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "beginner_seal",
+    "sourceId": "bronze-signet-ring",
+    "extraction": null,
+    "sha256": "dcbebcc0bd7a21ab83acd64e98748b9a1a5dfdce969455d774f15aa7e9334804",
+    "pixelSha256": "da3871b56fe590785fc3a3a08c8650a948e437ee539c7884c69a1006f8231ab8",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "intermediate_seal",
+    "sourceId": "iron-signet-ring",
+    "extraction": null,
+    "sha256": "f2050213720ba160703602d1c11c1e3da796dee0921777e88fd4673f43b77ed2",
+    "pixelSha256": "746f25393ad4d1bc26214e8467bea9a62ebc0a4d31dace37edbed82f81d18327",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "advanced_seal",
+    "sourceId": "royal-seal-ring",
+    "extraction": null,
+    "sha256": "762999b973a7bca8b7ac052ce2bfead6625aef4c4ccc1b9d4e7cbeb631ac7612",
+    "pixelSha256": "1de574f64274a356875509f85c12777c5465fc42a2c04bb00038cc17eab8db2f",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "master_seal",
+    "sourceId": "royal-signet",
+    "extraction": null,
+    "sha256": "faf17431763bc2b60d10a6ed43dfbcd0f532040701dc61b9e85a577e2519866e",
+    "pixelSha256": "04c39496cd7072e7f02127d58b2a92e48fc142f164dbffa5fa922d5e6c794a21",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "dark_seal",
+    "sourceId": "skull-key",
+    "extraction": null,
+    "sha256": "eeaa28ece0ee0ac7bfa1b307a10a66fe038753171092ea5e1ca9d2393c97e9af",
+    "pixelSha256": "6ad2da1b3885c5ce9a567895f6224dcb9fc1cb1340a60c35d59120e49b55c128",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "abyssian_seal",
+    "sourceId": "obsidian-ring",
+    "extraction": null,
+    "sha256": "059281df2010bfd8ecef52aa5b58b2ae49136dc1c72f44989d087c7852e725bc",
+    "pixelSha256": "5886414f454a6ec884c3634c145d216ac3f06a6c9555989e688b828671e4745e",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "icon": "dancer_seal",
+    "sourceId": "rose-brooch",
+    "extraction": null,
+    "sha256": "97c1c8f4a9d1cf0fb6ed2f9e829bf23e3b5867bfe0c8f73ba759233cdeda1438",
+    "pixelSha256": "20fe68b2f546f9ba6008773a893d39a6f30bc68a600221b2fd3827b1d5b82bd5",
+    "width": 256,
+    "height": 256
+  }
+]

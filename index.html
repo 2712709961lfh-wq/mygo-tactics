@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111e29" />
+  <title>迷途回声 · MYGO!!!!!</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="entry.css" />
+  <link rel="stylesheet" href="soul-ui.css" />
+  <link rel="stylesheet" href="diary-ui.css?v=5.0" />
+  <link rel="stylesheet" href="equipment.css?v=5.3" />
+</head>
+<body class="soul-ui">
+  <div class="game-shell" id="game-shell">
+  <div class="ambient" aria-hidden="true"></div>
+
+  <!-- ============================================================
+       游戏进入页
+       — 与战斗界面分离的全屏标题页；CC0 纸张与皮革素材均在项目内。
+       ============================================================ -->
+  <section class="entry-screen" id="entry-screen" hidden aria-label="游戏进入页">
+    <div class="entry-atmosphere" aria-hidden="true">
+      <span class="entry-moon"></span>
+      <span class="entry-cloud entry-cloud-a"></span>
+      <span class="entry-cloud entry-cloud-b"></span>
+      <span class="entry-grid-lines"></span>
+      <span class="entry-spark entry-spark-a"></span>
+      <span class="entry-spark entry-spark-b"></span>
+      <span class="entry-spark entry-spark-c"></span>
+    </div>
+
+    <div class="soul-art" aria-hidden="true">
+      <div class="diary-photo"></div>
+      <div class="soul-art-caption">FIVE VOICES, ONE PATH<br/><span>这一次，不再独自迷路。</span></div>
+    </div>
+    <div class="entry-shell">
+      <header class="entry-top">
+        <div class="entry-top-brand">
+          <span class="entry-top-star">✦</span>
+          <span>MYGO!!!!! / ECHOES OF THE LOST</span>
+        </div>
+        <div class="entry-top-meta">A JOURNEY INTO THE INNER WORLD</div>
+      </header>
+
+      <div class="entry-main">
+        <div class="entry-title-block">
+          <div class="entry-overline">那些未被听见的声音，仍在回响。</div>
+          <h1 class="entry-title">
+            <span class="entry-logo">MYGO!!!!!</span>
+            <span class="entry-game-title">迷途回声</span>
+          </h1>
+          <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
+          <div class="entry-mission-chip">
+            <span class="entry-chip-label">MISSION 01</span>
+            <strong>黄昏的迷途庭院</strong>
+            <span>第一重心境</span>
+          </div>
+          <div class="entry-copy">
+            <span></span>
+            <p>背叛之后，五名少女坠入封闭心声的世界。<br />穿过怪物与回忆，走向那个不敢面对的名字。</p>
+          </div>
+        </div>
+
+        <div class="entry-menu-wrap">
+          <div class="entry-menu-kicker"><span>RESONANCE</span> 心声的彼端</div>
+          <nav class="entry-menu" aria-label="主菜单">
+            <button class="entry-option entry-option-primary" type="button" data-entry-action="start">
+              <span class="entry-index">01</span>
+              <span class="entry-option-copy">
+                <strong>走入心境</strong>
+                <em>BEGIN THE JOURNEY</em>
+                <small>第一重心境 · 黄昏的迷途庭院</small>
+              </span>
+              <span class="entry-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="entry-option" type="button" data-entry-action="save">
+              <span class="entry-index">02</span>
+              <span class="entry-option-copy">
+                <strong>记忆留痕</strong>
+                <em>SAVE DATA</em>
+                <small id="entry-save-hint">查看本地保存的战斗记录</small>
+              </span>
+              <span class="entry-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="entry-option" type="button" data-entry-action="formation">
+              <span class="entry-index">03</span>
+              <span class="entry-option-copy">
+                <strong>同行之人</strong>
+                <em>FORMATION</em>
+                <small>查看同行者的能力、武器与心声</small>
+              </span>
+              <span class="entry-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="entry-option" type="button" data-entry-action="equipment">
+              <span class="entry-index">04</span>
+              <span class="entry-option-copy">
+                <strong>器物图鉴</strong>
+                <em>EQUIPMENT CODEX</em>
+                <small>查询武器、药品、转职证与魔法</small>
+              </span>
+              <span class="entry-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="entry-option" type="button" data-entry-action="chapter2">
+              <span class="entry-index">05</span>
+              <span class="entry-option-copy">
+                <strong>第二重 · 星铃花镇</strong>
+                <em>CHAPTER 02</em>
+                <small>从另一段尚未解开的心声继续</small>
+              </span>
+              <span class="entry-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="entry-option" type="button" data-entry-action="chapter3">
+              <span class="entry-index">06</span>
+              <span class="entry-option-copy"><strong>第三重 · 梦醒的呼救</strong><em>CHAPTER 03</em><small>赶往花镇南端，救援井芹仁菜</small></span>
+              <span class="entry-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="entry-option" type="button" data-entry-action="chapter4">
+              <span class="entry-index">07</span>
+              <span class="entry-option-copy"><strong>第四重 · 飞鸟山公园的往日之影</strong><em>CHAPTER 04</em><small>点亮公园路灯，追踪神秘幻影</small></span>
+              <span class="entry-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="entry-option" type="button" data-entry-action="chapter5">
+              <span class="entry-index">08</span>
+              <span class="entry-option-copy"><strong>第五重 · 双桥水庭的铁幕</strong><em>CHAPTER 05</em><small>突破重装防线，拦截携钥天马</small></span>
+              <span class="entry-arrow" aria-hidden="true">→</span>
+            </button>
+          </nav>
+          <p class="entry-footnote">心门会关闭，但她们仍然选择彼此。</p>
+          <button type="button" class="terrain-credit-button" onclick="document.getElementById('terrain-credits').showModal()">地图素材与署名</button>
+        </div>
+      </div>
+
+      <footer class="entry-footer">
+        <div class="entry-roster">
+          <div class="entry-roster-label">仍在身边 <span>OUR VOICES, ONE PATH</span></div>
+          <div class="entry-roster-list" id="entry-roster"></div>
+        </div>
+        <div class="entry-footer-note">
+          <span class="entry-footer-line"></span>
+          <p>“这一次，想把真正的心声，传达给你。”</p>
+        </div>
+      </footer>
+    </div>
+
+    <!-- 存档侧栏 -->
+    <aside class="entry-save-panel" id="entry-save-panel" hidden aria-label="存档选项">
+      <div class="entry-save-head">
+        <div>
+          <div class="entry-save-kicker">SAVE DATA</div>
+          <h2>记忆留痕</h2>
+        </div>
+        <button class="entry-save-close" type="button" data-save-close aria-label="关闭存档面板">×</button>
+      </div>
+      <div class="entry-save-info" id="entry-save-info"></div>
+      <div class="entry-save-actions">
+        <button class="entry-save-btn primary" type="button" data-save-current>保存当前进度</button>
+        <button class="entry-save-btn" type="button" data-save-load>读取存档</button>
+        <button class="entry-save-btn danger" type="button" data-save-delete>删除存档</button>
+      </div>
+      <p class="entry-save-note" id="entry-save-note">仅我方行动阶段、无单位行动中时可保存。</p>
+      <p class="entry-save-status" id="entry-save-status" role="status"></p>
+    </aside>
+  </section>
+
+  <!-- ============================================================
+       编队页：羊皮纸名单 + 角色档案 + 全能力值
+       ============================================================ -->
+  <section class="formation-screen" id="formation-screen" hidden aria-label="编队界面">
+    <div class="formation-shell">
+      <header class="formation-head">
+        <div class="formation-heading">
+          <div class="formation-kicker">COMPANIONS / UNHEARD VOICES</div>
+          <h2>同行之人 <span>心声档案</span></h2>
+        </div>
+        <div class="formation-head-meta">
+          <span>出击人数</span>
+          <strong id="formation-count">5 / 5</strong>
+        </div>
+        <button class="formation-close" type="button" data-formation-close>
+          返回标题 <span>ESC</span>
+        </button>
+      </header>
+
+      <div class="formation-body">
+        <aside class="formation-roster-panel">
+          <div class="formation-roster-head">
+            <span>UNIT ROSTER</span>
+            <strong>出击成员</strong>
+          </div>
+          <div class="formation-list" id="formation-list"></div>
+          <div class="formation-pose-dock" id="formation-pose-dock"></div>
+          <div class="formation-roster-foot">
+            <span class="formation-roster-dot"></span>
+            <p>选择成员查看完整能力值。战斗中可随时按方格移动。</p>
+          </div>
+        </aside>
+
+        <section class="formation-detail" id="formation-detail" aria-live="polite"></section>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter-intro" id="chapter-intro" hidden aria-label="章节开始">
+    <div class="chapter-blackout" aria-hidden="true"></div>
+    <div class="chapter-paper">
+      <div class="chapter-wash" aria-hidden="true"></div>
+      <div class="chapter-flora chapter-flora-a" aria-hidden="true"></div>
+      <div class="chapter-flora chapter-flora-b" aria-hidden="true"></div>
+      <div class="chapter-flora chapter-flora-c" aria-hidden="true"></div>
+      <div class="chapter-pressure" aria-hidden="true"></div>
+
+      <div class="chapter-vine chapter-vine-a" aria-hidden="true"></div>
+      <div class="chapter-vine chapter-vine-b" aria-hidden="true"></div>
+      <div class="chapter-vine chapter-vine-c" aria-hidden="true"></div>
+      <div class="chapter-vine chapter-vine-d" aria-hidden="true"></div>
+      <div class="chapter-vine chapter-vine-e" aria-hidden="true"></div>
+      <div class="chapter-vine chapter-vine-f" aria-hidden="true"></div>
+
+      <span class="chapter-bloom chapter-bloom-a" aria-hidden="true">❀</span>
+      <span class="chapter-bloom chapter-bloom-b" aria-hidden="true">❀</span>
+      <span class="chapter-bloom chapter-bloom-c" aria-hidden="true">✿</span>
+      <span class="chapter-bloom chapter-bloom-d" aria-hidden="true">✿</span>
+      <span class="chapter-bloom chapter-bloom-e" aria-hidden="true">❁</span>
+      <span class="chapter-bloom chapter-bloom-f" aria-hidden="true">❀</span>
+      <span class="chapter-bloom chapter-bloom-g" aria-hidden="true">✿</span>
+      <span class="chapter-bloom chapter-bloom-h" aria-hidden="true">❁</span>
+
+      <span class="chapter-petal chapter-petal-a" aria-hidden="true"></span>
+      <span class="chapter-petal chapter-petal-b" aria-hidden="true"></span>
+      <span class="chapter-petal chapter-petal-c" aria-hidden="true"></span>
+      <span class="chapter-petal chapter-petal-d" aria-hidden="true"></span>
+      <span class="chapter-petal chapter-petal-e" aria-hidden="true"></span>
+      <span class="chapter-petal chapter-petal-f" aria-hidden="true"></span>
+
+      <div class="chapter-card" role="presentation">
+        <div class="chapter-overline">MYGO!!!!! / ECHOES OF THE LOST</div>
+        <div class="chapter-number">
+          <span class="chapter-number-jp">第一话</span>
+          <span class="chapter-number-en">CHAPTER 01</span>
+        </div>
+        <div class="chapter-divider" aria-hidden="true"><i></i><b>❖</b><i></i></div>
+        <h2 class="chapter-title">黄昏的迷途庭院</h2>
+        <p class="chapter-sub">不要让这首歌，再次被遗忘。</p>
+        <div class="chapter-foot">MISSION 01 · 迷途庭院</div>
+      </div>
+      <div class="chapter-skip">点击任意处继续</div>
+    </div>
+  </section>
+
+  <section class="equipment-screen" id="equipment-screen" hidden role="dialog" aria-modal="true" aria-labelledby="eq-heading"></section>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-star" aria-hidden="true">✦</div>
+      <div>
+        <div class="brand-title">迷途回声</div>
+        <div class="brand-sub">MYGO!!!!! / INNER WORLD</div>
+      </div>
+    </div>
+
+    <div class="mission-block">
+      <div class="eyebrow" id="mission-chapter">MISSION 01</div>
+      <div class="mission-title" id="mission-title">黄昏的迷途庭院</div>
+      <div class="mission-sub" id="mission-sub">不要让这首歌，再次被遗忘。</div>
+    </div>
+
+    <div class="phase-block" id="phase-block" data-phase="player">
+      <span class="phase-dot" aria-hidden="true"></span>
+      <div class="phase-text">
+        <strong id="phase-label">我方阶段</strong>
+        <small id="turn-label">第 1 回合</small>
+      </div>
+    </div>
+
+    <nav class="top-actions" aria-label="游戏菜单">
+      <button class="icon-btn" id="save-btn" type="button" title="存档（仅我方自由行动时可存）">存档</button>
+      <button class="icon-btn" id="load-btn" type="button" title="读取本地存档">读档</button>
+      <button class="icon-btn" id="equipment-btn" type="button" title="查看装备图鉴">图鉴</button>
+      <button class="icon-btn" id="help-btn" type="button" title="玩法说明">说明</button>
+      <button class="icon-btn" id="title-btn" type="button" title="返回标题页 / 编队">标题</button>
+      <button class="icon-btn icon-btn-danger" id="restart-btn" type="button" title="重新开始本关">重开</button>
+    </nav>
+  </header>
+
+  <div class="battle-layout">
+    <aside class="party-rail" aria-label="同行者快捷选择">
+      <div class="party-heading">同行者<span>VOICES</span></div>
+      <div id="party-list" class="party-list"></div>
+      <div class="party-thread" aria-hidden="true">◇<i></i>◇</div>
+      <div class="party-caption">仍在<br/>彼此身边</div>
+    </aside>
+  <main class="stage">
+    <section class="battle-card" aria-label="战场">
+      <div class="board-head">
+        <div class="turn-wrap">
+          <span class="turn-number" id="turn-number">01</span>
+          <div>
+            <div class="turn-kicker" id="phase-kicker">PLAYER PHASE</div>
+            <div class="turn-title" id="turn-title">我方行动</div>
+          </div>
+        </div>
+
+        <div class="force-counts" aria-label="双方存活人数">
+          <span class="force player-force"><i></i>同行者 <b id="player-count">5</b></span>
+          <span class="force enemy-force"><i></i>迷途回声 <b id="enemy-count">6</b></span>
+        </div>
+
+        <div class="board-head-right">
+          <span class="autosave-note" id="save-note"></span>
+
+        </div>
+      </div>
+
+      <div class="board-frame" id="board-frame">
+        <div class="board-viewport" id="board-viewport">
+          <canvas id="board" width="768" height="512" tabindex="0" aria-label="战棋地图，点击成员移动，数字键1到6选择同行者"></canvas>
+        </div>
+        <div class="board-tools" aria-label="地图缩放">
+          <button class="board-tool" id="zoom-out" type="button" aria-label="缩小地图">−</button>
+          <span class="zoom-level" id="zoom-level">100%</span>
+          <button class="board-tool" id="zoom-in" type="button" aria-label="放大地图">+</button>
+          <button class="board-tool board-tool-reset" id="zoom-reset" type="button" aria-label="重置缩放">1:1</button>
+        </div>
+        <div class="turn-banner" id="turn-banner" hidden>
+          <div class="banner-rule"></div>
+          <strong id="banner-title">第 1 回合</strong>
+          <span id="banner-sub">我方行动</span>
+        </div>
+        <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+        <div class="board-corner board-corner-tl" aria-hidden="true"></div>
+        <div class="board-corner board-corner-br" aria-hidden="true"></div>
+      </div>
+
+      <div class="board-foot">
+        <button class="btn btn-end" id="end-turn-btn" type="button">结束回合 <kbd>E</kbd></button>
+        <div class="objective-line">
+          <span class="objective-label">胜利条件</span>
+          <strong id="objective-text">击破所有迷途回声</strong>
+        </div>
+        <div class="legend" aria-label="地形图例">
+          <span><i class="terrain-dot plain"></i>草地</span>
+          <span><i class="terrain-dot forest"></i>森林 +20闪避</span>
+          <span><i class="terrain-dot mountain"></i>山地 +3守备</span>
+          <span><i class="terrain-dot wall"></i>残垣</span>
+        </div>
+        <div class="control-hint"><kbd>左键</kbd> 操作 <span>·</span> <kbd>右键/Esc</kbd> 返回 <span>·</span> <kbd>Ctrl+滚轮</kbd> 缩放</div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="info-panel" id="info-panel" aria-live="polite">
+    <div class="portrait-block" id="portrait-block" data-side="none">
+      <canvas id="info-portrait" width="32" height="32" aria-hidden="true"></canvas>
+      <span class="portrait-badge" id="portrait-badge">战场</span>
+      <span class="portrait-level" id="portrait-level"></span>
+    </div>
+
+    <div class="info-main" id="info-main">
+      <div class="info-heading">
+        <div>
+          <div class="info-eyebrow">心境观测 / INSIGHT</div>
+          <h2 id="info-name">迷途庭院</h2>
+        </div>
+        <div class="info-tags" id="info-tags"></div>
+      </div>
+      <div id="info-body" class="info-body"></div>
+    </div>
+
+    <div class="info-side" id="info-side">
+      <div class="context-title" id="context-title">行动指引</div>
+      <div class="context-text" id="context-text">点击我方单位开始行动。</div>
+      <div class="action-buttons" id="action-buttons"></div>
+    </div>
+  </aside>
+
+  </div>
+  <footer class="game-status">
+    <div class="status-emblem">◇</div><span id="tactical-hint">选择同行者，迈出下一步。</span>
+    <span class="status-keys"><kbd>1–6</kbd> 选择 <kbd>Esc</kbd> 返回 <kbd>E</kbd> 回合</span>
+    <button id="grid-btn" type="button" aria-pressed="true">网格 <kbd>G</kbd></button>
+    <button id="fullscreen-btn" type="button">全屏 <kbd>F</kbd></button>
+  </footer>
+
+  <div class="overlay" id="overlay-root" hidden>
+    <div class="overlay-backdrop" data-overlay-dismiss="1"></div>
+    <section class="overlay-card" id="overlay-card" role="dialog" aria-modal="true" aria-labelledby="overlay-title"></section>
+  </div>
+
+  <!-- 战斗演出：程序化像素战场 + 侧视战斗动画 + 战场 HUD -->
+  <div class="battle-scene" id="battle-scene" hidden aria-hidden="true">
+    <div class="bs-viewport" id="battle-viewport">
+      <canvas id="battle-canvas" width="896" height="640" aria-label="角色战斗演出"></canvas>
+      <div class="bs-grain" aria-hidden="true"></div>
+      <div class="bs-vignette" aria-hidden="true"></div>
+      <div class="bs-flash" id="battle-flash" aria-hidden="true"></div>
+
+      <div class="bs-top">
+        <div class="bs-nameplate bs-nameplate-atk" id="battle-atk-plate">
+          <span class="bs-role" id="cutin-atk-role">PLAYER · ATTACKER</span>
+          <strong id="cutin-atk-name">高松灯</strong>
+          <small id="cutin-atk-class">剑士</small>
+        </div>
+        <div class="bs-chapter">
+          <span>MISSION 01</span>
+          <b>黄昏的迷途庭院</b>
+        </div>
+        <div class="bs-nameplate bs-nameplate-def" id="battle-def-plate">
+          <span class="bs-role" id="cutin-def-role">ENEMY · TARGET</span>
+          <strong id="cutin-def-name">迷途回声</strong>
+          <small id="cutin-def-class">影斧兵</small>
+        </div>
+      </div>
+
+      <div class="bs-center-tag" id="battle-center-tag">物理 · 无克制</div>
+      <div class="bs-announce" id="battle-announce" role="status" aria-live="polite"></div>
+      <div class="bs-crit" id="battle-crit">CRITICAL</div>
+
+      <div class="bs-hud" id="battle-hud">
+        <section class="bs-panel bs-panel-atk" id="battle-panel-atk">
+          <div class="bs-panel-head">
+            <span class="bs-weapon-icon" id="battle-atk-icon">剑</span>
+            <b id="cutin-atk-weapon">铁剑</b>
+            <span class="bs-side-tag" data-side-tag>我方</span>
+          </div>
+          <div class="bs-metrics">
+            <div><span data-m1-label>HIT</span><b data-m1>90</b></div>
+            <div><span data-m2-label>DMG</span><b data-m2>10</b></div>
+            <div><span data-m3-label>CRT</span><b data-m3>15</b></div>
+          </div>
+          <div class="bs-hp">
+            <span id="battle-atk-hp-text">26 / 26</span>
+            <div class="bs-hp-track"><i id="battle-atk-hp-fill"></i></div>
+          </div>
+        </section>
+
+        <div class="bs-emblem" aria-hidden="true">
+          <span></span><b>VS</b><span></span>
+        </div>
+
+        <section class="bs-panel bs-panel-def" id="battle-panel-def">
+          <div class="bs-panel-head">
+            <span class="bs-side-tag" data-side-tag>敌方</span>
+            <b id="cutin-def-weapon">残缺之斧</b>
+            <span class="bs-weapon-icon" id="battle-def-icon">斧</span>
+          </div>
+          <div class="bs-metrics">
+            <div><span data-m1-label>AVO</span><b data-m1>15</b></div>
+            <div><span data-m2-label>DEF</span><b data-m2>6</b></div>
+            <div><span data-m3-label>RES</span><b data-m3>1</b></div>
+          </div>
+          <div class="bs-hp">
+            <span id="battle-def-hp-text">26 / 26</span>
+            <div class="bs-hp-track"><i id="battle-def-hp-fill"></i></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="bs-skip">点击 / Esc 跳过演出</div>
+    </div>
+  </div>
+
+  <div class="screen-flash" id="screen-flash" aria-hidden="true"></div>
+
+  </div><!-- /game-shell -->
+
+  <script src="src/equipment-data.js?v=5.4.0"></script>
+  <script src="src/magic-data.js?v=5.4.0"></script>
+  <script src="src/codex-data.js?v=5.4.0"></script>
+  <script src="src/inventory.js?v=5.4.0"></script>
+  <script src="src/class-data.js?v=5.4.0"></script>
+  <script src="src/config.js?v=5.4.0"></script>
+  <script src="src/chapter-three.js?v=5.4.0"></script>
+  <script src="src/chapter-four.js?v=5.4.0"></script>
+  <script src="src/chapter-five.js?v=5.4.3"></script>
+  <script src="src/map-projection.js?v=5.4.0"></script>
+  <script src="src/rng.js?v=5.4.0"></script>
+  <script src="src/growth-data.js?v=5.4.2"></script>
+  <script src="src/growth.js?v=5.4.0"></script>
+  <script src="src/grid.js?v=5.4.0"></script>
+  <script src="src/pathfinding.js?v=5.4.0"></script>
+  <script src="src/combat.js?v=5.4.0"></script>
+  <script src="src/game.js?v=5.4.3"></script>
+  <script src="src/ai.js?v=5.4.0"></script>
+  <script src="src/save.js?v=5.4.0"></script>
+  <script src="src/assets.js?v=5.4.0"></script>
+  <script src="src/garden-map.js?v=5.4.0"></script>
+  <script src="src/moon-map.js?v=5.4.0"></script>
+  <script src="src/park-map.js?v=5.4.0"></script>
+  <script src="src/characters.js?v=5.4.0"></script>
+  <script src="src/dark-soyo.js?v=5.4.0"></script>
+  <script src="src/watercourt-art.js?v=5.4.3"></script>
+  <script src="src/renderer.js?v=5.4.0"></script>
+  <script src="src/battle.js?v=5.4.1"></script>
+  <script src="src/viewport.js?v=5.4.0"></script>
+  <script src="src/ui.js?v=5.4.3"></script>
+  <script src="src/park-intro.js?v=5.4.0"></script>
+  <script src="src/equipment-ui.js?v=5.4.0"></script>
+  <script src="src/entry.js?v=5.4.0"></script>
+  <script src="src/loadout-ui.js?v=5.4.0"></script>
+  <script src="src/shop-ui.js?v=5.4.0"></script>
+  <script src="src/main.js?v=5.4.0"></script>
+  <dialog id="terrain-credits" aria-labelledby="terrain-credits-title" style="width:min(680px,90vw);max-height:80vh;overflow:auto;background:#202b2c;color:#e1dfce;border:1px solid #8b987e;border-radius:8px;padding:24px;font:14px/1.8 system-ui">
+    <form method="dialog" style="float:right"><button aria-label="关闭地图素材署名">关闭 ×</button></form>
+    <h2 id="terrain-credits-title">地图素材与署名</h2>
+    <p>第五关：<a href="https://opengameart.org/content/rpg-urban-pack" target="_blank" rel="noopener">RPG Urban Pack</a> — Kenney，CC0；<a href="https://opengameart.org/content/greek-hypaspist-persian-foot-archer-pegasus-pony" target="_blank" rel="noopener">Pegasus Pony</a> — Spring Spring，CC0，提取动画并增绘骑手；<a href="https://github.com/liberatedpixelcup/Universal-LPC-Spritesheet-Character-Generator" target="_blank" rel="noopener">Universal LPC Spritesheet Character Generator</a> — wulax、Redshrike、bluecarrot16、JaidynReiman、BenCreating、bigbeargames、Napsio、makrohn、pvigier、Inboxninja、castelonia 等，<a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>。分层合成板甲骑士及同步长枪、战斧动作，统领金色重着色，衍生图集以相同许可共享；完整逐文件作者见 assets/chapter-five/knight-source-manifest.json。地图思路参考《觉醒》第三章 <a href="https://fireemblemwiki.org/wiki/Warrior_Realm" target="_blank" rel="noopener">Warrior Realm</a>。完整来源及改动说明见 assets/chapter-five/SOURCES.md。</p>
+    <p>第四关往日之影长崎爽世叠加贴图：<a href="https://opengameart.org/content/particle-pack-80-sprites" target="_blank" rel="noopener" style="color:#bcd4ad">Particle Pack (80 sprites)</a> — Kenney Vleugels，CC0。使用烟雾、魔法纹样与裂痕并重新染色。草地与水面沿用下列已署名素材；公园路灯、长椅、花圃与指路牌由代码绘制。</p>
+    <p>第一关 A 方案 · 旧石堡垒与荒野河岸</p>
+    <p><a href="https://opengameart.org/content/grassland-tileset" target="_blank" rel="noopener" style="color:#bcd4ad">Grassland Tileset</a> — Clint Bellanger、Lamoot、Blender Foundation（apricot.blender.org）、lattice、p0ss、Bart K.、Sindwiller、Zuendholz、Yughues；部分公共领域纹理由 Blender Texture Disc 与 Public Domain Textures 提供。</p>
+    <p><a href="https://opengameart.org/content/old-ruins-tileset" target="_blank" rel="noopener" style="color:#bcd4ad">Old ruins tileset</a> — rubberduck；依赖素材作者包括 Spelle、Clint Bellanger、MrCraftAnimation、Daniel Andersson、Scribe 与 Blender Cloud。</p>
+    <p>原素材包及本项目的衍生图集采用 <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener" style="color:#bcd4ad">Creative Commons Attribution-ShareAlike 3.0</a>。本项目进行了裁切、透视展开、缩放、统一调色与组合。允许免费使用及商用；分发修改后的相关素材需保留署名、说明修改并按相同许可共享。</p>
+    <p>详细原始引用见源文件包的两份 CREDITS.txt；项目内保留于 assets/terrain/flare。第二、三关使用同源石材与纹理重新调色，另加入 Leonard Pabin 的 <a href="https://opengameart.org/content/whispers-of-avalon-grassland-tileset" target="_blank" rel="noopener">Whispers of Avalon: Grassland Tileset</a> 花树与花丛（原作 CC BY 3.0）。当前第二关使用 4096×2048 图集，地面取自原始 512～1024px 纹理，加入石坪拼缝与月纹；组合后的月光庭园图集按 CC BY-SA 3.0 提供，修改包括裁切、缩放与梦境配色。完整署名见 assets/terrain/moon-dream/README.md。</p>
+  </dialog>
+  <style>.terrain-credit-button{display:block;margin:6px auto 0;padding:3px 8px;background:transparent;border:0;color:#696456;font:12px inherit;text-decoration:underline;cursor:pointer}#terrain-credits::backdrop{background:rgba(8,15,20,.78)}#terrain-credits button{padding:5px 12px;background:#34423d;color:#e3e0cc;border:1px solid #80917d;border-radius:3px;cursor:pointer}</style>
+</body>
+</html>

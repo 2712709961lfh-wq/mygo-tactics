@@ -1,0 +1,440 @@
+Title: Healing/Support action Exp formula + Exp table from level 1 to 50
+
+URL Source: https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/
+
+Published Time: 2019-09-19T08:38:32+0000
+
+Markdown Content:
+[Jump to content](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#ipsLayout_mainArea "Go to main content on this page")
+
+[![Image 1: Serenes Forest Forums](https://s3-forums.serenesforest.net/monthly_2023_01/skin-logo-serenes-forest.png.651e0e5557b5963365241b89c5a99f25.png)](https://forums.serenesforest.net/)
+*   [Existing user? Sign In](https://forums.serenesforest.net/login/)
+
+#### Sign In
+
+  
+  
+
+    *   - [x] Remember me Not recommended on shared computers 
+    *   Sign In
+[Forgot your password?](https://forums.serenesforest.net/lostpassword/)
+
+*   [Sign Up](https://forums.serenesforest.net/register/)
+
+*   [](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)
+
+*   [Browse](https://forums.serenesforest.net/)
+    *   [Main Site](https://serenesforest.net/)
+    *   [Forums](https://forums.serenesforest.net/)
+    *   [Events](https://forums.serenesforest.net/events/)
+    *   [Guidelines](https://forums.serenesforest.net/guidelines/)
+    *   [Staff](https://forums.serenesforest.net/staff/)
+    *   [Online Users](https://forums.serenesforest.net/online/)
+    *   [More](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)
+
+*   [Activity](https://forums.serenesforest.net/discover/)
+    *   [All Activity](https://forums.serenesforest.net/discover/)
+    *   [Search](https://forums.serenesforest.net/search/)
+    *   [More](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)
+
+*   [More](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)
+    *   [More](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)
+
+This Topic
+*   Everywhere 
+*   This Forum 
+*   This Topic 
+*   Status Updates 
+*   Topics 
+*   Events 
+*   Members 
+
+*   [Fire Emblem: Three Houses](https://forums.serenesforest.net/forum/97-fire-emblem-three-houses/)
+*   [](https://forums.serenesforest.net/discover/)
+*   [](https://forums.serenesforest.net/search/)
+
+*   [All Activity](https://forums.serenesforest.net/discover/)
+
+*   [Home](https://forums.serenesforest.net/ "Home")
+*   [Fire Emblem Forums](https://forums.serenesforest.net/forum/9-fire-emblem-forums/)
+*   [Fire Emblem: Three Houses](https://forums.serenesforest.net/forum/97-fire-emblem-three-houses/)
+*    Healing/Support action Exp formula + Exp table from level 1 to 50 
+
+# Healing/Support action Exp formula + Exp table from level 1 to 50
+
+*   [maths!](https://forums.serenesforest.net/tags/maths!/ "Find other content tagged with 'maths!'")
+
+* * *
+
+[![Image 2: Cysx](https://s3-forums.serenesforest.net/profile/photo-thumb-1593.png)](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")
+
+**By [Cysx](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")**  
+September 19, 2019 in [Fire Emblem: Three Houses](https://forums.serenesforest.net/forum/97-fire-emblem-three-houses/)
+
+*   [Start new topic](https://forums.serenesforest.net/forum/97-fire-emblem-three-houses/?do=add "Start a new topic in this forum")
+
+## Recommended Posts
+
+[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)
+
+[![Image 3: Cysx](https://s3-forums.serenesforest.net/profile/photo-thumb-1593.png)](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")[![Image 4: Community Regular](https://s3-forums.serenesforest.net/monthly_2023_01/8_Regular.svg)](https://forums.serenesforest.net/profile/1593-cysx/badges/)
+
+### [Cysx](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")
+
+[Posted September 19, 2019](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#findComment-5509142)
+
+### **[Cysx](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")**
+
+*    Away but not really
+*   [![Image 5: Cysx](https://s3-forums.serenesforest.net/profile/photo-thumb-1593.png)](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")![Image 6: Community Regular](https://s3-forums.serenesforest.net/monthly_2023_01/8_Regular.svg) 
+*   Member
+
+![Image 7](https://s3-forums.serenesforest.net/badges/member/(default).gif)
+
+*   **Favorite FE:** Radiant Dawn 
+*   **Location:** France 
+
+*   [](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#elControls_5509142_menu "More options...")
+
+ Posted September 19, 2019
+
+Disclaimer:
+
+[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)Reveal hidden contents
+
+Okay, so originally I wanted to submit this as part of a global exp formula. Unfortunately, my research on combat exp isn't bearing fruits at the moment, So I figured I'd just share this already.  
+ Note that this doesn't include Resonant White Magic, because it functions very differently compared to everything else. Its formula actually seems very close to how combat exp works, and since I haven't figured _that_ out... What I can tell you is that the gains are based on the % of health you heal on the main target, its level respective to yours(the lower your level is in comparison, the more exp you'll get, and vice-versa). Also, the gains are minimal unless there's a big gap; in other words, it's a decent tool to level extremely weak units, but not much more.
+
+First off, some basic things about how exp works.
+
+- Unlike with most things in this game, exp gains are rounded up. This is likely to avoid making it possible to gain less than 1 exp.  
+ - As you probably know, the exp to level up isn't static in Three Houses, unlike in previous entries. The way the requirements evolve however, largely is:  
+ - From Lv 1 to 21, the requirements are multiplied by 1.1 every level, and the result is rounded down.  
+ - ie, level 12 would be 100 * (1.1 to the power of 11) = 285,3116... = 285  
+ - Probably in an effort to avoid the numbers getting out of control, that 1.1 multiplier is lowered from Lv 22 onward.  
+ - Lv 21->22 itself is a bit weird, with a multiplier of ~1.06545(or roughly +44.05). At the moment I'm not entirely clear on what the game does there.  
+ - From 23 onward it's static again, now with a 1.05 multiplier instead.  
+ - Thus, the value for, say, level 29 is [(100 *1.1 to the power of 20) + 44.05] * (1.05 to the power of 7) = 1008.6095... = 1008.  
+ - Anyway, **here's a table from level 1 to 50:**
+
+[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)Reveal hidden contents
+
+Lv 1 100 Lv 11  259 Lv 21  672 Lv 31 1111 Lv 41 1811
+
+Lv 2 110 Lv 12 285 Lv 22 716 Lv 32 1167 Lv 42 1901
+
+Lv 3 121 Lv 13 313 Lv 23 752 Lv 33 1225 Lv 43 1996
+
+Lv 4 133 Lv 14 345 Lv 24 790 Lv 34 1287 Lv 44 2096
+
+Lv 5 146 Lv 15 379 Lv 25 829 Lv 35 1351 Lv 45 2201
+
+Lv 6 161 Lv 16 417 Lv 26 871 Lv 36 1419 Lv 46 2311
+
+Lv 7 177 Lv 17 459 Lv 27 914 Lv 37 1490 Lv 47 2427
+
+Lv 8 194 Lv 18 505 Lv 28 960 Lv 38 1564 Lv 48 2548
+
+Lv 9 214 Lv 19 555 Lv 29 1008 Lv 39 1642 Lv 49 2676
+
+Lv 10 235 Lv 20 611 Lv 30 1059 Lv 40  1725 Lv 50 2809
+
+- Exp bonuses are made up of two totals: All the statues' bonuses added together, and all the other bonuses added together.  
+ - On that note, when you unlock the +10% bonus of a statue, it replaces the 5% one. As a result, the maximum bonus you can get from statues is +10% *4 = +40%  
+ - The other available exp bonuses are as follows:  
+ - Professor's Guidance/ The lords' P.skills(+20% each)  
+ - The Experience Gem(+50%)  
+- As a result of the above, the highest multiplier possible is [1 + (0.1*4)] * [1 + (0.2 + 0.2 + 0.5)] = **2.66**. Only the three lords can reach this, since Byleth cannot get his/her own bonus twice.
+
+----------------------------------------------------------------------------------------
+
+Okay, now for what the thread is meant to be about. The formula itself is pretty simple and is the same on Normal, Hard and (from what I can tell)Maddening:  
+  
+**(10 + Level -1) * Skill bonus * Bonus exp multiplier**
+
+... Yup, that's it. An important thing to understand as a result is that your target doesn't matter at all; it can be lv 1 or 100, that won't affect the result. This is also true for multi-targets spells(such as Fortify), the number of targets is irrelevant.  
+ Now as for the "**Skill bonus**", aka the actual meat of it, it is tied to each support action. Here's the list:
+
+Heal:  *1 Recover: *1.5 Physic: *1.5 Fortify: *3
+
+Restore:  *1.5 Ward:  *1.5 Rescue:  *2 Warp:  *3
+
+Silence:  *2 Dance: *2 Resonant White Magic: See Disclaimer
+
+Recovery Roar, Impregnable Wall, Sacred Shield, Retribution, Stride, Blessing, Dance of the Goddess: *0/Don't give exp.
+
+So for example, a level 15 character healing with Physic and getting a 1.2 bonus from statues would get:  
+ (10 + 15 - 1) * 1.5 * 1.2 = 43.2 = 44 points of exp.  
+ A level 25 character using Warp, getting a 1.2 bonus from statues and with the experience gem equipped would get:  
+ (10 + 25 - 1) * 3 * 1.2 * 1.5 = 183.6 = 184 points of exp.
+
+... And that's actually all there is to it. As usual, my bad if this is old information. Have a nice day!
+
+_Edits:_  
+ - Was slightly off on the Lv 21 -> 22 multiplier, leading to an inconsistency on level 31.
+
+- Additionally after further testing, turns out exp bonuses don't interact exactly like I wrote down. It should now be accurate.
+
+[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)
+
+[![Image 8: Tables](https://s3-forums.serenesforest.net/profile/photo-thumb-1427.png)](https://forums.serenesforest.net/profile/1427-tables/ "Go to Tables's profile")[![Image 9: Newbie](https://s3-forums.serenesforest.net/monthly_2023_01/1_Newbie.svg)](https://forums.serenesforest.net/profile/1427-tables/badges/)
+
+### [Tables](https://forums.serenesforest.net/profile/1427-tables/ "Go to Tables's profile")
+
+[Posted September 21, 2019](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#findComment-5510411)
+
+### **[Tables](https://forums.serenesforest.net/profile/1427-tables/ "Go to Tables's profile")**
+
+*    Aah! Maths!
+*   [![Image 10: Tables](https://s3-forums.serenesforest.net/profile/photo-thumb-1427.png)](https://forums.serenesforest.net/profile/1427-tables/ "Go to Tables's profile")![Image 11: Newbie](https://s3-forums.serenesforest.net/monthly_2023_01/1_Newbie.svg) 
+*   Member
+
+![Image 12](https://s3-forums.serenesforest.net/badges/member/(default).gif)
+
+*   **Favorite FE:** Sacred Stones 
+*   **Location:** UK 
+
+*   [](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#elControls_5510411_menu "More options...")
+
+ Posted September 21, 2019
+
+Very useful guide. Would love to see more research, especially into battle EXP, but I'm sure that will be a much trickier nut to crack. I was beginning to suspect that support EXP didn't vary by difficulty - I've quickly noticed my highest level units on Maddening are all of my mages, who are already a solid 2-4 levels ahead of the rest of my team. Nice to see that confirmed.
+
+[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)
+
+[![Image 13: Cysx](https://s3-forums.serenesforest.net/profile/photo-thumb-1593.png)](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")[![Image 14: Community Regular](https://s3-forums.serenesforest.net/monthly_2023_01/8_Regular.svg)](https://forums.serenesforest.net/profile/1593-cysx/badges/)
+
+### [Cysx](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")
+
+[Posted September 22, 2019](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#findComment-5510609)
+
+### **[Cysx](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")**
+
+*    Away but not really
+*   [![Image 15: Cysx](https://s3-forums.serenesforest.net/profile/photo-thumb-1593.png)](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")![Image 16: Community Regular](https://s3-forums.serenesforest.net/monthly_2023_01/8_Regular.svg) 
+*   Member
+
+![Image 17](https://s3-forums.serenesforest.net/badges/member/(default).gif)
+
+*   **Favorite FE:** Radiant Dawn 
+*   **Location:** France 
+
+*   **Author**
+
+*   [](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#elControls_5510609_menu "More options...")
+
+ Posted September 22, 2019
+
+> [](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)[](https://forums.serenesforest.net/?app=core&module=system&controller=content&do=find&content_class=forums_Topic&content_id=89413&content_commentid=5510411) On 9/21/2019 at 8:35 PM, [Tables](https://forums.serenesforest.net/?app=core&module=members&controller=profile&id=1427) said: 
+> 
+> 
+> 
+> Very useful guide. Would love to see more research, especially into battle EXP, but I'm sure that will be a much trickier nut to crack. I was beginning to suspect that support EXP didn't vary by difficulty - I've quickly noticed my highest level units on Maddening are all of my mages, who are already a solid 2-4 levels ahead of the rest of my team. Nice to see that confirmed.
+
+Thanks! And yes, battle exp seems to take such a harsh penalty on Maddening that I'm not surprised to hear that. Though I did wonder if the considerable level difference wouldn't compensate a little. It's an interesting design choice, in any case.
+
+Beyond that, I'll just list what I've found on combat exp. I'm just bummed I don't have more.
+
+- Combat exp seems based primarily on three things: your level vs the target's, the % of health you depleted, and the tier of the enemy.  
+ - As usual, you get a bonus if the enemy is of a higher level, and a malus if it's the opposite.  
+ - The bonus seems to cap at a 5 levels difference. The malus apparently doesn't have such a limit.  
+ - Additionally, the bonus/malus isn't consistent between normal and hard so I can't even give a rough value.  
+ - % of health means that when dealing 10 damage to two enemies of the same level, one with 30 max HP and the other with 40, you **will** get more exp in the first case.  
+ - There seems to be a ~15% difference in exp gains from one enemy tier to the next(with one exception). There are a few problems, however:  
+ - The very first enemies you face in the prologue are of the enemy-only Ruffian class. Is that "Unique" or "Beginner"? No idea.  
+ - It might not even matter, as the students you fight in ch1 seem to give the same exp as the Fighters in ch2, ie there may not be a difference.  
+ - Manuella and Hanneman, despite being in Intermediate classes in ch1, seem to be considered as the same tier as students as far as exp gains go.  
+ - Pegasus knights give Advanced tier exp, confirming that the enemy class is of that tier.  
+ - The aforementioned exception is that Advanced and Master enemies seem to give the same exp bonus. So all in all, there may only be three distinct tier bonuses.  
+  
+ Oh and by the way, it's been hinted in a recent interview that characters in higher class tiers _gained_ more exp. I have tested this quite a bit, and that doesn't seem to be the case at all. Might have been a mistranslation, or something I've missed somehow, though I'm pretty confident on that one. Anyway, for more general things:
+
+- Kill exp seems to consistently amount to around 100% damage dealt exp *2  
+ - Bosses unsurprisingly get a bonus, but I didn't figure out what it was precisely.  
+ - Demonic beasts may also get something, and each of their lifebars constitutes an individual kill.  
+ - For an unit of the same level as their target, hard mode gets a *0.66... exp malus. Aka a gain of 45 will translate into 30.  
+ - This is only confirmed for levels 1->10, and I can't say for maddening.  
+ - The maximum amount of exp you can get at once is still a full level.  
+ - ... but exp requirements evolve in 3H. Which means that you actually gain a bit less than previously:  
+ - In a previous FE, if you had 50 exp and gained 100, you'd end up at 50 exp again.  
+ - In 3H, if you're at like, 50% of level 9->10(so 214*0.5 = 107), a full level will leave you at 235-107=128 left for 10->11(so roughly 45% bar).
+
+[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)
+
+[![Image 18: Shanty Pete's 1st Mate](https://s3-forums.serenesforest.net/monthly_2026_01/Spr_RG_SailorF.thumb.png.842261ffe0f657c213dcfdcd0aa0b571.png)](https://forums.serenesforest.net/profile/24296-shanty-petes-1st-mate/ "Go to Shanty Pete's 1st Mate's profile")[![Image 19: Mentor](https://s3-forums.serenesforest.net/monthly_2023_01/12_Mentor.svg)](https://forums.serenesforest.net/profile/24296-shanty-petes-1st-mate/badges/)
+
+### [Shanty Pete's 1st Mate](https://forums.serenesforest.net/profile/24296-shanty-petes-1st-mate/ "Go to Shanty Pete's 1st Mate's profile")
+
+[Posted September 23, 2019](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#findComment-5510937)
+
+### **[Shanty Pete's 1st Mate](https://forums.serenesforest.net/profile/24296-shanty-petes-1st-mate/ "Go to Shanty Pete's 1st Mate's profile")**
+
+*    I'm a pirate! Pirates are the definition of 'cool'.
+*   [![Image 20: Shanty Pete's 1st Mate](https://s3-forums.serenesforest.net/monthly_2026_01/Spr_RG_SailorF.thumb.png.842261ffe0f657c213dcfdcd0aa0b571.png)](https://forums.serenesforest.net/profile/24296-shanty-petes-1st-mate/ "Go to Shanty Pete's 1st Mate's profile")![Image 21: Mentor](https://s3-forums.serenesforest.net/monthly_2023_01/12_Mentor.svg) 
+*   Member
+
+![Image 22](https://s3-forums.serenesforest.net/badges/member/Tellius.gif)
+
+*   **Pronouns:** Any/All 
+*   **Favorite FE:** Radiant Dawn 
+*   **Location:** Eternia 
+
+*   [](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#elControls_5510937_menu "More options...")
+
+ Posted September 23, 2019
+
+Thanks for finding this out! Now that spells recharge each map, there's no reason not to spam high-return white magic on the last turn of a given map. Good to know which ones I should be favoring!
+
+[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)
+
+[![Image 23: Cysx](https://s3-forums.serenesforest.net/profile/photo-thumb-1593.png)](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")[![Image 24: Community Regular](https://s3-forums.serenesforest.net/monthly_2023_01/8_Regular.svg)](https://forums.serenesforest.net/profile/1593-cysx/badges/)
+
+### [Cysx](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")
+
+[Posted September 23, 2019](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#findComment-5511109)
+
+### **[Cysx](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")**
+
+*    Away but not really
+*   [![Image 25: Cysx](https://s3-forums.serenesforest.net/profile/photo-thumb-1593.png)](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")![Image 26: Community Regular](https://s3-forums.serenesforest.net/monthly_2023_01/8_Regular.svg) 
+*   Member
+
+![Image 27](https://s3-forums.serenesforest.net/badges/member/(default).gif)
+
+*   **Favorite FE:** Radiant Dawn 
+*   **Location:** France 
+
+*   **Author**
+
+*   [](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#elControls_5511109_menu "More options...")
+
+ Posted September 23, 2019
+
+> [](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)[](https://forums.serenesforest.net/?app=core&module=system&controller=content&do=find&content_class=forums_Topic&content_id=89413&content_commentid=5510937) On 9/23/2019 at 3:18 AM, [Shanty Pete's 1st Mate](https://forums.serenesforest.net/?app=core&module=members&controller=profile&id=24296) said: 
+> 
+> 
+> 
+> Thanks for finding this out! Now that spells recharge each map, there's no reason not to spam high-return white magic on the last turn of a given map. Good to know which ones I should be favoring!
+
+Frankly I just spam high exp spells in general(read: Fortify), though I sometimes keep one use in case of an emergency. That's worked pretty well for me thus far, and has allowed my healer(read: Mercedes) to regularly get Mag level ups and remain at a comfortable range even as the maps get larger later on.
+
+Anyway, added lv 41-> 50 to the table. As said previously I won't go any further since levels >50 really aren't relevant at all currently. Maybe the dlc will change that, but I think that's enough for now.  
+ Fun fact, If the *1.05 multiplier remains consistent from 51 to 99, level 98->99 should take 30 688 exp, over 10 times what level 49->50 requires.
+
+[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)
+
+[![Image 28: Satinii](blob:http://localhost/24b89e8919ed36e65f24238283a60f6e)](https://forums.serenesforest.net/profile/43374-satinii/ "Go to Satinii's profile")[![Image 29: Newbie](https://s3-forums.serenesforest.net/monthly_2023_01/1_Newbie.svg)](https://forums.serenesforest.net/profile/43374-satinii/badges/)
+
+### [Satinii](https://forums.serenesforest.net/profile/43374-satinii/ "Go to Satinii's profile")
+
+[Posted September 27, 2019](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#findComment-5512905)
+
+### **[Satinii](https://forums.serenesforest.net/profile/43374-satinii/ "Go to Satinii's profile")**
+
+*   [![Image 30: Satinii](blob:http://localhost/24b89e8919ed36e65f24238283a60f6e)](https://forums.serenesforest.net/profile/43374-satinii/ "Go to Satinii's profile")![Image 31: Newbie](https://s3-forums.serenesforest.net/monthly_2023_01/1_Newbie.svg) 
+*   New Member
+
+![Image 32](https://s3-forums.serenesforest.net/badges/member/(default).gif)
+
+*   [](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#elControls_5512905_menu "More options...")
+
+ Posted September 27, 2019
+
+Thank you for the guide!
+
+A strategy guide book is recently published in Japan, it contains all formulas and other stuff in FETH.Unfortunately I don't have it, but there is a screenshot on how exp system works (based on my limited Japanese and google translate), and it looks similar to what you found so far.[![Image 33: 007YhGWwly1g7a83eqcx9j32c0340e8b.thumb.jpg.70fbc53684582c83317b4165d31ed95d.jpg](https://s3-forums.serenesforest.net/monthly_2019_09/007YhGWwly1g7a83eqcx9j32c0340e8b.thumb.jpg.70fbc53684582c83317b4165d31ed95d.jpg)](https://s3-forums.serenesforest.net/monthly_2019_09/007YhGWwly1g7a83eqcx9j32c0340e8b.jpg.5319ce13480106cf18e4ccdeb739cd94.jpg)
+
+(rough translation)
+
+kill exp = (enemy type base exp) * (enemy level coefficient) * (coefficient of level diff in different difficulties) * 2 (for bosses and demons)
+
+dmg exp = 1/2* kill exp * dmg percentage
+
+The healing part has an extra part based on your description. It adds an extra penalty based on # of turns you've taken so far. So under 20 turns it is 100% and then the coefficient decreases slowly.
+
+I'm not sure if the book is edited by the developer. Clearly there are some typos (missing %, missing numbers). You can find the book on amazon jp:[https://www.amazon.co.jp/ファイアーエムブレム-風花雪月-パーフェクトガイド-ファミ通書籍編集部/dp/4047334294](https://www.amazon.co.jp/%E3%83%95%E3%82%A1%E3%82%A4%E3%82%A2%E3%83%BC%E3%82%A8%E3%83%A0%E3%83%96%E3%83%AC%E3%83%A0-%E9%A2%A8%E8%8A%B1%E9%9B%AA%E6%9C%88-%E3%83%91%E3%83%BC%E3%83%95%E3%82%A7%E3%82%AF%E3%83%88%E3%82%AC%E3%82%A4%E3%83%89-%E3%83%95%E3%82%A1%E3%83%9F%E9%80%9A%E6%9B%B8%E7%B1%8D%E7%B7%A8%E9%9B%86%E9%83%A8/dp/4047334294)
+
+[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/)
+
+[![Image 34: Cysx](https://s3-forums.serenesforest.net/profile/photo-thumb-1593.png)](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")[![Image 35: Community Regular](https://s3-forums.serenesforest.net/monthly_2023_01/8_Regular.svg)](https://forums.serenesforest.net/profile/1593-cysx/badges/)
+
+### [Cysx](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")
+
+[Posted September 30, 2019](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#findComment-5514029)
+
+### **[Cysx](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")**
+
+*    Away but not really
+*   [![Image 36: Cysx](https://s3-forums.serenesforest.net/profile/photo-thumb-1593.png)](https://forums.serenesforest.net/profile/1593-cysx/ "Go to Cysx's profile")![Image 37: Community Regular](https://s3-forums.serenesforest.net/monthly_2023_01/8_Regular.svg) 
+*   Member
+
+![Image 38](https://s3-forums.serenesforest.net/badges/member/(default).gif)
+
+*   **Favorite FE:** Radiant Dawn 
+*   **Location:** France 
+
+*   **Author**
+
+*   [](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#elControls_5514029_menu "More options...")
+
+ Posted September 30, 2019
+
+> [](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)[](https://forums.serenesforest.net/?app=core&module=system&controller=content&do=find&content_class=forums_Topic&content_id=89413&content_commentid=5512905) On 9/27/2019 at 9:41 PM, [Satinii](https://forums.serenesforest.net/?app=core&module=members&controller=profile&id=43374) said:
+
+Thanks a lot for sharing! I'm pretty glad they did this, and also a bit confused that there are things I disagree with on there(Reserve/Fortify isn't 4x Live/Heal's exp for example, that's just factually wrong from what I've seen many, many times). Regardless, it's really good to have a combat exp formula now, and the 105% exp at equal levels definitely sounds like what might have tripped me up; the idea that you'd only get the base exp gain when fighting an enemy 1 level stronger than you didn't occur to me. Otherwise I'd need to look deeper to tell if I 100% agree, not that it matters much when I didn't produce a formula myself. Also no mention of a -5 level cap to the underleveled exp bonus, so I potentially didn't research that thoroughly enough.
+
+I did notice a reducing of support exp gains past a certain point, but a much more drastic one and only for the Dance action(as in, past ~20 turns/uses it'd stop giving exp altogether), so this is clearly not what they're talking about. Considering healing uses are generally depleted past turn 20 and that's beyond the scope of my testing anyway, I likely just missed it.
+
+#### Archived
+
+This topic is now archived and is closed to further replies.
+
+[Go to topic listing](https://forums.serenesforest.net/forum/97-fire-emblem-three-houses/ "Go to Fire Emblem: Three Houses")
+
+*   
+### Recently Browsing 0 members
+
+    *   No registered users viewing this page.
+
+*   [All Activity](https://forums.serenesforest.net/discover/)
+
+*   [Home](https://forums.serenesforest.net/ "Home")
+*   [Fire Emblem Forums](https://forums.serenesforest.net/forum/9-fire-emblem-forums/)
+*   [Fire Emblem: Three Houses](https://forums.serenesforest.net/forum/97-fire-emblem-three-houses/)
+*    Healing/Support action Exp formula + Exp table from level 1 to 50 
+
+*   [Theme](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#elNavTheme_menu)
+    *   Serenes Forest (Default)
+    *   Night Forest 
+
+*   [Contact Us](https://forums.serenesforest.net/contact/)
+*   [Cookies](https://forums.serenesforest.net/cookies/)
+
+Joshua Moore[Powered by Invision Community](https://www.invisioncommunity.com/ "Invision Community")
+
+[×](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)
+
+*   [Existing user? Sign In](https://forums.serenesforest.net/login/)
+*   [Sign Up](https://forums.serenesforest.net/register/)
+
+*   #### [Browse](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)
+
+    *   [Back](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)
+    *   [Main Site](https://serenesforest.net/)
+    *   [Forums](https://forums.serenesforest.net/)
+    *   [Events](https://forums.serenesforest.net/events/)
+    *   [Guidelines](https://forums.serenesforest.net/guidelines/)
+    *   [Staff](https://forums.serenesforest.net/staff/)
+    *   [Online Users](https://forums.serenesforest.net/online/)
+
+*   #### [Activity](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)
+
+    *   [Back](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)
+    *   [All Activity](https://forums.serenesforest.net/discover/)
+    *   [Search](https://forums.serenesforest.net/search/)
+
+[×](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)
+
+*   Create New...
+
+[](https://forums.serenesforest.net/topic/89413-healingsupport-action-exp-formula-exp-table-from-level-1-to-50/#)

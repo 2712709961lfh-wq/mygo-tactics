@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>Character Atlas Preview</title>
+<style>
+  body{margin:0;background:#11151c;color:#cfd8e3;font:12px/1.5 monospace;padding:18px}
+  h2{color:#ff8fb1;font-size:14px;margin:18px 0 6px}
+  .row{display:flex;gap:22px;align-items:flex-start}
+  .cell{background:#1b2230;border:1px solid #354154;padding:8px;position:relative}
+  img.sheet{width:640px;height:1536px;image-rendering:pixelated;background:#2a3444}
+  img.portrait{width:164px;image-rendering:pixelated;background:#2a3444}
+  .grid{position:absolute;left:9px;top:9px;width:640px;height:1536px;pointer-events:none;background:
+    repeating-linear-gradient(to right, transparent 0 79px, rgba(255,255,255,.18) 79px 80px),
+    repeating-linear-gradient(to bottom, transparent 0 95px, rgba(255,255,255,.18) 95px 96px);}
+</style></head>
+<body>
+  <h2>tomori sheet (4 cols x 8 rows; each 80x96)</h2>
+  <div class="row">
+    <div class="cell"><img class="sheet" src="tomori-sheet.png"><div class="grid"></div></div>
+    <div class="cell"><img class="portrait" src="tomori-portrait.png"></div>
+  </div>
+</body></html>

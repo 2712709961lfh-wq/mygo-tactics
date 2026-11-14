@@ -1,0 +1,394 @@
+/* v3: one 1360 × 768 landscape surface. This file owns the new layout;
+   the original styles retain combat/animation details and legacy preview pages. */
+:root {
+  --bg:#101c27; --bg-deep:#0b141e; --panel:#162632; --panel-solid:#162632;
+  --text:#e8e9df; --muted:#a5b5b6; --dim:#849a9e;
+  --cyan:#9dc7bd; --pink:#cb9fa9; --gold:#d1bd91; --red:#d28b91;
+  --line:#ffffff1c; --line-strong:#b7c5b547; --radius:3px;
+  --paper:#eeeadd; --paper-deep:#ded9cb; --paper-ink:#283e46; --paper-muted:#71807d;
+  --entry-ink:#eeeade; --entry-muted:#a0b2b5; --entry-pink:#d1a9af; --entry-violet:#91abae;
+  --entry-gold:#d1bd91; --formation-violet:#466b71;
+}
+html,body.soul-ui {width:100%;height:100%;margin:0;overflow:hidden;background:#080f17}
+body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px;color:var(--text)}
+.soul-ui button:focus-visible,.soul-ui a:focus-visible {outline:2px solid #d1bd91;outline-offset:4px}
+.game-shell {position:fixed;left:50%;top:50%;width:1360px;height:768px;overflow:hidden;
+  transform:translate(-50%,-50%) rotate(var(--ui-rotation,0deg)) scale(var(--ui-scale,1));
+  transform-origin:center;display:grid;grid-template-rows:78px minmax(0,1fr) 40px;
+  background:radial-gradient(ellipse at 65% 0,#34505b33,transparent 65%),#111e29;
+  box-shadow:0 0 120px #0008;isolation:isolate}
+.game-shell .ambient {position:absolute;inset:0;background-size:64px 64px;opacity:.3}
+.game-shell .topbar {container:none;grid-row:1;position:relative;width:auto;min-width:0;height:78px;
+  margin:0 24px;padding:0;gap:26px;display:flex;flex-wrap:nowrap;align-items:center;
+  border:0;border-bottom:1px solid #d7d2b529;border-radius:0;background:none;box-shadow:none;backdrop-filter:none}
+.game-shell .brand {min-width:210px;flex:0 0 210px;gap:12px}
+.game-shell .brand-star {width:34px;height:40px;border:0;border-radius:0;background:none;color:#d3be98;
+  font-size:31px;font-weight:300;box-shadow:none;transform:rotate(15deg)}
+.game-shell .brand-title {font-family:"Songti SC","SimSun",serif;font-size:26px;font-weight:400;
+  letter-spacing:7px;color:#eeeade;background:none;filter:none;line-height:1.2}
+.game-shell .brand-sub {display:block;margin-top:5px;font-size:8px;color:#9eb0b5;letter-spacing:2.2px}
+.game-shell .mission-block {display:block;flex:1;min-width:0;padding:0 0 0 24px;border-left:1px solid #c7b89933}
+.game-shell .eyebrow {color:#cfb98d;font-size:9px;letter-spacing:2px}
+.game-shell .mission-title {font-size:17px;font-weight:500;letter-spacing:2px;margin:2px 0 0}
+.game-shell .mission-sub {display:none}
+.game-shell .phase-block {display:flex;order:initial;flex:0 0 147px;margin:0;padding:7px 14px;gap:10px;
+  border:1px solid #9dc7bd44;border-radius:2px;background:#9dc7bd09}
+.game-shell .phase-label {font-size:12px}.game-shell .phase-text strong {font-size:12px}
+.game-shell .phase-text small {font-size:10px;color:#b5c2bd;letter-spacing:1px}
+.game-shell .phase-dot {width:5px;height:5px;box-shadow:0 0 10px #9dc7bd55}
+.game-shell .top-actions {display:flex;order:initial;gap:6px;margin:0;width:auto}
+.game-shell .icon-btn {width:44px;min-width:44px;flex:none;padding:7px 0;border:0;border-radius:1px;
+  color:#bcc7c2;font-size:11px;background:transparent;box-shadow:none}
+.game-shell .icon-btn:hover {color:#efe5cc;background:#ffffff08;transform:none}
+.game-shell .icon-btn-danger {color:#c798a0}
+
+/* The map and the action panel always share one horizontal row. */
+.battle-layout {grid-row:2;display:grid;grid-template-columns:80px minmax(0,1fr) 300px;
+  gap:14px;min-height:0;margin:14px 24px 0}
+.party-rail {display:flex;flex-direction:column;align-items:center;min-height:0;position:relative;
+  border-right:1px solid #a7b7a522;padding-right:12px}
+.party-heading {width:100%;text-align:center;color:#d7c6a5;font-size:11px;letter-spacing:2px;line-height:1.8;margin:3px 0 12px}
+.party-heading span {display:block;font-size:8px;color:#7f969d;letter-spacing:2px}
+.party-list {display:flex;flex-direction:column;width:100%;gap:10px}
+.party-unit {position:relative;display:grid;grid-template-rows:46px 18px 4px;gap:3px;justify-items:center;
+  width:66px;height:83px;padding:4px 4px 5px;border:1px solid #b3c3c424;border-radius:2px;
+  background:#1b2c36;cursor:pointer;transition:background .18s,border .18s;box-shadow:none}
+.party-unit::before {content:attr(data-shortcut);position:absolute;left:3px;top:0;color:#b4b8a3;font:9px var(--mono)}
+.party-unit canvas {width:46px;height:46px;image-rendering:pixelated;filter:drop-shadow(0 3px 3px #0004)}
+.party-unit strong {font-size:11px;font-weight:500;line-height:18px;color:#dce1d6;letter-spacing:1px}
+.party-unit .party-hp {width:47px;height:3px;background:#06131a}
+.party-unit .party-hp i {height:100%;display:block;background:#9dc7bd}
+.party-unit:hover,.party-unit[aria-pressed=true] {background:#30464d;border-color:#c7b58c}
+.party-unit[aria-pressed=true]::after {content:"";position:absolute;right:-7px;top:33px;
+  width:8px;height:8px;transform:rotate(45deg);background:#d1bd91}
+.party-unit.is-acted canvas {filter:grayscale(.9);opacity:.55}
+.party-unit.is-acted::before {content:"✓";color:#9dc7bd}
+.party-unit.is-down {opacity:.4}.party-unit:disabled {cursor:default}
+.party-thread {display:flex;align-items:center;width:50px;gap:4px;color:#8baca44d;margin:16px 0 9px;font-size:9px}
+.party-thread i {height:1px;background:#8baca44d;flex:1}
+.party-caption {font:10px/1.9 "SimSun",serif;color:#7d949a;text-align:center;letter-spacing:3px}
+.game-shell .stage {width:100%;height:100%;min-height:0;min-width:0;margin:0}
+.game-shell .battle-card {height:100%;min-height:0;display:grid;grid-template-rows:42px minmax(0,1fr) 58px;
+  border:0;border-radius:0;background:none;box-shadow:none;backdrop-filter:none;overflow:visible}
+.game-shell .board-head {display:flex;flex-wrap:nowrap;padding:0 3px 10px;gap:10px;min-height:0}
+.game-shell .turn-wrap {gap:9px;min-width:128px}
+.game-shell .turn-number {font-size:25px;color:#cfbd95;font-weight:400;letter-spacing:-1px;text-shadow:none}
+.game-shell .turn-kicker {font-size:8px;letter-spacing:1.8px;color:#8aa29f}
+.game-shell .turn-title {font-size:12px;font-weight:500;color:#e4e5d8;letter-spacing:1px}
+.game-shell .force-counts {display:flex;order:initial;margin-left:auto;gap:15px}
+.game-shell .force {padding:0;border:0;background:none;gap:7px;font-size:11px;color:#a8b8b6}
+.game-shell .force b {font-size:16px;font-weight:400;color:#e4e5d8}
+.game-shell .force i {width:4px;height:4px;box-shadow:none}
+.game-shell .board-head-right {display:flex;width:auto;order:initial;margin-left:12px}
+.game-shell .autosave-note {display:block;font-size:9px;color:#8da39e}
+.game-shell .board-frame {display:grid;place-items:center;position:relative;min-height:0;min-width:0;
+  margin:0;overflow:hidden;border:1px solid #b9c4af47;border-radius:2px;background:#0b171f;
+  box-shadow:0 8px 24px #0003}
+.game-shell .board-frame::before,.game-shell .board-frame::after {display:none}
+.game-shell .board-viewport {flex:none;position:relative;aspect-ratio:auto;margin:auto;min-width:0;min-height:0;
+  max-width:100%;max-height:100%;background:#0b171f;scrollbar-color:#8aaba0 #0b171f;overscroll-behavior:contain}
+.game-shell #board {display:block;width:100%;height:100%;image-rendering:pixelated;touch-action:manipulation;outline-offset:-2px}
+.game-shell .board-corner {display:none}
+.game-shell .board-tools {top:auto;right:8px;bottom:8px;left:auto;display:flex;gap:4px;padding:4px 5px;
+  border:1px solid #c8ccb145;border-radius:2px;background:#10232be8;box-shadow:none;backdrop-filter:none}
+.game-shell .board-tool {min-width:22px;width:22px;height:20px;border:0;border-radius:0;font-size:13px;color:#dee0cb;background:none}
+.game-shell .board-tool-reset {width:27px;font-size:9px;color:#c5b58f}
+.game-shell .zoom-level {min-width:35px;font-size:9px;color:#b7c9bb}
+.game-shell .board-foot {display:grid;grid-template-columns:minmax(0,1fr) 155px;align-items:center;
+  gap:12px;padding:10px 0 0;min-height:0;border:0}
+.game-shell .objective-line {grid-column:1;grid-row:1;display:flex;align-items:flex-start;gap:9px;min-width:0}
+.game-shell .objective-label {flex:none;color:#c9b892;font-size:9px;letter-spacing:1px;padding:2px 6px;
+  border:1px solid #c5b38b44;border-radius:1px;background:none}
+.game-shell .objective-line strong {font-size:11px;font-weight:400;line-height:1.8;white-space:normal;color:#b6c5c1}
+.game-shell .legend,.game-shell .control-hint {display:none}
+.game-shell .btn-end {grid-column:2;grid-row:1;display:flex;flex:none;justify-content:space-between;
+  width:155px;padding:10px 14px;color:#eadcbd;font-size:12px;font-weight:500;border:1px solid #d0b78d66;
+  border-radius:2px;background:linear-gradient(110deg,#c0ac7c25,#c0ac7c0a);box-shadow:none;letter-spacing:2px}
+.game-shell .btn-end:hover:not(:disabled) {background:#c0ac7c30;transform:none}
+
+/* A light, quiet dossier keeps numbers distinct from the battlefield. */
+.game-shell .info-panel {position:relative;display:grid;grid-template-columns:72px minmax(0,1fr);
+  grid-template-rows:86px minmax(0,1fr) auto;gap:15px 12px;width:auto;height:100%;min-height:0;max-height:100%;
+  margin:0;padding:19px 17px 16px;border:1px solid #bfbca1;border-radius:2px;
+  color:#2b4148;background:linear-gradient(155deg,#f0ecdf,#e6e4d8);box-shadow:0 7px 28px #0003;backdrop-filter:none}
+.game-shell .info-panel::before {content:"";position:absolute;top:5px;left:5px;right:5px;bottom:5px;
+  border:1px solid #879e911f;pointer-events:none}
+.game-shell .portrait-block {grid-row:1;grid-column:1;align-self:stretch;min-height:0;height:86px;
+  width:72px;border:1px solid #889c8c5e;border-radius:1px;background:radial-gradient(circle at 50% 40%,#bad1c4,#d6d9ca);overflow:hidden}
+.game-shell .portrait-block[data-side=enemy] {background:#ddcac5;border-color:#b28a8c}
+.game-shell .portrait-block[data-side=terrain] {background:#d4d6bf;border-color:#a7af92}
+.game-shell #info-portrait {position:absolute;top:50%;left:50%;width:64px;height:64px;transform:translate(-50%,-43%);filter:drop-shadow(0 4px 5px #0002)}
+.game-shell .portrait-badge {top:3px;left:3px;right:auto;border:0;border-radius:0;padding:0 3px;color:#48605b;
+  background:#f1eddfb3;font-size:8px;letter-spacing:1px}
+.game-shell .portrait-level {right:3px;bottom:1px;font-size:8px;color:#344d50}
+.game-shell .info-main {display:contents;padding:0}
+.game-shell .info-heading {grid-column:2;grid-row:1;display:flex;flex-direction:column;justify-content:center;
+  align-items:flex-start;gap:5px;min-width:0}
+.game-shell .info-eyebrow {color:#7b8c87;font-size:8px;letter-spacing:1.2px}
+.game-shell .info-heading h2 {font-family:"Songti SC","SimSun",serif;font-size:21px;font-weight:600;
+  letter-spacing:1px;line-height:1.4;white-space:normal;margin:0;color:#293f46}
+.game-shell .info-tags {gap:4px;margin:0;display:flex;flex-wrap:wrap}
+.game-shell .tag {font-size:9px;padding:1px 4px;line-height:1.6;color:#6a7b76;border:1px solid #7c93843b;border-radius:1px;background:none}
+.game-shell .tag.side-player {color:#417a72;border-color:#79a39877}.game-shell .tag.side-enemy {color:#a25b69;border-color:#bd8e9566}
+.game-shell .tag.gold {color:#8f7844;border-color:#ab975361}
+.game-shell .info-body {grid-column:1/-1;grid-row:2;margin:0;min-height:0;overflow:auto;padding:0 1px 4px;
+  scrollbar-width:thin;scrollbar-color:#acb7a7 transparent;align-self:stretch}
+.game-shell .unit-subline {gap:8px;font-size:11px;line-height:1.7;color:#526d6e}
+.game-shell .weapon-mark {width:25px;height:29px;flex:none;color:#7e6e47;border:1px solid #84998c59;border-radius:1px;background:#a8b6a314;font-size:12px}
+.game-shell .weapon-line {white-space:normal;overflow:visible}
+.game-shell .hp-line {margin-top:18px;gap:9px}
+.game-shell .hp-caption {font-size:11px;color:#667d76;letter-spacing:1px}
+.game-shell .hp-meter {height:5px;background:#acb8a65e;border:0;border-radius:0}
+.game-shell .hp-fill {border-radius:0;box-shadow:none;background:#578d7d}
+.game-shell .hp-fill.mid {background:#ba9a5f;box-shadow:none}.game-shell .hp-fill.low {background:#b76c78;box-shadow:none}
+.game-shell .hp-values {font-size:10px;color:#72817a}.game-shell .hp-values b {font-size:20px;color:#334e50;font-weight:500}
+.game-shell .hp-values span {color:#7c8982}
+.game-shell .stat-grid {grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:17px;
+  border-top:1px solid #9bad9c66;border-left:0;border-bottom:1px solid #9bad9c66}
+.game-shell .stat {padding:10px 0 8px;border:0;border-radius:0;text-align:center;background:none;line-height:1.5}
+.game-shell .stat:nth-child(-n+4) {border-bottom:1px solid #9bad9c33}
+.game-shell .stat i {color:#6c8079;font-size:10px;letter-spacing:1px}
+.game-shell .stat b {font-size:20px;font-weight:500;color:#344d50}
+.game-shell .stat.accent b {color:#38796f}.game-shell .stat.warm b {color:#9d7a40}
+.game-shell .stat b small {color:#9c7a40;font-size:11px}
+.game-shell .derived-line {display:flex;flex-wrap:wrap;gap:7px 12px;line-height:1.7;margin-top:14px;font-size:10px;color:#75857c}
+.game-shell .derived-line b {color:#3f5f5b;font-weight:500;font-size:10px}
+.game-shell .info-side {grid-column:1/-1;grid-row:3;display:block;min-height:0;max-height:239px;
+  border:0;border-top:1px solid #99a99466;padding:12px 0 0}
+.game-shell .context-title {color:#6e8075;font-size:10px;letter-spacing:2px}
+.game-shell .context-text {flex:none;margin-top:7px;font-size:11px;line-height:1.8;color:#4d6663}
+.game-shell .context-text strong {color:#314c49;font-weight:600}
+.game-shell .context-text .hint-line {margin-top:6px;font-size:10px;line-height:1.7;color:#7d8a7e}
+.game-shell .action-buttons {display:flex;flex-direction:column;gap:5px;margin-top:12px}
+.game-shell .action-btn {display:flex;align-items:center;justify-content:space-between;flex:none;min-height:34px;
+  min-width:0;padding:7px 12px;border:1px solid #9bac9866;border-radius:1px;color:#49665f;background:#ffffff1f;
+  font-size:12px;font-weight:500;letter-spacing:2px;box-shadow:none}
+.game-shell .action-btn::after {content:"›";font-size:17px;line-height:1;color:#829b8a}
+.game-shell .action-btn.primary {color:#f3efdf;border-color:#3c6865;background:#466d69}
+.game-shell .action-btn.primary::after {color:#c1d4be}
+.game-shell .action-btn.attack {color:#85515e;border-color:#b18d9166;background:#c1949714}
+.game-shell .action-btn:hover:not(:disabled) {transform:none;background:#97b29d44;border-color:#7a9d8f}
+.game-shell .action-btn.primary:hover:not(:disabled) {background:#375a57}
+.game-shell .action-btn .count {margin-left:auto;margin-right:12px;border:0;border-radius:0;background:none;color:inherit;font-size:12px}
+.game-shell .mission-info {font-size:12px;line-height:1.9;color:#566d66}
+.game-shell .mission-info strong {display:block;font-size:12px;line-height:1.9;color:#385550;font-weight:600}
+.game-shell .mission-quote {margin-top:20px;padding:0 0 0 12px;border-left:2px solid #b8899277;color:#9b777c;
+  font:12px/1.9 "SimSun",serif}
+.seal-progress {display:flex;flex-direction:column;gap:0;margin:24px 0 10px;padding:0;list-style:none}
+.seal-progress li {position:relative;display:grid;grid-template-columns:24px 1fr;gap:8px;padding:0 0 20px;color:#809087;font-size:11px}
+.seal-progress li::before {content:"";position:absolute;width:1px;top:19px;bottom:1px;left:9px;background:#93aa9944}
+.seal-progress li:last-child::before {display:none}
+.seal-progress i {display:grid;place-items:center;width:20px;height:20px;border:1px solid #97ab9966;
+  transform:rotate(45deg);font-style:normal;font-size:9px;color:#809884}
+.seal-progress i b {transform:rotate(-45deg);font-weight:400}
+.seal-progress strong {font-size:12px;line-height:1.7;font-weight:500;color:#526e61}
+.seal-progress small {display:block;margin-top:3px;color:#809087;font-size:10px}
+.seal-progress li.is-current i {border-color:#6f9184;background:#6f91841c;color:#3f6e5f}
+.seal-progress li.is-current strong {color:#315d50}
+.game-shell .terrain-info {gap:15px;padding-top:6px}.game-shell .terrain-name-line strong {color:#34514c;font-size:17px}
+.game-shell .terrain-desc {font-size:13px;line-height:1.9;color:#667c72}
+.game-shell .effect-chip {border:1px solid #8eaa9366;border-radius:1px;padding:5px 8px;color:#4d7264;background:#789d8611;font-size:11px}
+.game-shell .effect-chip.warn {border-color:#b1808866;color:#9d6974;background:#b1808811}
+.forecast-strip {display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;padding:12px 0;
+  border-top:1px solid #98a89255;border-bottom:1px solid #98a89255;text-align:center}
+.forecast-strip span {font-size:9px;color:#6e8175;letter-spacing:1px}.forecast-strip b {display:block;font:24px var(--mono);color:#355d50}
+.forecast-strip b.damage {color:#a96673}
+
+/* Thin lower command rail; primary actions stay at the map and dossier. */
+.game-status {grid-row:3;display:flex;align-items:center;gap:12px;margin:0 24px;border-top:1px solid #a8b6a51c;
+  font-size:10px;color:#8ea39e;min-width:0}
+.status-emblem {font-size:17px;color:#b4a384}.game-status #tactical-hint {flex:1;letter-spacing:.4px}
+.status-keys {color:#8ea19d;font-size:9px;margin-right:14px}
+.game-status button {font-size:10px;color:#b1c0b8;border:0;background:none;cursor:pointer;padding:3px 4px;letter-spacing:1px}
+.game-status kbd {font-size:8px;border-color:#a9bcb024;background:none;border-radius:2px;color:#bac5b6;margin:0 4px}
+.game-status button[aria-pressed=false] {color:#758785}
+.game-shell .toast {position:absolute;top:auto;bottom:40px;left:50%;max-width:85%;border:1px solid #afc4b26b;
+  border-radius:2px;background:#12262ef5;color:#e7e5d7;box-shadow:0 5px 20px #0004;font-size:12px;padding:10px 16px}
+.game-shell .turn-banner {border-radius:0;background:linear-gradient(90deg,#10262b00,#10262bed 20% 80%,#10262b00);box-shadow:none}
+
+/* Title: a fractured heart-door, five voices, and a quiet vertical menu. */
+.game-shell .entry-screen {position:absolute;inset:0;width:100%;height:100%;overflow:hidden;
+  background:radial-gradient(ellipse at 54% 45%,#34555a44,transparent 58%),linear-gradient(120deg,#172b35,#0f1d2a 65%,#15212c)}
+.game-shell .entry-screen::before {inset:24px;border:1px solid #d2c9a61c;background:none;opacity:1}
+.game-shell .entry-screen::after {height:120px;opacity:.6;background:linear-gradient(transparent,#0b1722)}
+.game-shell .entry-atmosphere {display:block}.game-shell .entry-moon,.game-shell .entry-cloud,.game-shell .entry-grid-lines {display:none}
+.game-shell .entry-spark {background:#c4c3a8;box-shadow:0 0 14px #becaba55;opacity:.3;animation-duration:12s}
+.game-shell .entry-shell {position:relative;z-index:2;width:100%;height:100%;min-height:0;margin:0;padding:40px 60px 30px;
+  display:grid;grid-template-rows:35px minmax(0,1fr) 95px;max-width:none}
+.game-shell .entry-top {padding:0;align-items:center;gap:20px;border:0;color:#99b0b3;font-size:9px;letter-spacing:2px}
+.game-shell .entry-top-brand {font-size:10px;gap:10px}.game-shell .entry-top-star {color:#cdbd99;text-shadow:none}
+.game-shell .entry-top-meta {font-size:8px;letter-spacing:2px;color:#91a4a8;opacity:1}
+.game-shell .entry-main {position:relative;display:grid;grid-template-columns:minmax(0,1fr) 325px;
+  align-items:center;gap:55px;padding:10px 0 0;min-height:0}
+.game-shell .entry-title-block {max-width:670px;padding-bottom:6px}
+.game-shell .entry-overline {font-family:"SimSun",serif;font-size:12px;letter-spacing:4px;color:#a4bbb7;margin:0 0 26px}
+.game-shell .entry-overline::before {width:25px;background:#91b3a9;margin-right:12px}
+.game-shell .entry-title {line-height:1.2;text-shadow:0 8px 35px #07131c66}
+.game-shell .entry-logo {color:#b4c6c5;-webkit-text-fill-color:initial;background:none;filter:none;font-size:14px;
+  font-weight:500;letter-spacing:5px;line-height:1.5;margin:0 0 10px}
+.game-shell .entry-game-title {font-family:"Songti SC","SimSun",serif;font-size:80px;font-weight:400;
+  letter-spacing:12px;margin:0;color:#eee9d9;line-height:1.5;white-space:nowrap}
+.game-shell .entry-game-title::after {content:"ECHOES OF THE LOST";display:block;font-family:var(--mono);
+  color:#b9bbb0;font-size:11px;letter-spacing:7px;margin:5px 0 0 5px;font-weight:400}
+.game-shell .entry-lead {font-family:"SimSun",serif;font-size:18px;letter-spacing:3px;color:#d3c1b6;margin:26px 0 0}
+.game-shell .entry-mission-chip {display:inline-flex;gap:11px;margin-top:25px;padding:8px 12px;border:1px solid #acb9a42e;
+  border-left:2px solid #bba788;background:#172d3633;color:#b7c7bc;font-size:10px;border-radius:0}
+.game-shell .entry-chip-label {font-size:8px;color:#c4b08e;letter-spacing:1px}
+.game-shell .entry-mission-chip strong {font-size:11px;letter-spacing:1px;font-weight:400}
+.game-shell .entry-mission-chip span:last-child {font-size:9px;color:#899f9e;letter-spacing:1px}
+.game-shell .entry-copy {font-family:"SimSun",serif;font-size:12px;line-height:2.2;color:#9cb2b0;margin-top:24px;gap:13px}
+.game-shell .entry-copy > span {background:#b68d95;opacity:.6}.game-shell .entry-copy p {margin:0}
+.soul-art {position:absolute;z-index:1;left:430px;top:60px;width:620px;height:610px;pointer-events:none;opacity:.9}
+.soul-art svg {width:100%;height:100%}.soul-art-caption {position:absolute;left:207px;bottom:27px;text-align:center;
+  font:8px/2.3 var(--mono);letter-spacing:3px;color:#9eb4ac99}
+.soul-art-caption span {font-family:"SimSun",serif;font-size:10px;letter-spacing:4px;color:#b9b3a0a3}
+.game-shell .entry-menu-wrap {width:325px;max-width:none;justify-self:end;position:relative;z-index:3;
+  padding:23px 0 0 23px;border-left:1px solid #acb8a924;background:linear-gradient(90deg,#13242b00,#13242b66)}
+.game-shell .entry-menu-kicker {font-size:10px;letter-spacing:2px;gap:9px;margin-bottom:23px;color:#97aaa4}
+.game-shell .entry-menu-kicker span {font-size:8px;padding:3px 6px;border-color:#c2b08e55;color:#cdbb96}
+.game-shell .entry-menu {display:flex;flex-direction:column;gap:9px}
+.game-shell .entry-option {display:grid;grid-template-columns:27px minmax(0,1fr) 20px;gap:9px;
+  width:100%;min-height:80px;padding:12px 12px 12px 7px;border:0;border-bottom:1px solid #cad1b524;
+  border-radius:0;background:none;box-shadow:none;color:#e5e5d5;transform:none}
+.game-shell .entry-option::before {display:none}
+.game-shell .entry-option-primary {border:1px solid #c2b28a4a;background:linear-gradient(100deg,#9cad9022,#b3ad8b08);padding-left:7px}
+.game-shell .entry-option:hover,.game-shell .entry-option:focus-visible {transform:none;background:#9cad901c;border-color:#d0be9980;box-shadow:none}
+.game-shell .entry-index {font-size:9px;color:#a39b83;align-self:center}
+.game-shell .entry-option-copy strong {font-family:"Songti SC","SimSun",serif;display:block;font-size:22px;font-weight:400;letter-spacing:4px;color:#e5e3d5}
+.game-shell .entry-option-copy em {display:block;margin-top:3px;font-size:7px;letter-spacing:2px;color:#a6b7ad;font-style:normal}
+.game-shell .entry-option-copy small {display:block;margin-top:7px;font-size:9px;line-height:1.6;letter-spacing:.5px;color:#91a59e}
+.game-shell .entry-arrow {font-size:18px;color:#c7b28b}.game-shell .entry-footnote {font:10px/1.8 "SimSun",serif;
+  color:#9caaa0;letter-spacing:1px;margin:23px 0 0}
+.game-shell .entry-footer {display:flex;align-items:center;justify-content:space-between;gap:30px;border-top:1px solid #b9b89a26;
+  padding-top:13px;z-index:3;min-height:0}
+.game-shell .entry-roster {display:flex;align-items:center;gap:23px}.game-shell .entry-roster-label {font-size:11px;color:#bdc6b5;
+  letter-spacing:2px;line-height:1.8;white-space:nowrap}
+.game-shell .entry-roster-label span {display:block;font-size:7px;letter-spacing:1px;color:#7e9997}
+.game-shell .entry-roster-list {display:flex;gap:10px}
+.game-shell .entry-roster-unit {display:flex;align-items:center;gap:4px;border:0;background:none;padding:0;width:64px;flex:none}
+.game-shell .entry-roster-unit canvas {width:38px;height:38px;border-radius:0;border:1px solid #a5b89b33;background:#a5b89b0b}
+.game-shell .entry-roster-unit small {font-size:9px;color:#9eafa4}
+.game-shell .entry-footer-note {display:flex;align-items:center;gap:13px;max-width:320px;text-align:right}
+.game-shell .entry-footer-note p {font:12px/1.9 "SimSun",serif;letter-spacing:1px;color:#a8b7aa;margin:0}
+.game-shell .entry-footer-line {height:1px;width:30px;background:#b0997a;opacity:.6}
+
+/* Save and companions remain inside the landscape surface. */
+.game-shell .entry-save-panel {position:absolute;top:0;right:0;bottom:0;left:auto;width:400px;max-width:none;
+  height:100%;padding:35px 28px;background:#eae8db;color:#35514c;border-left:1px solid #bdb99c;box-shadow:-20px 0 70px #0006;z-index:8}
+.game-shell .entry-save-head h2 {font-family:"SimSun",serif;font-size:28px;font-weight:400;color:#35514c;letter-spacing:4px}
+.game-shell .entry-save-kicker {color:#81967e;font-size:9px}
+.game-shell .entry-save-close {border-color:#9aab9655;background:none;color:#5e786a;border-radius:1px}
+.game-shell .entry-save-info {color:#597064;background:#97ab8f0c;border-color:#a1af9955}
+.game-shell .entry-save-info strong,.game-shell .entry-save-info b {color:#35514c}
+.game-shell .entry-save-btn {background:none;border:1px solid #97ab9166;border-radius:1px;color:#4c6b5f;font-size:13px}
+.game-shell .entry-save-btn.primary {background:#486d65;color:#efeede;border-color:#486d65}
+.game-shell .entry-save-btn.danger {color:#9f6977;border-color:#b58b9555}
+.game-shell .entry-save-note,.game-shell .entry-save-status {color:#7b897c}
+.game-shell .formation-screen {position:absolute;inset:0;width:100%;height:100%;padding:24px 28px;overflow:hidden;
+  background:#0c1925ed;z-index:110}
+.game-shell .formation-shell {position:relative;width:100%;max-width:none;height:100%;min-height:0;max-height:none;
+  margin:0;border:1px solid #b9b99e;border-radius:2px;background:#eae8db;box-shadow:0 20px 80px #0005;
+  display:grid;grid-template-rows:80px minmax(0,1fr)}
+.game-shell .formation-shell::after,.game-shell .formation-shell::before {display:none}
+.game-shell .formation-head {display:flex;flex-wrap:nowrap;align-items:center;gap:24px;padding:16px 25px;border-bottom:1px solid #819a7c44;background:none}
+.game-shell .formation-kicker {font-size:9px;color:#77917c;letter-spacing:2px}
+.game-shell .formation-heading h2 {font-family:"SimSun",serif;font-size:26px;color:#35564e;font-weight:400;margin:3px 0 0;letter-spacing:3px}
+.game-shell .formation-heading h2 span {font-size:11px;color:#83907e;letter-spacing:2px}
+.game-shell .formation-head-meta {font-size:10px;color:#7d8c79}.game-shell .formation-head-meta strong {font-size:23px;color:#4c7160}
+.game-shell .formation-close {padding:8px 12px;background:none;border:1px solid #8ea28666;border-radius:1px;color:#4f6c59;font-size:12px}
+.game-shell .formation-body {display:grid;grid-template-columns:340px minmax(0,1fr);gap:0;min-height:0;padding:0}
+.game-shell .formation-roster-panel {display:flex;flex-direction:column;min-height:0;padding:18px 16px;background:#dce0d11f;border-right:1px solid #9aae9044}
+.game-shell .formation-roster-head {display:flex;align-items:center;justify-content:space-between;padding:0 8px 13px}
+.game-shell .formation-roster-head span {font-size:9px;color:#8c947d}.game-shell .formation-roster-head strong {font-size:12px;color:#59725b;font-weight:500}
+.game-shell .formation-list {display:flex;flex-direction:column;gap:5px;overflow:auto;max-height:none}
+.game-shell .formation-row {display:grid;grid-template-columns:18px 45px minmax(0,1fr) 27px 29px;gap:8px;flex:none;
+  min-width:0;width:100%;min-height:67px;padding:8px;border:1px solid #9baa8d44;border-radius:1px;background:none}
+.game-shell .formation-row.is-selected {background:#4e7267;border-color:#4e7267;box-shadow:none}
+.game-shell .formation-row.is-selected::before {display:none}
+.game-shell .formation-row-index {font-size:9px;color:#87957f}.game-shell .formation-avatar {width:43px;height:43px;border:1px solid #8eaa8e55;border-radius:1px;background:#c6d0b82e}
+.game-shell .formation-row-copy strong {font-size:15px;color:#3f604f;letter-spacing:1px}.game-shell .formation-row-copy small {font-size:9px;color:#7c8f78}
+.game-shell .formation-row.is-selected .formation-row-copy strong {color:#eeeade}.game-shell .formation-row.is-selected .formation-row-copy small {color:#becfbb}
+.game-shell .formation-row-move b {font-size:19px}.game-shell .formation-row-move small {font-size:7px}.game-shell .formation-status {font-size:9px;padding:1px 3px}
+.game-shell .formation-roster-foot {display:none}.game-shell .formation-pose-dock {padding:12px 4px 0;margin-top:auto;border-top:1px solid #a8b59944;background:none}
+.game-shell .formation-dock-head {font-size:8px;color:#8d9a83}.game-shell .formation-dock-head span {font-size:10px;color:#6b8063}
+.game-shell .formation-poses {display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:9px}
+.game-shell .formation-pose {padding:2px;background:#a2b8930d;border-color:#95aa8844;border-radius:1px;margin:0}
+.game-shell .formation-pose canvas {width:55px;height:55px}.game-shell .formation-pose figcaption {font-size:8px;color:#7c9075}
+.game-shell .formation-detail {padding:22px 26px;min-height:0;overflow:auto;background:none}
+.game-shell .formation-detail-top {margin-bottom:16px}.game-shell .formation-hero-card {display:grid;grid-template-columns:140px 1fr;gap:23px}
+.game-shell .formation-portrait-frame {width:140px;height:155px;border:1px solid #93aa8655;border-radius:1px;background:radial-gradient(ellipse,#c4d1b833,transparent)}
+.game-shell .formation-portrait-frame canvas {width:133px;height:144px}.game-shell .formation-portrait-frame::after,.game-shell .formation-portrait-frame::before {display:none}
+.game-shell .formation-unit-kicker {font-size:8px;letter-spacing:1px;color:#8c997f}.game-shell .formation-identity h3 {font-family:"SimSun",serif;font-size:32px;letter-spacing:3px;margin:5px 0;color:#35564a}
+.game-shell .formation-classline {font-size:12px;color:#77906d;margin:0}.game-shell .formation-identity blockquote {font:12px/1.9 "SimSun",serif;color:#9c7e80;margin:12px 0}
+.game-shell .formation-tags {gap:5px}.game-shell .formation-tag {color:#5e7c60;border-color:#8ca48455;background:none;border-radius:1px;font-size:10px}
+.game-shell .formation-stat-grid {display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:0;border-top:1px solid #9eac9366;border-bottom:1px solid #9eac9366;margin:0 0 18px;padding:9px 0;background:none}
+.game-shell .formation-stat {padding:7px 0;text-align:center;border:0;border-radius:0;background:none;min-height:0}
+.game-shell .formation-stat > span {font-size:10px;color:#738768}.game-shell .formation-stat > strong {font-size:24px;color:#466748;line-height:1.5}
+.game-shell .formation-stat > strong small {font-size:9px;color:#8c9b80}.game-shell .formation-stat > small {font-size:8px;color:#8a987e}
+.game-shell .formation-stat.is-primary {background:#7c9e7914}.game-shell .formation-stat.is-primary > strong {color:#346c54}
+.game-shell .formation-info-grid {display:grid;grid-template-columns:1fr 1fr;gap:20px}.game-shell .formation-info-card {padding:13px;border:1px solid #9aae8c44;border-radius:1px;background:none}
+.game-shell .formation-info-title {font-size:8px;color:#86967b}.game-shell .formation-info-title span {font-size:11px;color:#617b5c}
+.game-shell .formation-info-card dl {margin-top:8px;gap:5px}.game-shell .formation-info-card dl>div {padding:3px 0}.game-shell .formation-info-card dt {font-size:10px;color:#8a9980}.game-shell .formation-info-card dd {font-size:11px;color:#4e704d}
+.game-shell .formation-weapon-head {gap:10px;margin-top:12px}.game-shell .formation-weapon-icon {width:36px;height:36px;border-radius:1px;color:#687a49;background:#9aaa8022;border-color:#9aaa8044}
+.game-shell .formation-weapon-head strong {font-size:14px;color:#466745}.game-shell .formation-weapon-head small {font-size:10px;color:#8d997f}
+.game-shell .formation-weapon-stats {gap:6px;margin-top:12px}.game-shell .formation-weapon-stats span {font-size:9px;background:none;border-radius:0}.game-shell .formation-weapon-stats b {font-size:18px;color:#4e704d}
+.game-shell .formation-weapon-note {font-size:10px;color:#86967b;line-height:1.8}.game-shell .formation-detail-foot {border-top:0;margin-top:13px;padding-top:0;gap:8px}
+.game-shell .formation-detail-foot p {font-size:9px;color:#8b9880}.game-shell .formation-power {font-size:9px;color:#8b9880}.game-shell .formation-power b {color:#627e55;font-size:11px}
+.soul-fragment {font-size:11px;line-height:1.9;color:#6d8066;margin:5px 0 12px;padding-left:10px;border-left:2px solid #b1919766}
+
+/* Cinematic and dialog layers inherit the fitted surface, never the webpage. */
+.game-shell .chapter-intro,.game-shell .overlay,.game-shell .battle-scene,.game-shell .screen-flash {position:absolute;inset:0}
+.game-shell .chapter-paper {background:radial-gradient(circle at 50% 46%,#2c4550,#11222f 72%);color:#e6e1cc}
+.game-shell .chapter-wash {opacity:.12}.game-shell .chapter-flora,.game-shell .chapter-vine,
+.game-shell .chapter-bloom,.game-shell .chapter-pressure {display:none}
+.game-shell .chapter-card {color:#e7dfc8}.game-shell .chapter-title {font-family:"SimSun",serif;color:#e8e1cd;text-shadow:none;font-size:48px;font-weight:400;letter-spacing:7px}
+.game-shell .chapter-number-jp,.game-shell .chapter-number-en,.game-shell .chapter-overline {color:#a2bbb4}
+.game-shell .chapter-sub {color:#bda7a8;font-size:16px}.game-shell .chapter-foot {color:#92a99e}.game-shell .chapter-skip {color:#91a89d}
+.game-shell .chapter-divider i {background:#c4b18b55}.game-shell .chapter-divider b {color:#c4b18b}.game-shell .chapter-petal {opacity:.2;background:#b49a9e}
+.game-shell .overlay {padding:25px;display:grid;place-items:center;z-index:210}
+.game-shell .overlay-card {width:560px;max-width:100%;max-height:680px;overflow:auto;padding:26px;border:1px solid #bdc4aa66;
+  border-radius:2px;background:#162c36;color:#e4e4d5;box-shadow:0 15px 70px #0008}
+.game-shell .overlay-card.wide {width:860px}.game-shell .overlay-card.result-card {width:560px}
+.game-shell .overlay-card h2 {font-family:"SimSun",serif;font-weight:400;letter-spacing:2px}
+.game-shell .overlay-close,.game-shell .modal-btn {border-radius:1px;border-color:#afc2a844}
+.game-shell .help-grid {grid-template-columns:1fr 1fr}.game-shell .forecast-versus {grid-template-columns:1fr 40px 1fr}
+.game-shell .bs-viewport {width:1360px;height:765px;aspect-ratio:16/9;max-width:none;max-height:none}
+.game-shell .bs-nameplate {border-radius:1px;background:#132831dc;border-color:#adbda64d}
+.game-shell .bs-panel {border-radius:1px;background:#112a33ee;border-color:#bdc3a759}
+.game-shell .bs-chapter b {font-family:"SimSun",serif;font-weight:400}.game-shell .bs-center-tag {border-radius:1px;background:#142c34cb}
+.game-shell .bs-panel-atk {--bs-accent:#9dc7bd}.game-shell .bs-panel-def {--bs-accent:#cb9fa9}
+@media (prefers-reduced-motion:reduce) {.game-shell *, .game-shell *::before,.game-shell *::after {animation-duration:.01ms!important;transition:none!important}}
+
+.game-shell .entry-option[data-entry-action="chapter2"] .entry-option-copy strong {font-size:18px;letter-spacing:1px}
+/* Reset legacy viewport breakpoints inside the fixed landscape surface. */
+.game-shell .formation-body {grid-template-rows:minmax(0,1fr)}
+.game-shell .formation-row-index,.game-shell .formation-status {display:block}
+.game-shell .formation-row-move {grid-column:auto}
+.game-shell .formation-head-meta {display:block}
+.game-shell .formation-heading h2 span,.game-shell .formation-close span {display:inline}
+.game-shell .formation-identity blockquote {display:block}
+.game-shell .formation-info-card dl {grid-template-columns:1fr 1fr}
+.game-shell .entry-save-panel {left:auto;bottom:0;max-height:none;transform:none;animation:soul-drawer-in .22s ease-out}
+@keyframes soul-drawer-in {from {opacity:0;transform:translateX(25px)} to {opacity:1;transform:none}}
+.game-shell .chapter-card {width:900px;max-width:none;padding:30px}
+.game-shell .chapter-roseband {display:none}
+.game-shell .bs-top {top:3.4%;left:2.6%;right:2.6%;grid-template-columns:30% 1fr 30%}
+.game-shell .bs-nameplate {padding:15px 20px}
+.game-shell .bs-nameplate strong {font-size:30px}
+.game-shell .bs-nameplate small {display:block}
+.game-shell .bs-chapter {display:block}
+.game-shell .bs-hud {right:2.6%;bottom:2.6%;left:2.6%;height:21.5%;grid-template-columns:1fr 66px 1fr;gap:1.4%}
+.game-shell .bs-panel {padding:16px 19px}
+.game-shell .bs-panel-head > b {font-size:13px}
+.game-shell .bs-weapon-icon {width:30px;height:30px;font-size:15px}
+.game-shell .bs-side-tag {display:block}
+.game-shell .bs-metrics {gap:4px}
+.game-shell .bs-metrics b {font-size:20px}
+.game-shell .bs-hp > span {width:78px;font-size:12px}
+.game-shell .bs-skip {display:block}
+
+.game-shell .entry-option-copy {display:block}
+.game-shell .entry-footer {flex-direction:row}
+.game-shell .entry-top-meta {display:block}
+.game-shell .bs-nameplate.is-player,.game-shell .bs-panel.is-player {--bs-accent:#9dc7bd}
+.game-shell .bs-nameplate-def,.game-shell .bs-panel-def {--bs-accent:#cb9fa9}

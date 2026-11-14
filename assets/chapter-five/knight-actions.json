@@ -1,0 +1,75 @@
+{
+  "cellWidth": 192,
+  "cellHeight": 192,
+  "anchorX": 96,
+  "anchorY": 124,
+  "bodyHeight": 48,
+  "directions": [
+    "up",
+    "left",
+    "down",
+    "right"
+  ],
+  "license": "CC-BY-SA-3.0",
+  "source": "LPC synchronized body, plate armour, armet helmet and weapon animation layers",
+  "units": {
+    "armor": {
+      "file": "armor-actions.png",
+      "actions": {
+        "idle": {
+          "row": 0,
+          "count": 2
+        },
+        "walk": {
+          "row": 4,
+          "count": 8
+        },
+        "attack": {
+          "row": 8,
+          "count": 8
+        },
+        "hurt": {
+          "row": 12,
+          "count": 3
+        },
+        "down": {
+          "row": 16,
+          "count": 6
+        },
+        "jump": {
+          "row": 20,
+          "count": 5
+        }
+      }
+    },
+    "warden": {
+      "file": "warden-actions.png",
+      "actions": {
+        "idle": {
+          "row": 0,
+          "count": 2
+        },
+        "walk": {
+          "row": 4,
+          "count": 8
+        },
+        "attack": {
+          "row": 8,
+          "count": 6
+        },
+        "hurt": {
+          "row": 12,
+          "count": 3
+        },
+        "down": {
+          "row": 16,
+          "count": 6
+        },
+        "jump": {
+          "row": 20,
+          "count": 5
+        }
+      }
+    }
+  }
+}

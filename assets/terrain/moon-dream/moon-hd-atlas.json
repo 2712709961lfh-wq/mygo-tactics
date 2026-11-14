@@ -1,0 +1,189 @@
+{
+  "slotSize": 512,
+  "items": [
+    {
+      "name": "meadow-native512",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sprite": false
+    },
+    {
+      "name": "garden-cobbles-native512",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sprite": false
+    },
+    {
+      "name": "pearl-slab-native512",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sprite": false
+    },
+    {
+      "name": "wall-coping-native512",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sprite": false
+    },
+    {
+      "name": "palace-masonry-native1024",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "sprite": false
+    },
+    {
+      "name": "lavender-rock-native512",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sprite": false
+    },
+    {
+      "name": "moon-water-native512",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sprite": false
+    },
+    {
+      "name": "bridge-masonry-native1024",
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "sprite": false
+    },
+    {
+      "name": "shore-native512",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sprite": false
+    },
+    {
+      "name": "moon-inlay",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sprite": false
+    },
+    {
+      "name": "side-path-native512",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sprite": false
+    },
+    {
+      "name": "moon-pillar",
+      "sourceSize": [
+        128,
+        256
+      ],
+      "sprite": true
+    },
+    {
+      "name": "garden-statue",
+      "sourceSize": [
+        128,
+        256
+      ],
+      "sprite": true
+    },
+    {
+      "name": "garden-rocks",
+      "sourceSize": [
+        128,
+        256
+      ],
+      "sprite": true
+    },
+    {
+      "name": "blossom-tree-0",
+      "sourceSize": [
+        128,
+        192
+      ],
+      "sprite": true
+    },
+    {
+      "name": "blossom-tree-1",
+      "sourceSize": [
+        128,
+        192
+      ],
+      "sprite": true
+    },
+    {
+      "name": "blossom-tree-2",
+      "sourceSize": [
+        128,
+        192
+      ],
+      "sprite": true
+    },
+    {
+      "name": "flowers-0",
+      "sourceSize": [
+        16,
+        32
+      ],
+      "sprite": true
+    },
+    {
+      "name": "flowers-1",
+      "sourceSize": [
+        16,
+        32
+      ],
+      "sprite": true
+    },
+    {
+      "name": "flowers-2",
+      "sourceSize": [
+        32,
+        32
+      ],
+      "sprite": true
+    },
+    {
+      "name": "moon-medallion",
+      "sourceSize": [
+        512,
+        512
+      ],
+      "sprite": false
+    },
+    {
+      "name": "iron-gate-native256",
+      "sourceSize": [
+        256,
+        256
+      ],
+      "sprite": false
+    },
+    {
+      "name": "bark-native256",
+      "sourceSize": [
+        256,
+        256
+      ],
+      "sprite": false
+    }
+  ]
+}

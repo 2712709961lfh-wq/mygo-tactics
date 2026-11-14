@@ -1,0 +1,51 @@
+{
+  "cellWidth": 160,
+  "cellHeight": 128,
+  "anchorX": 64,
+  "anchorY": 112,
+  "bodyHeight": 70,
+  "frames": {
+    "idle": {
+      "row": 0,
+      "count": 6
+    },
+    "idle2": {
+      "row": 1,
+      "count": 6
+    },
+    "walk": {
+      "row": 2,
+      "count": 8
+    },
+    "run": {
+      "row": 3,
+      "count": 8
+    },
+    "jump": {
+      "row": 4,
+      "count": 8
+    },
+    "attack": {
+      "row": 5,
+      "count": 6
+    },
+    "attack2": {
+      "row": 6,
+      "count": 7
+    },
+    "special": {
+      "row": 7,
+      "count": 8
+    },
+    "hurt": {
+      "row": 8,
+      "count": 4
+    },
+    "down": {
+      "row": 9,
+      "count": 5
+    }
+  },
+  "sourceFacing": "right",
+  "source": "source/taki-axe-original.jpg"
+}

@@ -1,0 +1,117 @@
+/* A field armory bound into the existing textured diary. 1280 × 720 logical canvas. */
+.shop-layout{display:grid;grid-template-columns:144px minmax(0,1fr);gap:22px;min-height:0;padding:14px 16px 3px}
+.shop-catalogue{min-height:0;display:grid;grid-template-rows:auto auto minmax(0,1fr)}
+.shop-toolbar{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #a48a5855;font-size:12px;color:#81704e}
+.shop-message{min-height:28px;margin:10px 0;font-size:11px;line-height:1.6;color:#77623e}
+.shop-list{min-height:0;overflow:auto;display:flex;flex-direction:column;gap:8px;padding-right:8px;scrollbar-width:thin}
+.shop-row{display:flex;align-items:center;gap:14px;border:1px solid #a48a5855;padding:9px 12px;background:#e7d8b42b}
+.shop-row.is-locked{opacity:.52}.shop-row img{width:58px;height:58px;object-fit:contain;flex-shrink:0}
+.shop-copy{flex:1;min-width:0}.shop-copy h3{font-size:14px;font-weight:400;margin:0 0 5px}.shop-copy h3 small{font:9px Georgia,serif;color:#95805a;margin-left:8px}
+.shop-copy p{margin:3px 0;font-size:10px;line-height:1.5;color:#7d6a48}.shop-copy>small{font-size:9px;color:#6d7350}
+.shop-row>strong{min-width:64px;text-align:right;font:17px Georgia,serif;color:#65704c}
+.shop-row button,.class-card button{border:1px solid #a48a5877;background:#64714f;color:#f2e5c5;padding:7px 12px;font:11px SimSun,serif;cursor:pointer}
+.shop-row button:disabled,.class-card button:disabled{background:#b6a78933;color:#9b8865;cursor:default}
+.shop-quantity{display:flex;align-items:center;gap:6px;font-size:9px;color:#897552}.shop-quantity input{width:44px;padding:4px;border:1px solid #a48a5855;background:#f2e5c566;color:#554b38}
+.class-card button{margin-top:9px;width:100%;padding:6px 4px;line-height:1.4}.medicine-icon{width:45px;height:45px;object-fit:contain}
+.equipment-screen {position:absolute;inset:0;z-index:180;padding:16px;background:#0b161ef5;color:#443d30;font-family:'SimSun','Songti SC',serif}
+.equipment-screen[hidden] {display:none}
+.eq-book {height:100%;display:grid;grid-template-rows:75px minmax(0,1fr) 27px;border:13px solid transparent;border-image:var(--diary-frame) 95 stretch;background:var(--diary-paper) center/cover;box-shadow:0 12px 40px #000a}
+.eq-header {display:flex;align-items:center;gap:28px;margin:0 16px;border-bottom:1px solid #9a825077;padding:0 4px 10px}
+.eq-kicker {font:8px/1.8 Georgia,serif;letter-spacing:2px;color:#8a795a}
+.eq-header h2 {margin:2px 0 0;font-size:27px;letter-spacing:5px;font-weight:400;color:#4b4435}
+.eq-header h2 span {font-size:11px;letter-spacing:3px;margin-left:18px;color:#8d7857}
+.eq-summary {margin-left:auto;display:flex;gap:10px;align-items:center;color:#6d7350}
+.eq-summary b {font:35px/1 Georgia,serif;font-weight:400}
+.eq-summary span {font:8px/1.9 Georgia,'SimSun',serif;letter-spacing:1px;color:#8d7f62}
+.eq-close {background:none;border:1px solid #9c87535c;padding:9px 17px;color:#675c44;font:12px 'SimSun',serif;cursor:pointer}
+.eq-close span {font:8px Georgia,serif;letter-spacing:1px;margin-left:15px;color:#9c8863}
+.eq-close:hover {background:#9a825022}
+.eq-layout {display:grid;grid-template-columns:144px minmax(0,1fr) 352px;min-height:0;padding:14px 16px 3px;gap:18px}
+.eq-sidebar {min-height:0;background:linear-gradient(#0d202944,#0e1e25aa),var(--diary-leather);border:7px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;padding:10px 5px;display:flex;flex-direction:column;color:#dcc9a3}
+.eq-nav-title {font-size:12px;letter-spacing:3px;margin:0 5px 11px;color:#e0cba3}
+.eq-nav-title span {display:block;font:7px Georgia,serif;letter-spacing:1.6px;color:#a89c80;margin-top:5px}
+.eq-categories {display:flex;flex-direction:column;gap:3px;min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:#b9a57366 transparent}
+.eq-categories button {display:flex;align-items:center;justify-content:space-between;min-height:37px;background:none;border:0;border-left:2px solid transparent;padding:5px 8px;color:#c2b596;text-align:left;cursor:pointer;font:13px 'SimSun',serif}
+.eq-categories button small {display:block;font:6px Georgia,serif;letter-spacing:1px;color:#8e9587;margin-top:3px}
+.eq-categories button b {font:12px Georgia,serif;font-weight:400;color:#ada687}
+.eq-categories button:hover,.eq-categories button[aria-pressed=true] {border-left-color:#cfb777;background:linear-gradient(90deg,#c3a5683a,#9eae980d);color:#f2e2bd}
+.eq-side-note {flex-shrink:0;margin-top:auto;padding:12px 7px 0;border-top:1px solid #b3a37333;color:#999f8c}
+.eq-side-note>span {font-size:10px;color:#c4b28e;letter-spacing:2px}
+.eq-side-note p {font-size:10px;line-height:1.8;margin:8px 0}
+.eq-side-note small {font-size:8px;line-height:1.8;color:#8b968a}
+.eq-catalogue {display:grid;grid-template-rows:auto 30px minmax(0,1fr);min-height:0;min-width:0}
+.eq-tools {display:grid;grid-template-columns:minmax(0,1fr) 99px 138px;gap:8px 10px;padding:0 0 9px;border-bottom:1px solid #ac916247;align-items:end}
+.eq-tools label {display:flex;flex-direction:column;gap:4px;min-width:0}
+.eq-tools label>span {font-size:9px;letter-spacing:1px;color:#897552}
+.eq-tools input,.eq-tools select {box-sizing:border-box;width:100%;height:29px;color:#554b38;background:#d1bf9535;border:1px solid #a9905e66;border-radius:0;font:11px 'SimSun',serif;padding:4px 7px;outline-offset:2px}
+.eq-tools .eq-search {grid-column:1 / 3}
+.eq-tools label:nth-child(3) {grid-column:1;grid-row:2}
+.eq-tools label:nth-child(4) {grid-column:2;grid-row:2}
+.eq-tools label:nth-child(5) {grid-column:3;grid-row:2}
+.eq-tools select {cursor:pointer}.eq-tools input::placeholder {color:#a18c64;font-size:10px}
+.eq-list-heading {display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#8a7755}
+.eq-list-heading button {background:none;border:0;font:9px 'SimSun',serif;color:#856b4c;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.eq-grid {overflow:auto;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:155px;gap:10px;padding:1px 7px 8px 1px;align-content:start;scrollbar-width:thin;scrollbar-color:#9b86534d transparent}
+.eq-card {position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:8px 7px 7px;border:1px solid #a48a5855;border-radius:0;background:linear-gradient(#f4e8cc2b,#ccb88c22);box-shadow:0 2px 5px #67522f0d;cursor:pointer;color:#514936;transition:border-color .15s,background .15s}
+.eq-card::after {content:'';position:absolute;inset:4px;border:1px solid #a48a581f;pointer-events:none}
+.eq-card img {width:78px;height:78px;object-fit:contain;filter:drop-shadow(1px 3px 2px #49361d40);transition:transform .16s}
+.eq-card strong {font-size:13px;font-weight:400;letter-spacing:1px;line-height:1.5;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eq-card>small {font:7px/1.5 Georgia,serif;color:#9b8762;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eq-card-stats {margin-top:auto;width:calc(100% - 10px);border-top:1px solid #ae946448;padding-top:5px;font-size:8px;color:#918264;display:flex;gap:5px;align-items:baseline;justify-content:center}
+.eq-card-stats b {font:12px Georgia,serif;color:#65704c;font-weight:400}.eq-card-stats i {font-style:normal;color:#b29b71;margin:0 2px}
+.eq-card-no {position:absolute;left:9px;top:8px;font:8px Georgia,serif;color:#ab9874}.eq-card-rank {position:absolute;right:10px;top:8px;font:12px Georgia,'SimSun',serif;color:#93815a}
+.eq-card:hover {background:#e4d6af70;border-color:#9a8154}.eq-card:hover img {transform:translateY(-2px)}
+.eq-card[aria-pressed=true] {border:2px solid #745345;padding:7px 6px 6px;background:linear-gradient(125deg,#e7d8b460,#bda07136);box-shadow:inset 0 0 0 2px #e9d9b0,0 2px 6px #70553830}
+.eq-card.is-relic .eq-card-rank {color:#916c37}.eq-forged-mark {position:absolute;bottom:36px;right:10px;color:#5b7258;font:14px Georgia,serif}
+.eq-empty {grid-column:1/-1;align-self:start;text-align:center;padding:70px 0;color:#8c7756}.eq-empty>span {font-size:20px;letter-spacing:3px}.eq-empty p {font-size:12px;line-height:2}.eq-empty button {background:none;border:1px solid #a48a58;padding:8px 15px;color:#75613d;cursor:pointer}
+.eq-detail {min-width:0;min-height:0;overflow:auto;border-left:1px solid #a58a585c;padding:0 0 0 18px;scrollbar-width:thin;scrollbar-color:#9b86534d transparent}
+.eq-detail-scroll {padding-right:5px}.eq-detail-overline {display:flex;justify-content:space-between;align-items:center;font:7px Georgia,serif;letter-spacing:1px;color:#938364}
+.eq-detail-overline b {font:9px 'SimSun',serif;letter-spacing:1px;font-weight:400;color:#8e6d43}
+.eq-art {height:161px;position:relative;margin:7px 0 9px;background:radial-gradient(ellipse at 50% 55%,#b69e5c24,transparent 63%);border-bottom:1px solid #a58a5855;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.eq-art::before {content:'';position:absolute;width:133px;height:133px;border:1px solid #9b86582a;border-radius:50%;box-shadow:0 0 0 11px #9b865807,0 0 0 12px #9b86581c}
+.eq-art img {width:155px;height:155px;object-fit:contain;filter:drop-shadow(4px 7px 4px #6b50283d);z-index:1}.eq-art.is-relic {background:radial-gradient(ellipse,#c7a35333,transparent 66%)}
+.eq-art-watermark {position:absolute;left:7px;top:21px;font-size:81px;color:#9a85530d;line-height:1}.eq-art-label {position:absolute;bottom:8px;right:2px;font:7px Georgia,serif;letter-spacing:2px;color:#aa956c}
+.eq-detail-title {display:flex;align-items:center;justify-content:space-between;gap:7px}.eq-detail-title h3 {font-size:25px;letter-spacing:3px;font-weight:400;margin:0;color:#514737;line-height:1.35}.eq-detail-title p {font:10px/1.8 Georgia,serif;color:#95805a;margin:2px 0 0}
+.eq-rank {flex:none;text-align:center;color:#9b8357;font-size:8px;letter-spacing:1px;border-left:1px solid #a68b5d55;padding-left:12px;line-height:1.5}.eq-rank b {display:block;font:23px Georgia,serif;color:#6c7550}
+.eq-tags {display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 10px}.eq-tags span {font-size:9px;color:#81704e;border:1px solid #a38a594d;background:#c5ac7430;padding:3px 6px}
+.eq-versions {display:flex;gap:4px;align-items:center;margin:0 0 10px}.eq-versions button {background:#c6af7e22;border:1px solid #a48a5860;padding:5px 10px;font:10px 'SimSun',serif;color:#8b7653;cursor:pointer}.eq-versions button[aria-pressed=true] {background:#64714f;color:#e9dbb8;border-color:#64714f}.eq-versions>span {font-size:8px;color:#a58c66;margin-left:auto}
+.eq-stats {display:grid;grid-template-columns:repeat(3,1fr);margin:0 0 12px;border-top:1px solid #ac91626b;border-bottom:1px solid #ac91626b;background:#c8ae7420}
+.eq-stats>div {padding:8px 5px 7px;text-align:center}.eq-stats dt {font-size:9px;letter-spacing:2px;color:#91815f}.eq-stats dd {margin:4px 0 0;font:22px/1.1 Georgia,serif;color:#5e6b4b;position:relative;white-space:nowrap}
+.eq-delta {font:9px Georgia,serif;color:#86683d;margin-left:5px}.eq-delta.good {color:#4f7551}
+.eq-effect h4 {font:12px 'SimSun',serif;letter-spacing:2px;margin:0 0 6px;color:#77623e}.eq-effect h4 span {font:7px Georgia,serif;letter-spacing:1px;color:#a08d65;margin-left:7px}.eq-effect p {font-size:11px;line-height:1.85;color:#7d6a48;margin:0 0 12px}
+.eq-equipping {font-size:10px;line-height:1.8;padding-left:9px;border-left:2px solid #a08e5f88;color:#91805f}.eq-equipping b {display:block;font-size:10px;color:#776946;font-weight:400;letter-spacing:2px}
+.eq-source {margin-top:12px;font-size:8px;color:#a08b65;line-height:1.8;border-top:1px solid #a58a5838;padding-top:8px}.eq-source a {color:#7b805b;text-underline-offset:3px}.eq-source small {display:block;font-size:8px;color:#a48e68}
+.eq-detail-empty {padding-top:140px;text-align:center;font-size:16px;color:#ac9771;letter-spacing:3px}
+.eq-footer {display:flex;justify-content:space-between;align-items:end;padding:0 20px 5px;font-size:8px;letter-spacing:.5px;color:#9a825b}
+.equipment-screen :focus-visible {outline:2px solid #906a43;outline-offset:2px}
+.game-shell .entry-option {min-height:67px}
+.game-shell .entry-menu-wrap {padding-top:19px;padding-bottom:15px}
+.game-shell .entry-option[data-entry-action=equipment] .entry-option-copy strong {font-size:21px}
+.game-shell .entry-menu-wrap {max-height:100%;overflow-y:auto;min-height:0}
+.game-shell .entry-menu {gap:6px}
+.game-shell .entry-option[data-entry-action=chapter3] .entry-option-copy strong {font-size:20px;letter-spacing:2px}
+.game-shell .entry-option[data-entry-action=chapter4] .entry-option-copy strong {font-size:16px;letter-spacing:0;line-height:1.5;white-space:normal}
+.game-shell .party-list {min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:2px;scrollbar-width:thin}
+.game-shell .party-unit {flex-shrink:0}
+.game-shell .portrait-block[data-side=ally] {background:#d4e4d0;border-color:#89ae87}
+.game-shell .tag.side-ally {color:#427e50;border-color:#79a57b88}
+
+/* Class records share the formation diary's parchment and restrained ink. */
+.class-current {margin:12px 0 18px;padding:14px 16px;border:1px solid #9d855c75;border-left:3px solid #69734f;background:#c4ad7630;color:#534a38}
+.class-current>span {display:block;font-size:11px;letter-spacing:2px;color:#786b50}
+.class-current>strong {display:block;margin:7px 0;font-size:24px;letter-spacing:2px;font-weight:400}
+.class-current strong small {font:12px Georgia,serif;letter-spacing:1px;color:#877455}
+.class-current p {margin:5px 0;font-size:12px;line-height:1.8}
+.class-current .class-path {border-top:1px solid #9d855c45;padding-top:7px;color:#69734f}
+.class-tier {margin:22px 0}
+.class-tier h4 {font-size:17px;font-weight:400;letter-spacing:2px;color:#5d513c;border-bottom:1px solid #a48a5860;padding-bottom:9px;margin:0 0 10px}
+.class-tier h4 small {font-size:11px;letter-spacing:0;color:#8b7657}
+.class-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.class-card {min-width:0;padding:13px;border:1px solid #a48a5860;background:#d9c69c24;color:#6b5b42}
+.class-card.is-current {border-color:#68744e;background:#a7b27d20;box-shadow:inset 0 0 0 1px #68744e}
+.class-card>div {display:flex;justify-content:space-between;align-items:center;gap:7px}
+.class-card strong {font-size:17px;font-weight:400;letter-spacing:1px}
+.class-card>small {display:block;margin:4px 0 10px;font:11px Georgia,serif;color:#928060}
+.class-card p {margin:5px 0;font-size:12px;line-height:1.75;overflow-wrap:anywhere}
+.class-card footer {border-top:1px solid #a48a5835;margin-top:10px;padding-top:8px;font-size:11px;line-height:1.7;color:#847253}
+.class-badge {flex:none;font-size:10px;color:#5b6b44;border:1px solid #7c8a5c88;padding:3px 5px}

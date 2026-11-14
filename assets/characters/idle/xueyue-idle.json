@@ -1,0 +1,85 @@
+{
+  "source": "source/xueyue-standing-original.jpg",
+  "sourceSize": [
+    976,
+    1082
+  ],
+  "cellWidth": 128,
+  "cellHeight": 142,
+  "bodyHeight": 106,
+  "footY": 131,
+  "directions": [
+    {
+      "direction": "down",
+      "col": 0,
+      "row": 0,
+      "sourceBounds": [
+        0,
+        0,
+        488,
+        541
+      ],
+      "silhouetteBounds": [
+        6,
+        10,
+        392,
+        507
+      ],
+      "bodyWidth": 82
+    },
+    {
+      "direction": "left",
+      "col": 1,
+      "row": 0,
+      "sourceBounds": [
+        488,
+        0,
+        976,
+        541
+      ],
+      "silhouetteBounds": [
+        107,
+        13,
+        458,
+        508
+      ],
+      "bodyWidth": 75
+    },
+    {
+      "direction": "up",
+      "col": 0,
+      "row": 1,
+      "sourceBounds": [
+        0,
+        541,
+        488,
+        1082
+      ],
+      "silhouetteBounds": [
+        22,
+        24,
+        384,
+        511
+      ],
+      "bodyWidth": 79
+    },
+    {
+      "direction": "right",
+      "col": 1,
+      "row": 1,
+      "sourceBounds": [
+        488,
+        541,
+        976,
+        1082
+      ],
+      "silhouetteBounds": [
+        94,
+        24,
+        441,
+        516
+      ],
+      "bodyWidth": 75
+    }
+  ]
+}

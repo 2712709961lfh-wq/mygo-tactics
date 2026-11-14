@@ -1,0 +1,275 @@
+/* v3.1 — CC0 parchment photography + yd's stitched leather / curled borders.
+   Source files and derivative recipe: assets/ui/SOURCES.md. */
+:root {
+  --diary-paper:url('assets/ui/diary/paper.jpg');
+  --diary-leather:url('assets/ui/diary/leather.jpg');
+  --diary-frame:url('assets/ui/diary/frame-paper.png');
+  --diary-ink-frame:url('assets/ui/diary/frame-ink.png');
+  --diary-portrait:url('assets/ui/diary/portrait-frame.png');
+  --diary-flourish:url('assets/ui/diary/flourish.png');
+  --diary-flourish-ink:url('assets/ui/diary/flourish-ink.png');
+  --diary-cast:url('assets/ui/diary/title-companions.png?v=3.2.1');
+  --paper-ink:#403d35;--paper-muted:#7e7562;
+}
+.game-shell {background:var(--diary-leather) repeat;box-shadow:0 0 110px #000b}
+.game-shell .ambient {display:none}
+.game-shell .topbar {margin:8px 20px 0;height:70px;padding:0 16px;gap:22px;
+  border:9px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  background:linear-gradient(#0d1c2044,#07141b44),var(--diary-leather);box-shadow:0 4px 12px #0005}
+.game-shell .brand {min-width:196px;flex-basis:196px;gap:10px}
+.game-shell .brand-title {font-size:24px;letter-spacing:5px;color:#e8d8b5;text-shadow:0 2px 2px #000}
+.game-shell .brand-star {font-size:28px;color:#bca478}
+.game-shell .brand-sub {font-size:7px;letter-spacing:2px;color:#aaab9d}
+.game-shell .mission-block {padding-left:18px;border-color:#a9916266}
+.game-shell .mission-title {color:#e5d8bd;font-size:16px}
+.game-shell .phase-block {border:5px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  padding:1px 7px;background:#33444066;flex-basis:139px}
+.game-shell .top-actions {gap:3px}.game-shell .icon-btn {font-size:11px;width:40px;min-width:40px;color:#c6b995}
+.game-shell .icon-btn:hover {background:#b5a57722;color:#f5e7c4}
+.battle-layout {margin:14px 20px 0;gap:12px;grid-template-columns:82px minmax(0,1fr) 304px}
+.party-rail {border:0;padding-right:8px}
+.party-heading {color:#d2bd95;letter-spacing:3px;margin-bottom:9px}
+.party-heading::after {content:'';display:block;background:var(--diary-flourish) center/contain no-repeat;height:8px;margin:5px 0 0}
+.party-heading span {color:#989c8c}
+.party-list {gap:8px}
+.game-shell .party-unit {width:68px;height:84px;border:7px solid transparent;
+  border-image:var(--diary-portrait) 45 stretch;padding:0 1px;gap:2px;
+  grid-template-rows:39px 14px 3px;background:var(--diary-leather);box-shadow:0 3px 5px #0008}
+.party-unit canvas {width:39px;height:39px;background:none}
+.party-unit strong {font-family:'SimSun',serif;font-size:11px;line-height:14px;color:#e1d2b1}
+.party-unit::before {left:-3px;top:-4px;font-size:8px;color:#d7c69f;text-shadow:0 1px #000}
+.party-unit .party-hp {width:43px;height:3px;background:#050e12;border:1px solid #c4ad7044}
+.party-unit .party-hp i {background:#84b39a;box-shadow:0 0 5px #b6cf8855}
+.game-shell .party-unit:hover,.game-shell .party-unit[aria-pressed=true] {background:linear-gradient(#ad9b5d44,#283d3444),var(--diary-leather);filter:brightness(1.18)}
+.party-unit[aria-pressed=true]::after {right:-12px;top:23px;background:#d5b478;box-shadow:0 0 7px #c9b77455}
+.party-thread {color:#aa9675}.party-caption {color:#a29b86}
+.game-shell .board-head {padding-left:8px;padding-right:8px}
+.game-shell .turn-number {color:#d8bf8f;font-family:Georgia,serif}
+.game-shell .board-frame {border:8px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  background:#0c171d;box-shadow:0 7px 20px #0009;overflow:hidden}
+.game-shell .board-tools {border:4px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  background:var(--diary-leather);padding:3px;right:5px;bottom:5px}
+.game-shell .board-foot {padding-top:10px}
+.game-shell .objective-label {color:#c5ae80;border-color:#b59b5f66}
+.game-shell .btn-end {width:158px;border:7px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  padding:7px 10px;background:linear-gradient(#4c5d4077,#23372c77),var(--diary-leather);
+  color:#e6d4aa;text-shadow:0 1px #000;box-shadow:0 4px 8px #0005;font-family:'SimSun',serif;font-size:13px}
+.game-shell .btn-end:hover:not(:disabled) {background:linear-gradient(#82906066,#55634055),var(--diary-leather)}
+
+/* The information column is an actual paper sheet inside a leather cover. */
+.game-shell .info-panel {border:17px solid transparent;border-image:var(--diary-frame) 95 stretch;
+  background:var(--diary-paper) center/cover;box-shadow:0 6px 25px #0007;
+  padding:13px 11px 12px;grid-template-columns:62px minmax(0,1fr);grid-template-rows:79px minmax(0,1fr) auto;
+  column-gap:10px;row-gap:14px;color:#433e32}
+.game-shell .info-panel::before {display:none}
+.game-shell .portrait-block {width:62px;height:79px;border:5px solid transparent;
+  border-image:var(--diary-portrait) 45 stretch;background:#b6afa355}
+.game-shell #info-portrait {width:53px;height:53px}
+.game-shell .portrait-badge {font-size:7px;top:0;left:0;background:#ede0bdc7;color:#5d503a}
+.game-shell .portrait-level {font-size:8px;color:#5b4f39}
+.game-shell .info-heading h2 {font-size:19px;letter-spacing:1px;color:#443b2f;text-shadow:0 1px #ffffdf99}
+.game-shell .info-eyebrow {font-size:7px;letter-spacing:1px;color:#877a60}
+.game-shell .tag {font-size:8px;border-color:#96866a66;color:#786b51;background:#e6dac266}
+.game-shell .tag.side-player {color:#527665;border-color:#718e6866}
+.game-shell .tag.side-enemy {color:#a26569;border-color:#a2777766}
+.game-shell .unit-subline {font-size:10px;color:#70654f;gap:6px}
+.game-shell .weapon-mark {width:23px;color:#806c44;border-color:#9d886077;background:#d2ba8344}
+.game-shell .hp-line {margin-top:15px}
+.game-shell .hp-meter {height:6px;border:1px solid #9d896078;background:#b6a88577;box-shadow:inset 0 1px 2px #50452a66}
+.game-shell .hp-fill {background:linear-gradient(#93ab7e,#56775f)}
+.game-shell .hp-values b {color:#4a5d43}
+.game-shell .stat-grid {margin-top:15px;border-color:#9a85605e}
+.game-shell .stat {padding:8px 0 6px}.game-shell .stat b {font-family:Georgia,serif;font-size:21px;color:#5a5c42}
+.game-shell .stat i {color:#84765c;font-size:10px}
+.game-shell .derived-line {font-size:9px;color:#84785e;gap:6px 9px;margin-top:12px}
+.game-shell .derived-line b {font-size:9px;color:#6b644b}
+.game-shell .info-side {border-color:#a8956c77;padding-top:10px;max-height:228px}
+.game-shell .context-title {color:#7c6b4b;font-size:10px;letter-spacing:2px}
+.game-shell .context-text {font-size:11px;color:#6b604d;line-height:1.8}
+.game-shell .context-text strong {color:#5b5540}
+.game-shell .action-buttons {gap:5px;margin-top:9px}
+.game-shell .action-btn {border:5px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  background:linear-gradient(#5d6c5b33,#33473b55),var(--diary-leather);color:#e8d9b7;
+  min-height:34px;padding:5px 9px;font-size:12px;text-shadow:0 1px #000}
+.game-shell .action-btn.primary {background:linear-gradient(#6d7e4e88,#3b584777),var(--diary-leather);color:#f1e1b9}
+.game-shell .action-btn:hover:not(:disabled) {filter:brightness(1.2);transform:none}
+.game-shell .action-btn:disabled {opacity:.5}
+.game-shell .action-buttons.has-extra-action {display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.game-shell .action-buttons.has-extra-action .action-btn:first-child,
+.game-shell .action-buttons.has-extra-action .action-btn:last-child {grid-column:1/-1}
+.mission-info strong {color:#63513a}.mission-info p {font-size:11px;color:#827153}
+.seal-progress {margin:19px 0 10px}.seal-progress li {padding-bottom:18px}
+.seal-progress strong {color:#736749;font-family:'SimSun',serif;font-size:13px}
+.seal-progress small {color:#938166;font-size:10px}
+.seal-progress i {border-color:#aa9567;background:#ccb78522;color:#96805b}
+.seal-progress li.is-current i {border-color:#7e8f69;background:#72876033;color:#52683f}
+.seal-progress li.is-current strong {color:#5e7147}
+.game-shell .mission-quote {color:#96756c;font-family:'SimSun',serif;font-size:12px;line-height:1.9}
+.game-status {margin:0 22px;border-color:#9c815b44;color:#a59f87}
+.game-status #tactical-hint {color:#b7ad94}
+.game-status button {color:#c2b28f}
+
+/* Title: a leather-bound notebook, a mounted photograph, and paper commands. */
+.game-shell .entry-screen {background:linear-gradient(100deg,#0c192b33,#23374433),var(--diary-leather)}
+.game-shell .entry-screen::before {inset:14px;border:10px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;box-shadow:inset 0 0 80px #0006}
+.game-shell .entry-screen::after {display:none}
+.game-shell .entry-shell {padding:38px 58px 26px;grid-template-rows:35px minmax(0,1fr) 84px}
+.game-shell .entry-main {grid-template-columns:minmax(0,1fr) 320px;gap:45px}
+.game-shell .entry-title-block {max-width:440px;padding-bottom:8px}
+.game-shell .entry-overline {font-size:11px;letter-spacing:3px;color:#b5ae95;margin-bottom:21px}
+.game-shell .entry-logo {color:#bcb19a;font-size:13px;letter-spacing:6px}
+.game-shell .entry-game-title {font-size:68px;letter-spacing:9px;color:#ead9b4;text-shadow:0 3px 1px #061019,0 0 30px #c1a26c22}
+.game-shell .entry-game-title::after {font-size:9px;letter-spacing:6px;color:#b5a989;margin-top:11px}
+.game-shell .entry-lead {color:#bca18d;font-size:16px;letter-spacing:2px;margin-top:26px}
+.game-shell .entry-mission-chip {border:5px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  padding:6px 8px;background:#73633c22;gap:8px;color:#c2b696}
+.game-shell .entry-copy {font-size:11px;color:#a8ac9a;line-height:2.1;max-width:365px}
+.game-shell .entry-copy > span {background:#ae817d}
+.game-shell .entry-top-brand,.game-shell .entry-top-meta {color:#aaa38a}
+.game-shell .entry-atmosphere {opacity:.17}
+.soul-art {left:388px;top:95px;width:620px;height:580px;opacity:1;transform:rotate(-2deg)}
+.soul-art .diary-photo {width:100%;height:100%;background:var(--diary-cast) center/contain no-repeat;
+  filter:drop-shadow(7px 12px 13px #0008)}
+.soul-art-caption {left:188px;bottom:68px;color:#73634e;font-size:8px;letter-spacing:2px}
+.soul-art-caption span {font-size:11px;color:#7b6656;letter-spacing:3px}
+.game-shell .entry-menu-wrap {width:320px;padding:24px 20px 20px;border:17px solid transparent;
+  border-image:var(--diary-frame) 95 stretch;background:var(--diary-paper) center/cover;
+  box-shadow:0 16px 30px #0008;transform:rotate(.4deg)}
+.game-shell .entry-menu-kicker {margin-bottom:16px;color:#847053;font-family:'SimSun',serif;letter-spacing:3px}
+.game-shell .entry-menu-kicker span {border-color:#ad936266;color:#826a3c;letter-spacing:1px}
+.game-shell .entry-menu {gap:7px}
+.game-shell .entry-option {min-height:78px;padding:10px 8px;grid-template-columns:20px minmax(0,1fr) 14px;gap:7px;
+  border-bottom:1px solid #a58a5c55;color:#6d5c3d;background:none}
+.game-shell .entry-option-primary {border:5px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  background:linear-gradient(#6d765033,#48534655),var(--diary-leather);padding:8px 5px}
+.game-shell .entry-option-copy strong {font-size:23px;letter-spacing:4px;color:#594c35}
+.game-shell .entry-option-copy em {font-size:7px;letter-spacing:1.7px;color:#9b8660}
+.game-shell .entry-option-copy small {font-size:9px;line-height:1.7;letter-spacing:0;color:#938064;margin-top:6px}
+.game-shell .entry-option-primary .entry-option-copy strong {color:#e7d4ac}
+.game-shell .entry-option-primary .entry-option-copy em,.game-shell .entry-option-primary .entry-option-copy small {color:#bfb092}
+.game-shell .entry-index {font-family:Georgia,serif;color:#9f875c}
+.game-shell .entry-arrow {color:#9b8252;font-size:17px}
+.game-shell .entry-option:hover,.game-shell .entry-option:focus-visible {background:#aa8e4d22}
+.game-shell .entry-option-primary:hover,.game-shell .entry-option-primary:focus-visible {background:linear-gradient(#86916d44,#52654166),var(--diary-leather)}
+.game-shell .entry-option[data-entry-action=chapter2] .entry-option-copy strong {font-size:15px;letter-spacing:0}
+.game-shell .entry-footnote {font-size:10px;color:#8f7659;border:0;text-align:center;margin:15px 0 0;line-height:1.9}
+.game-shell .entry-footnote::before {content:'';display:block;height:11px;margin-bottom:9px;background:var(--diary-flourish-ink) center/100% auto no-repeat;opacity:.55}
+.game-shell .entry-footer {border:0;position:relative;padding-top:10px}
+.game-shell .entry-footer::before {content:'';position:absolute;top:0;left:0;right:0;height:9px;
+  background:var(--diary-flourish) center/500px 12px repeat-x;opacity:.45}
+.game-shell .entry-roster-list {gap:7px}
+.game-shell .entry-roster-label {writing-mode:horizontal-tb;min-width:120px;color:#c4b594}
+.game-shell .entry-roster-label span {margin-top:5px;color:#9f9b84;font-size:6px;letter-spacing:.7px}
+.game-shell .entry-roster-unit canvas {border:4px solid transparent;border-image:var(--diary-portrait) 45 stretch;
+  width:44px;height:44px;background:var(--diary-leather)}
+.game-shell .entry-footer-note p {color:#b6aa90;font-size:11px}
+
+/* Every secondary surface uses the same real materials. */
+.game-shell .entry-save-panel {top:18px;right:20px;bottom:18px;height:auto;width:405px;
+  border:19px solid transparent;border-image:var(--diary-frame) 95 stretch;
+  background:var(--diary-paper) center/cover;padding:25px 20px;box-shadow:-15px 10px 50px #0009}
+.game-shell .entry-save-head h2 {color:#5d5039;font-size:28px}
+.game-shell .entry-save-kicker {color:#9c865d}
+.game-shell .entry-save-info {background:#997d3e0a;border-color:#9c815844;color:#8b7756}
+.game-shell .entry-save-info strong,.game-shell .entry-save-info b {color:#655537}
+.game-shell .entry-save-btn {border:5px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  background:var(--diary-leather);color:#d3c4a1;font-size:12px;padding:8px}
+.game-shell .entry-save-btn.primary {background:linear-gradient(#69806244,#45603e66),var(--diary-leather);color:#ebddb9}
+.game-shell .entry-save-note,.game-shell .entry-save-status {color:#8f7b5f}
+.game-shell .entry-save-info span,.game-shell .entry-save-info small {color:#746348}
+.game-shell .entry-save-btn.danger {color:#deb6b1}
+.game-shell .formation-screen {padding:18px;background:#0a1722ed}
+.game-shell .formation-shell {border:19px solid transparent;border-image:var(--diary-frame) 95 stretch;
+  background:var(--diary-paper) center/cover;grid-template-rows:69px minmax(0,1fr)}
+.game-shell .formation-head {border-color:#a58a5b55;padding:8px 16px 15px}
+.game-shell .formation-heading h2 {color:#5b5039}.game-shell .formation-kicker {color:#98825c}
+.game-shell .formation-roster-panel {padding:16px 14px 6px;border-color:#a58a5b55}
+.game-shell .formation-row {border:5px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  min-height:67px;padding:4px 6px;background:#a38c4d16;grid-template-columns:14px 43px minmax(0,1fr) 24px 27px;gap:5px}
+.game-shell .formation-row.is-selected {background:linear-gradient(#62745a55,#2c483655),var(--diary-leather)}
+.game-shell .formation-row-copy strong {color:#685d43}.game-shell .formation-row-copy small {color:#978263}
+.game-shell .formation-avatar {border:0;background:none}
+.game-shell .formation-row-index {color:#ad966c}
+.game-shell .formation-portrait-frame {border:8px solid transparent;border-image:var(--diary-portrait) 45 stretch;
+  background:linear-gradient(#e9d5a944,#bbaa7633);padding:0}
+.game-shell .formation-portrait-frame canvas {width:124px;height:136px}
+.game-shell .formation-identity h3 {color:#665940}
+.game-shell .formation-tags {align-items:center;flex-wrap:wrap}
+.game-shell .formation-total {display:inline-flex;align-items:baseline;gap:8px;margin-left:10px;color:#776348;font-size:11px;letter-spacing:1px}
+.game-shell .formation-total b {font:24px/1 Georgia,serif;color:#5c6b46;letter-spacing:0}
+.game-shell .formation-derived {font-size:10px;color:#7b6c52;margin:-7px 0 12px;line-height:1.8}
+.game-shell .formation-derived b {color:#5c6448;font-weight:500}
+.game-shell .formation-derived span {margin-left:15px;font-size:9px;color:#88775a}
+.game-shell .unit-stat-total {flex-basis:100%;padding-bottom:3px;border-bottom:1px solid #a58a5b44;color:#796442}
+.game-shell .unit-stat-total b {font-size:14px;color:#596641}
+.game-shell .formation-identity blockquote {color:#a0786a}
+.game-shell .formation-stat-grid {border-color:#ad956255;background:#b5985b0d}
+.game-shell .formation-stat > strong {font-family:Georgia,serif;color:#69744b}
+.game-shell .formation-info-card {border:6px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  background:#d3b67b14;padding:12px}
+.game-shell .formation-detail {padding:17px 23px}
+.game-shell .formation-detail-foot {margin-top:12px}
+.game-shell .formation-pose-dock {border-color:#a58a5b55}
+.soul-fragment {color:#8d7758;border-color:#ad7c71}
+/* Keep secondary data readable against the photographic paper grain. */
+.game-shell .formation-stat > span,.game-shell .formation-stat > small,
+.game-shell .formation-info-card dt,.game-shell .formation-weapon-note,
+.game-shell .formation-detail-foot p,.game-shell .formation-power {color:#74684f}
+.game-shell .formation-row-copy small {color:#7c6d52}
+.game-shell .formation-row.is-selected .formation-row-copy small {color:#cec6aa}
+.game-shell .formation-unit-kicker,.game-shell .formation-info-title {color:#7b6a4f}
+.game-shell .overlay-card {border:15px solid transparent;border-image:var(--diary-frame) 95 stretch;
+  background:var(--diary-paper) center/cover;color:#594e3c;box-shadow:0 20px 80px #000a;padding:22px}
+.game-shell .overlay-card h2,.game-shell .modal-title {color:#62513a}
+.game-shell .modal-kicker,.game-shell .modal-sub,.game-shell .help-card p {color:#8a7555}
+.game-shell .help-card {border-color:#a58a5b55;background:#d6b47c16}
+.game-shell .help-card h3 {color:#6e6345}
+.game-shell .help-card em {color:#8c5c58}
+.game-shell .modal-btn {border:5px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  background:var(--diary-leather);color:#d8c7a5}
+.game-shell .modal-btn.primary {background:linear-gradient(#5e754d44,#365b3e66),var(--diary-leather);color:#eadcb8}
+.game-shell .chapter-paper {background:linear-gradient(#0e1b2633,#0b172455),var(--diary-leather)}
+.game-shell .chapter-card {border:16px solid transparent;border-image:var(--diary-frame) 95 stretch;
+  background:var(--diary-paper) center/cover;padding:55px 40px;box-shadow:0 15px 70px #0007;color:#6f5c3e}
+.game-shell .chapter-title {color:#5e4f38;text-shadow:0 1px #fff4ce}
+.game-shell .chapter-number-jp,.game-shell .chapter-number-en,.game-shell .chapter-overline {color:#9b8259}
+.game-shell .chapter-sub {color:#9e7868}.game-shell .chapter-foot {color:#a48e68}
+.game-shell .bs-nameplate,.game-shell .bs-panel {border:9px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  background:linear-gradient(#11273599,#0c1723bb),var(--diary-leather);box-shadow:0 8px 15px #0006}
+.game-shell .bs-nameplate::before,.game-shell .bs-panel::before {display:none}
+.game-shell .bs-center-tag {border:5px solid transparent;border-image:var(--diary-ink-frame) 44 stretch;
+  background:var(--diary-leather);color:#d6c49b}
+
+/* Chapter 2's five visit locations, within the existing scrollable mission panel. */
+.bell-directory{display:grid;gap:5px;margin:14px 0}
+.bell-directory button{font:inherit;font-size:12px;text-align:left;color:#494d45;background:rgba(255,252,230,.3);border:1px solid rgba(91,99,79,.35);padding:7px 10px;cursor:pointer}
+.bell-directory button:hover,.bell-directory button:focus-visible{background:rgba(201,182,220,.38);outline:1px solid #8c759a}
+.bell-directory small{float:right;color:#727b67}
+/* One confirmation for a complete attack / counter / follow-up exchange. */
+.exchange-card { max-height: 90vh; overflow-y: auto; }
+.exchange-summary { display:flex; justify-content:space-between; gap:16px; padding:10px 0; color:#aebec9; font-size:12px; border-bottom:1px solid #b99a6b44; }
+.exchange-summary b { color:#e4ca98; }
+.exchange-list { margin:12px 0; }
+.exchange-strike { display:flex; align-items:center; gap:12px; padding:10px 4px; border-bottom:1px solid #b99a6b26; }
+.exchange-order { display:grid; place-items:center; width:25px; height:25px; flex-shrink:0; border:1px solid #a4c6ce66; border-radius:50%; color:#a4d0de; }
+.exchange-strike.is-enemy .exchange-order { color:#e6a0a6; border-color:#d3879566; }
+.exchange-strike>div { flex:1; min-width:0; }
+.exchange-strike strong { display:block; font-size:14px; }
+.exchange-strike small { display:block; margin-top:4px; color:#acb5c1; font-size:11px; }
+.exchange-strike>b { font-size:18px; white-space:nowrap; }
+.counter-forecast { margin-top:8px; border-top:1px solid #b99a6b44; padding-top:8px; }
+.game-shell .exchange-card { overflow-y:auto; }
+.game-shell .exchange-card .exchange-summary,
+.game-shell .exchange-card .exchange-strike small,
+.game-shell .exchange-card .result-sub,
+.game-shell .exchange-card .result-hp-label,
+.game-shell .exchange-card .result-note { color:#6a604c; }
+.game-shell .exchange-card .exchange-summary b,
+.game-shell .exchange-card .result-hp-label b { color:#4b4938; }
+.game-shell .exchange-card .exchange-strike small { font-size:12px; }
+.game-shell .exchange-card .exchange-order { color:#416d72; border-color:#416d7288; }
+.game-shell .exchange-card .is-enemy .exchange-order { color:#995666; border-color:#99566688; }
+.game-shell .context-text .forecast-strip { margin:4px 0; padding:5px 0; }
+.game-shell .context-text .forecast-strip b { font-size:20px; }
+.game-shell .context-text .hint-line { margin-top:4px; }
+.game-shell .info-side:has(.forecast-strip) { max-height:290px; }
