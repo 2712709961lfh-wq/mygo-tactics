@@ -104,6 +104,7 @@
   <script src="src/assets.js"></script>
   <script src="src/characters.js?v=4.0"></script>
   <script src="src/renderer.js"></script>
+  <script src="src/combat-vfx.js"></script>
   <script src="src/battle.js?v=4.0"></script>
   <script>
     (function () {
@@ -135,8 +136,7 @@
           document.body.appendChild(box);
         }
       }
-      if (MyGO.Characters) MyGO.Characters.load().then(run, run);
-      else run();
+      Promise.all([MyGO.Characters.load(), MyGO.CombatVfx.load()]).then(run, run);
     })();
   </script>
 </body>

@@ -95,6 +95,7 @@
     if (global.MyGO.MaskedCourtArt) tasks.push(global.MyGO.MaskedCourtArt.load());
     if (global.MyGO.LivehouseArt) tasks.push(global.MyGO.LivehouseArt.load());
     if (global.MyGO.DarkSoyo) tasks.push(global.MyGO.DarkSoyo.load());
+    if (global.MyGO.CombatVfx) tasks.push(global.MyGO.CombatVfx.load());
     if (tasks.length) {
       Promise.all(tasks).then(start, start);
       return;

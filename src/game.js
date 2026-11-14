@@ -503,6 +503,23 @@
       );
     }
 
+    /** Visible enemy's potential coverage after moving, using the current weapon. */
+    getEnemyThreatTiles(unit) {
+      const tiles=new Set();
+      if(!unit||unit.side!=='enemy'||unit.dead||unit.escaped||this.maskRetreatPending||
+        !this.isUnitVisible(unit)||!MyGO.Inventory.usable(unit))return tiles;
+      // Hidden units must not reveal themselves through gaps in the overlay.
+      const knownUnits=this.stage===4?this.units.filter(u=>this.isUnitVisible(u)):this.units;
+      const reachable=Pathfinding.getReachable(this.map,unit,knownUnits);
+      for(const origin of reachable.values()){
+        if(!origin.stoppable)continue;
+        for(const cell of Pathfinding.getAttackTiles(this.map,unit,origin)){
+          if(this.isVisible(cell.x,cell.y))tiles.add(Grid.key(cell.x,cell.y));
+        }
+      }
+      return tiles;
+    }
+
     canAttack(attacker, target) {
       return (
         !!attacker &&

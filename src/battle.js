@@ -840,6 +840,7 @@
     }
 
     _drawSwordSlash(ctx, t, atkX, atkY, defX, defY) {
+      if (MyGO.CombatVfx?.weapon(ctx, 'sword', t, atkX, atkY, defX, defY)) return;
       // The new Tomori artwork already contains sword and slash trails.
       if ((this.attacker.id === 'tomori' || this.attacker.id === 'xueyue')
         && MyGO.Characters && MyGO.Characters.hasActions(this.attacker.id)) return;
@@ -880,6 +881,7 @@
     }
 
     _drawAxeChop(ctx, t, atkX, atkY, defX, defY) {
+      if (MyGO.CombatVfx?.weapon(ctx, 'axe', t, atkX, atkY, defX, defY)) return;
       if(MyGO.WatercourtArt?.isArmored(this.attacker.id))return;
       // Taki's atlas includes both axe and trails. General impact particles
       // remain, but do not paint a second slash over the authored animation.
@@ -923,6 +925,7 @@
     }
 
     _drawLanceThrust(ctx, t, atkX, atkY, defX, defY) {
+      if (MyGO.CombatVfx?.weapon(ctx, 'lance', t, atkX, atkY, defX, defY)) return;
       if(MyGO.WatercourtArt?.isArmored(this.attacker.id))return;
       if (this.attacker.id === 'rana' && MyGO.Characters && MyGO.Characters.hasActions('rana')) {
         // Keep the original spear visible; only add a brief trail at its tip.
@@ -1071,6 +1074,7 @@
     }
 
     _drawMagicOrb(ctx, t, atkX, atkY, defX, defY) {
+      if (MyGO.CombatVfx?.magic(ctx, this.attacker, t, atkX, atkY, defX, defY)) return;
       const pal = this.palette || ELEMENT_PALETTES.arcane;
       const handX = atkX + 27;
       const handY = atkY - 75;
@@ -1159,7 +1163,8 @@
     _drawImpact(ctx, x, y, age, kind, palette) {
       const r = this.result;
       const pal = palette || ELEMENT_PALETTES.arcane;
-      if (r.hit) {
+      const animated = MyGO.CombatVfx?.impact(ctx, this.attacker, r, kind, x, y, age);
+      if (r.hit && !animated) {
         const p = clamp01(age / 260);
         const alpha = 1 - p;
         ctx.save();
@@ -1259,6 +1264,7 @@
     _spawnParticles(hit, crit) {
       if (!hit) return;
       const kind = this.attacker.weapon.type;
+      if (MyGO.CombatVfx?.ready && ['sword', 'axe', 'lance', 'tome'].includes(kind)) return;
       const pal = this.palette || ELEMENT_PALETTES.arcane;
       const count = crit ? 28 : kind === 'bow' ? 10 : kind === 'tome' ? 22 : 16;
       const colors = kind === 'tome'

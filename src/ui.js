@@ -133,6 +133,8 @@
       this.reachable = null;
       this.moveTiles = new Set();
       this.attackTiles = new Set();
+      this.enemyThreatId = null;
+      this.enemyThreatTiles = new Set();
       this.targetIds = new Set();
       this.actionTargets = [];
       this.previewPath = [];
@@ -516,6 +518,7 @@
       if(this.game.stage===6)this.dom.objectiveText.textContent=this.sixthObjectiveText();
       if(this.game.stage===7)this.dom.objectiveText.textContent='全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.nijikaJoined?' · 虹夏已入队':' · 回应虹夏的求助');
       if(this.game.stage===5)this.dom.objectiveText.textContent='击败东侧铁幕守卫长 · 宝箱 '+this.game.openedChests.length+'/2 · 钥匙持有者 '+this.game.living('enemy').filter(u=>u.drops.includes('chest_key')).length+' 人';
+      this.refreshEnemyThreat();
       this.scheduleAutoEndTurn();
     }
 
@@ -718,6 +721,7 @@
         hoverKey: this.hoverKey,
         moveTiles: this.mode === 'move' ? this.moveTiles : new Set(),
         attackTiles: this.mode === 'attack' ? this.attackTiles : new Set(),
+        enemyThreatTiles: this.game.isPlayerPhase()?this.enemyThreatTiles:new Set(),
         targetIds: this.mode === 'attack' ? this.targetIds : new Set(),
         path: this.mode === 'move' ? this.previewPath : [],
         actionableIds: actionable
@@ -796,6 +800,11 @@
         this.showToast('这里还没有被照亮。靠近路灯，在行动菜单中点亮它。','info',2300);return;
       }
       const unit = this.game.unitAt(cell.x, cell.y);
+
+      if(unit?.side==='enemy'&&['idle','move','action'].includes(this.mode)){
+        this.toggleEnemyThreat(unit);
+        return;
+      }
 
       if (this.mode === 'idle') {
         if (unit && unit.side === 'player') {
@@ -1446,6 +1455,28 @@
       ]);
     }
 
+    refreshEnemyThreat() {
+      if(!this.enemyThreatId)return;
+      const unit=this.game.getUnit(this.enemyThreatId);
+      if(this.enemyThreatGame!==this.game||!this.game.isPlayerPhase()||this.game.isOver()||
+        !unit||unit.dead||unit.escaped||!this.game.isUnitVisible(unit)){
+        this.enemyThreatId=null;this.enemyThreatTiles=new Set();
+      }else this.enemyThreatTiles=this.game.getEnemyThreatTiles(unit);
+      this.renderer.setView({...this.renderer.view,enemyThreatTiles:this.enemyThreatTiles});
+    }
+
+    toggleEnemyThreat(unit) {
+      if(this.busy||this.chapterOpen||!this.game.isPlayerPhase()||this.game.isOver()||
+        unit.side!=='enemy'||unit.dead||unit.escaped||!this.game.isUnitVisible(unit))return;
+      const showing=this.enemyThreatId!==unit.id;
+      this.enemyThreatId=showing?unit.id:null;
+      this.enemyThreatGame=this.game;
+      this.enemyThreatTiles=showing?this.game.getEnemyThreatTiles(unit):new Set();
+      if(this.mode==='idle')this.inspectUnit(unit);
+      else this.setView();
+      this.showToast(showing?(this.enemyThreatTiles.size?'橙色格：'+unit.name+'移动后可攻击的范围。再次点击该敌人可关闭。':unit.name+'当前没有可覆盖的攻击格。再次点击可取消查看。'):'已关闭敌方攻击范围。','info',2300);
+    }
+
     inspectUnit(unit) {
       if(this.game.stage===4&&!this.game.isUnitVisible(unit))return;
       this.inspectedId = unit.id;
@@ -1466,6 +1497,7 @@
         if(this.game.stage===5&&unit.drops.length)detail+='<span class="hint-line">击败掉落：'+unit.drops.map(id=>esc(MyGO.Inventory.item(id).name)).join('、')+'。'+(unit.boss?'击败后立即通关，请先搜集宝箱。':'钥匙进入击败者背包；背包已满会自动腾位或送入运输队。')+'</span>';
         detail += '<span class="hint-line">攻击范围 ' + unit.weapon.range[0] + '–' + unit.weapon.range[1] +
           ' 格 · 基础命中 ' + Combat.hitOf(unit) + ' · 基础暴击率 ' + Combat.critRateOf(unit) + '% · 必杀回避 ' + Combat.critAvoidOf(unit) + '</span>';
+        if(this.enemyThreatId===unit.id)detail+='<span class="hint-line">橙色格显示该单位移动后可攻击的范围；再次点击该敌人可关闭。</span>';
       } else if (unit.side === 'ally') {
         detail+='<span class="hint-line">由 AI 控制的友军。每回合在我方行动结束后自主抵抗附近敌人；可接受我方辅助治疗。存活到全灭敌军即可加入，阵亡不会导致任务失败。</span>';
       } else if (unit.acted) {
@@ -2021,6 +2053,7 @@
      * @returns {boolean} 是否已进入一场可继续操作的对局
      */
     loadSnapshot(loaded) {
+      this.enemyThreatId=null;this.enemyThreatTiles=new Set();
       if(this._livehouseEndingCancel)this._livehouseEndingCancel();
       const at = timeText(loaded.savedAt) || '未知时间';
       if(this.chapterOpen)this.finishChapterIntro();
@@ -2107,6 +2140,7 @@
           '<h2 class="modal-title" id="overlay-title">战场说明</h2>',
           '<p class="modal-sub">内心世界 · 同行者战术手册</p>',
           '<div class="help-grid">',
+          '  <div class="help-card"><h3>敌方攻击覆盖</h3><p>我方阶段点击敌人，以<em>橙色格</em>查看其移动后可攻击的范围；再次点击同一敌人关闭，点击其他敌人切换。可与蓝色移动范围对照，攻击模式下仍正常点击目标交战。</p></div>',
           '  <div class="help-card"><h3>回合结束</h3><p>所有存活的我方同伴完成行动后，<em>自动进入下一阶段</em>；有友军时先执行友军行动。也可点击「结束回合」或按 E 提前结束。</p></div>',
           '  <div class="help-card"><h3>移动</h3><p>点击我方单位，蓝色格为可移动范围。消耗等于地形移动费；<em>敌方单位阻挡通行</em>，友军可穿过但不能停留。</p></div>',
           '  <div class="help-card"><h3>攻击</h3><p>近战武器射程 <em>1</em>，弓与魔法射程 <em>2–3</em>。移动后选择攻击，只有红色范围内的敌人才可被点击。</p></div>',

@@ -60,6 +60,7 @@ const SCRIPTS = [
   'src/masked-court-art.js',
   'src/livehouse-art.js',
   'src/renderer.js',
+  'src/combat-vfx.js',
   'src/battle.js',
   'src/viewport.js',
   'src/ui.js',
@@ -79,6 +80,7 @@ const CHARACTER_DIR = 'assets/characters/sprites';
 const WALK_DIR = 'assets/characters/walk';
 const IDLE_DIR = 'assets/characters/idle';
 const MAP_IMAGES = {
+  combatVfx: 'assets/effects/combat/combat-atlas.png',
   livespeaker: 'assets/chapter-seven/source/speaker.png',
   livedrums: 'assets/chapter-seven/source/music-icons/32x32/drums.png',
   liveguitar: 'assets/chapter-seven/source/music-icons/32x32/guitar_electric.png',

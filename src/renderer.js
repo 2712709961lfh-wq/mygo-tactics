@@ -46,6 +46,7 @@
         hoverKey: null,
         moveTiles: new Set(),
         attackTiles: new Set(),
+        enemyThreatTiles: new Set(),
         targetIds: new Set(),
         path: [],
         actionableIds: new Set()
@@ -239,6 +240,7 @@
         hoverKey: view.hoverKey || null,
         moveTiles: view.moveTiles || new Set(),
         attackTiles: view.attackTiles || new Set(),
+        enemyThreatTiles: view.enemyThreatTiles || new Set(),
         targetIds: view.targetIds || new Set(),
         path: view.path || [],
         actionableIds: view.actionableIds || new Set()
@@ -863,6 +865,7 @@
       ctx.drawImage(this.terrainLayer,0,0,this.logicalWidth,this.logicalHeight);
       if(this.game.stage>=4)art.drawLights(ctx,v,this.game);
       ctx.save();P.apply(ctx,v);
+      this._drawRange(this.view.enemyThreatTiles,'rgba(245,143,60,.24)','rgba(255,185,103,.7)');
       if(this.view.mode==='move')this._drawRange(this.view.moveTiles,'rgba(59,170,255,.24)','rgba(133,219,255,.68)');
       if(this.view.mode==='attack')this._drawRange(this.view.attackTiles,'rgba(255,69,105,.24)','rgba(255,130,157,.65)');
       this._drawGrid();this._drawPath();this._drawHover();this._drawFlashes(now);
@@ -979,6 +982,7 @@
       this._drawTerrain();
 
       // 范围高亮在单位下方
+      this._drawRange(this.view.enemyThreatTiles,'rgba(245,143,60,.24)','rgba(255,185,103,.7)');
       if (this.view.mode === 'move') {
         this._drawRange(this.view.moveTiles, 'rgba(67, 164, 255, 0.20)', 'rgba(103, 199, 255, 0.42)');
       } else if (this.view.mode === 'attack') {

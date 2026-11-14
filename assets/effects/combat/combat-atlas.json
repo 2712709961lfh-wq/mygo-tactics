@@ -1,0 +1,108 @@
+{
+  "cell": 128,
+  "columns": 8,
+  "tracks": {
+    "sword": {
+      "row": 0,
+      "count": 6
+    },
+    "axe": {
+      "row": 1,
+      "count": 6
+    },
+    "lance": {
+      "row": 2,
+      "count": 6
+    },
+    "spark": {
+      "row": 3,
+      "count": 6
+    },
+    "bolt_fire": {
+      "row": 4,
+      "count": 6
+    },
+    "bolt_ice": {
+      "row": 5,
+      "count": 6
+    },
+    "bolt_wind": {
+      "row": 6,
+      "count": 6
+    },
+    "bolt_thunder": {
+      "row": 7,
+      "count": 6
+    },
+    "bolt_dark": {
+      "row": 8,
+      "count": 6
+    },
+    "bolt_light": {
+      "row": 9,
+      "count": 6
+    },
+    "bolt_arcane": {
+      "row": 10,
+      "count": 6
+    },
+    "hit_fire": {
+      "row": 11,
+      "count": 24
+    },
+    "hit_ice": {
+      "row": 14,
+      "count": 24
+    },
+    "hit_wind": {
+      "row": 17,
+      "count": 24
+    },
+    "hit_thunder": {
+      "row": 20,
+      "count": 24
+    },
+    "hit_dark": {
+      "row": 23,
+      "count": 24
+    },
+    "hit_light": {
+      "row": 26,
+      "count": 24
+    },
+    "hit_arcane": {
+      "row": 29,
+      "count": 24
+    },
+    "dust": {
+      "row": 32,
+      "count": 16
+    }
+  },
+  "inputs": {
+    "para1/unpacked/particlefx_14.png": "4b345c469aeb3f4eb39d10721763d337ed58338db5ed84dad36a36ee40a50f64",
+    "cethiel/unpacked/Alternative 2/5/Alternative_2_25.png": "9f6d534f10a62e115859cc7ffcb7920dd4eae8bcf1ac51493ce69468916c6fb5",
+    "cethiel/unpacked/Alternative 2/5/Alternative_2_26.png": "42e3c7212b1c54c576be754c7750f631c556a2b6ae7ad6888109d15c25a183e7",
+    "cethiel/unpacked/Alternative 2/5/Alternative_2_27.png": "cce0b75006d4bef1e3145d1d059e8f5b974a26384dd0a589be06cf22a32da635",
+    "cethiel/unpacked/Alternative 2/5/Alternative_2_28.png": "10403e692b3f5889d6c3f75654a1a6407a72cc24564a2b3dda86dbc88ab0acf3",
+    "cethiel/unpacked/Alternative 2/5/Alternative_2_29.png": "5744ce1a080a50ac67fda80d0c288d71a7a66ddf096e9ada7fa1cf849ba977df",
+    "cethiel/unpacked/Alternative 2/5/Alternative_2_30.png": "74974941159c94edb2042ab51f2979df85e586adface038a7a518f00f0730e8a",
+    "cethiel/unpacked/Classic/4/Classic_19.png": "fb7229167af0c34b092a5b7e6870502f65654ad11bdf86c24614190eaa72f357",
+    "cethiel/unpacked/Classic/4/Classic_20.png": "b5383b2d15d38aade2924c4718435339232b6b697415174c28c3c330f746dd50",
+    "cethiel/unpacked/Classic/4/Classic_21.png": "37f392d3fca92165f7655f8429f1ca0d1f4c20731468110d15a858955d8ebfa9",
+    "cethiel/unpacked/Classic/4/Classic_22.png": "87e6355348045802ea3734d729a15a947904f6222c970eb8bea063cecf4f9185",
+    "cethiel/unpacked/Classic/4/Classic_23.png": "d49c9bdb9937b7c9a747fde99eb6b4ee67d4e8c566445d9a9da39e3ff9fca87d",
+    "cethiel/unpacked/Classic/4/Classic_24.png": "cb00e9cd20ed969878dea87666a58e8f2a84ca8ceaa7e267f9b858e446b15939",
+    "cethiel/unpacked/Classic/5/Classic_25.png": "908b3ee918bfbfec41a23d3525845fc12b0aa5d0682eacafbcd26b4324eedb94",
+    "cethiel/unpacked/Classic/5/Classic_26.png": "18fa6213e71c7f65aca0ccdebc850559b4ef2dce8e1f4dc8400dc0c2d7c3dbf9",
+    "cethiel/unpacked/Classic/5/Classic_27.png": "766e93d732e54cb552b577725398856a2d9af377a49b7b5c93bf2ee69f37b409",
+    "cethiel/unpacked/Classic/5/Classic_28.png": "77de82df9b37a974984820952bdc6846d1740940003a5aa8e34019764080e1bd",
+    "cethiel/unpacked/Classic/5/Classic_29.png": "48296d9dccb4b89010894012f348d1377bf9df85b772f2388563eed4bfe5ec88",
+    "cethiel/unpacked/Classic/5/Classic_30.png": "21b0a3289783364a06afb82563ba7687a367a791cea4fa104f6ce6e0049e8b85",
+    "para1/unpacked/particlefx_10.png": "5823a717719f3a820d8cdab4387a1587725faaa025da02c1b1cf99fe07517be3",
+    "para1/unpacked/particlefx_08.png": "b4c824d73b48c135270c8daa38a8b8aafcb91b335ca6624f7ba09c20a877b42f",
+    "para1/unpacked/particlefx_13.png": "9f22edce17fd6970b6eba53e476afc504efe6f45a3791d7b4517673111c8d8ee",
+    "para1/unpacked/particlefx_12.png": "ac1fa6db7a06e10a8cefa0df7905cc7bea9d3e8c64db8868d832a34c73542ea1",
+    "para1/unpacked/particlefx_04.png": "da7fcf03bd7687371a565c98e71d172af2440e023cca6b28b0bbb7df6b675601"
+  }
+}

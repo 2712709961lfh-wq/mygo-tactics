@@ -1,0 +1,16 @@
+[
+  {
+    "name": "cethiel",
+    "page": "https://opengameart.org/content/weapon-slash-effect",
+    "download": "https://opengameart.org/sites/default/files/Everything_0.zip",
+    "license": "CC0-1.0",
+    "sha256": "163eb4e4d41385f3b888e7176c6da077d0e7fa7c101da96bbaa4645a2ec9d673"
+  },
+  {
+    "name": "para1",
+    "page": "https://opengameart.org/content/animated-particle-effects-1",
+    "download": "https://opengameart.org/sites/default/files/para_CC0_particlefx-1.zip",
+    "license": "CC0-1.0",
+    "sha256": "5c0be385e907d3c0db99b82be0fae43174b3cfe3a8b45d7734585c685dd1187f"
+  }
+]
