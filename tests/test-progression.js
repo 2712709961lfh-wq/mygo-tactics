@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path'), vm = require('node:vm');
-const world = {console}; world.window = world; vm.createContext(world);
+const world = {console,setTimeout,clearTimeout}; world.window = world; vm.createContext(world);
 for (const name of ['equipment-data','magic-data','inventory','class-data','config','rng','growth-data','growth','grid','pathfinding','combat','game','ui'])
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../src', name + '.js'), 'utf8'), world);
 const M = world.MyGO;

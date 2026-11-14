@@ -144,6 +144,7 @@
       this.confirmHandler = null;
       this.bannerTimer = null;
       this.toastTimer = null;
+      this.autoEndTurnTimer = null;
       this.cutinTimer = null;
       this.cutinSkip = null;
       this.lastSaveAt = null;
@@ -223,6 +224,7 @@
       if (!root || this.chapterPlayed) {
         this.chapterDone = null;
         if (onDone) onDone();
+        this.scheduleAutoEndTurn();
         return;
       }
 
@@ -250,6 +252,7 @@
       if (!root) {
         if (this.chapterDone) this.chapterDone();
         this.chapterDone = null;
+        this.scheduleAutoEndTurn();
         return;
       }
       root.classList.add('is-leaving');
@@ -260,6 +263,7 @@
         const done = this.chapterDone;
         this.chapterDone = null;
         if (done) done();
+        this.scheduleAutoEndTurn();
       }, 720);
     }
 
@@ -496,6 +500,7 @@
         this.dom.objectiveText.textContent=this.parkObjectiveText();
       }
       if(this.game.stage===5)this.dom.objectiveText.textContent='击败东侧铁幕守卫长 · 宝箱 '+this.game.openedChests.length+'/2 · 钥匙持有者 '+this.game.living('enemy').filter(u=>u.drops.includes('chest_key')).length+' 人';
+      this.scheduleAutoEndTurn();
     }
 
     updateChrome() {
@@ -629,6 +634,7 @@
     setBusy(value) {
       this.busy = !!value;
       this.updateChrome();
+      this.scheduleAutoEndTurn();
     }
 
     updateSaveNote() {
@@ -938,13 +944,6 @@
       this.resetSelection();
       this.updateAll();
       this.showToast(unit.name + ' 进入待机。', 'info', 1200);
-      if (this.game.allPlayerActed()) {
-        setTimeout(() => {
-          if (this.game.isPlayerPhase() && !this.busy) {
-            this.showToast('我方全员行动完毕，点击“结束回合”。', 'success', 2300);
-          }
-        }, 700);
-      }
     }
 
     cancelCurrent() {
@@ -1488,8 +1487,6 @@
         if (this.game.isOver()) {
           await sleep(420);
           this.showEndScreen();
-        } else if (this.game.allPlayerActed() && !result?.keyRecipientId && !result?.drops?.length) {
-          this.showToast('我方全员行动完毕，点击“结束回合”。', 'success', 2400);
         }
       } catch (err) {
         this.handleError(err);
@@ -1824,6 +1821,26 @@
      * 敌方回合
      * ============================================================ */
 
+    canAutoEndTurn() {
+      return !this.busy && !this.chapterOpen && !this.endShown && this.mode === 'idle' &&
+        this.dom.overlayRoot?.hidden !== false && this.dom.chapterIntro?.hidden !== false &&
+        !(MyGO.entry?.ui === this && !MyGO.entry.dom.root.hidden) &&
+        this.game.isPlayerPhase() && !this.game.isOver() && this.game.allPlayerActed();
+    }
+
+    scheduleAutoEndTurn() {
+      clearTimeout(this.autoEndTurnTimer);
+      this.autoEndTurnTimer = null;
+      if (!this.canAutoEndTurn()) return;
+      const game = this.game, turn = game.turn;
+      // Let the final action finish updating its feedback before changing phases.
+      this.autoEndTurnTimer = setTimeout(() => {
+        this.autoEndTurnTimer = null;
+        if (this.game !== game || game.turn !== turn || !this.canAutoEndTurn()) return;
+        this.endTurn();
+      }, 350);
+    }
+
     async endTurn() {
       if (this.busy || !this.game.isPlayerPhase() || this.game.isOver()) return;
       if (this.mode !== 'idle') {
@@ -2054,6 +2071,7 @@
           '<h2 class="modal-title" id="overlay-title">战场说明</h2>',
           '<p class="modal-sub">内心世界 · 同行者战术手册</p>',
           '<div class="help-grid">',
+          '  <div class="help-card"><h3>回合结束</h3><p>所有存活的我方同伴完成行动后，<em>自动进入下一阶段</em>；有友军时先执行友军行动。也可点击「结束回合」或按 E 提前结束。</p></div>',
           '  <div class="help-card"><h3>移动</h3><p>点击我方单位，蓝色格为可移动范围。消耗等于地形移动费；<em>敌方单位阻挡通行</em>，友军可穿过但不能停留。</p></div>',
           '  <div class="help-card"><h3>攻击</h3><p>近战武器射程 <em>1</em>，弓与魔法射程 <em>2–3</em>。移动后选择攻击，只有红色范围内的敌人才可被点击。</p></div>',
           '  <div class="help-card"><h3>力量 / 魔力</h3><p>物理武器读取<em>力量</em>，以目标<em>守备</em>减伤；魔法武器读取<em>魔力</em>，以目标<em>魔防</em>减伤。</p></div>',
@@ -2157,6 +2175,7 @@
       document.body.classList.remove('modal-open');
       this.modalDismissible = false;
       this.confirmHandler = null;
+      this.scheduleAutoEndTurn();
     }
 
     handleError(err) {
