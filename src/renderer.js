@@ -942,7 +942,7 @@
       ctx.strokeStyle=selected?'#ffe2a1':u.side==='player'?'#8ddfff':u.side==='ally'?'#9cf2b1':'#f98fab';ctx.lineWidth=selected?1.8:1;
       ctx.beginPath();ctx.ellipse(p.x,p.y,11,4,.1,0,Math.PI*2);ctx.stroke();
       if(this.view.targetIds.has(u.id)){ctx.strokeStyle='#ff719d';ctx.strokeRect(p.x-height*.32,p.y-height+2,height*.64,height);}
-      if(u.acted&&u.side==='player')ctx.globalAlpha=.48;
+      if(u.acted&&u.side==='player'&&!this.game._liveEnding)ctx.globalAlpha=.48;
       if(u._summonAlpha!==undefined)ctx.globalAlpha*=u._summonAlpha;
       if(u._escapeAlpha!==undefined)ctx.globalAlpha*=u._escapeAlpha;
       const custom=MyGO.Characters&&MyGO.Characters.has(u.id)

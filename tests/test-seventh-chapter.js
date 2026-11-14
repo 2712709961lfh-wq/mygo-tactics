@@ -39,4 +39,12 @@ test('Six to seven preserves growth, economy and recruited companions',()=>{
  const h=new M.Game({stage:7,recruited:g.recruited,loadout:g.exportLoadout()});assert.equal(h.gold,4733);assert.equal(h.getUnit('tomori').level,t.level);assert.equal(h.getUnit('tomori').exp,29);assert.equal(h.livingCount('player'),7);h.joinNijika();assert.equal(h.livingCount('player'),8);
  const before=h.getUnit('live-blade').maxHp;for(const u of h.living('player'))u.level+=10;h.scaleParkEnemies();assert(h.getUnit('live-blade').maxHp>before);
 });
+test('Epilogue completion persists, old saves remain compatible, invalid flags rejected',()=>{
+ const g=game();g.joinNijika();assert.equal(g.livehouseEndingShown,false);
+ for(const e of g.living('enemy')){e.dead=true;e.hp=0;}g.checkOutcome();g.livehouseEndingShown=true;
+ const s=g.serialize(),h=game();h.restore(s);assert.equal(h.livehouseEndingShown,true);
+ const old=plain(s);delete old.livehouseEndingShown;h.restore(old);assert.equal(h.livehouseEndingShown,false);
+ const wrong=plain(s);wrong.livehouseEndingShown='true';assert.throws(()=>game().restore(wrong),/剧情/);
+ const premature=game().serialize();premature.livehouseEndingShown=true;assert.throws(()=>game().restore(premature),/剧情/);
+});
 console.log('Seventh chapter: '+cases+' cases passed.');

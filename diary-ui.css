@@ -51,6 +51,12 @@
 .live-opening-caption small {color:#e7c87f;letter-spacing:2px;font-size:13px}
 .live-opening-caption p {font-size:clamp(14px,1.8vw,21px);line-height:1.7;margin:8px 0;color:#f1e5d5}
 .live-opening-skip {text-align:right;padding:10px 20px;font-size:11px;color:#a59ba5}
+.live-ending-dialogue strong {font:inherit}
+.live-ending-controls {display:flex;align-items:center;justify-content:flex-end;gap:16px;flex:none;padding:10px 0;font-size:11px;color:#a59ba5}
+.live-ending-progress {margin-right:auto;color:#d1b580}
+.live-ending-controls button {border:0;border-bottom:1px solid #a59ba555;background:transparent;color:#e5d3aa;font:inherit;padding:4px 2px;cursor:pointer}
+.live-ending-controls button:hover,.live-ending-controls button:focus-visible {color:#fff0c7;border-color:#e5d3aa}
+@media(max-width:640px){.live-ending-controls{gap:9px;flex-wrap:wrap}.live-ending-controls>span:nth-child(2){display:none}}
 @media(max-width:640px){#chapter-intro.livehouse-intro{padding:8px}.live-opening-caption{padding:8px 12px;gap:10px;min-height:150px}.live-opening-caption canvas{width:65px;height:90px}.live-opening-skip{padding:8px 0}.live-opening-head h2{letter-spacing:2px}}
 .game-shell .party-unit {width:68px;height:84px;border:7px solid transparent;
   border-image:var(--diary-portrait) 45 stretch;padding:0 1px;gap:2px;

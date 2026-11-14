@@ -1,6 +1,83 @@
 /* Opening recruits Nijika at the party's answer, including when skipped. */
 (function(global){
  'use strict';const M=global.MyGO;
+ const ending=[
+  {id:'nijika',name:'伊地知虹夏',line:'真的太谢谢大家了！多亏你们，才守住了这里。'},
+  {id:'anon',name:'千早爱音',line:'不用客气啦！不过，虹夏，你为什么会出现在这里？'},
+  {id:'nijika',name:'伊地知虹夏',line:'我和乐队的大家约好了，今天来 Live House 彩排。'},
+  {id:'nijika',name:'伊地知虹夏',line:'可是推开门，就发现里面全是怪物……我也不知道为什么会变成这样。'},
+  {id:'soyo',name:'长崎爽世',line:'那你就和我们同行吧。我们也在寻找回到现实世界的方法。'},
+  {id:'nijika',name:'伊地知虹夏',line:'真的吗？太好了！那就请多关照啦！能和大家一起走，我很开心！'}
+ ];
+ M.UI.prototype.showLivehouseEnding=function(){
+  const ui=this,game=this.game,r=this.renderer,root=this.dom.chapterIntro,priorBusy=this.busy;
+  game._liveEnding=true;
+  this.closeOverlay();this.setBusy(true);this.chapterOpen=true;document.body.classList.add('chapter-open');
+  root.classList.add('livehouse-intro','livehouse-ending');root.classList.remove('is-leaving');
+  const scene=document.createElement('div');scene.className='livehouse-opening live-ending';
+  scene.innerHTML='<div class="live-opening-head"><small>CHAPTER 07 / AFTER STORY</small><h2>一同寻找归途</h2><span>STARRY · 战斗后的 Live House</span></div>'+
+   '<canvas class="live-opening-canvas live-ending-scene" width="1200" height="660" aria-label="战斗结束，虹夏走向主角团，众人在真实 Live House 地图中交谈"></canvas>'+
+   '<div class="live-opening-caption live-ending-dialogue" aria-live="polite"><canvas width="110" height="125" aria-hidden="true"></canvas><div><small><strong></strong></small><p></p></div></div>'+
+   '<div class="live-ending-controls"><span class="live-ending-progress"></span><span>自动播放 · 点击画面 / Enter 下一句</span><button type="button" data-confirm>下一句</button><button type="button" data-live-ending-skip>跳过剧情 · Esc</button></div>';
+  root.appendChild(scene);root.hidden=false;void root.offsetWidth;root.classList.add('is-visible');
+  const canvas=scene.querySelector('.live-ending-scene'),ctx=canvas.getContext('2d'),face=scene.querySelector('.live-ending-dialogue canvas'),speaker=scene.querySelector('.live-ending-dialogue strong'),line=scene.querySelector('.live-ending-dialogue p');
+  const party=game.living('player'),places={nijika:[14,20],anon:[13,21.5],soyo:[15,21.5],tomori:[13,23],rana:[15,23],taki:[14,24],xueyue:[12,24.5],nina:[16,24.5]};
+  const saved=party.map(u=>({u,facing:u.facing,walking:u._walking,walkUntil:u._walkUntil,visual:{...r.visuals.get(u.id)}}));
+  const oldView=r.view;r.setView({mode:'idle'});
+  return new Promise(resolve=>{
+   let page=0,state='playing',raf=0,fade=0,start=performance.now(),beatStart=start,previous=start,camera={x:5,y:15.5,w:20,h:12.5};
+   const duration=[3600,3500,3900,4300,4700,4200];
+   const settle=completed=>{
+    if(state==='done')return;state='done';clearTimeout(fade);cancelAnimationFrame(raf);
+    if(ui._livehouseEndingCancel===cancel)ui._livehouseEndingCancel=null;
+    root.hidden=true;root.classList.remove('livehouse-intro','livehouse-ending','is-visible','is-leaving');scene.remove();document.body.classList.remove('chapter-open');
+    ui.setBusy(priorBusy);resolve(completed&&ui.game===game);
+   };
+   const finish=completed=>{
+    if(state==='done')return;
+    if(state==='leaving'){if(!completed)settle(false);return;}
+    state='leaving';cancelAnimationFrame(raf);ui.chapterOpen=false;
+    delete game._liveEnding;
+    ui._livehouseEndingAdvance=null;ui._livehouseEndingSkip=null;
+    for(const s of saved){s.u.facing=s.facing;s.u._walking=s.walking;s.u._walkUntil=s.walkUntil;if(ui.game===game)r.visuals.set(s.u.id,s.visual);}
+    if(ui.game===game)r.setView(oldView);
+    if(completed){root.classList.add('is-leaving');fade=setTimeout(()=>settle(true),650);}else settle(false);
+   };
+   const cancel=()=>finish(false);ui._livehouseEndingCancel=cancel;
+   const caption=()=>{
+    const row=ending[page];
+    scene.dataset.endingPage=String(page);speaker.textContent=row.name;line.textContent='“'+row.line+'”';
+    scene.querySelector('.live-ending-progress').textContent='对话 '+(page+1)+' / '+ending.length;
+    scene.querySelector('[data-confirm]').textContent=page===ending.length-1?'一同出发':'下一句';
+    const fc=face.getContext('2d');fc.clearRect(0,0,110,125);M.Characters.drawPortrait(fc,row.id,0,0,110,125,{head:true});
+   };
+   const next=()=>{if(state!=='playing')return;if(ui.game!==game){finish(false);return;}if(page===ending.length-1){finish(true);return;}page++;beatStart=performance.now();caption();};
+   ui._livehouseEndingAdvance=next;ui._livehouseEndingSkip=()=>finish(true);
+   scene.querySelector('[data-confirm]').addEventListener('click',event=>{event.stopPropagation();next();});
+   scene.querySelector('[data-live-ending-skip]').addEventListener('click',event=>{event.stopPropagation();finish(true);});
+   const draw=now=>{
+    if(state!=='playing')return;if(ui.game!==game){finish(false);return;}
+    const elapsed=now-start,talk=ending[page].id,dt=Math.min(100,now-previous);previous=now;
+    for(const [i,u] of party.entries()){
+     const target=places[u.id]||[12+i,24],v=r.visuals.get(u.id),progress=Math.max(0,Math.min(1,(elapsed-i*70)/1700)),ease=1-Math.pow(1-progress,2);
+     if(v){v.px=(target[0]+(i%2?.35:-.35)*(1-ease))*32;v.py=(target[1]+1.8*(1-ease))*32;v.moving=progress<1;}
+     u._walking=progress<1;u._walkUntil=now+120;
+     u.facing=progress<1?'up':u.id==='nijika'?'down':u.id===talk?'up':u.id==='soyo'?'left':'up';
+    }
+    r.render(now);ctx.fillStyle='#0f101a';ctx.fillRect(0,0,1200,660);
+    const target={x:talk==='soyo'?8.2:talk==='anon'?7.4:7.8,y:17.2,w:13.5,h:10},blend=1-Math.exp(-dt/650);
+    for(const k of ['x','y','w','h'])camera[k]+=(target[k]-camera[k])*blend;
+    const s=r.scale,p=M.MapProjection.project(r.projection,camera.x*32,camera.y*32),sw=camera.w*32*s,sh=camera.h*32*s,fit=Math.min(1200/sw,660/sh),ww=sw*fit,hh=sh*fit,dx=(1200-ww)/2,dy=(660-hh)/2;
+    ctx.drawImage(r.canvas,p.x*s,p.y*s,sw,sh,dx,dy,ww,hh);
+    const speaking=game.getUnit(talk),v=speaking&&!speaking.dead?r.visuals.get(talk):null;
+    if(v){const foot=M.MapProjection.project(r.projection,v.px+16,v.py+27),x=dx+(foot.x-p.x)*s*fit,y=dy+(foot.y-p.y-52)*s*fit;
+     ctx.save();ctx.fillStyle=page===5?'#f4d687':'#decb9f';ctx.font=page===5?'24px sans-serif':'16px sans-serif';ctx.textAlign='center';ctx.fillText(page===5?'♪':'•',x,y-4-Math.sin(now/240)*3);ctx.restore();}
+    if(now-beatStart>=duration[page])next();
+    if(state==='playing')raf=requestAnimationFrame(draw);
+   };
+   caption();raf=requestAnimationFrame(draw);
+  });
+ };
  M.UI.prototype.playLivehouseIntro=function(){
   const root=this.dom.chapterIntro,game=this.game,r=this.renderer;
   if(game.nijikaJoined){this.finishChapterIntro();return;}

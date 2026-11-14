@@ -127,7 +127,7 @@
       const game = this.ui.game;
       if (game.isOver()) {
         // loadSnapshot may already be awaiting a recruitment confirmation.
-        if(this.ui.dom.overlayRoot.hidden)this.ui.endShown = false;
+        if(this.ui.dom.overlayRoot.hidden&&!this.ui.chapterOpen&&!this.ui._livehouseEndingCancel)this.ui.endShown = false;
         this.ui.showEndScreen();
         return;
       }

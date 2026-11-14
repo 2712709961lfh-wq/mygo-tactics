@@ -34,10 +34,28 @@ try{for(const name of ['index.html','standalone.html']){
  // Healing uses production support rules and shares the normal action/EXP systems.
  await page.evaluate(()=>{const u=MYGO_UI,n=u.game.getUnit('nijika'),t=u.game.getUnit('tomori');Object.assign(n,{x:14,y:21,acted:false});Object.assign(t,{x:13,y:21,hp:1});const r=u.game.castSupport(n,'heal',t);if(!r.experience.length||t.hp<=1)throw Error('Nijika heal/EXP failed');u.updateAll();});
  // One living enemy keeps the battle going; all 18 dead opens CLEAR.
- await page.evaluate(()=>{const u=MYGO_UI,en=u.game.living('enemy');for(const e of en.slice(1)){e.dead=true;e.hp=0;}u.game.checkOutcome();if(u.game.phase!=='player')throw Error('early victory');en[0].dead=true;en[0].hp=0;u.game.checkOutcome();u.showEndScreen();});await page.waitForSelector('[data-end-restart]');assert((await page.locator('#overlay-card').innerText()).includes('全部敌人已击败'));if(name==='index.html')await page.screenshot({path:path.join(shots,'chapter-07-browser-victory.png')});
+ await page.evaluate(()=>{const u=MYGO_UI,en=u.game.living('enemy');for(const e of en.slice(1)){e.dead=true;e.hp=0;}u.game.checkOutcome();if(u.game.phase!=='player')throw Error('early victory');en[0].dead=true;en[0].hp=0;u.game.checkOutcome();u.updateAll();u.showEndScreen();u.showEndScreen();});
+ await page.waitForSelector('.live-ending');assert.equal(await page.locator('[data-end-restart]').count(),0);
+ assert(await page.evaluate(()=>MYGO_UI.dom.overlayRoot.hidden&&MYGO_UI.chapterOpen&&!MYGO_UI.dom.chapterIntro.hidden&&MYGO_UI.dom.chapterIntro.classList.contains('livehouse-ending')));
+ const endingUnits=await page.evaluate(()=>JSON.stringify(MYGO_UI.game.serialize().units));
+ await page.waitForTimeout(1900);
+ const expected=[['伊地知虹夏','谢谢大家'],['千早爱音','为什么会出现在这里'],['伊地知虹夏','Live House 彩排'],['伊地知虹夏','全是怪物'],['长崎爽世','回到现实世界的方法'],['伊地知虹夏','很开心']];
+ for(let i=0;i<expected.length;i++){
+  await page.waitForSelector('.live-ending[data-ending-page="'+i+'"]');assert.equal(await page.locator('.live-ending-dialogue strong').innerText(),expected[i][0]);assert((await page.locator('.live-ending-dialogue p').innerText()).includes(expected[i][1]));
+  if(i===4&&name==='index.html'){await page.waitForTimeout(400);await page.screenshot({path:path.join(shots,'chapter-07-browser-ending.png')});}
+  if(i%2===0)await page.keyboard.press('Enter');else await page.locator('.live-ending [data-confirm]').click();
+ }
+ await page.waitForSelector('[data-end-restart]');assert(await page.evaluate(()=>MYGO_UI.game.livehouseEndingShown));assert((await page.locator('#overlay-card').innerText()).includes('全部敌人已击败'));if(name==='index.html')await page.screenshot({path:path.join(shots,'chapter-07-browser-victory.png')});
+ assert.equal(await page.evaluate(()=>JSON.stringify(MYGO_UI.game.serialize().units)),endingUnits);assert(await page.evaluate(()=>!MYGO_UI.chapterOpen&&MYGO_UI.dom.chapterIntro.hidden&&!MYGO_UI.game._liveEnding));
+ await page.evaluate(()=>{const u=MYGO_UI;u.loadSnapshot({snapshot:u.game.serialize(),savedAt:new Date().toISOString()});});await page.waitForSelector('[data-end-restart]');assert.equal(await page.locator('.live-ending').count(),0);
  // Restart reliably recruits on skip as well.
  await page.locator('[data-end-restart]').click();await page.waitForSelector('.livehouse-opening');await page.keyboard.press('Enter');await page.waitForFunction(()=>document.getElementById('chapter-intro').hidden);assert(await page.evaluate(()=>MYGO_UI.game.nijikaJoined));
- assert.deepEqual(errors,[]);assert.deepEqual(missing,[]);console.log(name+': natural/skip intro, join, restore, movement, magic battle, heal, all-clear and restart passed');await page.close();
+ await page.evaluate(()=>{const u=MYGO_UI;if(u.game.livehouseEndingShown)throw Error('ending did not reset');for(const e of u.game.living('enemy')){e.dead=true;e.hp=0;}u.game.checkOutcome();u.updateAll();u.showEndScreen();});await page.waitForSelector('.live-ending');await page.locator('[data-live-ending-skip]').click();await page.waitForSelector('[data-end-restart]');assert(await page.evaluate(()=>MYGO_UI.game.livehouseEndingShown));
+ if(name==='standalone.html'){
+  await page.evaluate(()=>{const u=MYGO_UI;u.game.livehouseEndingShown=false;u.endShown=false;u.showEndScreen();});await page.waitForSelector('.live-ending');
+  await page.waitForFunction(()=>MYGO_UI.game.livehouseEndingShown,{},{timeout:30000});await page.waitForSelector('[data-end-restart]');
+ }
+ assert.deepEqual(errors,[]);assert.deepEqual(missing,[]);assert((await page.locator('[data-game-version]').innerText()).includes(JSON.parse(fs.readFileSync(path.join(root,'version.json'),'utf8')).version));console.log(name+': opening, gameplay, full-map epilogue (six lines/auto/skip/save), position restoration, restart and version passed');await page.close();
  }
  // A pending save replays opening; six-to-seven and an eight-person mobile rail.
  const page=await browser.newPage({viewport:{width:1440,height:1000}});await page.goto(base+'/index.html?stage=6');await page.waitForFunction(()=>window.MYGO_ENTRY);

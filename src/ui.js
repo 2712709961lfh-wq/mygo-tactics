@@ -248,6 +248,7 @@
     }
 
     finishChapterIntro() {
+      if(this._livehouseEndingAdvance){this._livehouseEndingAdvance();return;}
       if (!this.chapterOpen) return;
       if(this.parkIntroCleanup){this.parkIntroCleanup();this.parkIntroCleanup=null;}
       this.chapterOpen = false;
@@ -274,6 +275,7 @@
     }
 
     newGame(seed, stage) {
+      if(this._livehouseEndingCancel)this._livehouseEndingCancel();
       this.closeOverlay();
       this.endShown = false;
       this.busy = false;
@@ -392,6 +394,11 @@
           (document.getElementById('equipment-screen') && !document.getElementById('equipment-screen').hidden) ||
           (document.getElementById('shop-screen') && !document.getElementById('shop-screen').hidden)) return;
       if (this.chapterOpen) {
+        if(this._livehouseEndingAdvance){
+          if(event.key==='Escape'){event.preventDefault();this._livehouseEndingSkip();}
+          else if(event.key==='Enter'||event.key===' '){event.preventDefault();this._livehouseEndingAdvance();}
+          return;
+        }
         if (event.key === 'Escape' || event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           this.finishChapterIntro();
@@ -2014,6 +2021,7 @@
      * @returns {boolean} 是否已进入一场可继续操作的对局
      */
     loadSnapshot(loaded) {
+      if(this._livehouseEndingCancel)this._livehouseEndingCancel();
       const at = timeText(loaded.savedAt) || '未知时间';
       if(this.chapterOpen)this.finishChapterIntro();
       this.game.restore(loaded.snapshot);
@@ -2136,6 +2144,11 @@
         await this.showNinaRecruitment();
         if(this.game!==cleared)return;
         this.game.ninaRecruitmentShown=true;
+      }
+      if(win&&this.game.stage===7&&!this.game.livehouseEndingShown){
+        const cleared=this.game,completed=await this.showLivehouseEnding();
+        if(this.game!==cleared||!completed)return;
+        this.game.livehouseEndingShown=true;
       }
       const enemyTotal=this.game.stage===6?this.game.units.filter(u=>u.side==='enemy').length:this.game.mission.enemyCount;
       const defeated = this.game.stage===6?this.game.units.filter(u=>u.side==='enemy'&&u.dead).length:enemyTotal-this.game.livingCount('enemy');

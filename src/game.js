@@ -135,6 +135,7 @@
       if(this.ninaLost)this.recruited=this.recruited.filter(id=>id!=='nina');
       this.ninaRecruitmentShown = false;
       this.nijikaJoined=this.stage===7&&this.recruited.includes('nijika');
+      this.livehouseEndingShown=false;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       this.units = unitsForStage(this.stage, this.recruited);
       this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
@@ -351,6 +352,7 @@
       this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
       this.gateOpen = false;
       this.nijikaJoined=this.stage===7&&this.recruited.includes('nijika');
+      this.livehouseEndingShown=false;
       this.resonanceOpen = false;
       this.awakenedBells = [];
       this.litLamps=[];
@@ -900,7 +902,7 @@
           soyoBossBonus:this.soyoBossBonus,enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===5?{openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===6?{summonedWaves:this.summonedWaves.slice(),lastSummonTurn:this.lastSummonTurn,maskRetreatPending:this.maskRetreatPending,maskEscaped:this.maskEscaped,enemyScaleLevel:this.enemyScaleLevel}:{}),
-        ...(this.stage===7?{nijikaJoined:this.nijikaJoined,enemyScaleLevel:this.enemyScaleLevel}:{}),
+        ...(this.stage===7?{nijikaJoined:this.nijikaJoined,livehouseEndingShown:this.livehouseEndingShown,enemyScaleLevel:this.enemyScaleLevel}:{}),
         recruited: this.recruited.slice(),
         recruitmentVersion: 1,
         recruitmentShown: this.recruitmentShown,
@@ -980,7 +982,9 @@
       if (this.stage === 1 && snapshot.phase !== 'victory') this.recruited = [];
       this.recruitmentShown = snapshot.recruitmentVersion === 1 && !!snapshot.recruitmentShown;
       this.nijikaJoined=this.stage===7&&snapshot.nijikaJoined===true;
+      this.livehouseEndingShown=this.stage===7&&snapshot.livehouseEndingShown===true;
       if(this.stage===7){
+        if(snapshot.livehouseEndingShown!==undefined&&typeof snapshot.livehouseEndingShown!=='boolean'||this.livehouseEndingShown&&snapshot.phase!=='victory')throw Error('Live House 战后剧情状态无效');
         if(typeof snapshot.nijikaJoined!=='boolean'||this.nijikaJoined!==this.recruited.includes('nijika'))throw Error('虹夏入队状态无效');
         if(!Number.isInteger(snapshot.enemyScaleLevel)||snapshot.enemyScaleLevel<1||snapshot.enemyScaleLevel>97)throw Error('存档敌军等级无效');
         const expected=unitsForStage(this.stage,this.recruited);

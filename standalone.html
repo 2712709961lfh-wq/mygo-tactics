@@ -4663,6 +4663,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 .live-opening-caption small {color:#e7c87f;letter-spacing:2px;font-size:13px}
 .live-opening-caption p {font-size:clamp(14px,1.8vw,21px);line-height:1.7;margin:8px 0;color:#f1e5d5}
 .live-opening-skip {text-align:right;padding:10px 20px;font-size:11px;color:#a59ba5}
+.live-ending-dialogue strong {font:inherit}
+.live-ending-controls {display:flex;align-items:center;justify-content:flex-end;gap:16px;flex:none;padding:10px 0;font-size:11px;color:#a59ba5}
+.live-ending-progress {margin-right:auto;color:#d1b580}
+.live-ending-controls button {border:0;border-bottom:1px solid #a59ba555;background:transparent;color:#e5d3aa;font:inherit;padding:4px 2px;cursor:pointer}
+.live-ending-controls button:hover,.live-ending-controls button:focus-visible {color:#fff0c7;border-color:#e5d3aa}
+@media(max-width:640px){.live-ending-controls{gap:9px;flex-wrap:wrap}.live-ending-controls>span:nth-child(2){display:none}}
 @media(max-width:640px){#chapter-intro.livehouse-intro{padding:8px}.live-opening-caption{padding:8px 12px;gap:10px;min-height:150px}.live-opening-caption canvas{width:65px;height:90px}.live-opening-skip{padding:8px 0}.live-opening-head h2{letter-spacing:2px}}
 .game-shell .party-unit {width:68px;height:84px;border:7px solid transparent;
   border-image:var(--diary-portrait) 45 stretch;padding:0 1px;gap:2px;
@@ -5082,7 +5088,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.6.1</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.6.3</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -8607,6 +8613,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(this.ninaLost)this.recruited=this.recruited.filter(id=>id!=='nina');
       this.ninaRecruitmentShown = false;
       this.nijikaJoined=this.stage===7&&this.recruited.includes('nijika');
+      this.livehouseEndingShown=false;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       this.units = unitsForStage(this.stage, this.recruited);
       this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
@@ -8823,6 +8830,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
       this.gateOpen = false;
       this.nijikaJoined=this.stage===7&&this.recruited.includes('nijika');
+      this.livehouseEndingShown=false;
       this.resonanceOpen = false;
       this.awakenedBells = [];
       this.litLamps=[];
@@ -9372,7 +9380,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           soyoBossBonus:this.soyoBossBonus,enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===5?{openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===6?{summonedWaves:this.summonedWaves.slice(),lastSummonTurn:this.lastSummonTurn,maskRetreatPending:this.maskRetreatPending,maskEscaped:this.maskEscaped,enemyScaleLevel:this.enemyScaleLevel}:{}),
-        ...(this.stage===7?{nijikaJoined:this.nijikaJoined,enemyScaleLevel:this.enemyScaleLevel}:{}),
+        ...(this.stage===7?{nijikaJoined:this.nijikaJoined,livehouseEndingShown:this.livehouseEndingShown,enemyScaleLevel:this.enemyScaleLevel}:{}),
         recruited: this.recruited.slice(),
         recruitmentVersion: 1,
         recruitmentShown: this.recruitmentShown,
@@ -9452,7 +9460,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if (this.stage === 1 && snapshot.phase !== 'victory') this.recruited = [];
       this.recruitmentShown = snapshot.recruitmentVersion === 1 && !!snapshot.recruitmentShown;
       this.nijikaJoined=this.stage===7&&snapshot.nijikaJoined===true;
+      this.livehouseEndingShown=this.stage===7&&snapshot.livehouseEndingShown===true;
       if(this.stage===7){
+        if(snapshot.livehouseEndingShown!==undefined&&typeof snapshot.livehouseEndingShown!=='boolean'||this.livehouseEndingShown&&snapshot.phase!=='victory')throw Error('Live House 战后剧情状态无效');
         if(typeof snapshot.nijikaJoined!=='boolean'||this.nijikaJoined!==this.recruited.includes('nijika'))throw Error('虹夏入队状态无效');
         if(!Number.isInteger(snapshot.enemyScaleLevel)||snapshot.enemyScaleLevel<1||snapshot.enemyScaleLevel>97)throw Error('存档敌军等级无效');
         const expected=unitsForStage(this.stage,this.recruited);
@@ -14050,7 +14060,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       ctx.strokeStyle=selected?'#ffe2a1':u.side==='player'?'#8ddfff':u.side==='ally'?'#9cf2b1':'#f98fab';ctx.lineWidth=selected?1.8:1;
       ctx.beginPath();ctx.ellipse(p.x,p.y,11,4,.1,0,Math.PI*2);ctx.stroke();
       if(this.view.targetIds.has(u.id)){ctx.strokeStyle='#ff719d';ctx.strokeRect(p.x-height*.32,p.y-height+2,height*.64,height);}
-      if(u.acted&&u.side==='player')ctx.globalAlpha=.48;
+      if(u.acted&&u.side==='player'&&!this.game._liveEnding)ctx.globalAlpha=.48;
       if(u._summonAlpha!==undefined)ctx.globalAlpha*=u._summonAlpha;
       if(u._escapeAlpha!==undefined)ctx.globalAlpha*=u._escapeAlpha;
       const custom=MyGO.Characters&&MyGO.Characters.has(u.id)
@@ -16084,6 +16094,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     }
 
     finishChapterIntro() {
+      if(this._livehouseEndingAdvance){this._livehouseEndingAdvance();return;}
       if (!this.chapterOpen) return;
       if(this.parkIntroCleanup){this.parkIntroCleanup();this.parkIntroCleanup=null;}
       this.chapterOpen = false;
@@ -16110,6 +16121,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     }
 
     newGame(seed, stage) {
+      if(this._livehouseEndingCancel)this._livehouseEndingCancel();
       this.closeOverlay();
       this.endShown = false;
       this.busy = false;
@@ -16228,6 +16240,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           (document.getElementById('equipment-screen') && !document.getElementById('equipment-screen').hidden) ||
           (document.getElementById('shop-screen') && !document.getElementById('shop-screen').hidden)) return;
       if (this.chapterOpen) {
+        if(this._livehouseEndingAdvance){
+          if(event.key==='Escape'){event.preventDefault();this._livehouseEndingSkip();}
+          else if(event.key==='Enter'||event.key===' '){event.preventDefault();this._livehouseEndingAdvance();}
+          return;
+        }
         if (event.key === 'Escape' || event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           this.finishChapterIntro();
@@ -17850,6 +17867,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
      * @returns {boolean} 是否已进入一场可继续操作的对局
      */
     loadSnapshot(loaded) {
+      if(this._livehouseEndingCancel)this._livehouseEndingCancel();
       const at = timeText(loaded.savedAt) || '未知时间';
       if(this.chapterOpen)this.finishChapterIntro();
       this.game.restore(loaded.snapshot);
@@ -17972,6 +17990,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         await this.showNinaRecruitment();
         if(this.game!==cleared)return;
         this.game.ninaRecruitmentShown=true;
+      }
+      if(win&&this.game.stage===7&&!this.game.livehouseEndingShown){
+        const cleared=this.game,completed=await this.showLivehouseEnding();
+        if(this.game!==cleared||!completed)return;
+        this.game.livehouseEndingShown=true;
       }
       const enemyTotal=this.game.stage===6?this.game.units.filter(u=>u.side==='enemy').length:this.game.mission.enemyCount;
       const defeated = this.game.stage===6?this.game.units.filter(u=>u.side==='enemy'&&u.dead).length:enemyTotal-this.game.livingCount('enemy');
@@ -18199,6 +18222,83 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 /* Opening recruits Nijika at the party's answer, including when skipped. */
 (function(global){
  'use strict';const M=global.MyGO;
+ const ending=[
+  {id:'nijika',name:'伊地知虹夏',line:'真的太谢谢大家了！多亏你们，才守住了这里。'},
+  {id:'anon',name:'千早爱音',line:'不用客气啦！不过，虹夏，你为什么会出现在这里？'},
+  {id:'nijika',name:'伊地知虹夏',line:'我和乐队的大家约好了，今天来 Live House 彩排。'},
+  {id:'nijika',name:'伊地知虹夏',line:'可是推开门，就发现里面全是怪物……我也不知道为什么会变成这样。'},
+  {id:'soyo',name:'长崎爽世',line:'那你就和我们同行吧。我们也在寻找回到现实世界的方法。'},
+  {id:'nijika',name:'伊地知虹夏',line:'真的吗？太好了！那就请多关照啦！能和大家一起走，我很开心！'}
+ ];
+ M.UI.prototype.showLivehouseEnding=function(){
+  const ui=this,game=this.game,r=this.renderer,root=this.dom.chapterIntro,priorBusy=this.busy;
+  game._liveEnding=true;
+  this.closeOverlay();this.setBusy(true);this.chapterOpen=true;document.body.classList.add('chapter-open');
+  root.classList.add('livehouse-intro','livehouse-ending');root.classList.remove('is-leaving');
+  const scene=document.createElement('div');scene.className='livehouse-opening live-ending';
+  scene.innerHTML='<div class="live-opening-head"><small>CHAPTER 07 / AFTER STORY</small><h2>一同寻找归途</h2><span>STARRY · 战斗后的 Live House</span></div>'+
+   '<canvas class="live-opening-canvas live-ending-scene" width="1200" height="660" aria-label="战斗结束，虹夏走向主角团，众人在真实 Live House 地图中交谈"></canvas>'+
+   '<div class="live-opening-caption live-ending-dialogue" aria-live="polite"><canvas width="110" height="125" aria-hidden="true"></canvas><div><small><strong></strong></small><p></p></div></div>'+
+   '<div class="live-ending-controls"><span class="live-ending-progress"></span><span>自动播放 · 点击画面 / Enter 下一句</span><button type="button" data-confirm>下一句</button><button type="button" data-live-ending-skip>跳过剧情 · Esc</button></div>';
+  root.appendChild(scene);root.hidden=false;void root.offsetWidth;root.classList.add('is-visible');
+  const canvas=scene.querySelector('.live-ending-scene'),ctx=canvas.getContext('2d'),face=scene.querySelector('.live-ending-dialogue canvas'),speaker=scene.querySelector('.live-ending-dialogue strong'),line=scene.querySelector('.live-ending-dialogue p');
+  const party=game.living('player'),places={nijika:[14,20],anon:[13,21.5],soyo:[15,21.5],tomori:[13,23],rana:[15,23],taki:[14,24],xueyue:[12,24.5],nina:[16,24.5]};
+  const saved=party.map(u=>({u,facing:u.facing,walking:u._walking,walkUntil:u._walkUntil,visual:{...r.visuals.get(u.id)}}));
+  const oldView=r.view;r.setView({mode:'idle'});
+  return new Promise(resolve=>{
+   let page=0,state='playing',raf=0,fade=0,start=performance.now(),beatStart=start,previous=start,camera={x:5,y:15.5,w:20,h:12.5};
+   const duration=[3600,3500,3900,4300,4700,4200];
+   const settle=completed=>{
+    if(state==='done')return;state='done';clearTimeout(fade);cancelAnimationFrame(raf);
+    if(ui._livehouseEndingCancel===cancel)ui._livehouseEndingCancel=null;
+    root.hidden=true;root.classList.remove('livehouse-intro','livehouse-ending','is-visible','is-leaving');scene.remove();document.body.classList.remove('chapter-open');
+    ui.setBusy(priorBusy);resolve(completed&&ui.game===game);
+   };
+   const finish=completed=>{
+    if(state==='done')return;
+    if(state==='leaving'){if(!completed)settle(false);return;}
+    state='leaving';cancelAnimationFrame(raf);ui.chapterOpen=false;
+    delete game._liveEnding;
+    ui._livehouseEndingAdvance=null;ui._livehouseEndingSkip=null;
+    for(const s of saved){s.u.facing=s.facing;s.u._walking=s.walking;s.u._walkUntil=s.walkUntil;if(ui.game===game)r.visuals.set(s.u.id,s.visual);}
+    if(ui.game===game)r.setView(oldView);
+    if(completed){root.classList.add('is-leaving');fade=setTimeout(()=>settle(true),650);}else settle(false);
+   };
+   const cancel=()=>finish(false);ui._livehouseEndingCancel=cancel;
+   const caption=()=>{
+    const row=ending[page];
+    scene.dataset.endingPage=String(page);speaker.textContent=row.name;line.textContent='“'+row.line+'”';
+    scene.querySelector('.live-ending-progress').textContent='对话 '+(page+1)+' / '+ending.length;
+    scene.querySelector('[data-confirm]').textContent=page===ending.length-1?'一同出发':'下一句';
+    const fc=face.getContext('2d');fc.clearRect(0,0,110,125);M.Characters.drawPortrait(fc,row.id,0,0,110,125,{head:true});
+   };
+   const next=()=>{if(state!=='playing')return;if(ui.game!==game){finish(false);return;}if(page===ending.length-1){finish(true);return;}page++;beatStart=performance.now();caption();};
+   ui._livehouseEndingAdvance=next;ui._livehouseEndingSkip=()=>finish(true);
+   scene.querySelector('[data-confirm]').addEventListener('click',event=>{event.stopPropagation();next();});
+   scene.querySelector('[data-live-ending-skip]').addEventListener('click',event=>{event.stopPropagation();finish(true);});
+   const draw=now=>{
+    if(state!=='playing')return;if(ui.game!==game){finish(false);return;}
+    const elapsed=now-start,talk=ending[page].id,dt=Math.min(100,now-previous);previous=now;
+    for(const [i,u] of party.entries()){
+     const target=places[u.id]||[12+i,24],v=r.visuals.get(u.id),progress=Math.max(0,Math.min(1,(elapsed-i*70)/1700)),ease=1-Math.pow(1-progress,2);
+     if(v){v.px=(target[0]+(i%2?.35:-.35)*(1-ease))*32;v.py=(target[1]+1.8*(1-ease))*32;v.moving=progress<1;}
+     u._walking=progress<1;u._walkUntil=now+120;
+     u.facing=progress<1?'up':u.id==='nijika'?'down':u.id===talk?'up':u.id==='soyo'?'left':'up';
+    }
+    r.render(now);ctx.fillStyle='#0f101a';ctx.fillRect(0,0,1200,660);
+    const target={x:talk==='soyo'?8.2:talk==='anon'?7.4:7.8,y:17.2,w:13.5,h:10},blend=1-Math.exp(-dt/650);
+    for(const k of ['x','y','w','h'])camera[k]+=(target[k]-camera[k])*blend;
+    const s=r.scale,p=M.MapProjection.project(r.projection,camera.x*32,camera.y*32),sw=camera.w*32*s,sh=camera.h*32*s,fit=Math.min(1200/sw,660/sh),ww=sw*fit,hh=sh*fit,dx=(1200-ww)/2,dy=(660-hh)/2;
+    ctx.drawImage(r.canvas,p.x*s,p.y*s,sw,sh,dx,dy,ww,hh);
+    const speaking=game.getUnit(talk),v=speaking&&!speaking.dead?r.visuals.get(talk):null;
+    if(v){const foot=M.MapProjection.project(r.projection,v.px+16,v.py+27),x=dx+(foot.x-p.x)*s*fit,y=dy+(foot.y-p.y-52)*s*fit;
+     ctx.save();ctx.fillStyle=page===5?'#f4d687':'#decb9f';ctx.font=page===5?'24px sans-serif':'16px sans-serif';ctx.textAlign='center';ctx.fillText(page===5?'♪':'•',x,y-4-Math.sin(now/240)*3);ctx.restore();}
+    if(now-beatStart>=duration[page])next();
+    if(state==='playing')raf=requestAnimationFrame(draw);
+   };
+   caption();raf=requestAnimationFrame(draw);
+  });
+ };
  M.UI.prototype.playLivehouseIntro=function(){
   const root=this.dom.chapterIntro,game=this.game,r=this.renderer;
   if(game.nijikaJoined){this.finishChapterIntro();return;}
@@ -18488,7 +18588,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const game = this.ui.game;
       if (game.isOver()) {
         // loadSnapshot may already be awaiting a recruitment confirmation.
-        if(this.ui.dom.overlayRoot.hidden)this.ui.endShown = false;
+        if(this.ui.dom.overlayRoot.hidden&&!this.ui.chapterOpen&&!this.ui._livehouseEndingCancel)this.ui.endShown = false;
         this.ui.showEndScreen();
         return;
       }
