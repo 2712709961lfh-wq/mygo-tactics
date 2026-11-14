@@ -39,6 +39,7 @@
       return map(c,u,x,y,h,now,opts);
     }
     if(u._casting)return action(c,x,y-8,h*1.1,'summon',frameAt('summon',u._casting),'right',now);
+    if(u._teleporting)return action(c,x,y-8,h*1.1,'idle',Math.floor(now/180)%specs.idle[1],'right',now);
     if(!images.idle)return false;
     aura(c,x,y-8,h,now);c.save();c.imageSmoothingEnabled=true;
     const dir={down:0,up:1,left:2,right:3}[u.facing]||0;
@@ -81,6 +82,10 @@
   }};
   function drawMapEffects(c,v,game,now){
     const fx=game._courtFx;if(!fx)return;
+    if(fx.kind==='summon'){
+      const boss=game.getUnit('masked_stranger'),p=M.MapProjection.project(v,(boss.x+.5)*T,(boss.y+.85)*T);
+      circle(c,p.x,p.y,76,28,Math.min(.99,fx.progress*2.5),.8);
+    }
     for(const point of fx.points){const p=M.MapProjection.project(v,(point.x+.5)*T,(point.y+.85)*T);const t=fx.progress;
       circle(c,p.x,p.y,fx.kind==='escape'?100:68,fx.kind==='escape'?38:25,Math.min(.99,t*1.1),1-t*.3);
       c.save();const hh=(fx.kind==='escape'?110:74)*Math.sin(Math.PI*t),w=fx.kind==='escape'?50:29;
