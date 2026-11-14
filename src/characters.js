@@ -1,8 +1,8 @@
 /* ============================================================================
  * characters.js — 角色素材层
  * ----------------------------------------------------------------------------
- * 七名角色使用项目内提供的四方向行走 / 待机 / 攻击 / 受伤 / 倒地素材。
- * 基础素材为 4 列 × 8 行、每格 80×96；七名角色另用作者动作图集。
+ * 八名角色使用项目内提供的四方向行走 / 待机 / 攻击 / 受伤 / 倒地素材。
+ * 基础素材为 4 列 × 8 行、每格 80×96；八名角色另用作者动作图集。
  *
  * 这个模块只负责“怎么画”，不修改战斗数据：
  *   - 地图 / 行动界面：drawMap
@@ -20,7 +20,7 @@
   const COLS = 4;
   const ROWS = 8;
 
-  const UNIT_IDS = ['tomori', 'anon', 'rana', 'soyo', 'taki', 'xueyue', 'nina'];
+  const UNIT_IDS = ['tomori', 'anon', 'rana', 'soyo', 'taki', 'xueyue', 'nina', 'nijika'];
 
   // 每个角色的素材文件名与配置 id 保持一致，方便替换。
   const SHEET_FILE = 'assets/characters/sprites/%s-sheet.png';
@@ -52,6 +52,7 @@
     jump: [5, 8], attack: [6, 4], attack2: [7, 4], hurt: [8, 3], down: [9, 5] };
   const ACTIONS = { soyo: SOYO_ACTIONS, tomori: TOMORI_ACTIONS, rana: RANA_ACTIONS,
     anon: ANON_ACTIONS, taki: TAKI_ACTIONS, xueyue: XUEYUE_ACTIONS,
+    nijika:{width:192,height:160,anchorX:72,anchorY:144,bodyHeight:112,idle:[0,8],dialogue:[1,8],special:[2,6],walk:[3,8],run:[3,8],attack:[4,8],hurt:[5,3],down:[6,6]},
     nina:{width:160,height:144,anchorX:64,anchorY:124,bodyHeight:84,
       idle:[0,6],walk:[1,8],run:[2,8],jump:[3,8],attack:[4,4],attack2:[5,3],attack3:[6,4],shield:[7,2],hurt:[8,3],down:[9,3]} };
 
@@ -346,13 +347,13 @@
     const tick = Math.floor((now + phase * 89) / 112);
     const frameSeq = [0, 1, 2, 1];
     const col = moving ? frameSeq[tick % frameSeq.length] : 0;
-    const row = facing === 'up' ? 1 : facing === 'right' && ['xueyue','nina'].includes(id) ? 3
+    const row = facing === 'up' ? 1 : facing === 'right' && ['xueyue','nina','nijika'].includes(id) ? 3
       : (facing === 'left' || facing === 'right') ? 2 : 0;
     const h = height || 60;
     const w = h;
     ctx.save();
     ctx.imageSmoothingEnabled = false;
-    if (facing === 'right' && !['xueyue','nina'].includes(id)) {
+    if (facing === 'right' && !['xueyue','nina','nijika'].includes(id)) {
       ctx.translate(x, 0);
       ctx.scale(-1, 1);
       ctx.drawImage(img, col * WALK_CELL, row * WALK_CELL, WALK_CELL, WALK_CELL, -w / 2, y - h, w, h);
@@ -456,7 +457,7 @@
     return drawFrame(ctx, id, x + w / 2, y + h, h, {
       state: state || 'idle',
       facing: 'down',
-      frame: hasActions(id) ? ((id === 'nina' ? { attack:2,hurt:1,down:2 }
+      frame: hasActions(id) ? ((id === 'nijika' ? {attack:6,hurt:1,down:5} : id === 'nina' ? { attack:2,hurt:1,down:2 }
         : id === 'xueyue' ? { attack: 2, hurt: 1, down: 4 }
         : id === 'taki' ? { attack: 3, hurt: 1, down: 4 }
         : id === 'anon' ? { attack: 1, hurt: 1, down: 4 }

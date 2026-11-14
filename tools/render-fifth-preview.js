@@ -3,7 +3,7 @@ const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('nod
 const {createCanvas,Image,GlobalFonts}=require('@napi-rs/canvas');GlobalFonts.registerFromPath('C:/Windows/Fonts/msyh.ttc','Microsoft YaHei');
 const root=path.resolve(__dirname,'..');class LocalImage extends Image{set src(v){super.src=v.startsWith('data:')?v:fs.readFileSync(path.join(root,v.split('?')[0]));}}
 const w={console,Date,Math,Map,Set,Image:LocalImage,performance:{now:()=>1600},requestAnimationFrame:()=>0,cancelAnimationFrame:()=>{},document:{createElement:()=>createCanvas(1,1)}};w.window=w;vm.createContext(w);
-for(const n of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','map-projection','rng','growth-data','growth','grid','pathfinding','combat','game','assets','garden-map','moon-map','park-map','characters','dark-soyo','watercourt-art','renderer','battle'])vm.runInContext(fs.readFileSync(path.join(root,'src',n+'.js'),'utf8'),w,{filename:n});
+for(const n of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','map-projection','rng','growth-data','growth','grid','pathfinding','combat','game','assets','garden-map','moon-map','park-map','characters','dark-soyo','watercourt-art','masked-court-art','renderer','battle'])vm.runInContext(fs.readFileSync(path.join(root,'src',n+'.js'),'utf8'),w,{filename:n});
 (async()=>{const M=w.MyGO;await Promise.all([M.MoonMap.load(),M.Characters.load(),M.WatercourtArt.load()]);
  const g=new M.Game({stage:5,recruited:['xueyue','nina'],seed:57}),canvas=createCanvas(1,1),r=new M.Renderer(canvas,g);r.showGrid=true;r.render(1600);
  const out=path.join(root,'docs/previews');fs.writeFileSync(path.join(out,'chapter-05-map.png'),canvas.toBuffer('image/png'));
@@ -15,6 +15,14 @@ for(const n of ['equipment-data','magic-data','inventory','class-data','config',
  c.fillStyle='#ecd6ab';c.font='bold 23px Microsoft YaHei';c.fillText('天马骑士',1115,620);M.Characters.drawBattlePose(c,g.getUnit('court-pegasus-n'),1290,840,185,'idle',0,'left');
  c.font='18px Microsoft YaHei';c.fillStyle='#b8c6cb';c.fillText('湖上两名携带宝箱钥匙',1115,886);c.fillText('两名较弱护卫守住 Boss 两侧',1115,925);c.fillText('四名均可飞行 / 弓特效弱点',1115,964);
  fs.writeFileSync(path.join(out,'chapter-05-guide.png'),detail.toBuffer('image/png'));
+ // Use the complete renderer chain, including the chapter-six wrappers.
+ const compare=createCanvas(900,330),cc=compare.getContext('2d'),boss=g.getUnit('iron_warden');
+ cc.fillStyle='#182535';cc.fillRect(0,0,900,330);cc.fillStyle='#f1ddaf';cc.font='22px Microsoft YaHei';
+ for(const [i,label] of ['地图造型（放大）','战斗待机','角色缩略图'].entries())cc.fillText(label,i*300+50,38);
+ M.Characters.drawMap(cc,boss,150,280,180/1.16,0);
+ M.Characters.drawBattlePose(cc,boss,450,280,180,'idle',0,'left');
+ M.Characters.drawPortrait(cc,boss.id,650,280-180/.95,200,180/.95);
+ fs.writeFileSync(path.join(out,'chapter-05-boss-consistency.png'),compare.toBuffer('image/png'));
  // Exercise every real directional cell through the production character drawer.
  const meta=JSON.parse(fs.readFileSync(path.join(root,'assets/chapter-five/knight-actions.json'))),probe=createCanvas(192,192),pc=probe.getContext('2d');
  let verified=0;

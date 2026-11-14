@@ -97,7 +97,7 @@
       const map = this.game.map;
       if(this.game.stage>=4&&MyGO.ParkMap){
         lc.fillStyle='#050c17';lc.fillRect(0,0,this.logicalWidth,this.logicalHeight);
-        lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
+        lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
         this._depthScene=null;this._parkFogKey=null;this.terrainLayer=layer;return;
       }
       if (this.game.stage >= 2 && MyGO.MoonMap) {
@@ -853,7 +853,7 @@
     /** Upright pieces and scenery share foot depth above an undistorted square board. */
     _renderDepth(now) {
       const ctx=this.ctx,P=MyGO.MapProjection,v=this.projection;
-      const first=this.game.stage===1,art=this.game.stage===5?MyGO.WatercourtMap:this.game.stage===4?MyGO.ParkMap:first?MyGO.GardenMap:MyGO.MoonMap;
+      const first=this.game.stage===1,art=this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:this.game.stage===4?MyGO.ParkMap:first?MyGO.GardenMap:MyGO.MoonMap;
       this.time=now;
       ctx.clearRect(0,0,this.logicalWidth,this.logicalHeight);
       if(!this.terrainLayer)this._buildTerrainLayer();
@@ -870,7 +870,7 @@
       if(!this._depthScene||this._depthGate!==this.game.gateOpen){
         this._depthScene=art.makeObjects(this.game.map,v);this._depthGate=this.game.gateOpen;
       }
-      const units=this.game.living().filter(u=>this.game.isUnitVisible(u)&&!(this.game.parkIntroLights&&u.side==='enemy')).map(u=>{
+      const units=this.game.living().filter(u=>this.game.isUnitVisible(u)&&(!this.game._liveIntro||this.game._liveIntro.visible(u))&&!(this.game.parkIntroLights&&u.side==='enemy')).map(u=>{
         const visual=this._unitVisual(u),p=P.project(v,visual.px+TILE/2,visual.py+TILE*(first?1:.84));
         return {u,visual,p,depth:p.y};
       }).filter(({u,visual})=>this.game.stage!==4||u.side!=='enemy'||
@@ -880,7 +880,7 @@
       for(const item of layers){
         if(item.u){this._drawDepthUnit(item,now);continue;}
         ctx.save();
-        if(item.kind==='lamp')item.lit=this.game.stage===5||this.game.parkIntroLights||this.game.litLamps.includes(item.id);
+        if(item.kind==='lamp')item.lit=this.game.stage>=5||this.game.parkIntroLights||this.game.litLamps.includes(item.id);
         if(item.kind==='chest')item.opened=this.game.openedChests.includes(item.id);
         if(item.kind==='bell')item.awakened=this.game.awakenedBells.includes(item.bellId);
         if(item.kind==='house'&&units.some(q=>q.u.x>=item.x&&q.u.x<item.x+item.w&&q.u.y<item.y&&item.y-q.u.y<=2))ctx.globalAlpha=.5;
@@ -889,6 +889,7 @@
         art.drawObject(ctx,v,item);ctx.restore();
       }
       if(this.game.stage===4)art.drawFog(ctx,v,this.game,this);
+      if(this.game.stage===6)MyGO.MaskedCourtArt.drawMapEffects(ctx,v,this.game,now);
       // Status bars stay visible even behind a flowering canopy.
       for(const {u,p,visual} of units){
         if(first){
@@ -942,6 +943,8 @@
       ctx.beginPath();ctx.ellipse(p.x,p.y,11,4,.1,0,Math.PI*2);ctx.stroke();
       if(this.view.targetIds.has(u.id)){ctx.strokeStyle='#ff719d';ctx.strokeRect(p.x-height*.32,p.y-height+2,height*.64,height);}
       if(u.acted&&u.side==='player')ctx.globalAlpha=.48;
+      if(u._summonAlpha!==undefined)ctx.globalAlpha*=u._summonAlpha;
+      if(u._escapeAlpha!==undefined)ctx.globalAlpha*=u._escapeAlpha;
       const custom=MyGO.Characters&&MyGO.Characters.has(u.id)
         ? MyGO.Characters.drawMap(ctx,u,p.x,p.y,height,now,{moving:visual.moving}):false;
       if(!custom)MyGO.Assets.drawUnit(ctx,u,Math.round(p.x-fallback/2),Math.round(p.y-fallback),fallback,{bob:0,static:false,chibi:true});

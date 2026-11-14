@@ -40,7 +40,7 @@ async function positionAction(page,id,x,y){await page.evaluate(({id,x,y})=>{cons
   // Restore through the production UI with an isolated snapshot.
   assert.equal(await page.evaluate(()=>{const ui=MYGO_UI,s=JSON.parse(JSON.stringify(ui.game.serialize()));ui.loadSnapshot({snapshot:s,savedAt:new Date().toISOString()});return ui.game.openedChests.length;}),2);
   await fight(page,'soyo','iron_warden',{x:27,y:12},name==='index.html'?'chapter-05-browser-boss-battle.png':null);await page.waitForFunction(()=>MYGO_UI.game.phase==='victory'&&MYGO_UI.endShown);
-  assert((await page.locator('#overlay-card').innerText()).includes('中级转职证 ×1、钢斧 ×1'));assert.equal(await page.locator('[data-end-next]').count(),0);
+  assert((await page.locator('#overlay-card').innerText()).includes('中级转职证 ×1、钢斧 ×1'));assert.equal(await page.locator('[data-end-next]').count(),1);
   assert.deepEqual(await page.evaluate(()=>['intermediate_seal','steel_axe'].map(id=>MYGO_UI.game.units.filter(u=>u.side==='player').flatMap(u=>u.inventory).concat(MYGO_UI.game.convoy).filter(i=>i.id===id).length)),[1,1]);
   if(name==='index.html'){await page.waitForTimeout(800);await page.screenshot({path:path.join(shots,'chapter-05-browser-victory.png')});}
   // Actual chapter-four victory button enters the new chapter with inherited state.

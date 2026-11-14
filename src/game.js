@@ -22,7 +22,7 @@
   }
 
   function stageTwoMap(stage = 2) {
-    const mission = stage === 5 ? C.STAGE_FIVE : stage === 4 ? C.STAGE_FOUR : stage === 3 ? C.STAGE_THREE : C.STAGE_TWO;
+    const mission = stage === 7 ? C.STAGE_SEVEN : stage === 6 ? C.STAGE_SIX : stage === 5 ? C.STAGE_FIVE : stage === 4 ? C.STAGE_FOUR : stage === 3 ? C.STAGE_THREE : C.STAGE_TWO;
     return {
       cols: mission.cols,
       rows: mission.rows,
@@ -32,12 +32,12 @@
   }
 
   function unitsForStage(stage, recruited) {
-    if (stage === 4 || stage === 5) {
-      const m=stage===5?C.STAGE_FIVE:C.STAGE_FOUR;
+    if (stage >= 4) {
+      const m=C.missionForStage(stage);
       const heroes=C.UNITS.filter(u=>u.side==='player'||u.id==='xueyue'&&recruited.includes('xueyue'));
       if(recruited.includes('nina'))heroes.push(C.NINA);
       return heroes.map(u=>createUnit({...u,...m.spawns[u.id],side:'player',boss:false,dormant:false,
-        facing:'right',mapCols:m.cols,mapRows:m.rows})).concat(m.enemies.map(createUnit));
+        facing:stage>=6?'up':'right',mapCols:m.cols,mapRows:m.rows})).concat(m.enemies.map(createUnit),stage===7?[createUnit({...C.NIJIKA,side:recruited.includes('nijika')?'player':'ally'})]:[]);
     }
     if (stage === 3) {
       const heroes=C.UNITS.filter(u=>u.side==='player'||u.id==='xueyue'&&recruited.includes('xueyue'));
@@ -93,6 +93,8 @@
       x: template.x,
       y: template.y,
       boss: !!template.boss,
+      hpFloor:template.hpFloor||0,
+      escaped:false,
       dormant: !!template.dormant,
       key: !!template.key,
       drops: (template.drops||[]).slice(),
@@ -124,16 +126,18 @@
   class Game {
     constructor(options) {
       const opts = options || {};
-      this.stage = [2,3,4,5].includes(opts.stage) ? opts.stage : 1;
-      this.recruited = Array.isArray(opts.recruited) ? ['xueyue','nina'].filter(id=>opts.recruited.includes(id)) : [];
+      this.stage = [2,3,4,5,6,7].includes(opts.stage) ? opts.stage : 1;
+      this.recruited = Array.isArray(opts.recruited) ? ['xueyue','nina','nijika'].filter(id=>opts.recruited.includes(id)) : [];
+      if(this.stage<7)this.recruited=this.recruited.filter(id=>id!=='nijika');
       if (this.stage === 1) this.recruited = [];
       this.recruitmentShown = false;
       this.ninaLost = !!opts.ninaLost;
       if(this.ninaLost)this.recruited=this.recruited.filter(id=>id!=='nina');
       this.ninaRecruitmentShown = false;
+      this.nijikaJoined=this.stage===7&&this.recruited.includes('nijika');
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       this.units = unitsForStage(this.stage, this.recruited);
-      this.mission = this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
+      this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
       this.convoy = MyGO.Inventory.stock();
       this.lootReserve=[];
       this.gold=MyGO.Shop.START_GOLD;
@@ -142,6 +146,7 @@
       for(const u of this.units)u.growthRngState=MyGO.Growth.seed(u.id,this.rng.serialize());
       if (opts.loadout) this.importLoadout(opts.loadout);
       this.litLamps=[];
+      this.summonedWaves=[];this.maskRetreatPending=false;this.maskEscaped=false;this.lastSummonTurn=0;
       this.openedChests=[];
       this.bossDiscovered=false;
       this.soyoBossBonus=false;
@@ -155,6 +160,17 @@
       this.awakenedBells = [];
       this.lastHealing = [];
       this.startedAt = Date.now();
+    }
+
+    joinNijika() {
+      if(this.stage!==7)return null;
+      const u=this.getUnit('nijika');if(!u||u.dead)return null;
+      if(!this.nijikaJoined){
+        this.nijikaJoined=true;u.side='player';u.acted=false;
+        if(!this.recruited.includes('nijika'))this.recruited.push('nijika');
+        MyGO.Inventory.learn(u);MyGO.Inventory.sync(u);
+      }
+      return u;
     }
 
     exportLoadout() {
@@ -329,14 +345,16 @@
 
     /** 切换静态关卡数据（不影响回合/单位状态，由 restore 重新填充）。 */
     _setupStage(stage) {
-      this.stage = [2,3,4,5].includes(stage) ? stage : 1;
+      this.stage = [2,3,4,5,6,7].includes(stage) ? stage : 1;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       this.units = unitsForStage(this.stage, this.recruited);
-      this.mission = this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
+      this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
       this.gateOpen = false;
+      this.nijikaJoined=this.stage===7&&this.recruited.includes('nijika');
       this.resonanceOpen = false;
       this.awakenedBells = [];
       this.litLamps=[];
+      this.summonedWaves=[];this.maskRetreatPending=false;this.maskEscaped=false;this.lastSummonTurn=0;
       this.openedChests=[];this.bossDiscovered=false;this.soyoBossBonus=false;this.enemyScaleLevel=0;
       if(this.stage>=4)this.scaleParkEnemies();
     }
@@ -379,20 +397,51 @@
     }
 
     /** Scale from authored stats, never from previously scaled stats; preserve HP ratio. */
-    scaleParkEnemies(level,units=this.units) {
-      if(this.stage!==4&&this.stage!==5)return;
+    scaleParkEnemies(level,units=this.units,force=false) {
+      if(this.stage<4)return;
       const party=units.filter(u=>u.side==='player');
       const target=level??Math.min(97,Math.ceil(party.reduce((n,u)=>n+u.level,0)/Math.max(1,party.length)));
-      if(target<=this.enemyScaleLevel)return;
+      if(target<=this.enemyScaleLevel&&!force)return;
       for(const u of units.filter(u=>u.side==='enemy')){
-        const base=(this.stage===5?C.STAGE_FIVE:C.STAGE_FOUR).enemies.find(t=>t.id===u.id),ratio=u.hp/u.maxHp;
+        const base=C.missionForStage(this.stage).enemies.concat(this.stage===6?C.STAGE_SIX.summonTemplates:[]).find(t=>t.id===u.id),ratio=u.hp/u.maxHp;
         u.level=Math.min(99,target+(u.boss?2:0));const d=u.level-base.level;
-        const courtArmor=this.stage===5&&u.tags.includes('armor');
+        const courtArmor=this.stage>=5&&u.tags.includes('armor');
         for(const [k,rate] of Object.entries({maxHp:courtArmor?(u.boss?2:1):u.boss?3:2,str:.65,mag:.65,dex:.5,spd:.35,def:.4,res:courtArmor?.15:.45,lck:.3}))
           u[k]=Math.max(k==='maxHp'?(u.boss?(courtArmor?22:26):12):0,base[k]+Math.round(d*rate));
         u.hp=u.dead?0:Math.max(1,Math.ceil(u.maxHp*ratio));
       }
       this.enemyScaleLevel=target;
+    }
+
+    /** At most one mixed wave each enemy phase; appearing units wait a full round. */
+    summonNearParty() {
+      if(this.stage!==6||this.phase!=='enemy'||this.maskRetreatPending||this.maskEscaped||this.lastSummonTurn===this.turn)return null;
+      const party=this.living('player').slice().sort((a,b)=>a.y-b.y||a.x-b.x),wave=this.mission.waves[this.summonedWaves.length];
+      if(!wave||!party.some(u=>u.y<=wave.threshold))return null;
+      const reserved=new Set(this.living().map(u=>Grid.key(u.x,u.y))),placements=[];
+      for(const [i,t] of wave.enemies.entries()){
+        const anchor=party[i%party.length],cells=[];
+        for(let y=Math.max(10,anchor.y-8);y<=Math.min(this.map.rows-3,anchor.y+8);y++)for(let x=2;x<this.map.cols-2;x++){
+          const d=Grid.manhattan(anchor,{x,y}),nearest=Math.min(...party.map(u=>Grid.manhattan(u,{x,y})));
+          if(d<3||d>8||nearest<3||reserved.has(Grid.key(x,y))||!Number.isFinite(Grid.movementCost(this.map,t,x,y)))continue;
+          cells.push({x,y,score:Math.abs(d-4)*10+((i%2===0?x<anchor.x:x>anchor.x)?0:2)+(this.map.tiles[y][x]==='water'?1:0)});
+        }
+        cells.sort((a,b)=>a.score-b.score||a.y-b.y||a.x-b.x);
+        if(!cells.length)return null;
+        const cell=cells[0];reserved.add(Grid.key(cell.x,cell.y));placements.push({...t,x:cell.x,y:cell.y});
+      }
+      const summoned=placements.map(t=>createUnit({...t,mapCols:this.map.cols,mapRows:this.map.rows}));
+      for(const u of summoned){u.acted=true;u.alerted=true;u.growthRngState=MyGO.Growth.seed(u.id,this.rng.serialize());}
+      this.units.push(...summoned);this.summonedWaves.push(wave.id);this.lastSummonTurn=this.turn;
+      this.scaleParkEnemies(this.enemyScaleLevel,this.units,true);
+      this.getUnit('masked_stranger').acted=true;
+      return {id:wave.id,name:wave.name,units:summoned};
+    }
+
+    finishMaskedEscape() {
+      if(this.stage!==6||!this.maskRetreatPending||this.maskEscaped)return false;
+      const boss=this.getUnit('masked_stranger');boss.hp=1;boss.dead=false;boss.escaped=true;boss.acted=true;
+      this.maskRetreatPending=false;this.maskEscaped=true;this.checkOutcome();return true;
     }
 
     getUnit(id) {
@@ -412,7 +461,12 @@
     }
 
     getTerrain(x, y) {
-      return Grid.terrainAt(this.map, x, y);
+      const t=Grid.terrainAt(this.map, x, y);
+      if(this.stage===7){
+        const labels={plaza:['演出厅地板','宽敞的观众站席，可沿两侧绕过设备箱和立柱。'],road:['舞台地板','Live House 的演出舞台。仍有敌人占据这里。'],wall:['隔墙与设备','不可穿越的隔墙、音箱、鼓组或固定设备。'],fort:['急救补给点','场馆的急救补给位置，回合开始时回复生命。']};
+        const label=labels[t.id];if(label)return {...t,name:label[0],desc:label[1]};
+      }
+      return t;
     }
 
     /** 当前阶段是否接受玩家操作。 */
@@ -432,6 +486,7 @@
 
     /** 返回指定攻击位置可攻击的敌人。 */
     getAttackableEnemies(unit, fromX, fromY) {
+      if(this.maskRetreatPending||unit.escaped)return [];
       const x = fromX == null ? unit.x : fromX;
       const y = fromY == null ? unit.y : fromY;
       return Pathfinding.getTargetsInRange(unit, this.units, x, y).filter(u=>unit.side!=='player'||this.isUnitVisible(u));
@@ -451,7 +506,7 @@
         !!attacker &&
         !!target &&
         !attacker.dead &&
-        !target.dead &&
+        !target.dead && !target.escaped && !attacker.escaped && !this.maskRetreatPending &&
         (attacker.side!=='player'||this.isUnitVisible(target)) &&
         Grid.hostile(attacker, target) &&
         Pathfinding.canAttackFrom(attacker, attacker.x, attacker.y, target)
@@ -564,7 +619,7 @@
 
     /** 闭门时庭院内的休眠敌人不会行动。 */
     isUnitActive(unit) {
-      if (!unit || (unit.dormant && !this.gateOpen)) return false;
+      if (!unit || unit.escaped || this.maskRetreatPending || (unit.dormant && !this.gateOpen)) return false;
       return !unit.guardRadius || unit.alerted || this.parkHuntActive(unit) || this._seesPlayer(unit);
     }
 
@@ -675,7 +730,8 @@
             result.keyRecipientId = strike.keyRecipientId;
             result.storedForKey = strike.storedForKey;
           }
-          if (strike.killed) break;
+          if(strike.retreatTriggered)result.retreatTriggered=true;
+          if (strike.killed||strike.retreatTriggered) break;
         }
         result.applied = true;
         result.hpBeforeApply = result.defenderHp;
@@ -687,7 +743,7 @@
         return result;
       }
       const defender = this.getUnit(result.defenderId);
-      if (!defender || defender.dead) {
+      if (!defender || defender.dead || defender.escaped || this.maskRetreatPending) {
         result.applied = true;
         return { ...result, killed: false, skipped: true };
       }
@@ -699,7 +755,9 @@
       }
       const before = defender.hp;
       this.alertGroup(defender);
-      defender.hp = Math.max(0, before - result.finalDamage);
+      defender.hp = Math.max(defender.hpFloor||0, before - result.finalDamage);
+      const retreat=this.stage===6&&defender.id==='masked_stranger'&&defender.hp===1&&result.finalDamage>0;
+      if(retreat){this.maskRetreatPending=true;result.retreatTriggered=true;}
       const killed = defender.hp <= 0;
       if (killed) {
         defender.dead = true;
@@ -748,7 +806,7 @@
      */
     checkOutcome() {
       if (this.isOver()) return this.winner;
-      const victory=this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
+      const victory=this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
         ? this.awakenedBells.length>=this.mission.requiredBells && !!this.getUnit('conductor')?.dead
         : this.livingCount('enemy')===0;
       if (this.livingCount('player') === 0) {
@@ -841,6 +899,8 @@
         ...(this.stage===4?{litLamps:this.litLamps.slice(),bossDiscovered:this.bossDiscovered,
           soyoBossBonus:this.soyoBossBonus,enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===5?{openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
+        ...(this.stage===6?{summonedWaves:this.summonedWaves.slice(),lastSummonTurn:this.lastSummonTurn,maskRetreatPending:this.maskRetreatPending,maskEscaped:this.maskEscaped,enemyScaleLevel:this.enemyScaleLevel}:{}),
+        ...(this.stage===7?{nijikaJoined:this.nijikaJoined,enemyScaleLevel:this.enemyScaleLevel}:{}),
         recruited: this.recruited.slice(),
         recruitmentVersion: 1,
         recruitmentShown: this.recruitmentShown,
@@ -876,9 +936,11 @@
         throw new Error('第二关地图已重新设计，请重开第二关；旧存档仍然保留。');
       }
       if (snapshot.stage === 3 && snapshot.mapRevision !== C.STAGE_THREE.mapRevision) throw new Error('第三关地图版本不兼容');
+      if(snapshot.stage===7&&snapshot.mapRevision!==C.STAGE_SEVEN.mapRevision)throw Error('第七关地图版本不兼容');
+      if (snapshot.stage === 6 && snapshot.mapRevision !== C.STAGE_SIX.mapRevision) throw Error('第六关地图版本不兼容');
       if (snapshot.stage === 5 && snapshot.mapRevision !== C.STAGE_FIVE.mapRevision) throw new Error('第五关地图版本不兼容');
       if (snapshot.stage === 4 && snapshot.mapRevision !== C.STAGE_FOUR.mapRevision) throw new Error('第四关地图版本不兼容');
-      if (![2,3,4,5].includes(snapshot.stage) && snapshot.mapRevision !== C.MAP_REVISION) {
+      if (![2,3,4,5,6,7].includes(snapshot.stage) && snapshot.mapRevision !== C.MAP_REVISION) {
         throw new Error('第一关地图已更新，请重开第一关；旧存档仍然保留。');
       }
       const bells=snapshot.stage===2 ? snapshot.awakenedBells || [] : [];
@@ -886,12 +948,13 @@
         bells.some(id=>!C.STAGE_TWO.bells.some(b=>b.id===id)))throw new Error('存档星铃数据无效');
 
       // 地图是可变的（大门开启后会换成 gateOpen），读档先恢复关卡与静态地图。
-      this.stage = [2,3,4,5].includes(snapshot.stage) ? snapshot.stage : 1;
+      this.stage = [2,3,4,5,6,7].includes(snapshot.stage) ? snapshot.stage : 1;
       if(this.stage===4){
         const lamps=snapshot.litLamps;
         if(!Array.isArray(lamps)||new Set(lamps).size!==lamps.length||lamps.some(id=>!C.STAGE_FOUR.lamps.some(l=>l.id===id)))throw Error('存档路灯数据无效');
         if(!Number.isInteger(snapshot.enemyScaleLevel)||snapshot.enemyScaleLevel<1||snapshot.enemyScaleLevel>97)throw Error('存档敌军等级无效');
       }
+      this.summonedWaves=[];this.maskRetreatPending=false;this.maskEscaped=false;this.lastSummonTurn=0;
       this.openedChests=[];
       if(this.stage===5){
         const opened=snapshot.openedChests;
@@ -909,14 +972,33 @@
       this.awakenedBells = bells.slice();
       this._syncResonance();
 
-      this.recruited = Array.isArray(snapshot.recruited) ? ['xueyue','nina'].filter(id=>snapshot.recruited.includes(id)) : [];
+      this.recruited = Array.isArray(snapshot.recruited) ? ['xueyue','nina','nijika'].filter(id=>snapshot.recruited.includes(id)) : [];
       this.ninaLost = !!snapshot.ninaLost || this.stage === 3 && snapshot.units.some(u=>u.id==='nina'&&(u.dead||u.hp<=0));
       this.ninaRecruitmentShown = !!snapshot.ninaRecruitmentShown;
       if (this.ninaLost || this.stage < 3 || this.stage===3&&snapshot.phase !== 'victory') this.recruited=this.recruited.filter(id=>id!=='nina');
       const legacyJoined = this.stage === 1 && this.recruited.includes('xueyue') && snapshot.recruitmentVersion !== 1;
       if (this.stage === 1 && snapshot.phase !== 'victory') this.recruited = [];
       this.recruitmentShown = snapshot.recruitmentVersion === 1 && !!snapshot.recruitmentShown;
+      this.nijikaJoined=this.stage===7&&snapshot.nijikaJoined===true;
+      if(this.stage===7){
+        if(typeof snapshot.nijikaJoined!=='boolean'||this.nijikaJoined!==this.recruited.includes('nijika'))throw Error('虹夏入队状态无效');
+        if(!Number.isInteger(snapshot.enemyScaleLevel)||snapshot.enemyScaleLevel<1||snapshot.enemyScaleLevel>97)throw Error('存档敌军等级无效');
+        const expected=unitsForStage(this.stage,this.recruited);
+        if(snapshot.units.length!==expected.length||snapshot.units.some(u=>!expected.some(t=>t.id===u.id)))throw Error('第七关单位数据无效');
+      }else this.recruited=this.recruited.filter(id=>id!=='nijika');
       const fresh = unitsForStage(this.stage, this.recruited);
+      if(this.stage===6){
+        const ids=snapshot.summonedWaves;
+        if(!Array.isArray(ids)||ids.length>4||ids.some((id,i)=>id!==C.STAGE_SIX.waves[i].id))throw Error('存档召唤波次无效');
+        if(!Number.isInteger(snapshot.enemyScaleLevel)||snapshot.enemyScaleLevel<1||snapshot.enemyScaleLevel>97)throw Error('存档敌军等级无效');
+        if(!Number.isInteger(snapshot.lastSummonTurn)||snapshot.lastSummonTurn<0||snapshot.lastSummonTurn>snapshot.turn||ids.length>0&&snapshot.lastSummonTurn<1)throw Error('存档召唤回合无效');
+        if(typeof snapshot.maskRetreatPending!=='boolean'||typeof snapshot.maskEscaped!=='boolean'||snapshot.maskRetreatPending&&snapshot.maskEscaped)throw Error('存档面具人状态无效');
+        this.summonedWaves=ids.slice();this.lastSummonTurn=snapshot.lastSummonTurn;
+        this.maskRetreatPending=snapshot.maskRetreatPending;this.maskEscaped=snapshot.maskEscaped;
+        for(const wave of C.STAGE_SIX.waves.filter(w=>ids.includes(w.id)))fresh.push(...wave.enemies.map(createUnit));
+        const expected=new Set(fresh.map(u=>u.id));
+        if(snapshot.units.length!==fresh.length||snapshot.units.some(u=>!expected.has(u.id)))throw Error('存档召唤单位无效');
+      }
       this.enemyScaleLevel=0;
       if(this.stage>=4)this.scaleParkEnemies(snapshot.enemyScaleLevel,fresh);
       const byId = new Map(fresh.map((u) => [u.id, u]));
@@ -951,6 +1033,11 @@
         }
       }
 
+      if(this.stage===6){
+        const boss=fresh.find(u=>u.id==='masked_stranger');
+        if(boss.dead||boss.hp<1||(this.maskEscaped||this.maskRetreatPending)&&boss.hp!==1)throw Error('存档面具人生命无效');
+        boss.escaped=this.maskEscaped;
+      }
       // Older chapter-five saves have no escort entries. Keep saved positions and
       // move only newly introduced escorts if their authored spawn is occupied.
       if (this.stage === 5) for (const id of ['court-pegasus-guard-n','court-pegasus-guard-s']) {
@@ -970,7 +1057,7 @@
       // 防御性检查：存活单位不能重叠。
       const occupied = new Set();
       for (const u of fresh) {
-        if (u.dead) continue;
+        if (u.dead || u.escaped) continue;
         const k = Grid.key(u.x, u.y);
         if (occupied.has(k)) throw new Error('存档单位位置重叠');
         occupied.add(k);
@@ -981,11 +1068,12 @@
       this.collectReservedLoot();
       this.restoreEconomy(snapshot.economy);
       this.units = fresh;
+      if(this.stage===7){const n=this.getUnit('nijika');n.side=this.nijikaJoined?'player':'ally';if(!this.nijikaJoined&&(n.dead||snapshot.phase!=='player'))throw Error('虹夏开场状态无效');}
       const nina=this.getUnit('nina');
       if(nina && this.ninaLost) Object.assign(nina,{dead:true,hp:0,acted:true,side:'ally'});
       if(nina && this.recruited.includes('nina') && !nina.dead && !this.ninaLost) Object.assign(nina,{side:'player',acted:this.stage===3?true:nina.acted,
         quote:'你们真的来了……我叫井芹仁菜。接下来，让我也一起走吧。'});
-      this.mission = this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
+      this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
       this.refreshParkDiscovery();
       this.turn = Math.max(1, Number(snapshot.turn) || 1);
       this.phase = ['enemy','ally'].includes(snapshot.phase) ? 'player' : snapshot.phase;

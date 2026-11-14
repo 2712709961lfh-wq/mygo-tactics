@@ -1,4 +1,4 @@
-/* Personal growth rates: character assets/角色成长值.xlsx, Sheet1!A1:I8 (%), updated 2026-11-13.
+/* Personal growth rates: character assets/角色成长值.xlsx, Sheet1!A1:I9 (%), updated 2026-11-14.
  * Class modifiers: Serenes Forest FE3H player growths, verified 2026-11-12.
  * Eight supplied stats only; movement and charm are not rolled. */
 (function(global){
@@ -70,6 +70,19 @@
       "res": 20
     }
   },
+  "xueyue": {
+    "name": "雪月",
+    "rates": {
+      "maxHp": 30,
+      "str": 45,
+      "mag": 30,
+      "dex": 40,
+      "spd": 50,
+      "lck": 50,
+      "def": 25,
+      "res": 20
+    }
+  },
   "nina": {
     "name": "井芹仁菜",
     "rates": {
@@ -83,17 +96,17 @@
       "res": 25
     }
   },
-  "xueyue": {
-    "name": "雪月",
+  "nijika": {
+    "name": "伊地知虹夏",
     "rates": {
-      "maxHp": 30,
-      "str": 45,
-      "mag": 30,
-      "dex": 40,
-      "spd": 50,
+      "maxHp": 45,
+      "str": 30,
+      "mag": 35,
+      "dex": 35,
+      "spd": 35,
       "lck": 50,
-      "def": 25,
-      "res": 20
+      "def": 35,
+      "res": 40
     }
   }
 };

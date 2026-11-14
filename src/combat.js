@@ -161,6 +161,7 @@
       strike.counterReason = b.id === defender.id ? plan.counterReason : '';
       b.hp = strike.hpAfter;
       strikes.push(strike);
+      if(b.hpFloor&&b.hp===b.hpFloor&&strike.finalDamage>0){strike.retreatTriggered=true;break;}
     }
     const outgoing = strikes.filter(s=>s.attackerId===attacker.id);
     return {...strikes[0], strikes, forecast:plan, applied:false,
@@ -244,10 +245,11 @@
       targetCritAvoid,
       crit,
       critDamage: damage * C.COMBAT.critMultiplier,
+      hpFloor:defender.hpFloor||0,
       defenderHp: defender.hp,
       defenderMaxHp: defender.maxHp,
-      hpAfterHit: Math.max(0, defender.hp - damage),
-      hpAfterCrit: Math.max(0, defender.hp - damage * C.COMBAT.critMultiplier)
+      hpAfterHit: Math.max(defender.hpFloor||0, defender.hp - damage),
+      hpAfterCrit: Math.max(defender.hpFloor||0, defender.hp - damage * C.COMBAT.critMultiplier)
     };
   }
 
@@ -276,7 +278,7 @@
       hitRoll,
       critRoll,
       finalDamage: damage,
-      hpAfter: Math.max(0, previewData.defenderHp - damage),
+      hpAfter: Math.max(previewData.hpFloor||0, previewData.defenderHp - damage),
       applied: false
     };
   }

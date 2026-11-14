@@ -1,0 +1,37 @@
+{
+  "cellWidth": 192,
+  "cellHeight": 160,
+  "anchorX": 72,
+  "anchorY": 144,
+  "bodyHeight": 112,
+  "frames": {
+    "idle": {
+      "row": 0,
+      "count": 8
+    },
+    "dialogue": {
+      "row": 1,
+      "count": 8
+    },
+    "special": {
+      "row": 2,
+      "count": 6
+    },
+    "walk": {
+      "row": 3,
+      "count": 8
+    },
+    "attack": {
+      "row": 4,
+      "count": 8
+    },
+    "hurt": {
+      "row": 5,
+      "count": 3
+    },
+    "down": {
+      "row": 6,
+      "count": 6
+    }
+  }
+}

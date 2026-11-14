@@ -13,7 +13,7 @@
     const hashParams = new URLSearchParams(global.location.hash.replace(/^#/, ''));
     const seed = params.get('seed') || hashParams.get('seed');
     const stageParam = Number(params.get('stage') || hashParams.get('stage'));
-    const stage = [2,3,4,5].includes(stageParam) ? stageParam : 1;
+    const stage = [2,3,4,5,6,7].includes(stageParam) ? stageParam : 1;
     const ui = new global.MyGO.UI({ seed: seed ? Number(seed) : undefined, stage: stage });
     global.MYGO_UI = ui;
     global.MyGO.ui = ui;
@@ -92,6 +92,8 @@
     if (global.MyGO.GardenMap) tasks.push(global.MyGO.GardenMap.load());
     if (global.MyGO.MoonMap) tasks.push(global.MyGO.MoonMap.load());
     if (global.MyGO.WatercourtArt) tasks.push(global.MyGO.WatercourtArt.load());
+    if (global.MyGO.MaskedCourtArt) tasks.push(global.MyGO.MaskedCourtArt.load());
+    if (global.MyGO.LivehouseArt) tasks.push(global.MyGO.LivehouseArt.load());
     if (global.MyGO.DarkSoyo) tasks.push(global.MyGO.DarkSoyo.load());
     if (tasks.length) {
       Promise.all(tasks).then(start, start);

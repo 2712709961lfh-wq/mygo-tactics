@@ -1,0 +1,30 @@
+{
+  "cellWidth": 256,
+  "cellHeight": 160,
+  "anchorX": 64,
+  "anchorY": 143,
+  "bodyHeight": 108,
+  "sourceFacing": "right",
+  "frames": {
+    "idle": {
+      "row": 0,
+      "count": 8
+    },
+    "walk": {
+      "row": 1,
+      "count": 7
+    },
+    "attack": {
+      "row": 2,
+      "count": 7
+    },
+    "hurt": {
+      "row": 3,
+      "count": 3
+    },
+    "down": {
+      "row": 4,
+      "count": 4
+    }
+  }
+}

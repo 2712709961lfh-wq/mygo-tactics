@@ -29,14 +29,14 @@
 
   function unitAt(units, x, y, includeDead) {
     for (const unit of units) {
-      if (!includeDead && unit.dead) continue;
+      if (!includeDead && (unit.dead||unit.escaped)) continue;
       if (unit.x === x && unit.y === y) return unit;
     }
     return null;
   }
 
   function living(units, side) {
-    return units.filter((u) => !u.dead && (!side || u.side === side));
+    return units.filter((u) => !u.dead && !u.escaped && (!side || u.side === side));
   }
 
   function hostile(a, b) {

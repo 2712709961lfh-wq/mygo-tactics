@@ -533,6 +533,11 @@
       let atkState = t >= (customAtk ? 0.18 : 0.34) && t < (customAtk ? 0.70 : 0.68) ? 'attack' : 'idle';
       // 攻击行第 0 帧是正面举武器，后续帧包含转身，战斗中固定用第 0 帧。
       let atkFrame = customAtk ? (t > 0.62 ? 1 : Math.min(6, Math.floor(clamp01((t - 0.18) / 0.34) * 7))) : 0;
+      if(customAtk&&a.id==='nijika'){
+        atkState=t>=.18&&t<.74?'attack':'idle';
+        atkFrame=atkState==='attack'?Math.min(7,Math.floor(clamp01((t-.18)/.54)*8)):Math.floor(t*(this.duration||1800)/160)%8;
+        atkY=feetY;atkLean=0;
+      }
       if(armorCustom){
         atkState='idle';atkFrame=Math.floor(t*(this.duration||1800)/240)%2;
         if(t>=DASH_START&&t<DASH_END){atkState='walk';atkFrame=Math.floor(t*(this.duration||1800)/70)%8;}
@@ -602,6 +607,10 @@
         }
         // Spear is already in the artwork; a small lean keeps its grip steady.
         atkLean *= 0.35;
+      }
+      if(customAtk&&a.id==='masked_stranger'){
+        atkState=t>=.18&&t<.74?'attack':'idle';
+        atkFrame=atkState==='attack'?Math.min(6,Math.floor(clamp01((t-.18)/.5)*7)):Math.floor(t*(this.duration||1800)/180)%8;
       }
       if (customAtk && a.id === 'anon') {
         atkState = 'idle';
@@ -743,6 +752,11 @@
         }else if(!hit&&impactAge>=0&&impactAge<500){
           defState='jump';defFrame=Math.min(4,Math.floor(impactAge/100));defY=feetY;defLean=0;
         }
+      } else if (customDef&&b.id==='nijika') {
+        defFrame=Math.floor(t*(this.duration||1800)/160)%8;
+        if(defState==='hurt')defFrame=Math.min(2,Math.floor(impactAge/110));
+        if(defState==='down'){defFrame=Math.min(5,Math.floor((impactAge-220)/85));defY=feetY;defLean=0;}
+        if(!hit){defState='idle';defY=feetY;defLean=0;}
       } else if (customDef) {
         if (!hit && impactAge >= 0 && impactAge < 540) {
           defState = 'jump';
@@ -1291,7 +1305,8 @@
       const ctx = bg.getContext('2d');
       ctx.imageSmoothingEnabled = false;
       ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
-      if(this.stage>=4&&MyGO.ParkMap)MyGO.ParkMap.drawBattleBackground(ctx,W,H,this.lampsLit);
+      if(this.stage===7&&MyGO.LivehouseArt)MyGO.LivehouseArt.drawBattleBackground(ctx,W,H);
+      else if(this.stage>=4&&MyGO.ParkMap)MyGO.ParkMap.drawBattleBackground(ctx,W,H,this.lampsLit);
       else this._paintBackground(ctx);
       this._backgroundKey=(this.stage||1)+'|'+!!this.lampsLit;
       this.bg = bg;

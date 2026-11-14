@@ -16,7 +16,7 @@
  * 说明：
  *   - 不依赖任何第三方包；
  *   - 只替换 index.html 中的本地 <link> 和 <script src>；
- *   - 七名角色的 PNG 素材会转成 data URL 嵌入，单文件仍可直接打开。
+ *   - 八名角色的 PNG 素材会转成 data URL 嵌入，单文件仍可直接打开。
  */
 
 'use strict';
@@ -38,6 +38,8 @@ const SCRIPTS = [
   'src/chapter-three.js',
   'src/chapter-four.js',
   'src/chapter-five.js',
+  'src/chapter-six.js',
+  'src/chapter-seven.js',
   'src/map-projection.js',
   'src/rng.js',
   'src/growth-data.js',
@@ -55,11 +57,15 @@ const SCRIPTS = [
   'src/characters.js',
   'src/dark-soyo.js',
   'src/watercourt-art.js',
+  'src/masked-court-art.js',
+  'src/livehouse-art.js',
   'src/renderer.js',
   'src/battle.js',
   'src/viewport.js',
   'src/ui.js',
   'src/park-intro.js',
+  'src/masked-court-ui.js',
+  'src/livehouse-intro.js',
   'src/equipment-ui.js',
   'src/entry.js',
   'src/loadout-ui.js',
@@ -68,11 +74,21 @@ const SCRIPTS = [
 ];
 
 const STYLES = ['styles.css', 'entry.css', 'soul-ui.css', 'diary-ui.css', 'equipment.css'];
-const CHARACTER_IDS = ['tomori', 'anon', 'rana', 'soyo', 'taki', 'xueyue', 'nina'];
+const CHARACTER_IDS = ['tomori', 'anon', 'rana', 'soyo', 'taki', 'xueyue', 'nina', 'nijika'];
 const CHARACTER_DIR = 'assets/characters/sprites';
 const WALK_DIR = 'assets/characters/walk';
 const IDLE_DIR = 'assets/characters/idle';
 const MAP_IMAGES = {
+  livespeaker: 'assets/chapter-seven/source/speaker.png',
+  livedrums: 'assets/chapter-seven/source/music-icons/32x32/drums.png',
+  liveguitar: 'assets/chapter-seven/source/music-icons/32x32/guitar_electric.png',
+  maskactions: 'assets/chapter-six/mask-actions.png',
+  maskwalk: 'assets/chapter-six/mask-walk.png',
+  maskidle: 'assets/chapter-six/mask-idle.png',
+  maskportrait: 'assets/chapter-six/mask-portrait.png',
+  maskthrone: 'assets/chapter-six/throne.png',
+  masklamp: 'assets/chapter-six/palace-lamp.png',
+  maskcircle: 'assets/chapter-six/void-circle.png',
   watercourturban: 'assets/chapter-five/urban-atlas.png',
   watercourtarmor: 'assets/chapter-five/armor-actions.png',
   watercourtwarden: 'assets/chapter-five/warden-actions.png',
@@ -161,7 +177,7 @@ function main() {
       for (const [key, file] of Object.entries(files)) {
         embedded[id][key] = `data:image/png;base64,${fs.readFileSync(path.join(ROOT, 'assets/characters/actions', file)).toString('base64')}`;
       }
-    } else if (id === 'tomori' || id === 'rana' || id === 'taki' || id === 'xueyue' || id === 'nina') {
+    } else if (id === 'tomori' || id === 'rana' || id === 'taki' || id === 'xueyue' || id === 'nina' || id === 'nijika') {
       embedded[id].actions = `data:image/png;base64,${fs.readFileSync(path.join(ROOT, 'assets/characters/actions', `${id}-actions.png`)).toString('base64')}`;
     }
   }

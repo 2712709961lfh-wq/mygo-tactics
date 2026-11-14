@@ -80,7 +80,7 @@
   }
   function drawLights(c,v,game){
     c.save();M.MapProjection.apply(c,v);
-    for(const l of game.mission.lamps)if(game.stage===5||game.litLamps.includes(l.id)||game.parkIntroLights){
+    for(const l of game.mission.lamps)if(game.stage>=5||game.litLamps.includes(l.id)||game.parkIntroLights){
       const g=c.createRadialGradient((l.x+.5)*S,(l.y+.5)*S,0,(l.x+.5)*S,(l.y+.5)*S,game.mission.lampRadius*S);
       g.addColorStop(0,'rgba(255,221,150,.16)');g.addColorStop(1,'rgba(255,221,150,0)');c.fillStyle=g;
       c.fillRect((l.x-6)*S,(l.y-6)*S,13*S,13*S);

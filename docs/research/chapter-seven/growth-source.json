@@ -1,0 +1,111 @@
+{
+  "source": "character assets/角色成长值.xlsx",
+  "range": "Sheet1!A1:I9",
+  "sha256": "6d0af8c9de05cc2410f29adefe465ba292d95f2d732e37655de3aef3ef7db87b",
+  "personal": {
+    "tomori": {
+      "name": "高松灯",
+      "rates": {
+        "maxHp": 45,
+        "str": 35,
+        "mag": 30,
+        "dex": 50,
+        "spd": 55,
+        "lck": 45,
+        "def": 25,
+        "res": 30
+      }
+    },
+    "anon": {
+      "name": "千早爱音",
+      "rates": {
+        "maxHp": 35,
+        "str": 35,
+        "mag": 20,
+        "dex": 55,
+        "spd": 50,
+        "lck": 35,
+        "def": 25,
+        "res": 35
+      }
+    },
+    "rana": {
+      "name": "要乐奈",
+      "rates": {
+        "maxHp": 40,
+        "str": 35,
+        "mag": 35,
+        "dex": 40,
+        "spd": 60,
+        "lck": 45,
+        "def": 30,
+        "res": 35
+      }
+    },
+    "soyo": {
+      "name": "长崎爽世",
+      "rates": {
+        "maxHp": 25,
+        "str": 15,
+        "mag": 60,
+        "dex": 60,
+        "spd": 50,
+        "lck": 10,
+        "def": 15,
+        "res": 40
+      }
+    },
+    "taki": {
+      "name": "椎名立希",
+      "rates": {
+        "maxHp": 55,
+        "str": 50,
+        "mag": 25,
+        "dex": 45,
+        "spd": 35,
+        "lck": 40,
+        "def": 35,
+        "res": 20
+      }
+    },
+    "xueyue": {
+      "name": "雪月",
+      "rates": {
+        "maxHp": 30,
+        "str": 45,
+        "mag": 30,
+        "dex": 40,
+        "spd": 50,
+        "lck": 50,
+        "def": 25,
+        "res": 20
+      }
+    },
+    "nina": {
+      "name": "井芹仁菜",
+      "rates": {
+        "maxHp": 45,
+        "str": 50,
+        "mag": 20,
+        "dex": 50,
+        "spd": 45,
+        "lck": 35,
+        "def": 30,
+        "res": 25
+      }
+    },
+    "nijika": {
+      "name": "伊地知虹夏",
+      "rates": {
+        "maxHp": 45,
+        "str": 30,
+        "mag": 35,
+        "dex": 35,
+        "spd": 35,
+        "lck": 50,
+        "def": 35,
+        "res": 40
+      }
+    }
+  }
+}

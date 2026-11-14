@@ -161,7 +161,7 @@
 
   /** 单位在指定位置能否攻击目标。 */
   function canAttackFrom(attacker, x, y, target) {
-    if (!MyGO.Inventory.usable(attacker) || !target || target.dead || !Grid.hostile(target, attacker)) return false;
+    if (!MyGO.Inventory.usable(attacker) || attacker.escaped || !target || target.dead || target.escaped || !Grid.hostile(target, attacker)) return false;
     const d = Math.abs(target.x - x) + Math.abs(target.y - y);
     const [minRange, maxRange] = attacker.weapon.range;
     return d >= minRange && d <= maxRange;
