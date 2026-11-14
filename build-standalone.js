@@ -181,6 +181,12 @@ function main() {
   const mapTag = `<script>window.MYGO_MAP_DATA=${JSON.stringify(mapEmbedded)};</script>`;
   html = html.replace(/<script src="src\/config\.js(?:\?[^"\s]*)?"><\/script>/, `${mapTag}\n  <script src="src/config.js"></script>`);
 
+  // The user-supplied chapter-four voice also travels with the offline file.
+  const audioEmbedded = {parkOpening:'data:audio/mpeg;base64,' +
+    fs.readFileSync(path.join(ROOT, 'assets/audio/chapter-04-opening.mp3')).toString('base64')};
+  html = html.replace(/<script src="src\/park-intro\.js(?:\?[^"\s]*)?"><\/script>/,
+    `<script>window.MYGO_AUDIO_DATA=${JSON.stringify(audioEmbedded)};</script>\n  <script src="src/park-intro.js"></script>`);
+
   // Equipment illustrations also travel with the standalone reference catalogue.
   const equipmentIcons = {};
   const iconManifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/equipment/icon-manifest.json'), 'utf8'));
