@@ -141,6 +141,20 @@ function embedCssImages(css, styleFile) {
 
 function main() {
   let html = read('index.html');
+  const { version } = JSON.parse(read('version.json'));
+  if (typeof version !== 'string' || !/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(version)) {
+    throw new Error('version.json 的 version 必须为主版本.次版本.修订号');
+  }
+  const versionLabel = /(<p\b[^>]*\bdata-game-version\b[^>]*>)[^<]*(<\/p>)/g;
+  if ([...html.matchAll(versionLabel)].length !== 1) throw new Error('主页必须包含一个 data-game-version 版本标记');
+  html = html.replace(versionLabel, (_, open, close) => `${open}游戏版本 · v${version}${close}`);
+  // Keep normal-page caches and the offline copy on the same release.
+  html = html.replace(/((?:<script src|<link rel="stylesheet" href)=")([^"\s]+)(")/g,
+    (tag, open, url, close) => {
+      const file = url.split('?')[0];
+      return /^(?:src\/[^"?]+\.js|[^/"?]+\.css)$/.test(file) ? `${open}${file}?v=${version}${close}` : tag;
+    });
+  const versionedEntry = html;
 
   // 1) 内联样式，按 index.html 中的顺序。
   for (const rel of STYLES) {
@@ -228,10 +242,12 @@ function main() {
     '<head>\n  <!-- 单文件构建：由 build-standalone.js 生成，请勿手工编辑。 -->'
   );
 
+  fs.writeFileSync(ENTRY, versionedEntry, 'utf8');
   fs.writeFileSync(OUTPUT, html, 'utf8');
 
   const bytes = Buffer.byteLength(html, 'utf8');
   console.log('✔ 已生成 standalone.html');
+  console.log(`  游戏版本：v${version}（主页与本地资源缓存已同步）`);
   console.log(`  大小：${(bytes / 1024).toFixed(1)} KB`);
   console.log('  只把这一个文件发给别人，或单独上传到静态托管即可。');
 }
