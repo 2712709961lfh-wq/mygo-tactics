@@ -9,7 +9,7 @@
   const courtyardKey=Object.freeze({id:'courtyard_key',name:'内庭钥匙',kind:'key',category:'key',uses:1,icon:'accuracy-ring',
     effect:'开启第一关内庭大门。持有者须站在门旁使用，使用后消耗钥匙并结束行动。'});
   const chestKey=Object.freeze({id:'chest_key',name:'宝箱钥匙',kind:'key',category:'key',uses:1,icon:'accuracy-ring',
-    effect:'第五关使用：持有者站在宝箱上或相邻1格，消耗钥匙开箱并结束行动。'});
+    effect:'持有者站在宝箱上或相邻1格，消耗钥匙开箱并结束行动。'});
   const supplyIds=E.items.filter(e=>['consumable','seal'].includes(e.kind)).map(e=>e.id);
   const allowed=new Set([...E.items.map(e=>e.id),courtyardKey.id,chestKey.id]);
   // Soyo's original v4.8 spell list is accepted only for save migration.

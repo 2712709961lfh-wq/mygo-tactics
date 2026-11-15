@@ -173,6 +173,7 @@
       this.dom.missionTitle.textContent = mission.title;
       this.dom.missionSub.textContent = mission.subtitle;
       this.dom.objectiveText.textContent = mission.objective;
+      if(this.game.stage===8)this.dom.objectiveText.textContent='击败幻影 · '+this.game.mission.phantomIds.filter(id=>this.game.getUnit(id)?.dead).length+'/2 · 宝箱 '+this.game.openedChests.length+'/3';
       if(this.game.stage===6)this.dom.objectiveText.textContent=this.sixthObjectiveText();
       if(this.game.stage===7)this.dom.objectiveText.textContent='全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.nijikaJoined?' · 虹夏已入队':' · 回应虹夏的求助');
       this.updateAll();
@@ -194,6 +195,7 @@
       this.dom.missionTitle.textContent = mission.title;
       this.dom.missionSub.textContent = mission.subtitle;
       this.dom.objectiveText.textContent = mission.objective;
+      if(this.game.stage===8)this.dom.objectiveText.textContent='击败幻影 · '+this.game.mission.phantomIds.filter(id=>this.game.getUnit(id)?.dead).length+'/2 · 宝箱 '+this.game.openedChests.length+'/3';
       if(this.game.stage===6)this.dom.objectiveText.textContent=this.sixthObjectiveText();
       if(this.game.stage===7)this.dom.objectiveText.textContent='全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.nijikaJoined?' · 虹夏已入队':' · 回应虹夏的求助');
       if(this.game.stage===2)this.dom.objectiveText.textContent='星铃 '+this.game.awakenedBells.length+'/3 · 指挥家'+
@@ -239,6 +241,7 @@
       document.body.classList.add('chapter-open');
       if(this.game.stage===4){this.playParkIntro();return;}
       if(this.game.stage===7){this.playLivehouseIntro();return;}
+      if(this.game.stage===8){this.playEighthIntro();return;}
       root.hidden = false;
       root.classList.remove('is-leaving');
       // 强制一帧初始态，保证 opacity 过渡从 0 开始。
@@ -271,7 +274,7 @@
         const done = this.chapterDone;
         this.chapterDone = null;
         if (done) done();
-        if(this.game.stage===6){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
+        if([6,8].includes(this.game.stage)){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
         this.scheduleAutoEndTurn();
       }, 720);
     }
@@ -281,9 +284,9 @@
       this.closeOverlay();
       this.endShown = false;
       this.busy = false;
-      const nextStage = [1,2,3,4,5,6,7].includes(stage) ? stage : this.game.stage || 1;
+      const nextStage = [1,2,3,4,5,6,7,8].includes(stage) ? stage : this.game.stage || 1;
       this.game = new MyGO.Game({ seed: seed || Date.now(), stage: nextStage,
-        recruited: nextStage >= 2 ? this.game.recruited.filter(id=>id!=='nijika') : [],
+        recruited: nextStage >= 2 ? this.game.recruited.filter(id=>nextStage!==7||id!=='nijika') : [],
         loadout: nextStage >= 2 && nextStage > this.game.stage ? this.game.exportLoadout() : undefined });
       this.renderer.setGame(this.game);
       this.chapterPlayed = false;
@@ -294,12 +297,12 @@
       this.syncMission();
       this.showBanner('第 1 回合', '我方行动 · PLAYER PHASE', 1600);
       this.showToast('新的战斗开始了。', 'success', 1600);
-      if(nextStage===7)setTimeout(()=>{if(this.game.stage===7&&!this.chapterPlayed&&!this.chapterOpen)this.playChapterIntro();},0);
+      if(nextStage>=7)setTimeout(()=>{if(this.game.stage===nextStage&&!this.chapterPlayed&&!this.chapterOpen)this.playChapterIntro();},0);
     }
 
     /** 开始下一章（或直接指定章节）。 */
     startNextStage() {
-      if(this.game.stage >= 7 || this.game.phase !== 'victory') return;
+      if(this.game.stage >= 8 || this.game.phase !== 'victory') return;
       const next = this.game.stage + 1;
       this.chapterPlayed = false;
       this.closeOverlay();
@@ -515,6 +518,7 @@
       if(this.game.stage===4){
         this.dom.objectiveText.textContent=this.parkObjectiveText();
       }
+      if(this.game.stage===8)this.dom.objectiveText.textContent='击败幻影 · '+this.game.mission.phantomIds.filter(id=>this.game.getUnit(id)?.dead).length+'/2 · 宝箱 '+this.game.openedChests.length+'/3';
       if(this.game.stage===6)this.dom.objectiveText.textContent=this.sixthObjectiveText();
       if(this.game.stage===7)this.dom.objectiveText.textContent='全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.nijikaJoined?' · 虹夏已入队':' · 回应虹夏的求助');
       if(this.game.stage===5)this.dom.objectiveText.textContent='击败东侧铁幕守卫长 · 宝箱 '+this.game.openedChests.length+'/2 · 钥匙持有者 '+this.game.living('enemy').filter(u=>u.drops.includes('chest_key')).length+' 人';
@@ -579,13 +583,13 @@
       const frame = vp.parentElement;
       if (document.getElementById('game-shell')) {
         const aspect = this.renderer.logicalWidth / this.renderer.logicalHeight;
-        const width = this.game.stage===6?Math.max(1,frame.clientWidth-2):Math.max(1, Math.min(frame.clientWidth - 2, (frame.clientHeight - 2) * aspect));
+        const width = [6,8].includes(this.game.stage)?Math.max(1,frame.clientWidth-2):Math.max(1, Math.min(frame.clientWidth - 2, (frame.clientHeight - 2) * aspect));
         vp.style.width = width + 'px';
-        vp.style.height = (this.game.stage===6?Math.max(1,frame.clientHeight-2):width/aspect) + 'px';
+        vp.style.height = ([6,8].includes(this.game.stage)?Math.max(1,frame.clientHeight-2):width/aspect) + 'px';
       }
       const baseW = vp.offsetWidth;
-      const baseH = this.game.stage===6?baseW*this.renderer.logicalHeight/this.renderer.logicalWidth:vp.offsetHeight;
-      const zoomed = this.zoom > 1.001 || this.game.stage===6;
+      const baseH = [6,8].includes(this.game.stage)?baseW*this.renderer.logicalHeight/this.renderer.logicalWidth:vp.offsetHeight;
+      const zoomed = this.zoom > 1.001 || [6,8].includes(this.game.stage);
       vp.classList.toggle('is-zoomed', zoomed);
       if (zoomed) {
         this.dom.board.style.width = Math.round(baseW * this.zoom) + 'px';
@@ -625,7 +629,7 @@
     /** 选中/查看远处单位时，把格子滚进视口。仅影响镜头，不影响规则。 */
     revealCell(x, y) {
       const vp = this.dom.boardViewport;
-      if (!vp || this.zoom <= 1.001 && this.game.stage!==6) return;
+      if (!vp || this.zoom <= 1.001 && ![6,8].includes(this.game.stage)) return;
       const cellW = this.dom.board.offsetWidth / this.game.map.cols;
       const cellH = this.dom.board.offsetHeight / this.game.map.rows;
       const projected = this.game.stage>=2 && MyGO.MapProjection
@@ -633,7 +637,7 @@
       const left = projected ? projected.x / this.renderer.logicalWidth * this.dom.board.offsetWidth - cellW/2 : x * cellW;
       const top = projected ? projected.y / this.renderer.logicalHeight * this.dom.board.offsetHeight - cellH/2 : y * cellH;
       // 至少留出 1.5 格的观察余量，避免选中单位贴边。
-      const pad = Math.max(24, Math.round(cellW * (this.game.stage===6?3:1.5)));
+      const pad = Math.max(24, Math.round(cellW * ([6,8].includes(this.game.stage)?3:1.5)));
       if (left < vp.scrollLeft + pad) vp.scrollLeft = Math.max(0, left - pad);
       else if (left + cellW > vp.scrollLeft + vp.clientWidth - pad) {
         vp.scrollLeft = left + cellW - vp.clientWidth + pad;
@@ -1043,7 +1047,7 @@
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, 32, 32);
       ctx.imageSmoothingEnabled = false;
-      if(this.game.stage===7&&MyGO.LivehouseArt){
+      if(this.game.stage>=7&&MyGO.LivehouseArt){
         ctx.fillStyle=terrainId==='wall'?'#56343c':terrainId==='road'?'#25222e':'#38323b';ctx.fillRect(0,0,32,32);
         ctx.strokeStyle='#64545a';ctx.strokeRect(1,1,30,30);ctx.beginPath();ctx.moveTo(0,16);ctx.lineTo(32,16);ctx.stroke();
         if(terrainId==='fort'){ctx.fillStyle='#a6c8b4';ctx.fillRect(13,6,6,20);ctx.fillRect(6,13,20,6);}
@@ -1194,13 +1198,13 @@
         '身旁是「'+esc(this.game.nearbyUnlitLamp(unit).name)+'」路灯。消耗本次行动，永久照亮周围 6 格；点灯后本回合不能再攻击。';
 
       const chest=this.game.nearbyChest(unit);
-      if(chest)this.dom.contextText.innerHTML='身旁是「'+esc(chest.name)+'」。开箱消耗一把宝箱钥匙并结束行动。'+(this.game.canOpenChest(unit)?'':'请先击败湖上携带钥匙的天马骑士，再让持有钥匙的角色靠近。');
+      if(chest)this.dom.contextText.innerHTML='身旁是「'+esc(chest.name)+'」。开箱消耗一把宝箱钥匙并结束行动。'+(this.game.canOpenChest(unit)?'':'请先击败携带钥匙的天马骑士，再让持有钥匙的角色靠近。');
       this.setActions([
         ...(chest?[{label:this.game.canOpenChest(unit)?'使用宝箱钥匙 · 开箱':'开箱 · 缺少宝箱钥匙',className:'primary',disabled:!this.game.canOpenChest(unit),onClick:()=>{
           const reward=this.game.openChest(unit);if(!reward)return;
           this.renderer.floatText('宝箱开启',reward.chest.x,reward.chest.y,'#ffe0a0',11);
           this.resetSelection();this.updateAll();
-          this.showToast(reward.gold?'获得 500 G！':'获得'+MyGO.Inventory.item(reward.drop.id).name+'，已放入'+reward.drop.location+'。','success',4500);
+          this.showToast(reward.gold?'获得 '+reward.gold+' G！':'获得'+MyGO.Inventory.item(reward.drop.id).name+'，已放入'+reward.drop.location+'。','success',4500);
         }}]:[]),
         ...(this.game.canLightLamp(unit)?[{label:'点亮路灯 · '+this.game.nearbyUnlitLamp(unit).name,className:'primary',onClick:()=>{
           const wasFound=this.game.bossDiscovered,lamp=this.game.lightLamp(unit);if(!lamp)return;
@@ -1332,7 +1336,7 @@
         '<span class="tag">第 ' + this.game.turn + ' 回合</span>'
       ].join('');
       const open = this.game.gateOpen;
-      const steps = this.game.stage===7?[['回应求助','开场回应虹夏后，她立即成为可操控同伴。'],['清理演出厅','利用两侧通道绕过设备，逐组击败失真回声。'],['夺回舞台','舞台上的敌人也要全部击败；右上角显示剩余敌人。']]:this.game.stage===6?[
+      const steps = this.game.stage===8?[['击败两名幻影','向舞台最深处推进，同时击败术士爽世之影与佣兵灯之影即可获胜。'],['破甲与防空','重装高守备低魔防，使用魔法；携钥天马机动很高，注意弓的飞行特效。'],['三个宝箱','三名携钥天马各掉一把钥匙。西箱中级转职证，东箱1500 G，后台钢剑。击败最后一名幻影前完成搜宝。']]:this.game.stage===7?[['回应求助','开场回应虹夏后，她立即成为可操控同伴。'],['清理演出厅','利用两侧通道绕过设备，逐组击败失真回声。'],['夺回舞台','舞台上的敌人也要全部击败；右上角显示剩余敌人。']]:this.game.stage===6?[
         ['沿中央林荫道向北','从南部中央出发，穿过池塘、长椅与花圃，到达十八盏宫廷立灯围绕的王座。滚轮或触摸拖动纵向查看地图，点击同伴自动跟随。'],
         ['防备暗幕召唤','推进越过四个区段后，敌方阶段每轮最多召唤一波，混合普通兵、重装和天马。新援军当轮不行动。'],
         ['保持队形并应对兵种','援军会在队伍附近出现。用弓防空、用魔法破甲，保护后排并利用休憩据点恢复。'],
@@ -1414,7 +1418,7 @@
     renderTerrainInfo(x, y) {
       const terrain = this.game.getTerrain(x, y);
       const bell=this.game.bellAt(x,y);
-      const chest=this.game.stage===5?this.game.mission.chests.find(c=>c.x===x&&c.y===y):null;
+      const chest=[5,8].includes(this.game.stage)?this.game.mission.chests.find(c=>c.x===x&&c.y===y):null;
       this.dom.portraitBlock.dataset.side = 'terrain';
       this.dom.portraitBadge.textContent = '地形';
       this.dom.portraitLevel.textContent = columnLabel(x) + (y + 1);
@@ -1439,7 +1443,7 @@
       this.dom.contextText.innerHTML =
         '单位站上该格时获得对应加成；攻击判定读取<strong>防守方</strong>脚下的地形。' +
         '<span class="hint-line">点击空地查看地形，点击其他单位切换情报。</span>';
-      if(chest)this.dom.contextText.innerHTML=this.game.openedChests.includes(chest.id)?'这只宝箱已经开启。':'持有宝箱钥匙的我方角色站在宝箱上或相邻1格，在行动菜单选择开箱。内容：'+(chest.gold?'500 G':MyGO.Inventory.item(chest.item).name)+'。击败湖上携带钥匙的天马骑士可获得钥匙。';
+      if(chest)this.dom.contextText.innerHTML=this.game.openedChests.includes(chest.id)?'这只宝箱已经开启。':'持有宝箱钥匙的我方角色站在宝箱上或相邻1格，在行动菜单选择开箱。内容：'+(chest.gold?chest.gold+' G':MyGO.Inventory.item(chest.item).name)+'。击败携带钥匙的天马骑士可获得钥匙。';
       if(bell)this.dom.contextText.innerHTML=this.game.awakenedBells.includes(bell.id)
         ? '这处星铃已唤醒。当前进度 '+this.game.awakenedBells.length+'/3。'
         : '星铃仍在沉睡。我方停在此格后选择「唤醒星铃」，消耗一次行动并回复自身 30% 最大 HP。';
@@ -1494,7 +1498,7 @@
             this.game.living('enemy').filter(u=>u.guardGroup===unit.guardGroup).length+' 人。'+
             (unit.alerted?'全队已惊动，持续追击。':this.game.stage===3&&unit.guardGroup==='south'?'第四回合全面逼近；提前接近或攻击也会惊动守卫。':unit.guardRadius?'接近 '+unit.guardRadius+' 移动点内或攻击任一队员，会惊动全队。':this.game.stage===3?'开场即与仁菜交战。':'开门后行动。')+'</span>';
         }
-        if(this.game.stage===5&&unit.drops.length)detail+='<span class="hint-line">击败掉落：'+unit.drops.map(id=>esc(MyGO.Inventory.item(id).name)).join('、')+'。'+(unit.boss?'击败后立即通关，请先搜集宝箱。':'钥匙进入击败者背包；背包已满会自动腾位或送入运输队。')+'</span>';
+        if([5,8].includes(this.game.stage)&&unit.drops.length)detail+='<span class="hint-line">击败掉落：'+unit.drops.map(id=>esc(MyGO.Inventory.item(id).name)).join('、')+'。'+(unit.boss?'击败后立即通关，请先搜集宝箱。':'钥匙进入击败者背包；背包已满会自动腾位或送入运输队。')+'</span>';
         detail += '<span class="hint-line">攻击范围 ' + unit.weapon.range[0] + '–' + unit.weapon.range[1] +
           ' 格 · 基础命中 ' + Combat.hitOf(unit) + ' · 基础暴击率 ' + Combat.critRateOf(unit) + '% · 必杀回避 ' + Combat.critAvoidOf(unit) + '</span>';
         if(this.enemyThreatId===unit.id)detail+='<span class="hint-line">橙色格显示该单位移动后可攻击的范围；再次点击该敌人可关闭。</span>';
@@ -2058,14 +2062,14 @@
       const at = timeText(loaded.savedAt) || '未知时间';
       if(this.chapterOpen)this.finishChapterIntro();
       this.game.restore(loaded.snapshot);
-      this.chapterPlayed=this.game.stage!==7||this.game.nijikaJoined;
+      this.chapterPlayed=this.game.stage===8?this.game.stageEightIntroSeen:this.game.stage!==7||this.game.nijikaJoined;
       this.renderer.setGame(this.game);
       this.endShown = false;
       this.resetSelection({ silent: true });
       this.lastSaveAt = at;
       this.syncMission();
       this.updateAll();
-      if(this.game.stage===6){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
+      if([6,8].includes(this.game.stage)){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
       if(this.game.stage===6&&this.game.maskRetreatPending){this.playMaskedEscape().then(()=>this.showEndScreen());return false;}
       if (this.game.isOver()) {
         // 正常流程不会写入终局存档；这里防御旧版本或手工构造的存档。
@@ -2073,7 +2077,7 @@
         return false;
       }
       this.renderIdleInfo();
-      if(this.game.stage===7&&!this.game.nijikaJoined)setTimeout(()=>{if(!this.chapterPlayed&&!this.chapterOpen)this.playChapterIntro();},0);
+      if(this.game.stage===8&&!this.game.stageEightIntroSeen||this.game.stage===7&&!this.game.nijikaJoined)setTimeout(()=>{if(!this.chapterPlayed&&!this.chapterOpen)this.playChapterIntro();},0);
       return true;
     }
 
@@ -2201,14 +2205,14 @@
         '    <div class="end-stat"><span>击破</span><b>' + Math.max(0, defeated) + ' / ' + enemyTotal + '</b></div>',
         '  </div>',
         '  <div class="end-copy">' + (win
-          ? (this.game.stage===7?'失真的噪音终于平息，STARRY 的舞台再次亮起。<br>全部敌人已击败，虹夏与大家一同守住了这里。<br>本章奖励 2000 G。':this.game.stage===6?'“留你们一命。”<br>神秘面具人在 1 HP 时打开传送阵离开，王座已空。<br>众人突破暗幕包围，本章奖励 2000 G。':this.game.stage===5?'双桥防线已突破。中级转职证 ×1、钢斧 ×1 已作为 Boss 战利品领取。<br>宝箱收集：'+this.game.openedChests.length+'/2；本章奖励 2000 G。':this.game.stage===4?'“这一次，我会和大家一起向前走。”<br>神秘幻影已击败。'+(this.game.soyoBossBonus?'爽世直面过去，已获得双倍击破经验。':'由爽世亲手击败幻影可获得双倍击破经验。'):this.game.stage===3?(this.game.ninaLost?'仁菜没能走出这场梦。今后的旅途中，她将不会加入同行之人。':'井芹仁菜已获救，加入同行之人。'):'“即使迷路，也要把这首歌传达出去。”')+'<br>' + esc(this.game.mission.chapter) + ' · ' + esc(this.game.mission.title) + ' · CLEAR'
+          ? (this.game.stage===8?'两名往日之影已消散，扩张的舞台恢复了寂静。<br>宝箱收集：'+this.game.openedChests.length+'/3；本章奖励 2000 G。':this.game.stage===7?'失真的噪音终于平息，STARRY 的舞台再次亮起。<br>全部敌人已击败，虹夏与大家一同守住了这里。<br>本章奖励 2000 G。':this.game.stage===6?'“留你们一命。”<br>神秘面具人在 1 HP 时打开传送阵离开，王座已空。<br>众人突破暗幕包围，本章奖励 2000 G。':this.game.stage===5?'双桥防线已突破。中级转职证 ×1、钢斧 ×1 已作为 Boss 战利品领取。<br>宝箱收集：'+this.game.openedChests.length+'/2；本章奖励 2000 G。':this.game.stage===4?'“这一次，我会和大家一起向前走。”<br>神秘幻影已击败。'+(this.game.soyoBossBonus?'爽世直面过去，已获得双倍击破经验。':'由爽世亲手击败幻影可获得双倍击破经验。'):this.game.stage===3?(this.game.ninaLost?'仁菜没能走出这场梦。今后的旅途中，她将不会加入同行之人。':'井芹仁菜已获救，加入同行之人。'):'“即使迷路，也要把这首歌传达出去。”')+'<br>' + esc(this.game.mission.chapter) + ' · ' + esc(this.game.mission.title) + ' · CLEAR'
           : '我方全灭。调整站位，利用森林与武器三角，再试一次。') + '</div>',
         '  <div class="modal-actions">',
         win ? '<button class="modal-btn" type="button" data-end-save>保存通关</button>' : '',
         win ? '<button class="modal-btn" type="button" data-end-shop>商店 · 补给</button>' : '',
         '<button class="modal-btn" type="button" data-end-formation>同行之人</button>',
-        win && this.game.stage < 7
-          ? '    <button class="modal-btn gold" type="button" data-end-next>进入第'+(['','二','三','四','五','六','七'][this.game.stage])+'章</button>'
+        win && this.game.stage < 8
+          ? '    <button class="modal-btn gold" type="button" data-end-next>进入第'+(['','二','三','四','五','六','七','八'][this.game.stage])+'章</button>'
           : '',
         '    <button class="modal-btn primary" type="button" data-end-restart>再次挑战</button>',
         '  </div>',

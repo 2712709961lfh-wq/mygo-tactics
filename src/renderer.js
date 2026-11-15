@@ -98,7 +98,7 @@
       const map = this.game.map;
       if(this.game.stage>=4&&MyGO.ParkMap){
         lc.fillStyle='#050c17';lc.fillRect(0,0,this.logicalWidth,this.logicalHeight);
-        lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
+        lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
         this._depthScene=null;this._parkFogKey=null;this.terrainLayer=layer;return;
       }
       if (this.game.stage >= 2 && MyGO.MoonMap) {
@@ -855,7 +855,7 @@
     /** Upright pieces and scenery share foot depth above an undistorted square board. */
     _renderDepth(now) {
       const ctx=this.ctx,P=MyGO.MapProjection,v=this.projection;
-      const first=this.game.stage===1,art=this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:this.game.stage===4?MyGO.ParkMap:first?MyGO.GardenMap:MyGO.MoonMap;
+      const first=this.game.stage===1,art=this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:this.game.stage===4?MyGO.ParkMap:first?MyGO.GardenMap:MyGO.MoonMap;
       this.time=now;
       ctx.clearRect(0,0,this.logicalWidth,this.logicalHeight);
       if(!this.terrainLayer)this._buildTerrainLayer();

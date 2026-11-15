@@ -51,18 +51,45 @@
   function ball(ctx, element, x, y, radius, phase, alpha = 1) {
     const [core, mid, edge] = colors[element];
     ctx.save(); ctx.globalAlpha *= alpha;
-    // Broad soft aura, a coloured spherical body and an offset highlight remain
-    // readable throughout flight, including the last frame before impact.
-    const glow = ctx.createRadialGradient(x, y, radius * .2, x, y, radius * 2.7);
-    glow.addColorStop(0, mid); glow.addColorStop(.34, mid + 'bb'); glow.addColorStop(1, mid + '00');
-    ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(x, y, radius * 2.7, 0, Math.PI * 2); ctx.fill();
-    clip(ctx, 'hit_' + element, .24 + phase * .16, x, y, radius * 4.1, radius * 4.1, phase * 1.2, element === 'fire' ? .28 : .75);
-    const body = ctx.createRadialGradient(x - radius * .3, y - radius * .35, radius * .05, x, y, radius);
-    body.addColorStop(0, '#ffffff'); body.addColorStop(.24, core);
-    body.addColorStop(.58, mid); body.addColorStop(1, edge);
+    ctx.globalCompositeOperation = 'lighter';
+    // Emissive gas: every layer dissolves into transparency, with no shaded
+    // solid surface or off-centre specular dot. The field stays readable in flight.
+    const pulse = 1 + Math.sin(phase * 19) * .055;
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, radius * 2.5);
+    glow.addColorStop(0, mid + '66'); glow.addColorStop(.35, mid + '33'); glow.addColorStop(1, edge + '00');
+    ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(x, y, radius * 2.5, 0, Math.PI * 2); ctx.fill();
+    const body = ctx.createRadialGradient(x, y, 0, x, y, radius);
+    body.addColorStop(0, core + 'e6'); body.addColorStop(.20, core + 'bb');
+    body.addColorStop(.48, mid + '88'); body.addColorStop(.78, mid + '38'); body.addColorStop(1, edge + '00');
     ctx.fillStyle = body; ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#ffffffcc'; ctx.beginPath();
-    ctx.arc(x - radius * .28, y - radius * .32, radius * .2, 0, Math.PI * 2); ctx.fill();
+    // Rotating authored particles break up the otherwise perfect radial gradient.
+    clip(ctx, 'hit_' + element, .27 + phase * .24, x, y,
+      radius * 3.1 * pulse, radius * 3.1 / pulse, phase * 5.4, element === 'fire' ? .30 : .65);
+    for (let i = 0; i < 3; i++) {
+      const angle = phase * 13 + i * Math.PI * 2 / 3;
+      const lx = x + Math.cos(angle) * radius * .42;
+      const ly = y + Math.sin(angle * 1.15 + i) * radius * .36;
+      const size = radius * (.50 + .08 * Math.sin(angle * 2));
+      const wisp = ctx.createRadialGradient(lx, ly, 0, lx, ly, size);
+      wisp.addColorStop(0, core + '8c'); wisp.addColorStop(.35, mid + '5c'); wisp.addColorStop(1, mid + '00');
+      ctx.fillStyle = wisp; ctx.beginPath(); ctx.arc(lx, ly, size, 0, Math.PI * 2); ctx.fill();
+    }
+    // Broken, tilted ribbons and orbiting sparks suggest an unstable energy
+    // envelope instead of drawing an opaque circular boundary.
+    for (let i = 0; i < 2; i++) {
+      const angle = phase * (i ? -9 : 11) + i * 2.1;
+      ctx.strokeStyle = i ? mid + 'a6' : core + 'b3';
+      ctx.lineWidth = Math.max(.6, radius * .065); ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.ellipse(x, y, radius * 1.14, radius * .66, angle * .38,
+        angle, angle + Math.PI * 1.14); ctx.stroke();
+    }
+    for (let i = 0; i < 5; i++) {
+      const angle = phase * 15 + i * Math.PI * 2 / 5;
+      const orbit = radius * (1.12 + .16 * Math.sin(angle * 2 + i));
+      ctx.fillStyle = i % 2 ? mid + 'bf' : core + 'dd';
+      ctx.beginPath(); ctx.arc(x + Math.cos(angle) * orbit,
+        y + Math.sin(angle) * orbit * .78, Math.max(.45, radius * .055), 0, Math.PI * 2); ctx.fill();
+    }
     ctx.restore();
   }
   function weapon(ctx, kind, t, ax, ay, dx, dy) {

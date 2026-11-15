@@ -10,10 +10,11 @@ function setup(fail=false,embedded=false) {
   const scope={window:w,Image,Math:safeMath,console};vm.createContext(scope);vm.runInContext(source,scope);
   vm.runInContext(fs.readFileSync(path.join(root,'src/battle.js'),'utf8'),scope);
   const calls=[],ctx={globalAlpha:1};
-  for(const name of ['save','restore','translate','rotate','strokeText','fillText','beginPath','arc','fill','fillRect'])ctx[name]=(...args)=>calls.push([name,...args]);
+  for(const name of ['save','restore','translate','rotate','strokeText','fillText','beginPath','arc','ellipse','stroke','fill','fillRect'])ctx[name]=(...args)=>calls.push([name,...args]);
   for(const name of ['createRadialGradient','createLinearGradient'])ctx[name]=(...args)=>{
     for(const value of args)assert(Number.isFinite(value));
-    return {addColorStop(){}};
+    const stops=[];calls.push([name,args,stops]);
+    return {addColorStop(offset,color){stops.push([offset,color]);}};
   };
   ctx.drawImage=(...args)=>{for(const v of args.slice(1))assert(Number.isFinite(v));calls.push(['drawImage',...args]);};
   return {fx:w.MyGO.CombatVfx,M:w.MyGO,ctx,calls,get loads(){return loads;}};
@@ -46,8 +47,11 @@ function setup(fail=false,embedded=false) {
     for(const t of [.461,.52,.579]) {
       a.calls.length=0;a.fx.magic(a.ctx,unit,t,142,242,434,242);
       const core=a.calls.filter(c=>c[0]==='arc'&&c[3]>=16&&c[3]<=18);
-      assert.equal(core.length,1,'a large spherical core must remain visible throughout the whole flight');
-      assert(core[0][1]>=176&&core[0][1]<=434,'ball must move from caster hand to target');
+      assert(core.length>=1,'the soft energy field must remain visible throughout the whole flight');
+      assert(core.at(-1)[1]>=176&&core.at(-1)[1]<=434,'ball must move from caster hand to target');
+      const fields=a.calls.filter(c=>c[0]==='createRadialGradient');
+      assert(fields.every(c=>c[2].at(-1)[1].endsWith('00')),'all energy fields must dissolve to transparency instead of ending at a solid edge');
+      assert(a.calls.some(c=>c[0]==='ellipse'),'flowing ribbons must accompany the energy field');
     }
     for(const t of [.1,.4599,.58,.9]) {
       a.calls.length=0;a.fx.magic(a.ctx,unit,t,142,242,434,242);

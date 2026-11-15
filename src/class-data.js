@@ -113,6 +113,12 @@
     if(!s)return;
     if(s.version!==1||!Array.isArray(s.certified)||new Set(s.certified).size!==s.certified.length)throw Error('存档职业资格无效');
     if(!u.classId){if(s.id!==null||s.certified.length)throw Error('存档职业无效');return;}
+    // Authored enemy jobs do not use player certification level requirements.
+    // Their identity remains locked to the mission template when loading.
+    if(u.side==='enemy'){
+      if(s.id!==u.classId||s.certified.length!==1||s.certified[0]!==u.classId)throw Error('存档敌方职业无效');
+      return;
+    }
     for(const id of s.certified){const job=byId.get(id);
       if(!job||u.level<job.minLevel||job.gender&&job.gender!==u.gender||job.prerequisite&&!s.certified.includes(job.prerequisite))throw Error('存档职业资格无效');
     }

@@ -5088,7 +5088,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.7.1</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.8.5</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -5172,6 +5172,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <button class="entry-option" type="button" data-entry-action="chapter7">
               <span class="entry-index">10</span>
               <span class="entry-option-copy"><strong>第七重 · 繁星之下的求援</strong><em>CHAPTER 07</em><small>回应虹夏的求助，夺回 Live House 舞台</small></span>
+              <span class="entry-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="entry-option" type="button" data-entry-action="chapter8">
+              <span class="entry-index">11</span>
+              <span class="entry-option-copy"><strong>第八重 · 无尽舞台的往日之影</strong><em>CHAPTER 08</em><small>面具人扩张舞台，击败爽世与灯的幻影</small></span>
               <span class="entry-arrow" aria-hidden="true">→</span>
             </button>
           </nav>
@@ -5787,7 +5792,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const courtyardKey=Object.freeze({id:'courtyard_key',name:'内庭钥匙',kind:'key',category:'key',uses:1,icon:'accuracy-ring',
     effect:'开启第一关内庭大门。持有者须站在门旁使用，使用后消耗钥匙并结束行动。'});
   const chestKey=Object.freeze({id:'chest_key',name:'宝箱钥匙',kind:'key',category:'key',uses:1,icon:'accuracy-ring',
-    effect:'第五关使用：持有者站在宝箱上或相邻1格，消耗钥匙开箱并结束行动。'});
+    effect:'持有者站在宝箱上或相邻1格，消耗钥匙开箱并结束行动。'});
   const supplyIds=E.items.filter(e=>['consumable','seal'].includes(e.kind)).map(e=>e.id);
   const allowed=new Set([...E.items.map(e=>e.id),courtyardKey.id,chestKey.id]);
   // Soyo's original v4.8 spell list is accepted only for save migration.
@@ -6030,6 +6035,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     if(!s)return;
     if(s.version!==1||!Array.isArray(s.certified)||new Set(s.certified).size!==s.certified.length)throw Error('存档职业资格无效');
     if(!u.classId){if(s.id!==null||s.certified.length)throw Error('存档职业无效');return;}
+    // Authored enemy jobs do not use player certification level requirements.
+    // Their identity remains locked to the mission template when loading.
+    if(u.side==='enemy'){
+      if(s.id!==u.classId||s.certified.length!==1||s.certified[0]!==u.classId)throw Error('存档敌方职业无效');
+      return;
+    }
     for(const id of s.certified){const job=byId.get(id);
       if(!job||u.level<job.minLevel||job.gender&&job.gender!==u.gender||job.prerequisite&&!s.certified.includes(job.prerequisite))throw Error('存档职业资格无效');
     }
@@ -7161,6 +7172,53 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
    {kind:'cases',x:6.5,y:13},{kind:'cases',x:22.5,y:13},{kind:'exit',x:14.5,y:26.7}]};
  C.CHARACTER_STORIES.nijika='熟悉的地下舞台忽然挤满了陌生黑影。她没有把求助藏在心里，而是向门口的少女们伸出了手。得到回应之后，她也决定成为回应别人的那个人。';
  const previous=C.missionForStage;C.missionForStage=stage=>stage===7?C.STAGE_SEVEN:previous(stage);
+})(window);
+
+  </script>
+  <script>
+/* ===== src/chapter-eight.js ===== */
+/* A distorted continuation of STARRY: eight rows unfold inside the existing stage. */
+(function(global){
+ 'use strict';const C=global.MyGO.CONFIG,base=C.STAGE_SEVEN;
+ const chars=base.mapChars.slice(0,6).concat(Array(8).fill(base.mapChars[6]),base.mapChars.slice(6));
+ const chests=[{id:'echo-seal',name:'西侧转职宝箱',x:4,y:23,item:'intermediate_seal'},
+  {id:'echo-gold',name:'东侧金币宝箱',x:25,y:17,gold:1500},
+  {id:'echo-sword',name:'后台武器宝箱',x:24,y:4,item:'steel_sword'}];
+ const defs=[['blade','shadow_blade_1',10,15],['axe','shadow_axe',19,15],['bow','shadow_bow',12,11],
+  ['blade-w','shadow_blade_2',8,10],['lance-e','shadow_lance',21,12],['bow-deep','shadow_bow',20,5],
+  ['mage-w','conductor',10,7],['mage-e','conductor',18,8]];
+ const regular=defs.map(([id,source,x,y])=>({...C.UNITS.find(u=>u.id===source),id:'echo-'+id,x,y,side:'enemy',level:10,
+  boss:false,key:false,hpFloor:0,dormant:false,drops:[],carriedItems:[],guardGroup:'echo-'+(y>10?'front':'rear'),guardRadius:6,facing:'down',
+  name:'舞台幻兵·'+(source==='conductor'?'咒':source.includes('bow')?'弓':source.includes('axe')?'斧':source.includes('lance')?'枪':'剑'),shortName:'舞台幻兵',
+  ...(source==='conductor'?{weapon:'miasma',spells:['miasma'],mag:11,maxHp:25,def:4,res:8}:{}),quote:'面具人留下的回声，凝成了舞台上的幻兵。'}));
+ const special=(type,i,x,y)=>({...C.STAGE_FIVE.enemies.find(u=>u.art==='park-'+type),id:'echo-'+type+'-'+i,x,y,side:'enemy',level:10,
+  name:type==='armor'?'暗幕重装':'携钥天马骑士',shortName:type==='armor'?'暗幕重装':'携钥天马',boss:false,key:false,hpFloor:0,dormant:false,
+  drops:type==='pegasus'?['chest_key']:[],carriedItems:type==='pegasus'?['chest_key']:[],guardGroup:'echo-'+(y>10?'front':'rear'),guardRadius:6,facing:'down'});
+ const enemies=regular.concat([[9,12],[20,13],[9,5],[20,8]].map(([x,y],i)=>special('armor',i,x,y)),
+  [[8,15],[21,10],[22,6]].map(([x,y],i)=>special('pegasus',i,x,y)),[
+  {...C.UNITS.find(u=>u.id==='soyo'),id:'dark_soyo',name:'往日之影长崎爽世',shortName:'爽世之影',side:'enemy',classId:'warlock',className:'术士',
+   level:12,maxHp:40,str:5,mag:15,dex:13,spd:9,lck:5,def:6,res:12,weapon:'miasma',spells:['miasma'],x:11,y:4,
+   boss:true,hpFloor:0,tags:[],drops:[],carriedItems:[],dormant:false,guardRadius:5,guardGroup:'echo-phantoms',facing:'down',quote:'那些没有说出口的话……你还记得吗？'},
+  {...C.UNITS.find(u=>u.id==='tomori'),id:'dark_tomori',name:'往日之影高松灯',shortName:'灯之影',side:'enemy',classId:'mercenary',className:'佣兵',
+   level:12,maxHp:43,str:14,mag:2,dex:14,spd:13,lck:5,def:10,res:5,weapon:'steel_sword',spells:[],x:18,y:4,
+   boss:true,hpFloor:0,tags:[],drops:[],carriedItems:[],dormant:false,guardRadius:5,guardGroup:'echo-phantoms',facing:'down',quote:'如果那首歌……再也传达不到呢？'}]);
+ // Panel budgets count all nine stats, including HP and movement.
+ // Preserve the requested attack/mobility trades without optimizing away off-role stats.
+ const balanceStats={
+  dark_soyo:{maxHp:38,str:7,mag:20,dex:14,spd:10,lck:6,def:7,res:14}, // panel total 120, move 4
+  dark_tomori:{maxHp:40,str:16,mag:5,dex:15,spd:16,lck:6,def:11,res:6}, // panel total 120, move 5
+  armor:{maxHp:30,str:15,mag:4,dex:10,spd:6,lck:7,def:22,res:4,move:4}, // panel total 102
+  flying:{maxHp:26,str:11,mag:6,dex:13,spd:14,lck:6,def:8,res:12} // panel total 102, move 6
+ };
+ C.STAGE_EIGHT={...base,id:'mission-08',mapRevision:1,rows:36,chapter:'MISSION 08',chapterJp:'第八话',chapterEn:'CHAPTER 08',balanceStats,
+  title:'无尽舞台的往日之影',mapName:'STARRY · 被暗幕扩张的舞台',
+  subtitle:'神秘面具人再现，熟悉的舞台向黑暗深处延伸。幕布下，两个本不该站在对面的身影睁开了眼。',
+  objective:'击败幻影：往日之影长崎爽世与往日之影高松灯',
+  gateHint:'众人留在舞台前沿。向北击败术士爽世之影与佣兵灯之影即可获胜。重装高守备低魔防；弓克制天马。三名携钥天马各掉一把钥匙，三个宝箱分别藏有中级转职证、1500 G、钢剑。先搜宝，再击败最后一名幻影。',
+  terrain:C.buildTerrainGrid(chars),mapChars:chars,enemies,enemyCount:enemies.length,chests,phantomIds:['dark_soyo','dark_tomori'],
+  spawns:{tomori:{x:13,y:18},anon:{x:14,y:19},rana:{x:15,y:18},soyo:{x:13,y:19},taki:{x:15,y:19},xueyue:{x:12,y:20},nina:{x:16,y:20},nijika:{x:14,y:18}},
+  decor:base.decor.map(o=>({...o,y:o.y>=6?o.y+8:o.y})).concat(chests.map(c=>({...c,kind:'chest'})))};
+ const prev=C.missionForStage;C.missionForStage=stage=>stage===8?C.STAGE_EIGHT:prev(stage);
 })(window);
 
   </script>
@@ -8490,6 +8548,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const Pathfinding = MyGO.Pathfinding;
   const Combat = MyGO.Combat;
 
+  // Keep core-only consumers independent of optional chapter modules.
+  function missionForStage(stage) {
+    return stage===8?C.STAGE_EIGHT:stage===7?C.STAGE_SEVEN:stage===6?C.STAGE_SIX:stage===5?C.STAGE_FIVE:stage===4?C.STAGE_FOUR:stage===3?C.STAGE_THREE:stage===2?C.STAGE_TWO:C.MISSION;
+  }
+
   function cloneMap() {
     return {
       cols: C.COLS,
@@ -8500,7 +8563,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   }
 
   function stageTwoMap(stage = 2) {
-    const mission = stage === 7 ? C.STAGE_SEVEN : stage === 6 ? C.STAGE_SIX : stage === 5 ? C.STAGE_FIVE : stage === 4 ? C.STAGE_FOUR : stage === 3 ? C.STAGE_THREE : C.STAGE_TWO;
+    const mission = missionForStage(stage);
     return {
       cols: mission.cols,
       rows: mission.rows,
@@ -8511,9 +8574,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   function unitsForStage(stage, recruited) {
     if (stage >= 4) {
-      const m=C.missionForStage(stage);
+      const m=missionForStage(stage);
       const heroes=C.UNITS.filter(u=>u.side==='player'||u.id==='xueyue'&&recruited.includes('xueyue'));
       if(recruited.includes('nina'))heroes.push(C.NINA);
+      if(stage===8)heroes.push(C.NIJIKA);
       return heroes.map(u=>createUnit({...u,...m.spawns[u.id],side:'player',boss:false,dormant:false,
         facing:stage>=6?'up':'right',mapCols:m.cols,mapRows:m.rows})).concat(m.enemies.map(createUnit),stage===7?[createUnit({...C.NIJIKA,side:recruited.includes('nijika')?'player':'ally'})]:[]);
     }
@@ -8604,19 +8668,21 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   class Game {
     constructor(options) {
       const opts = options || {};
-      this.stage = [2,3,4,5,6,7].includes(opts.stage) ? opts.stage : 1;
+      this.stage = [2,3,4,5,6,7,8].includes(opts.stage) ? opts.stage : 1;
       this.recruited = Array.isArray(opts.recruited) ? ['xueyue','nina','nijika'].filter(id=>opts.recruited.includes(id)) : [];
       if(this.stage<7)this.recruited=this.recruited.filter(id=>id!=='nijika');
+      if(this.stage===8&&!this.recruited.includes('nijika'))this.recruited.push('nijika');
       if (this.stage === 1) this.recruited = [];
       this.recruitmentShown = false;
       this.ninaLost = !!opts.ninaLost;
       if(this.ninaLost)this.recruited=this.recruited.filter(id=>id!=='nina');
       this.ninaRecruitmentShown = false;
-      this.nijikaJoined=this.stage===7&&this.recruited.includes('nijika');
+      this.nijikaJoined=this.stage>=7&&this.recruited.includes('nijika');
       this.livehouseEndingShown=false;
+      this.stageEightIntroSeen=false;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       this.units = unitsForStage(this.stage, this.recruited);
-      this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
+      this.mission = missionForStage(this.stage);
       this.convoy = MyGO.Inventory.stock();
       this.lootReserve=[];
       this.gold=MyGO.Shop.START_GOLD;
@@ -8629,7 +8695,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.openedChests=[];
       this.bossDiscovered=false;
       this.soyoBossBonus=false;
-      this.enemyScaleLevel=0;
+      this.enemyScaleLevel=0;this.enemyScalePower=0;
       if(this.stage>=4)this.scaleParkEnemies();
       this.turn = 1;
       this.phase = 'player'; // player | enemy | victory | defeat
@@ -8639,6 +8705,13 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.awakenedBells = [];
       this.lastHealing = [];
       this.startedAt = Date.now();
+    }
+
+    completeEighthIntro() {
+      if(this.stage!==8)return;
+      this.stageEightIntroSeen=true;
+      delete this._liveIntro;
+      for(const u of this.units)delete u._summonAlpha;
     }
 
     joinNijika() {
@@ -8824,18 +8897,19 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
     /** 切换静态关卡数据（不影响回合/单位状态，由 restore 重新填充）。 */
     _setupStage(stage) {
-      this.stage = [2,3,4,5,6,7].includes(stage) ? stage : 1;
+      this.stage = [2,3,4,5,6,7,8].includes(stage) ? stage : 1;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       this.units = unitsForStage(this.stage, this.recruited);
-      this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
+      this.mission = missionForStage(this.stage);
       this.gateOpen = false;
-      this.nijikaJoined=this.stage===7&&this.recruited.includes('nijika');
+      this.nijikaJoined=this.stage>=7&&this.recruited.includes('nijika');
       this.livehouseEndingShown=false;
+      this.stageEightIntroSeen=false;
       this.resonanceOpen = false;
       this.awakenedBells = [];
       this.litLamps=[];
       this.summonedWaves=[];this.maskRetreatPending=false;this.maskEscaped=false;this.lastSummonTurn=0;
-      this.openedChests=[];this.bossDiscovered=false;this.soyoBossBonus=false;this.enemyScaleLevel=0;
+      this.openedChests=[];this.bossDiscovered=false;this.soyoBossBonus=false;this.enemyScaleLevel=0;this.enemyScalePower=0;
       if(this.stage>=4)this.scaleParkEnemies();
     }
 
@@ -8877,13 +8951,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     }
 
     /** Scale from authored stats, never from previously scaled stats; preserve HP ratio. */
-    scaleParkEnemies(level,units=this.units,force=false) {
+    scaleParkEnemies(level,units=this.units,force=false,legacyEighth=false) {
       if(this.stage<4)return;
+      if(this.stage===8&&!legacyEighth)return this.scaleEighthEnemies(level,units,force);
       const party=units.filter(u=>u.side==='player');
       const target=level??Math.min(97,Math.ceil(party.reduce((n,u)=>n+u.level,0)/Math.max(1,party.length)));
       if(target<=this.enemyScaleLevel&&!force)return;
       for(const u of units.filter(u=>u.side==='enemy')){
-        const base=C.missionForStage(this.stage).enemies.concat(this.stage===6?C.STAGE_SIX.summonTemplates:[]).find(t=>t.id===u.id),ratio=u.hp/u.maxHp;
+        const base=missionForStage(this.stage).enemies.concat(this.stage===6?C.STAGE_SIX.summonTemplates:[]).find(t=>t.id===u.id),ratio=u.hp/u.maxHp;
         u.level=Math.min(99,target+(u.boss?2:0));const d=u.level-base.level;
         const courtArmor=this.stage>=5&&u.tags.includes('armor');
         for(const [k,rate] of Object.entries({maxHp:courtArmor?(u.boss?2:1):u.boss?3:2,str:.65,mag:.65,dex:.5,spd:.35,def:.4,res:courtArmor?.15:.45,lck:.3}))
@@ -8891,6 +8966,45 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         u.hp=u.dead?0:Math.max(1,Math.ceil(u.maxHp*ratio));
       }
       this.enemyScaleLevel=target;
+    }
+
+    /** Fixed panel totals for phantoms/armor/pegasi; ordinary soldiers
+     * follow party effective power. Legacy mode reconstructs v5.8.2 HP limits
+     * before migrating wounds, and must keep the original total-stat formula. */
+    scaleEighthEnemies(level,units=this.units,force=false,legacy=false) {
+      const party=units.filter(u=>u.side==='player');
+      const target=Math.min(97,Math.max(10,this.enemyScaleLevel||0,level||0,...party.map(u=>u.level)));
+      const effectiveTotal=u=>Combat.statTotalOf(u)-(u.weapon.damageType==='magic'?(u.str||0):(u.mag||0));
+      const power=Math.max(100,this.enemyScalePower||0,...party.map(legacy?Combat.statTotalOf:effectiveTotal));
+      if(!force&&target===this.enemyScaleLevel&&power===this.enemyScalePower)return;
+      for(const u of units.filter(u=>u.side==='enemy')){
+        const base=C.STAGE_EIGHT.enemies.find(t=>t.id===u.id),ratio=u.hp/u.maxHp;
+        const armor=u.tags.includes('armor'),flying=u.tags.includes('flying'),magic=C.WEAPONS[base.weapon].damageType==='magic';
+        u.level=Math.min(99,target+(u.boss?2:0));const delta=u.level-base.level;
+        const fixed=!legacy&&(C.STAGE_EIGHT.balanceStats[u.id]||C.STAGE_EIGHT.balanceStats[armor?'armor':flying?'flying':'']);
+        if(fixed){
+          Object.assign(u,fixed);
+          u.hp=u.dead?0:Math.max(1,Math.ceil(u.maxHp*ratio-1e-9));
+          continue;
+        }
+        for(const [key,rate] of Object.entries({maxHp:armor?1:u.boss?3:2,str:.65,mag:.65,dex:.5,spd:.35,def:.4,res:armor?.15:.45,lck:.3}))
+          u[key]=Math.max(key==='maxHp'?12:0,base[key]+Math.round(Math.max(0,delta)*(legacy||key!==(magic?'str':'mag')?rate:0)));
+        const budget=Math.ceil(power*(u.boss?1.30:armor?1.05:flying?1:.95));
+        const total=legacy?Combat.statTotalOf(u):Combat.statTotalOf(u)-(magic?u.str:u.mag);
+        const extra=Math.max(0,budget-total);
+        // No movement inflation; distribute power into each class's useful stats.
+        const weights=armor?{maxHp:34,str:21,dex:13,spd:4,lck:4,def:21,res:3}
+          :magic?{maxHp:30,mag:23,dex:12,spd:10,lck:6,def:6,res:13}
+          :flying?{maxHp:30,str:20,dex:14,spd:17,lck:5,def:5,res:9}
+          :{maxHp:34,str:19,dex:13,spd:12,lck:6,def:10,res:6};
+        const parts=Object.entries(weights).map(([key,weight])=>({key,n:Math.floor(extra*weight/100),fraction:extra*weight%100}));
+        parts.sort((a,b)=>b.fraction-a.fraction);
+        const remainder=extra-parts.reduce((n,p)=>n+p.n,0);
+        for(let i=0;i<remainder;i++)parts[i].n++;
+        for(const p of parts)u[p.key]+=p.n;
+        u.hp=u.dead?0:Math.max(1,Math.ceil(u.maxHp*ratio-1e-9));
+      }
+      this.enemyScaleLevel=target;this.enemyScalePower=power;
     }
 
     /** At most one mixed wave each enemy phase; appearing units wait a full round. */
@@ -8942,7 +9056,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
     getTerrain(x, y) {
       const t=Grid.terrainAt(this.map, x, y);
-      if(this.stage===7){
+      if(this.stage>=7){
         const labels={plaza:['演出厅地板','宽敞的观众站席，可沿两侧绕过设备箱和立柱。'],road:['舞台地板','Live House 的演出舞台。仍有敌人占据这里。'],wall:['隔墙与设备','不可穿越的隔墙、音箱、鼓组或固定设备。'],fort:['急救补给点','场馆的急救补给位置，回合开始时回复生命。']};
         const label=labels[t.id];if(label)return {...t,name:label[0],desc:label[1]};
       }
@@ -9084,7 +9198,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     }
 
     nearbyChest(unit){
-      return this.stage===5&&unit?(this.mission.chests.find(c=>!this.openedChests.includes(c.id)&&Grid.manhattan(unit,c)<=1)||null):null;
+      return [5,8].includes(this.stage)&&unit?(this.mission.chests.find(c=>!this.openedChests.includes(c.id)&&Grid.manhattan(unit,c)<=1)||null):null;
     }
 
     canOpenChest(unit){
@@ -9269,7 +9383,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         result.keyRecipientId = attacker.id;
         result.storedForKey = this._awardGateKey(attacker);
       }
-      if(killed&&this.stage===5&&defender.side==='enemy'&&attacker?.side==='player'&&!attacker.dead){
+      if(killed&&[5,8].includes(this.stage)&&defender.side==='enemy'&&attacker?.side==='player'&&!attacker.dead){
         result.drops=defender.drops.map(id=>this.awardLoot(attacker,id));
         for(const id of defender.drops){const at=defender.inventory.findIndex(i=>i.id===id);if(at>=0)defender.inventory.splice(at,1);}
       }
@@ -9303,7 +9417,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
      */
     checkOutcome() {
       if (this.isOver()) return this.winner;
-      const victory=this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
+      const victory=this.stage===8 ? this.stageEightIntroSeen&&this.mission.phantomIds.every(id=>this.getUnit(id)?.dead) : this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
         ? this.awakenedBells.length>=this.mission.requiredBells && !!this.getUnit('conductor')?.dead
         : this.livingCount('enemy')===0;
       if (this.livingCount('player') === 0) {
@@ -9395,6 +9509,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         awakenedBells: this.awakenedBells.slice(),
         ...(this.stage===4?{litLamps:this.litLamps.slice(),bossDiscovered:this.bossDiscovered,
           soyoBossBonus:this.soyoBossBonus,enemyScaleLevel:this.enemyScaleLevel}:{}),
+        ...(this.stage===8?{stageEightIntroSeen:this.stageEightIntroSeen,enemyScaleVersion:3,enemyScalePower:this.enemyScalePower,nijikaLevelVersion:1,openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===5?{openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===6?{summonedWaves:this.summonedWaves.slice(),lastSummonTurn:this.lastSummonTurn,maskRetreatPending:this.maskRetreatPending,maskEscaped:this.maskEscaped,enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===7?{nijikaJoined:this.nijikaJoined,nijikaLevelVersion:1,livehouseEndingShown:this.livehouseEndingShown,enemyScaleLevel:this.enemyScaleLevel}:{}),
@@ -9433,11 +9548,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         throw new Error('第二关地图已重新设计，请重开第二关；旧存档仍然保留。');
       }
       if (snapshot.stage === 3 && snapshot.mapRevision !== C.STAGE_THREE.mapRevision) throw new Error('第三关地图版本不兼容');
+      if(snapshot.stage===8&&snapshot.mapRevision!==C.STAGE_EIGHT.mapRevision)throw Error('第八关地图版本不兼容');
       if(snapshot.stage===7&&snapshot.mapRevision!==C.STAGE_SEVEN.mapRevision)throw Error('第七关地图版本不兼容');
       if (snapshot.stage === 6 && snapshot.mapRevision !== C.STAGE_SIX.mapRevision) throw Error('第六关地图版本不兼容');
       if (snapshot.stage === 5 && snapshot.mapRevision !== C.STAGE_FIVE.mapRevision) throw new Error('第五关地图版本不兼容');
       if (snapshot.stage === 4 && snapshot.mapRevision !== C.STAGE_FOUR.mapRevision) throw new Error('第四关地图版本不兼容');
-      if (![2,3,4,5,6,7].includes(snapshot.stage) && snapshot.mapRevision !== C.MAP_REVISION) {
+      if (![2,3,4,5,6,7,8].includes(snapshot.stage) && snapshot.mapRevision !== C.MAP_REVISION) {
         throw new Error('第一关地图已更新，请重开第一关；旧存档仍然保留。');
       }
       const bells=snapshot.stage===2 ? snapshot.awakenedBells || [] : [];
@@ -9445,7 +9561,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         bells.some(id=>!C.STAGE_TWO.bells.some(b=>b.id===id)))throw new Error('存档星铃数据无效');
 
       // 地图是可变的（大门开启后会换成 gateOpen），读档先恢复关卡与静态地图。
-      this.stage = [2,3,4,5,6,7].includes(snapshot.stage) ? snapshot.stage : 1;
+      this.stage = [2,3,4,5,6,7,8].includes(snapshot.stage) ? snapshot.stage : 1;
       if(this.stage===4){
         const lamps=snapshot.litLamps;
         if(!Array.isArray(lamps)||new Set(lamps).size!==lamps.length||lamps.some(id=>!C.STAGE_FOUR.lamps.some(l=>l.id===id)))throw Error('存档路灯数据无效');
@@ -9476,7 +9592,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const legacyJoined = this.stage === 1 && this.recruited.includes('xueyue') && snapshot.recruitmentVersion !== 1;
       if (this.stage === 1 && snapshot.phase !== 'victory') this.recruited = [];
       this.recruitmentShown = snapshot.recruitmentVersion === 1 && !!snapshot.recruitmentShown;
-      this.nijikaJoined=this.stage===7&&snapshot.nijikaJoined===true;
+      this.nijikaJoined=this.stage===8||this.stage===7&&snapshot.nijikaJoined===true;
       this.livehouseEndingShown=this.stage===7&&snapshot.livehouseEndingShown===true;
       if(this.stage===7){
         if(snapshot.livehouseEndingShown!==undefined&&typeof snapshot.livehouseEndingShown!=='boolean'||this.livehouseEndingShown&&snapshot.phase!=='victory')throw Error('Live House 战后剧情状态无效');
@@ -9485,7 +9601,22 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         if(!Number.isInteger(snapshot.enemyScaleLevel)||snapshot.enemyScaleLevel<1||snapshot.enemyScaleLevel>97)throw Error('存档敌军等级无效');
         const expected=unitsForStage(this.stage,this.recruited);
         if(snapshot.units.length!==expected.length||snapshot.units.some(u=>!expected.some(t=>t.id===u.id)))throw Error('第七关单位数据无效');
-      }else this.recruited=this.recruited.filter(id=>id!=='nijika');
+      }else if(this.stage!==8)this.recruited=this.recruited.filter(id=>id!=='nijika');
+      this.stageEightIntroSeen=this.stage===8&&snapshot.stageEightIntroSeen===true;
+      this.enemyScalePower=0;
+      if(this.stage===8&&snapshot.enemyScaleVersion!==undefined){
+        if(![1,2,3].includes(snapshot.enemyScaleVersion)||!Number.isSafeInteger(snapshot.enemyScalePower)||snapshot.enemyScalePower<100||snapshot.enemyScalePower>100000)throw Error('第八关敌军强度数据无效');
+        this.enemyScalePower=snapshot.enemyScalePower;
+      }
+      if(this.stage===8){
+        if(typeof snapshot.stageEightIntroSeen!=='boolean'||!this.recruited.includes('nijika')||snapshot.nijikaLevelVersion!==1)throw Error('第八关开场状态无效');
+        if(!this.stageEightIntroSeen&&snapshot.phase!=='player')throw Error('第八关开场尚未完成');
+        const opened=snapshot.openedChests,expected=unitsForStage(8,this.recruited);
+        if(!Array.isArray(opened)||new Set(opened).size!==opened.length||opened.some(id=>!C.STAGE_EIGHT.chests.some(c=>c.id===id)))throw Error('存档宝箱数据无效');
+        if(!Number.isInteger(snapshot.enemyScaleLevel)||snapshot.enemyScaleLevel<1||snapshot.enemyScaleLevel>97)throw Error('存档敌军等级无效');
+        if(snapshot.units.length!==expected.length||snapshot.units.some(u=>!expected.some(t=>t.id===u.id)))throw Error('第八关单位数据无效');
+        this.openedChests=opened.slice();
+      }
       const fresh = unitsForStage(this.stage, this.recruited);
       if(this.stage===6){
         const ids=snapshot.summonedWaves;
@@ -9500,7 +9631,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         if(snapshot.units.length!==fresh.length||snapshot.units.some(u=>!expected.has(u.id)))throw Error('存档召唤单位无效');
       }
       this.enemyScaleLevel=0;
-      if(this.stage>=4)this.scaleParkEnemies(snapshot.enemyScaleLevel,fresh);
+      if(this.stage===8&&snapshot.enemyScaleVersion===1)this.scaleEighthEnemies(snapshot.enemyScaleLevel,fresh,false,true);
+      else if(this.stage>=4)this.scaleParkEnemies(snapshot.enemyScaleLevel,fresh,false,this.stage===8&&snapshot.enemyScaleVersion===undefined);
+      // Both v5.8.3 and v5.8.4 used these HP limits. Restore wounds against
+      // those limits before applying the corrected panel budgets below.
+      if(this.stage===8&&snapshot.enemyScaleVersion===2)for(const u of fresh.filter(u=>u.side==='enemy')){
+        const oldMaxHp=u.id==='dark_soyo'?42:u.id==='dark_tomori'?43:u.tags.includes('armor')?32:u.tags.includes('flying')?29:0;
+        if(oldMaxHp){u.maxHp=oldMaxHp;u.hp=oldMaxHp;}
+      }
       const byId = new Map(fresh.map((u) => [u.id, u]));
       const seen = new Set();
 
@@ -9520,7 +9658,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         unit.x = saved.x;
         unit.y = saved.y;
         unit.growthRngState=MyGO.Growth.seed(unit.id,snapshot.rngState);
-        if(this.stage===7&&unit.id==='nijika'&&saved.growth){
+        if(this.stage>=7&&unit.id==='nijika'&&saved.growth){
           // The free level has no growth. Keep the old validation allowance so
           // a migrated Lv.99 save can retain every previously earned stat.
           unit.growthBase.level=8;
@@ -9564,6 +9702,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         Object.assign(guard,{x:cells[0].x,y:cells[0].y});
       }
 
+      // Reconstruct old limits before applying the corrected panel budgets.
+      if(this.stage===8){
+        if(![2,3].includes(snapshot.enemyScaleVersion)){this.enemyScaleLevel=0;this.enemyScalePower=0;}
+        this.scaleParkEnemies(undefined,fresh,snapshot.enemyScaleVersion!==3);
+      }
+
       // 防御性检查：存活单位不能重叠。
       const occupied = new Set();
       for (const u of fresh) {
@@ -9583,7 +9727,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(nina && this.ninaLost) Object.assign(nina,{dead:true,hp:0,acted:true,side:'ally'});
       if(nina && this.recruited.includes('nina') && !nina.dead && !this.ninaLost) Object.assign(nina,{side:'player',acted:this.stage===3?true:nina.acted,
         quote:'你们真的来了……我叫井芹仁菜。接下来，让我也一起走吧。'});
-      this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
+      this.mission = missionForStage(this.stage);
       this.refreshParkDiscovery();
       this.turn = Math.max(1, Number(snapshot.turn) || 1);
       this.phase = ['enemy','ally'].includes(snapshot.phase) ? 'player' : snapshot.phase;
@@ -12993,7 +13137,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     aura(c,x,y,h,now,state==='summon');c.save();c.translate(x,y);if(facing==='left')c.scale(-1,1);
     c.imageSmoothingEnabled=true;c.drawImage(images.actions,k*256,spec[0]*160,256,160,-64*scale,-143*scale,256*scale,160*scale);c.restore();return true;
   }
-  const alias=id=>M.CONFIG.STAGE_SIX.summonTemplates.find(u=>u.id===id)?.art;
+  const alias=id=>M.CONFIG.STAGE_SIX.summonTemplates.find(u=>u.id===id)?.art||M.CONFIG.STAGE_EIGHT?.enemies.find(u=>u.id===id)?.art;
   const armored=M.WatercourtArt.isArmored;M.WatercourtArt.isArmored=id=>alias(id)==='park-armor'||armored(id);
   const has=C.has,hasActions=C.hasActions;C.has=id=>id==='masked_stranger'||['park-armor','park-pegasus'].includes(alias(id))||has(id);C.hasActions=id=>id==='masked_stranger'||['park-armor','park-pegasus'].includes(alias(id))||hasActions(id);
   const map=C.drawMap;C.drawMap=function(c,u,x,y,h,now,opts){
@@ -13150,6 +13294,53 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   </script>
   <script>
+/* ===== src/eighth-art.js ===== */
+/* Reuse the same room, instruments, knight sheets and authored character actions. */
+(function(global){
+ 'use strict';const M=global.MyGO,T=M.CONFIG.TILE,C=M.Characters;
+ function drawGround(c,map){
+  const old=document.createElement('canvas');old.width=30*T;old.height=28*T;
+  M.LivehouseMap.drawGround(old.getContext('2d'),{...map,rows:28});
+  c.drawImage(old,0,0,30*T,6*T,0,0,30*T,6*T);
+  for(let y=6;y<14;y++)c.drawImage(old,0,6*T,30*T,T,0,y*T,30*T,T);
+  c.drawImage(old,0,6*T,30*T,22*T,0,14*T,30*T,22*T);
+  // The impossible extension belongs to the old stage: same floor, safety lines and truss palette.
+  c.save();c.strokeStyle='rgba(163,110,193,.32)';c.lineWidth=1;
+  for(let y=6;y<15;y+=2){c.beginPath();c.moveTo(7*T+4,y*T);c.lineTo(23*T-4,y*T);c.stroke();}
+  c.fillStyle='rgba(43,16,66,.16)';c.fillRect(7*T,6*T,16*T,8*T);
+  for(const y of [18,14,10]){
+   c.fillStyle='rgba(208,175,224,.55)';c.beginPath();c.moveTo(15*T,y*T);c.lineTo(15*T-7,y*T+9);c.lineTo(15*T+7,y*T+9);c.closePath();c.fill();
+  }c.restore();
+ }
+ M.EighthMap={drawGround,makeObjects:M.LivehouseMap.makeObjects,
+  drawObject(c,v,o){if(o.kind==='chest')M.WatercourtMap.drawObject(c,v,o);else M.LivehouseMap.drawObject(c,v,o);},
+  drawLights(c,v,game){
+   M.LivehouseMap.drawLights(c,v,game);c.save();M.MapProjection.apply(c,v);c.globalCompositeOperation='screen';
+   for(const [x,color] of [[9,'122,74,174'],[20,'78,109,173']]){
+    const g=c.createLinearGradient(0,2*T,0,18*T);g.addColorStop(0,'rgba('+color+',.21)');g.addColorStop(1,'rgba('+color+',0)');c.fillStyle=g;
+    c.beginPath();c.moveTo(x*T,2*T);c.lineTo((x+4)*T,18*T);c.lineTo((x-4)*T,18*T);c.closePath();c.fill();
+   }c.restore();
+  }};
+ const alias=id=>id==='dark_tomori'?'tomori':id;
+ for(const key of ['has','hasActions']){const base=C[key];C[key]=id=>base(alias(id));}
+ const map=C.drawMap;C.drawMap=function(c,u,x,y,h,now,opts){
+  if(u.id!=='dark_tomori')return map(c,u,x,y,h,now,opts);
+  M.DarkSoyo.aura(c,x,y,h,now);c.save();c.filter='brightness(.65) saturate(.45) hue-rotate(235deg)';
+  const ok=map(c,{...u,id:'tomori'},x,y,h,now,opts);c.restore();M.DarkSoyo.aura(c,x,y,h,now,true);return ok;
+ };
+ const battle=C.drawBattlePose;C.drawBattlePose=function(c,u,x,y,h,state,frame,facing,action){
+  if(u.id!=='dark_tomori')return battle(c,u,x,y,h,state,frame,facing,action);
+  const now=global.performance?.now()||0;M.DarkSoyo.aura(c,x,y,h,now);c.save();c.filter='brightness(.65) saturate(.45) hue-rotate(235deg)';
+  const ok=battle(c,{...u,id:'tomori'},x,y,h,state,frame,facing,action);c.restore();if(state!=='down')M.DarkSoyo.aura(c,x,y,h,now,true);return ok;
+ };
+ const portrait=C.drawPortrait;C.drawPortrait=function(c,id,x,y,w,h,opts){
+  if(id!=='dark_tomori')return portrait(c,id,x,y,w,h,opts);
+  c.save();c.filter='brightness(.6) saturate(.4) hue-rotate(235deg)';const ok=portrait(c,'tomori',x,y,w,h,opts);c.restore();return ok;
+ };
+})(window);
+
+  </script>
+  <script>
 /* ===== src/renderer.js ===== */
 /* ============================================================
  * renderer.js — Canvas 俯视地图渲染
@@ -13251,7 +13442,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const map = this.game.map;
       if(this.game.stage>=4&&MyGO.ParkMap){
         lc.fillStyle='#050c17';lc.fillRect(0,0,this.logicalWidth,this.logicalHeight);
-        lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
+        lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
         this._depthScene=null;this._parkFogKey=null;this.terrainLayer=layer;return;
       }
       if (this.game.stage >= 2 && MyGO.MoonMap) {
@@ -14008,7 +14199,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     /** Upright pieces and scenery share foot depth above an undistorted square board. */
     _renderDepth(now) {
       const ctx=this.ctx,P=MyGO.MapProjection,v=this.projection;
-      const first=this.game.stage===1,art=this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:this.game.stage===4?MyGO.ParkMap:first?MyGO.GardenMap:MyGO.MoonMap;
+      const first=this.game.stage===1,art=this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:this.game.stage===4?MyGO.ParkMap:first?MyGO.GardenMap:MyGO.MoonMap;
       this.time=now;
       ctx.clearRect(0,0,this.logicalWidth,this.logicalHeight);
       if(!this.terrainLayer)this._buildTerrainLayer();
@@ -14213,18 +14404,45 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function ball(ctx, element, x, y, radius, phase, alpha = 1) {
     const [core, mid, edge] = colors[element];
     ctx.save(); ctx.globalAlpha *= alpha;
-    // Broad soft aura, a coloured spherical body and an offset highlight remain
-    // readable throughout flight, including the last frame before impact.
-    const glow = ctx.createRadialGradient(x, y, radius * .2, x, y, radius * 2.7);
-    glow.addColorStop(0, mid); glow.addColorStop(.34, mid + 'bb'); glow.addColorStop(1, mid + '00');
-    ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(x, y, radius * 2.7, 0, Math.PI * 2); ctx.fill();
-    clip(ctx, 'hit_' + element, .24 + phase * .16, x, y, radius * 4.1, radius * 4.1, phase * 1.2, element === 'fire' ? .28 : .75);
-    const body = ctx.createRadialGradient(x - radius * .3, y - radius * .35, radius * .05, x, y, radius);
-    body.addColorStop(0, '#ffffff'); body.addColorStop(.24, core);
-    body.addColorStop(.58, mid); body.addColorStop(1, edge);
+    ctx.globalCompositeOperation = 'lighter';
+    // Emissive gas: every layer dissolves into transparency, with no shaded
+    // solid surface or off-centre specular dot. The field stays readable in flight.
+    const pulse = 1 + Math.sin(phase * 19) * .055;
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, radius * 2.5);
+    glow.addColorStop(0, mid + '66'); glow.addColorStop(.35, mid + '33'); glow.addColorStop(1, edge + '00');
+    ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(x, y, radius * 2.5, 0, Math.PI * 2); ctx.fill();
+    const body = ctx.createRadialGradient(x, y, 0, x, y, radius);
+    body.addColorStop(0, core + 'e6'); body.addColorStop(.20, core + 'bb');
+    body.addColorStop(.48, mid + '88'); body.addColorStop(.78, mid + '38'); body.addColorStop(1, edge + '00');
     ctx.fillStyle = body; ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#ffffffcc'; ctx.beginPath();
-    ctx.arc(x - radius * .28, y - radius * .32, radius * .2, 0, Math.PI * 2); ctx.fill();
+    // Rotating authored particles break up the otherwise perfect radial gradient.
+    clip(ctx, 'hit_' + element, .27 + phase * .24, x, y,
+      radius * 3.1 * pulse, radius * 3.1 / pulse, phase * 5.4, element === 'fire' ? .30 : .65);
+    for (let i = 0; i < 3; i++) {
+      const angle = phase * 13 + i * Math.PI * 2 / 3;
+      const lx = x + Math.cos(angle) * radius * .42;
+      const ly = y + Math.sin(angle * 1.15 + i) * radius * .36;
+      const size = radius * (.50 + .08 * Math.sin(angle * 2));
+      const wisp = ctx.createRadialGradient(lx, ly, 0, lx, ly, size);
+      wisp.addColorStop(0, core + '8c'); wisp.addColorStop(.35, mid + '5c'); wisp.addColorStop(1, mid + '00');
+      ctx.fillStyle = wisp; ctx.beginPath(); ctx.arc(lx, ly, size, 0, Math.PI * 2); ctx.fill();
+    }
+    // Broken, tilted ribbons and orbiting sparks suggest an unstable energy
+    // envelope instead of drawing an opaque circular boundary.
+    for (let i = 0; i < 2; i++) {
+      const angle = phase * (i ? -9 : 11) + i * 2.1;
+      ctx.strokeStyle = i ? mid + 'a6' : core + 'b3';
+      ctx.lineWidth = Math.max(.6, radius * .065); ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.ellipse(x, y, radius * 1.14, radius * .66, angle * .38,
+        angle, angle + Math.PI * 1.14); ctx.stroke();
+    }
+    for (let i = 0; i < 5; i++) {
+      const angle = phase * 15 + i * Math.PI * 2 / 5;
+      const orbit = radius * (1.12 + .16 * Math.sin(angle * 2 + i));
+      ctx.fillStyle = i % 2 ? mid + 'bf' : core + 'dd';
+      ctx.beginPath(); ctx.arc(x + Math.cos(angle) * orbit,
+        y + Math.sin(angle) * orbit * .78, Math.max(.45, radius * .055), 0, Math.PI * 2); ctx.fill();
+    }
     ctx.restore();
   }
   function weapon(ctx, kind, t, ax, ay, dx, dy) {
@@ -14476,7 +14694,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           this.takiAttackCount = (this.takiAttackCount || 0) + 1;
         }
       }
-      if (attacker.id === 'tomori' && !result.crit) {
+      if ((attacker.id === 'tomori' || attacker.id === 'dark_tomori') && !result.crit) {
         if (opt.action === 'attack2') this.tomoriAction = 'attack2';
         else {
           this.tomoriAction = (this.tomoriAttackCount || 0) % 2 ? 'attack2' : 'attack';
@@ -14742,7 +14960,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const kind = a.weapon.type;
       const ranged = kind === 'bow' || kind === 'tome';
       const takiCustom = a.id === 'taki' && MyGO.Characters && MyGO.Characters.hasActions(a.id);
-      const swordCustom = (a.id === 'tomori' || a.id === 'xueyue') && MyGO.Characters && MyGO.Characters.hasActions(a.id);
+      const swordCustom = ((a.id === 'tomori' || a.id === 'dark_tomori') || a.id === 'xueyue') && MyGO.Characters && MyGO.Characters.hasActions(a.id);
       const armorCustom = !!MyGO.WatercourtArt?.isArmored(a.id);
       const retreatStart = takiCustom || swordCustom || armorCustom || a.id === 'nina' ? 0.70 : 0.62;
       const gap = a.id === 'rana' && MyGO.Characters && MyGO.Characters.hasActions(a.id)
@@ -14828,7 +15046,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         const after = 1 - Math.abs(t - 0.45) / 0.13;
         if (after > 0) {
           for (let i = 3; i >= 1; i--) {
-            const running = (armorCustom || a.id === 'tomori' || a.id === 'xueyue' || a.id === 'rana' || a.id === 'taki' || a.id === 'nina') && MyGO.Characters && MyGO.Characters.hasActions(a.id);
+            const running = (armorCustom || (a.id === 'tomori' || a.id === 'dark_tomori') || a.id === 'xueyue' || a.id === 'rana' || a.id === 'taki' || a.id === 'nina') && MyGO.Characters && MyGO.Characters.hasActions(a.id);
             this._sprite(ctx, a, atkX - i * 13, atkY, 1, 0, atkLean * 0.4, 0.06 * after,
               swordCustom && r.crit ? 'rush' : running ? 'run' : 'attack',
               swordCustom && r.crit ? Math.min(2, Math.floor(clamp01((t - DASH_START) / .20) * 3))
@@ -15030,7 +15248,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           defY = feetY;
           defLean = 0;
         }
-      } else if (customDef && (b.id === 'tomori' || b.id === 'xueyue')) {
+      } else if (customDef && ((b.id === 'tomori' || b.id === 'dark_tomori') || b.id === 'xueyue')) {
         const idleTick = Math.floor(t * (this.duration || 1800) / 150) % (b.id === 'xueyue' ? 14 : 12);
         defState = idleTick < 6 ? 'idle' : 'idle2';
         defFrame = idleTick < 6 ? idleTick : idleTick - 6;
@@ -15089,7 +15307,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this._sprite(ctx, a, atkX, atkY, 1, 0, atkLean, 1, atkState, atkFrame,
         a.id === 'nina' ? (r.crit ? 'attack3' : r.kind === 'combo' ? 'attack2' : 'attack')
           : a.id === 'xueyue' ? (r.crit ? 'rush' : this.xueyueAction || 'attack')
-          : a.id === 'tomori' ? (r.crit ? 'rush' : this.tomoriAction || 'attack')
+          : (a.id === 'tomori' || a.id === 'dark_tomori') ? (r.crit ? 'rush' : this.tomoriAction || 'attack')
           : a.id === 'taki' ? (r.crit ? 'special' : this.takiAction || 'attack')
           : a.id === 'rana' ? (r.crit ? 'attack2' : 'attack') : r.crit ? 'flame' : 'fireball');
 
@@ -15156,7 +15374,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     _drawSwordSlash(ctx, t, atkX, atkY, defX, defY) {
       if (MyGO.CombatVfx?.weapon(ctx, 'sword', t, atkX, atkY, defX, defY)) return;
       // The new Tomori artwork already contains sword and slash trails.
-      if ((this.attacker.id === 'tomori' || this.attacker.id === 'xueyue')
+      if (((this.attacker.id === 'tomori' || this.attacker.id === 'dark_tomori') || this.attacker.id === 'xueyue')
         && MyGO.Characters && MyGO.Characters.hasActions(this.attacker.id)) return;
       if (t < 0.48 || t > 0.67) return;
       const p = clamp01((t - 0.48) / 0.19);
@@ -15629,7 +15847,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const ctx = bg.getContext('2d');
       ctx.imageSmoothingEnabled = false;
       ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
-      if(this.stage===7&&MyGO.LivehouseArt)MyGO.LivehouseArt.drawBattleBackground(ctx,W,H);
+      if(this.stage>=7&&MyGO.LivehouseArt)MyGO.LivehouseArt.drawBattleBackground(ctx,W,H);
       else if(this.stage>=4&&MyGO.ParkMap)MyGO.ParkMap.drawBattleBackground(ctx,W,H,this.lampsLit);
       else this._paintBackground(ctx);
       this._backgroundKey=(this.stage||1)+'|'+!!this.lampsLit;
@@ -16220,6 +16438,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.dom.missionTitle.textContent = mission.title;
       this.dom.missionSub.textContent = mission.subtitle;
       this.dom.objectiveText.textContent = mission.objective;
+      if(this.game.stage===8)this.dom.objectiveText.textContent='击败幻影 · '+this.game.mission.phantomIds.filter(id=>this.game.getUnit(id)?.dead).length+'/2 · 宝箱 '+this.game.openedChests.length+'/3';
       if(this.game.stage===6)this.dom.objectiveText.textContent=this.sixthObjectiveText();
       if(this.game.stage===7)this.dom.objectiveText.textContent='全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.nijikaJoined?' · 虹夏已入队':' · 回应虹夏的求助');
       this.updateAll();
@@ -16241,6 +16460,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.dom.missionTitle.textContent = mission.title;
       this.dom.missionSub.textContent = mission.subtitle;
       this.dom.objectiveText.textContent = mission.objective;
+      if(this.game.stage===8)this.dom.objectiveText.textContent='击败幻影 · '+this.game.mission.phantomIds.filter(id=>this.game.getUnit(id)?.dead).length+'/2 · 宝箱 '+this.game.openedChests.length+'/3';
       if(this.game.stage===6)this.dom.objectiveText.textContent=this.sixthObjectiveText();
       if(this.game.stage===7)this.dom.objectiveText.textContent='全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.nijikaJoined?' · 虹夏已入队':' · 回应虹夏的求助');
       if(this.game.stage===2)this.dom.objectiveText.textContent='星铃 '+this.game.awakenedBells.length+'/3 · 指挥家'+
@@ -16286,6 +16506,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       document.body.classList.add('chapter-open');
       if(this.game.stage===4){this.playParkIntro();return;}
       if(this.game.stage===7){this.playLivehouseIntro();return;}
+      if(this.game.stage===8){this.playEighthIntro();return;}
       root.hidden = false;
       root.classList.remove('is-leaving');
       // 强制一帧初始态，保证 opacity 过渡从 0 开始。
@@ -16318,7 +16539,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         const done = this.chapterDone;
         this.chapterDone = null;
         if (done) done();
-        if(this.game.stage===6){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
+        if([6,8].includes(this.game.stage)){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
         this.scheduleAutoEndTurn();
       }, 720);
     }
@@ -16328,9 +16549,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.closeOverlay();
       this.endShown = false;
       this.busy = false;
-      const nextStage = [1,2,3,4,5,6,7].includes(stage) ? stage : this.game.stage || 1;
+      const nextStage = [1,2,3,4,5,6,7,8].includes(stage) ? stage : this.game.stage || 1;
       this.game = new MyGO.Game({ seed: seed || Date.now(), stage: nextStage,
-        recruited: nextStage >= 2 ? this.game.recruited.filter(id=>id!=='nijika') : [],
+        recruited: nextStage >= 2 ? this.game.recruited.filter(id=>nextStage!==7||id!=='nijika') : [],
         loadout: nextStage >= 2 && nextStage > this.game.stage ? this.game.exportLoadout() : undefined });
       this.renderer.setGame(this.game);
       this.chapterPlayed = false;
@@ -16341,12 +16562,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.syncMission();
       this.showBanner('第 1 回合', '我方行动 · PLAYER PHASE', 1600);
       this.showToast('新的战斗开始了。', 'success', 1600);
-      if(nextStage===7)setTimeout(()=>{if(this.game.stage===7&&!this.chapterPlayed&&!this.chapterOpen)this.playChapterIntro();},0);
+      if(nextStage>=7)setTimeout(()=>{if(this.game.stage===nextStage&&!this.chapterPlayed&&!this.chapterOpen)this.playChapterIntro();},0);
     }
 
     /** 开始下一章（或直接指定章节）。 */
     startNextStage() {
-      if(this.game.stage >= 7 || this.game.phase !== 'victory') return;
+      if(this.game.stage >= 8 || this.game.phase !== 'victory') return;
       const next = this.game.stage + 1;
       this.chapterPlayed = false;
       this.closeOverlay();
@@ -16562,6 +16783,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(this.game.stage===4){
         this.dom.objectiveText.textContent=this.parkObjectiveText();
       }
+      if(this.game.stage===8)this.dom.objectiveText.textContent='击败幻影 · '+this.game.mission.phantomIds.filter(id=>this.game.getUnit(id)?.dead).length+'/2 · 宝箱 '+this.game.openedChests.length+'/3';
       if(this.game.stage===6)this.dom.objectiveText.textContent=this.sixthObjectiveText();
       if(this.game.stage===7)this.dom.objectiveText.textContent='全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.nijikaJoined?' · 虹夏已入队':' · 回应虹夏的求助');
       if(this.game.stage===5)this.dom.objectiveText.textContent='击败东侧铁幕守卫长 · 宝箱 '+this.game.openedChests.length+'/2 · 钥匙持有者 '+this.game.living('enemy').filter(u=>u.drops.includes('chest_key')).length+' 人';
@@ -16626,13 +16848,13 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const frame = vp.parentElement;
       if (document.getElementById('game-shell')) {
         const aspect = this.renderer.logicalWidth / this.renderer.logicalHeight;
-        const width = this.game.stage===6?Math.max(1,frame.clientWidth-2):Math.max(1, Math.min(frame.clientWidth - 2, (frame.clientHeight - 2) * aspect));
+        const width = [6,8].includes(this.game.stage)?Math.max(1,frame.clientWidth-2):Math.max(1, Math.min(frame.clientWidth - 2, (frame.clientHeight - 2) * aspect));
         vp.style.width = width + 'px';
-        vp.style.height = (this.game.stage===6?Math.max(1,frame.clientHeight-2):width/aspect) + 'px';
+        vp.style.height = ([6,8].includes(this.game.stage)?Math.max(1,frame.clientHeight-2):width/aspect) + 'px';
       }
       const baseW = vp.offsetWidth;
-      const baseH = this.game.stage===6?baseW*this.renderer.logicalHeight/this.renderer.logicalWidth:vp.offsetHeight;
-      const zoomed = this.zoom > 1.001 || this.game.stage===6;
+      const baseH = [6,8].includes(this.game.stage)?baseW*this.renderer.logicalHeight/this.renderer.logicalWidth:vp.offsetHeight;
+      const zoomed = this.zoom > 1.001 || [6,8].includes(this.game.stage);
       vp.classList.toggle('is-zoomed', zoomed);
       if (zoomed) {
         this.dom.board.style.width = Math.round(baseW * this.zoom) + 'px';
@@ -16672,7 +16894,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     /** 选中/查看远处单位时，把格子滚进视口。仅影响镜头，不影响规则。 */
     revealCell(x, y) {
       const vp = this.dom.boardViewport;
-      if (!vp || this.zoom <= 1.001 && this.game.stage!==6) return;
+      if (!vp || this.zoom <= 1.001 && ![6,8].includes(this.game.stage)) return;
       const cellW = this.dom.board.offsetWidth / this.game.map.cols;
       const cellH = this.dom.board.offsetHeight / this.game.map.rows;
       const projected = this.game.stage>=2 && MyGO.MapProjection
@@ -16680,7 +16902,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const left = projected ? projected.x / this.renderer.logicalWidth * this.dom.board.offsetWidth - cellW/2 : x * cellW;
       const top = projected ? projected.y / this.renderer.logicalHeight * this.dom.board.offsetHeight - cellH/2 : y * cellH;
       // 至少留出 1.5 格的观察余量，避免选中单位贴边。
-      const pad = Math.max(24, Math.round(cellW * (this.game.stage===6?3:1.5)));
+      const pad = Math.max(24, Math.round(cellW * ([6,8].includes(this.game.stage)?3:1.5)));
       if (left < vp.scrollLeft + pad) vp.scrollLeft = Math.max(0, left - pad);
       else if (left + cellW > vp.scrollLeft + vp.clientWidth - pad) {
         vp.scrollLeft = left + cellW - vp.clientWidth + pad;
@@ -17090,7 +17312,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, 32, 32);
       ctx.imageSmoothingEnabled = false;
-      if(this.game.stage===7&&MyGO.LivehouseArt){
+      if(this.game.stage>=7&&MyGO.LivehouseArt){
         ctx.fillStyle=terrainId==='wall'?'#56343c':terrainId==='road'?'#25222e':'#38323b';ctx.fillRect(0,0,32,32);
         ctx.strokeStyle='#64545a';ctx.strokeRect(1,1,30,30);ctx.beginPath();ctx.moveTo(0,16);ctx.lineTo(32,16);ctx.stroke();
         if(terrainId==='fort'){ctx.fillStyle='#a6c8b4';ctx.fillRect(13,6,6,20);ctx.fillRect(6,13,20,6);}
@@ -17241,13 +17463,13 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         '身旁是「'+esc(this.game.nearbyUnlitLamp(unit).name)+'」路灯。消耗本次行动，永久照亮周围 6 格；点灯后本回合不能再攻击。';
 
       const chest=this.game.nearbyChest(unit);
-      if(chest)this.dom.contextText.innerHTML='身旁是「'+esc(chest.name)+'」。开箱消耗一把宝箱钥匙并结束行动。'+(this.game.canOpenChest(unit)?'':'请先击败湖上携带钥匙的天马骑士，再让持有钥匙的角色靠近。');
+      if(chest)this.dom.contextText.innerHTML='身旁是「'+esc(chest.name)+'」。开箱消耗一把宝箱钥匙并结束行动。'+(this.game.canOpenChest(unit)?'':'请先击败携带钥匙的天马骑士，再让持有钥匙的角色靠近。');
       this.setActions([
         ...(chest?[{label:this.game.canOpenChest(unit)?'使用宝箱钥匙 · 开箱':'开箱 · 缺少宝箱钥匙',className:'primary',disabled:!this.game.canOpenChest(unit),onClick:()=>{
           const reward=this.game.openChest(unit);if(!reward)return;
           this.renderer.floatText('宝箱开启',reward.chest.x,reward.chest.y,'#ffe0a0',11);
           this.resetSelection();this.updateAll();
-          this.showToast(reward.gold?'获得 500 G！':'获得'+MyGO.Inventory.item(reward.drop.id).name+'，已放入'+reward.drop.location+'。','success',4500);
+          this.showToast(reward.gold?'获得 '+reward.gold+' G！':'获得'+MyGO.Inventory.item(reward.drop.id).name+'，已放入'+reward.drop.location+'。','success',4500);
         }}]:[]),
         ...(this.game.canLightLamp(unit)?[{label:'点亮路灯 · '+this.game.nearbyUnlitLamp(unit).name,className:'primary',onClick:()=>{
           const wasFound=this.game.bossDiscovered,lamp=this.game.lightLamp(unit);if(!lamp)return;
@@ -17379,7 +17601,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         '<span class="tag">第 ' + this.game.turn + ' 回合</span>'
       ].join('');
       const open = this.game.gateOpen;
-      const steps = this.game.stage===7?[['回应求助','开场回应虹夏后，她立即成为可操控同伴。'],['清理演出厅','利用两侧通道绕过设备，逐组击败失真回声。'],['夺回舞台','舞台上的敌人也要全部击败；右上角显示剩余敌人。']]:this.game.stage===6?[
+      const steps = this.game.stage===8?[['击败两名幻影','向舞台最深处推进，同时击败术士爽世之影与佣兵灯之影即可获胜。'],['破甲与防空','重装高守备低魔防，使用魔法；携钥天马机动很高，注意弓的飞行特效。'],['三个宝箱','三名携钥天马各掉一把钥匙。西箱中级转职证，东箱1500 G，后台钢剑。击败最后一名幻影前完成搜宝。']]:this.game.stage===7?[['回应求助','开场回应虹夏后，她立即成为可操控同伴。'],['清理演出厅','利用两侧通道绕过设备，逐组击败失真回声。'],['夺回舞台','舞台上的敌人也要全部击败；右上角显示剩余敌人。']]:this.game.stage===6?[
         ['沿中央林荫道向北','从南部中央出发，穿过池塘、长椅与花圃，到达十八盏宫廷立灯围绕的王座。滚轮或触摸拖动纵向查看地图，点击同伴自动跟随。'],
         ['防备暗幕召唤','推进越过四个区段后，敌方阶段每轮最多召唤一波，混合普通兵、重装和天马。新援军当轮不行动。'],
         ['保持队形并应对兵种','援军会在队伍附近出现。用弓防空、用魔法破甲，保护后排并利用休憩据点恢复。'],
@@ -17461,7 +17683,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     renderTerrainInfo(x, y) {
       const terrain = this.game.getTerrain(x, y);
       const bell=this.game.bellAt(x,y);
-      const chest=this.game.stage===5?this.game.mission.chests.find(c=>c.x===x&&c.y===y):null;
+      const chest=[5,8].includes(this.game.stage)?this.game.mission.chests.find(c=>c.x===x&&c.y===y):null;
       this.dom.portraitBlock.dataset.side = 'terrain';
       this.dom.portraitBadge.textContent = '地形';
       this.dom.portraitLevel.textContent = columnLabel(x) + (y + 1);
@@ -17486,7 +17708,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.dom.contextText.innerHTML =
         '单位站上该格时获得对应加成；攻击判定读取<strong>防守方</strong>脚下的地形。' +
         '<span class="hint-line">点击空地查看地形，点击其他单位切换情报。</span>';
-      if(chest)this.dom.contextText.innerHTML=this.game.openedChests.includes(chest.id)?'这只宝箱已经开启。':'持有宝箱钥匙的我方角色站在宝箱上或相邻1格，在行动菜单选择开箱。内容：'+(chest.gold?'500 G':MyGO.Inventory.item(chest.item).name)+'。击败湖上携带钥匙的天马骑士可获得钥匙。';
+      if(chest)this.dom.contextText.innerHTML=this.game.openedChests.includes(chest.id)?'这只宝箱已经开启。':'持有宝箱钥匙的我方角色站在宝箱上或相邻1格，在行动菜单选择开箱。内容：'+(chest.gold?chest.gold+' G':MyGO.Inventory.item(chest.item).name)+'。击败携带钥匙的天马骑士可获得钥匙。';
       if(bell)this.dom.contextText.innerHTML=this.game.awakenedBells.includes(bell.id)
         ? '这处星铃已唤醒。当前进度 '+this.game.awakenedBells.length+'/3。'
         : '星铃仍在沉睡。我方停在此格后选择「唤醒星铃」，消耗一次行动并回复自身 30% 最大 HP。';
@@ -17541,7 +17763,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             this.game.living('enemy').filter(u=>u.guardGroup===unit.guardGroup).length+' 人。'+
             (unit.alerted?'全队已惊动，持续追击。':this.game.stage===3&&unit.guardGroup==='south'?'第四回合全面逼近；提前接近或攻击也会惊动守卫。':unit.guardRadius?'接近 '+unit.guardRadius+' 移动点内或攻击任一队员，会惊动全队。':this.game.stage===3?'开场即与仁菜交战。':'开门后行动。')+'</span>';
         }
-        if(this.game.stage===5&&unit.drops.length)detail+='<span class="hint-line">击败掉落：'+unit.drops.map(id=>esc(MyGO.Inventory.item(id).name)).join('、')+'。'+(unit.boss?'击败后立即通关，请先搜集宝箱。':'钥匙进入击败者背包；背包已满会自动腾位或送入运输队。')+'</span>';
+        if([5,8].includes(this.game.stage)&&unit.drops.length)detail+='<span class="hint-line">击败掉落：'+unit.drops.map(id=>esc(MyGO.Inventory.item(id).name)).join('、')+'。'+(unit.boss?'击败后立即通关，请先搜集宝箱。':'钥匙进入击败者背包；背包已满会自动腾位或送入运输队。')+'</span>';
         detail += '<span class="hint-line">攻击范围 ' + unit.weapon.range[0] + '–' + unit.weapon.range[1] +
           ' 格 · 基础命中 ' + Combat.hitOf(unit) + ' · 基础暴击率 ' + Combat.critRateOf(unit) + '% · 必杀回避 ' + Combat.critAvoidOf(unit) + '</span>';
         if(this.enemyThreatId===unit.id)detail+='<span class="hint-line">橙色格显示该单位移动后可攻击的范围；再次点击该敌人可关闭。</span>';
@@ -18105,14 +18327,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const at = timeText(loaded.savedAt) || '未知时间';
       if(this.chapterOpen)this.finishChapterIntro();
       this.game.restore(loaded.snapshot);
-      this.chapterPlayed=this.game.stage!==7||this.game.nijikaJoined;
+      this.chapterPlayed=this.game.stage===8?this.game.stageEightIntroSeen:this.game.stage!==7||this.game.nijikaJoined;
       this.renderer.setGame(this.game);
       this.endShown = false;
       this.resetSelection({ silent: true });
       this.lastSaveAt = at;
       this.syncMission();
       this.updateAll();
-      if(this.game.stage===6){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
+      if([6,8].includes(this.game.stage)){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
       if(this.game.stage===6&&this.game.maskRetreatPending){this.playMaskedEscape().then(()=>this.showEndScreen());return false;}
       if (this.game.isOver()) {
         // 正常流程不会写入终局存档；这里防御旧版本或手工构造的存档。
@@ -18120,7 +18342,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         return false;
       }
       this.renderIdleInfo();
-      if(this.game.stage===7&&!this.game.nijikaJoined)setTimeout(()=>{if(!this.chapterPlayed&&!this.chapterOpen)this.playChapterIntro();},0);
+      if(this.game.stage===8&&!this.game.stageEightIntroSeen||this.game.stage===7&&!this.game.nijikaJoined)setTimeout(()=>{if(!this.chapterPlayed&&!this.chapterOpen)this.playChapterIntro();},0);
       return true;
     }
 
@@ -18248,14 +18470,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         '    <div class="end-stat"><span>击破</span><b>' + Math.max(0, defeated) + ' / ' + enemyTotal + '</b></div>',
         '  </div>',
         '  <div class="end-copy">' + (win
-          ? (this.game.stage===7?'失真的噪音终于平息，STARRY 的舞台再次亮起。<br>全部敌人已击败，虹夏与大家一同守住了这里。<br>本章奖励 2000 G。':this.game.stage===6?'“留你们一命。”<br>神秘面具人在 1 HP 时打开传送阵离开，王座已空。<br>众人突破暗幕包围，本章奖励 2000 G。':this.game.stage===5?'双桥防线已突破。中级转职证 ×1、钢斧 ×1 已作为 Boss 战利品领取。<br>宝箱收集：'+this.game.openedChests.length+'/2；本章奖励 2000 G。':this.game.stage===4?'“这一次，我会和大家一起向前走。”<br>神秘幻影已击败。'+(this.game.soyoBossBonus?'爽世直面过去，已获得双倍击破经验。':'由爽世亲手击败幻影可获得双倍击破经验。'):this.game.stage===3?(this.game.ninaLost?'仁菜没能走出这场梦。今后的旅途中，她将不会加入同行之人。':'井芹仁菜已获救，加入同行之人。'):'“即使迷路，也要把这首歌传达出去。”')+'<br>' + esc(this.game.mission.chapter) + ' · ' + esc(this.game.mission.title) + ' · CLEAR'
+          ? (this.game.stage===8?'两名往日之影已消散，扩张的舞台恢复了寂静。<br>宝箱收集：'+this.game.openedChests.length+'/3；本章奖励 2000 G。':this.game.stage===7?'失真的噪音终于平息，STARRY 的舞台再次亮起。<br>全部敌人已击败，虹夏与大家一同守住了这里。<br>本章奖励 2000 G。':this.game.stage===6?'“留你们一命。”<br>神秘面具人在 1 HP 时打开传送阵离开，王座已空。<br>众人突破暗幕包围，本章奖励 2000 G。':this.game.stage===5?'双桥防线已突破。中级转职证 ×1、钢斧 ×1 已作为 Boss 战利品领取。<br>宝箱收集：'+this.game.openedChests.length+'/2；本章奖励 2000 G。':this.game.stage===4?'“这一次，我会和大家一起向前走。”<br>神秘幻影已击败。'+(this.game.soyoBossBonus?'爽世直面过去，已获得双倍击破经验。':'由爽世亲手击败幻影可获得双倍击破经验。'):this.game.stage===3?(this.game.ninaLost?'仁菜没能走出这场梦。今后的旅途中，她将不会加入同行之人。':'井芹仁菜已获救，加入同行之人。'):'“即使迷路，也要把这首歌传达出去。”')+'<br>' + esc(this.game.mission.chapter) + ' · ' + esc(this.game.mission.title) + ' · CLEAR'
           : '我方全灭。调整站位，利用森林与武器三角，再试一次。') + '</div>',
         '  <div class="modal-actions">',
         win ? '<button class="modal-btn" type="button" data-end-save>保存通关</button>' : '',
         win ? '<button class="modal-btn" type="button" data-end-shop>商店 · 补给</button>' : '',
         '<button class="modal-btn" type="button" data-end-formation>同行之人</button>',
-        win && this.game.stage < 7
-          ? '    <button class="modal-btn gold" type="button" data-end-next>进入第'+(['','二','三','四','五','六','七'][this.game.stage])+'章</button>'
+        win && this.game.stage < 8
+          ? '    <button class="modal-btn gold" type="button" data-end-next>进入第'+(['','二','三','四','五','六','七','八'][this.game.stage])+'章</button>'
           : '',
         '    <button class="modal-btn primary" type="button" data-end-restart>再次挑战</button>',
         '  </div>',
@@ -18586,6 +18808,77 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   </script>
   <script>
+/* ===== src/eighth-intro.js ===== */
+/* Stage-side continuation: a visible spatial distortion, summons and portal exit. */
+(function(global){
+ 'use strict';const M=global.MyGO,T=M.CONFIG.TILE,clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>{x=clamp(x);return x*x*(3-2*x);};
+ M.UI.prototype.playEighthIntro=function(){
+  const ui=this,game=this.game,r=this.renderer,root=this.dom.chapterIntro;
+  if(game.stageEightIntroSeen){this.finishChapterIntro();return;}
+  root.classList.add('livehouse-intro');root.querySelector('.livehouse-opening')?.remove();
+  const scene=document.createElement('div');scene.className='livehouse-opening eighth-opening';
+  scene.innerHTML='<div class="live-opening-head"><small>CHAPTER 08 / STARRY</small><h2>无尽舞台的往日之影</h2><span>舞台前沿 · 未散的暗幕</span></div>'+
+   '<canvas class="live-opening-canvas" width="1200" height="660" aria-label="面具人现身并施法扩张舞台，召唤普通敌人、重装、天马与两名往日之影，随后消失"></canvas>'+
+   '<div class="live-opening-caption" aria-live="polite"><canvas width="110" height="125"></canvas><div><small></small><p></p></div></div>'+
+   '<div class="live-opening-skip">自动播放 · 点击 / Enter / Esc 跳过演出</div>';
+  root.appendChild(scene);root.hidden=false;root.classList.remove('is-leaving');void root.offsetWidth;root.classList.add('is-visible');
+  const ctx=scene.querySelector('.live-opening-canvas').getContext('2d'),face=scene.querySelector('.live-opening-caption canvas'),speaker=scene.querySelector('.live-opening-caption small'),line=scene.querySelector('.live-opening-caption p');
+  const world=document.createElement('canvas');world.width=30*T;world.height=36*T;const wc=world.getContext('2d');
+  const folded=document.createElement('canvas');folded.width=30*T;folded.height=36*T;const fc=folded.getContext('2d');
+  const beats=[['舞台前沿','虹夏刚刚答应同行。众人还站在舞台附近，暗处却再次传来脚步声。','nijika'],
+   ['神秘面具人','“你们以为这么简单吗！”','masked_stranger'],
+   ['神秘面具人 · 暗幕施法','她举起手，幕布后的空间被扭曲。原本熟悉的舞台，正向看不见的深处延伸。','masked_stranger'],
+   ['神秘面具人 · 召唤','法阵一一亮起，幻兵、重装与天马骑士从暗幕中现身。','masked_stranger'],
+   ['长崎爽世','“舞台最里面的……是我和灯？那些是我们的幻影……”','soyo'],
+   ['高松灯','“那个人……消失了。但我们会一起，把眼前的幻影击败。”','tomori'],
+   ['任务目标 · 击败幻影','击败往日之影长崎爽世（术士）与往日之影高松灯（佣兵）。三名携钥天马各带一把宝箱钥匙。','tomori']];
+  const bounds=[1800,4200,7200,10600,13200,15400,17800],enemies=game.living('enemy'),normal=enemies.filter(u=>!u.boss),start=performance.now();
+  let raf=0,part=-1,stopped=false,last=start,camera={x:2,y:1,w:26,h:16};
+  const oldView=r.view;r.setView({mode:'idle'});game._liveIntro={visible:u=>u.side!=='enemy'};
+  const draw=now=>{
+   if(stopped||!ui.chapterOpen||ui.game!==game)return;
+   const elapsed=now-start,step=bounds.findIndex(t=>elapsed<t),growth=ease((elapsed-4200)/3000);
+   if(step<0){ui.finishChapterIntro();return;}
+   scene.dataset.beat=String(step);scene.dataset.stageGrowth=growth.toFixed(3);scene.dataset.maskVisible=String(elapsed<15100);
+   const reveal=u=>u.boss?10600+game.mission.phantomIds.indexOf(u.id)*450:7200+normal.indexOf(u)*105;
+   game._liveIntro={visible:u=>u.side!=='enemy'||elapsed>=reveal(u)};
+   for(const u of enemies)u._summonAlpha=ease((elapsed-reveal(u))/800);
+   if(part!==step){part=step;speaker.textContent=beats[step][0];line.textContent=beats[step][1];const f=face.getContext('2d');f.clearRect(0,0,110,125);M.Characters.drawPortrait(f,beats[step][2],0,0,110,125,{head:true});}
+   r.render(now);const s=r.scale,p=M.MapProjection.project(r.projection,0,0);wc.clearRect(0,0,world.width,world.height);
+   wc.drawImage(r.canvas,p.x*s,p.y*s,world.width*s,world.height*s,0,0,world.width,world.height);
+   for(const u of enemies){const age=elapsed-reveal(u);if(age>=-450&&age<1600){const a=age<0?clamp((age+450)/450):1-clamp((age-850)/750);
+    M.MaskedCourtArt.circle(wc,(u.x+.5)*T,(u.y+.84)*T,62,25,clamp((age+450)/1700),a);
+    wc.save();wc.globalAlpha=a*.32;wc.fillStyle='#c090ef';wc.fillRect((u.x+.5)*T-12,(u.y+.84)*T-48,24,48);wc.restore();}}
+   // Split along the new rows: the original room remains rigid while the stage unfolds.
+   fc.clearRect(0,0,folded.width,folded.height);fc.drawImage(world,0,0,30*T,6*T,0,0,30*T,6*T);
+   if(growth>0)fc.drawImage(world,0,6*T,30*T,8*T,0,6*T,30*T,8*T*growth);
+   fc.drawImage(world,0,14*T,30*T,22*T,0,(6+8*growth)*T,30*T,22*T);
+   const mx=14.5*T,my=5.9*T,maskAlpha=clamp(elapsed/850)*(1-ease((elapsed-13200)/1900));
+   if(maskAlpha>0){fc.save();fc.globalAlpha=maskAlpha;
+    M.MaskedCourtArt.circle(fc,mx,my,100,35,(elapsed%1700)/1700,.8);
+    const casting=elapsed>=1800&&elapsed<13200,action=casting?'summon':'idle',progress=casting?clamp((elapsed-1800)%2100/1400):(elapsed%1400)/1400;
+    M.MaskedCourtArt.action(fc,mx,my,65,action,M.MaskedCourtArt.frameAt(action,progress),'right',now);fc.restore();}
+   if(elapsed>=13200&&elapsed<15400){M.MaskedCourtArt.circle(fc,mx,my,145,50,clamp((elapsed-13200)/2200),1-clamp((elapsed-14700)/700));}
+   if(elapsed>=4200&&elapsed<7600){fc.save();fc.strokeStyle='rgba(202,141,241,'+(.5*Math.sin(growth*Math.PI))+')';fc.lineWidth=3;
+    fc.strokeRect(7*T,6*T,16*T,8*T*growth+1);fc.restore();}
+   const target=step===4?{x:5,y:0,w:21,h:13}:step>=5?{x:1,y:0,w:28,h:23}:{x:2,y:0,w:26,h:16+8*growth};
+   const dt=Math.min(100,now-last);last=now;const blend=1-Math.exp(-dt/650);for(const k of ['x','y','w','h'])camera[k]+=(target[k]-camera[k])*blend;
+   ctx.fillStyle='#0f101a';ctx.fillRect(0,0,1200,660);const fit=Math.min(1200/(camera.w*T),660/(camera.h*T)),ww=camera.w*T*fit,hh=camera.h*T*fit;
+   ctx.drawImage(folded,camera.x*T,camera.y*T,camera.w*T,camera.h*T,(1200-ww)/2,(660-hh)/2,ww,hh);
+   raf=requestAnimationFrame(draw);
+  };
+  this.parkIntroCleanup=()=>{
+   stopped=true;cancelAnimationFrame(raf);
+   game.completeEighthIntro();
+   if(ui.game===game){r.setView(oldView);ui.updateAll();ui.renderIdleInfo();}
+   setTimeout(()=>{root.classList.remove('livehouse-intro');scene.remove();},720);
+  };
+  raf=requestAnimationFrame(draw);
+ };
+})(window);
+
+  </script>
+  <script>
 /* ===== src/equipment-ui.js ===== */
 /* Searchable, read-only equipment reference. No inventory or battle-state writes. */
 (function (global) {
@@ -18862,7 +19155,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         if (action) {
           const name = action.getAttribute('data-entry-action');
           if (name === 'start') this.hideToGame();
-          if (name === 'chapter2' || name === 'chapter3' || name === 'chapter4' || name === 'chapter5' || name === 'chapter6' || name === 'chapter7') {
+          if (name === 'chapter2' || name === 'chapter3' || name === 'chapter4' || name === 'chapter5' || name === 'chapter6' || name === 'chapter7' || name === 'chapter8') {
             this.ui.chapterPlayed = false;
             this.ui.newGame(Date.now(), Number(name.slice(-1)));
             this.hasStarted = true;
@@ -19027,8 +19320,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         const loaded = info.loaded;
         const snapshot = loaded.snapshot;
         // 快照只保存会变化的数据（id/x/y/hp/acted/dead），阵营要从模板反查。
-        const savedMission = snapshot.stage===7?MyGO.CONFIG.STAGE_SEVEN:snapshot.stage===6?MyGO.CONFIG.STAGE_SIX:snapshot.stage===5?MyGO.CONFIG.STAGE_FIVE:snapshot.stage===4?MyGO.CONFIG.STAGE_FOUR:snapshot.stage === 3 ? MyGO.CONFIG.STAGE_THREE : snapshot.stage === 2 ? MyGO.CONFIG.STAGE_TWO : MyGO.CONFIG.MISSION;
-        const templates = MyGO.CONFIG.UNITS.concat(snapshot.stage===7?MyGO.CONFIG.STAGE_SEVEN.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:snapshot.nijikaJoined?'player':'ally'}]):snapshot.stage===6?MyGO.CONFIG.STAGE_SIX.enemies.concat(MyGO.CONFIG.STAGE_SIX.summonTemplates,[MyGO.CONFIG.NINA]):snapshot.stage===5?MyGO.CONFIG.STAGE_FIVE.enemies.concat([MyGO.CONFIG.NINA]):snapshot.stage===4?MyGO.CONFIG.STAGE_FOUR.enemies.concat([MyGO.CONFIG.NINA]):snapshot.stage===3?MyGO.CONFIG.STAGE_THREE.enemies.concat([MyGO.CONFIG.NINA]):[]);
+        const savedMission = snapshot.stage===8?MyGO.CONFIG.STAGE_EIGHT:snapshot.stage===7?MyGO.CONFIG.STAGE_SEVEN:snapshot.stage===6?MyGO.CONFIG.STAGE_SIX:snapshot.stage===5?MyGO.CONFIG.STAGE_FIVE:snapshot.stage===4?MyGO.CONFIG.STAGE_FOUR:snapshot.stage === 3 ? MyGO.CONFIG.STAGE_THREE : snapshot.stage === 2 ? MyGO.CONFIG.STAGE_TWO : MyGO.CONFIG.MISSION;
+        const templates = MyGO.CONFIG.UNITS.concat(snapshot.stage===8?MyGO.CONFIG.STAGE_EIGHT.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'}]):snapshot.stage===7?MyGO.CONFIG.STAGE_SEVEN.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:snapshot.nijikaJoined?'player':'ally'}]):snapshot.stage===6?MyGO.CONFIG.STAGE_SIX.enemies.concat(MyGO.CONFIG.STAGE_SIX.summonTemplates,[MyGO.CONFIG.NINA]):snapshot.stage===5?MyGO.CONFIG.STAGE_FIVE.enemies.concat([MyGO.CONFIG.NINA]):snapshot.stage===4?MyGO.CONFIG.STAGE_FOUR.enemies.concat([MyGO.CONFIG.NINA]):snapshot.stage===3?MyGO.CONFIG.STAGE_THREE.enemies.concat([MyGO.CONFIG.NINA]):[]);
         const sideById = new Map(templates.map((unit) => [unit.id, unit.side]));
         if (snapshot.stage >= 2 && (snapshot.recruited || []).includes('xueyue')) sideById.set('xueyue', 'player');
         if (snapshot.stage>=3 && !snapshot.ninaLost && (snapshot.recruited || []).includes('nina')) sideById.set('nina','player');
@@ -19641,7 +19934,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     const hashParams = new URLSearchParams(global.location.hash.replace(/^#/, ''));
     const seed = params.get('seed') || hashParams.get('seed');
     const stageParam = Number(params.get('stage') || hashParams.get('stage'));
-    const stage = [2,3,4,5,6,7].includes(stageParam) ? stageParam : 1;
+    const stage = [2,3,4,5,6,7,8].includes(stageParam) ? stageParam : 1;
     const ui = new global.MyGO.UI({ seed: seed ? Number(seed) : undefined, stage: stage });
     global.MYGO_UI = ui;
     global.MyGO.ui = ui;

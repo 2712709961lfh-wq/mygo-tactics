@@ -12,6 +12,11 @@
   const Pathfinding = MyGO.Pathfinding;
   const Combat = MyGO.Combat;
 
+  // Keep core-only consumers independent of optional chapter modules.
+  function missionForStage(stage) {
+    return stage===8?C.STAGE_EIGHT:stage===7?C.STAGE_SEVEN:stage===6?C.STAGE_SIX:stage===5?C.STAGE_FIVE:stage===4?C.STAGE_FOUR:stage===3?C.STAGE_THREE:stage===2?C.STAGE_TWO:C.MISSION;
+  }
+
   function cloneMap() {
     return {
       cols: C.COLS,
@@ -22,7 +27,7 @@
   }
 
   function stageTwoMap(stage = 2) {
-    const mission = stage === 7 ? C.STAGE_SEVEN : stage === 6 ? C.STAGE_SIX : stage === 5 ? C.STAGE_FIVE : stage === 4 ? C.STAGE_FOUR : stage === 3 ? C.STAGE_THREE : C.STAGE_TWO;
+    const mission = missionForStage(stage);
     return {
       cols: mission.cols,
       rows: mission.rows,
@@ -33,9 +38,10 @@
 
   function unitsForStage(stage, recruited) {
     if (stage >= 4) {
-      const m=C.missionForStage(stage);
+      const m=missionForStage(stage);
       const heroes=C.UNITS.filter(u=>u.side==='player'||u.id==='xueyue'&&recruited.includes('xueyue'));
       if(recruited.includes('nina'))heroes.push(C.NINA);
+      if(stage===8)heroes.push(C.NIJIKA);
       return heroes.map(u=>createUnit({...u,...m.spawns[u.id],side:'player',boss:false,dormant:false,
         facing:stage>=6?'up':'right',mapCols:m.cols,mapRows:m.rows})).concat(m.enemies.map(createUnit),stage===7?[createUnit({...C.NIJIKA,side:recruited.includes('nijika')?'player':'ally'})]:[]);
     }
@@ -126,19 +132,21 @@
   class Game {
     constructor(options) {
       const opts = options || {};
-      this.stage = [2,3,4,5,6,7].includes(opts.stage) ? opts.stage : 1;
+      this.stage = [2,3,4,5,6,7,8].includes(opts.stage) ? opts.stage : 1;
       this.recruited = Array.isArray(opts.recruited) ? ['xueyue','nina','nijika'].filter(id=>opts.recruited.includes(id)) : [];
       if(this.stage<7)this.recruited=this.recruited.filter(id=>id!=='nijika');
+      if(this.stage===8&&!this.recruited.includes('nijika'))this.recruited.push('nijika');
       if (this.stage === 1) this.recruited = [];
       this.recruitmentShown = false;
       this.ninaLost = !!opts.ninaLost;
       if(this.ninaLost)this.recruited=this.recruited.filter(id=>id!=='nina');
       this.ninaRecruitmentShown = false;
-      this.nijikaJoined=this.stage===7&&this.recruited.includes('nijika');
+      this.nijikaJoined=this.stage>=7&&this.recruited.includes('nijika');
       this.livehouseEndingShown=false;
+      this.stageEightIntroSeen=false;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       this.units = unitsForStage(this.stage, this.recruited);
-      this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
+      this.mission = missionForStage(this.stage);
       this.convoy = MyGO.Inventory.stock();
       this.lootReserve=[];
       this.gold=MyGO.Shop.START_GOLD;
@@ -151,7 +159,7 @@
       this.openedChests=[];
       this.bossDiscovered=false;
       this.soyoBossBonus=false;
-      this.enemyScaleLevel=0;
+      this.enemyScaleLevel=0;this.enemyScalePower=0;
       if(this.stage>=4)this.scaleParkEnemies();
       this.turn = 1;
       this.phase = 'player'; // player | enemy | victory | defeat
@@ -161,6 +169,13 @@
       this.awakenedBells = [];
       this.lastHealing = [];
       this.startedAt = Date.now();
+    }
+
+    completeEighthIntro() {
+      if(this.stage!==8)return;
+      this.stageEightIntroSeen=true;
+      delete this._liveIntro;
+      for(const u of this.units)delete u._summonAlpha;
     }
 
     joinNijika() {
@@ -346,18 +361,19 @@
 
     /** 切换静态关卡数据（不影响回合/单位状态，由 restore 重新填充）。 */
     _setupStage(stage) {
-      this.stage = [2,3,4,5,6,7].includes(stage) ? stage : 1;
+      this.stage = [2,3,4,5,6,7,8].includes(stage) ? stage : 1;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       this.units = unitsForStage(this.stage, this.recruited);
-      this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
+      this.mission = missionForStage(this.stage);
       this.gateOpen = false;
-      this.nijikaJoined=this.stage===7&&this.recruited.includes('nijika');
+      this.nijikaJoined=this.stage>=7&&this.recruited.includes('nijika');
       this.livehouseEndingShown=false;
+      this.stageEightIntroSeen=false;
       this.resonanceOpen = false;
       this.awakenedBells = [];
       this.litLamps=[];
       this.summonedWaves=[];this.maskRetreatPending=false;this.maskEscaped=false;this.lastSummonTurn=0;
-      this.openedChests=[];this.bossDiscovered=false;this.soyoBossBonus=false;this.enemyScaleLevel=0;
+      this.openedChests=[];this.bossDiscovered=false;this.soyoBossBonus=false;this.enemyScaleLevel=0;this.enemyScalePower=0;
       if(this.stage>=4)this.scaleParkEnemies();
     }
 
@@ -399,13 +415,14 @@
     }
 
     /** Scale from authored stats, never from previously scaled stats; preserve HP ratio. */
-    scaleParkEnemies(level,units=this.units,force=false) {
+    scaleParkEnemies(level,units=this.units,force=false,legacyEighth=false) {
       if(this.stage<4)return;
+      if(this.stage===8&&!legacyEighth)return this.scaleEighthEnemies(level,units,force);
       const party=units.filter(u=>u.side==='player');
       const target=level??Math.min(97,Math.ceil(party.reduce((n,u)=>n+u.level,0)/Math.max(1,party.length)));
       if(target<=this.enemyScaleLevel&&!force)return;
       for(const u of units.filter(u=>u.side==='enemy')){
-        const base=C.missionForStage(this.stage).enemies.concat(this.stage===6?C.STAGE_SIX.summonTemplates:[]).find(t=>t.id===u.id),ratio=u.hp/u.maxHp;
+        const base=missionForStage(this.stage).enemies.concat(this.stage===6?C.STAGE_SIX.summonTemplates:[]).find(t=>t.id===u.id),ratio=u.hp/u.maxHp;
         u.level=Math.min(99,target+(u.boss?2:0));const d=u.level-base.level;
         const courtArmor=this.stage>=5&&u.tags.includes('armor');
         for(const [k,rate] of Object.entries({maxHp:courtArmor?(u.boss?2:1):u.boss?3:2,str:.65,mag:.65,dex:.5,spd:.35,def:.4,res:courtArmor?.15:.45,lck:.3}))
@@ -413,6 +430,45 @@
         u.hp=u.dead?0:Math.max(1,Math.ceil(u.maxHp*ratio));
       }
       this.enemyScaleLevel=target;
+    }
+
+    /** Fixed panel totals for phantoms/armor/pegasi; ordinary soldiers
+     * follow party effective power. Legacy mode reconstructs v5.8.2 HP limits
+     * before migrating wounds, and must keep the original total-stat formula. */
+    scaleEighthEnemies(level,units=this.units,force=false,legacy=false) {
+      const party=units.filter(u=>u.side==='player');
+      const target=Math.min(97,Math.max(10,this.enemyScaleLevel||0,level||0,...party.map(u=>u.level)));
+      const effectiveTotal=u=>Combat.statTotalOf(u)-(u.weapon.damageType==='magic'?(u.str||0):(u.mag||0));
+      const power=Math.max(100,this.enemyScalePower||0,...party.map(legacy?Combat.statTotalOf:effectiveTotal));
+      if(!force&&target===this.enemyScaleLevel&&power===this.enemyScalePower)return;
+      for(const u of units.filter(u=>u.side==='enemy')){
+        const base=C.STAGE_EIGHT.enemies.find(t=>t.id===u.id),ratio=u.hp/u.maxHp;
+        const armor=u.tags.includes('armor'),flying=u.tags.includes('flying'),magic=C.WEAPONS[base.weapon].damageType==='magic';
+        u.level=Math.min(99,target+(u.boss?2:0));const delta=u.level-base.level;
+        const fixed=!legacy&&(C.STAGE_EIGHT.balanceStats[u.id]||C.STAGE_EIGHT.balanceStats[armor?'armor':flying?'flying':'']);
+        if(fixed){
+          Object.assign(u,fixed);
+          u.hp=u.dead?0:Math.max(1,Math.ceil(u.maxHp*ratio-1e-9));
+          continue;
+        }
+        for(const [key,rate] of Object.entries({maxHp:armor?1:u.boss?3:2,str:.65,mag:.65,dex:.5,spd:.35,def:.4,res:armor?.15:.45,lck:.3}))
+          u[key]=Math.max(key==='maxHp'?12:0,base[key]+Math.round(Math.max(0,delta)*(legacy||key!==(magic?'str':'mag')?rate:0)));
+        const budget=Math.ceil(power*(u.boss?1.30:armor?1.05:flying?1:.95));
+        const total=legacy?Combat.statTotalOf(u):Combat.statTotalOf(u)-(magic?u.str:u.mag);
+        const extra=Math.max(0,budget-total);
+        // No movement inflation; distribute power into each class's useful stats.
+        const weights=armor?{maxHp:34,str:21,dex:13,spd:4,lck:4,def:21,res:3}
+          :magic?{maxHp:30,mag:23,dex:12,spd:10,lck:6,def:6,res:13}
+          :flying?{maxHp:30,str:20,dex:14,spd:17,lck:5,def:5,res:9}
+          :{maxHp:34,str:19,dex:13,spd:12,lck:6,def:10,res:6};
+        const parts=Object.entries(weights).map(([key,weight])=>({key,n:Math.floor(extra*weight/100),fraction:extra*weight%100}));
+        parts.sort((a,b)=>b.fraction-a.fraction);
+        const remainder=extra-parts.reduce((n,p)=>n+p.n,0);
+        for(let i=0;i<remainder;i++)parts[i].n++;
+        for(const p of parts)u[p.key]+=p.n;
+        u.hp=u.dead?0:Math.max(1,Math.ceil(u.maxHp*ratio-1e-9));
+      }
+      this.enemyScaleLevel=target;this.enemyScalePower=power;
     }
 
     /** At most one mixed wave each enemy phase; appearing units wait a full round. */
@@ -464,7 +520,7 @@
 
     getTerrain(x, y) {
       const t=Grid.terrainAt(this.map, x, y);
-      if(this.stage===7){
+      if(this.stage>=7){
         const labels={plaza:['演出厅地板','宽敞的观众站席，可沿两侧绕过设备箱和立柱。'],road:['舞台地板','Live House 的演出舞台。仍有敌人占据这里。'],wall:['隔墙与设备','不可穿越的隔墙、音箱、鼓组或固定设备。'],fort:['急救补给点','场馆的急救补给位置，回合开始时回复生命。']};
         const label=labels[t.id];if(label)return {...t,name:label[0],desc:label[1]};
       }
@@ -606,7 +662,7 @@
     }
 
     nearbyChest(unit){
-      return this.stage===5&&unit?(this.mission.chests.find(c=>!this.openedChests.includes(c.id)&&Grid.manhattan(unit,c)<=1)||null):null;
+      return [5,8].includes(this.stage)&&unit?(this.mission.chests.find(c=>!this.openedChests.includes(c.id)&&Grid.manhattan(unit,c)<=1)||null):null;
     }
 
     canOpenChest(unit){
@@ -791,7 +847,7 @@
         result.keyRecipientId = attacker.id;
         result.storedForKey = this._awardGateKey(attacker);
       }
-      if(killed&&this.stage===5&&defender.side==='enemy'&&attacker?.side==='player'&&!attacker.dead){
+      if(killed&&[5,8].includes(this.stage)&&defender.side==='enemy'&&attacker?.side==='player'&&!attacker.dead){
         result.drops=defender.drops.map(id=>this.awardLoot(attacker,id));
         for(const id of defender.drops){const at=defender.inventory.findIndex(i=>i.id===id);if(at>=0)defender.inventory.splice(at,1);}
       }
@@ -825,7 +881,7 @@
      */
     checkOutcome() {
       if (this.isOver()) return this.winner;
-      const victory=this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
+      const victory=this.stage===8 ? this.stageEightIntroSeen&&this.mission.phantomIds.every(id=>this.getUnit(id)?.dead) : this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
         ? this.awakenedBells.length>=this.mission.requiredBells && !!this.getUnit('conductor')?.dead
         : this.livingCount('enemy')===0;
       if (this.livingCount('player') === 0) {
@@ -917,6 +973,7 @@
         awakenedBells: this.awakenedBells.slice(),
         ...(this.stage===4?{litLamps:this.litLamps.slice(),bossDiscovered:this.bossDiscovered,
           soyoBossBonus:this.soyoBossBonus,enemyScaleLevel:this.enemyScaleLevel}:{}),
+        ...(this.stage===8?{stageEightIntroSeen:this.stageEightIntroSeen,enemyScaleVersion:3,enemyScalePower:this.enemyScalePower,nijikaLevelVersion:1,openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===5?{openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===6?{summonedWaves:this.summonedWaves.slice(),lastSummonTurn:this.lastSummonTurn,maskRetreatPending:this.maskRetreatPending,maskEscaped:this.maskEscaped,enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===7?{nijikaJoined:this.nijikaJoined,nijikaLevelVersion:1,livehouseEndingShown:this.livehouseEndingShown,enemyScaleLevel:this.enemyScaleLevel}:{}),
@@ -955,11 +1012,12 @@
         throw new Error('第二关地图已重新设计，请重开第二关；旧存档仍然保留。');
       }
       if (snapshot.stage === 3 && snapshot.mapRevision !== C.STAGE_THREE.mapRevision) throw new Error('第三关地图版本不兼容');
+      if(snapshot.stage===8&&snapshot.mapRevision!==C.STAGE_EIGHT.mapRevision)throw Error('第八关地图版本不兼容');
       if(snapshot.stage===7&&snapshot.mapRevision!==C.STAGE_SEVEN.mapRevision)throw Error('第七关地图版本不兼容');
       if (snapshot.stage === 6 && snapshot.mapRevision !== C.STAGE_SIX.mapRevision) throw Error('第六关地图版本不兼容');
       if (snapshot.stage === 5 && snapshot.mapRevision !== C.STAGE_FIVE.mapRevision) throw new Error('第五关地图版本不兼容');
       if (snapshot.stage === 4 && snapshot.mapRevision !== C.STAGE_FOUR.mapRevision) throw new Error('第四关地图版本不兼容');
-      if (![2,3,4,5,6,7].includes(snapshot.stage) && snapshot.mapRevision !== C.MAP_REVISION) {
+      if (![2,3,4,5,6,7,8].includes(snapshot.stage) && snapshot.mapRevision !== C.MAP_REVISION) {
         throw new Error('第一关地图已更新，请重开第一关；旧存档仍然保留。');
       }
       const bells=snapshot.stage===2 ? snapshot.awakenedBells || [] : [];
@@ -967,7 +1025,7 @@
         bells.some(id=>!C.STAGE_TWO.bells.some(b=>b.id===id)))throw new Error('存档星铃数据无效');
 
       // 地图是可变的（大门开启后会换成 gateOpen），读档先恢复关卡与静态地图。
-      this.stage = [2,3,4,5,6,7].includes(snapshot.stage) ? snapshot.stage : 1;
+      this.stage = [2,3,4,5,6,7,8].includes(snapshot.stage) ? snapshot.stage : 1;
       if(this.stage===4){
         const lamps=snapshot.litLamps;
         if(!Array.isArray(lamps)||new Set(lamps).size!==lamps.length||lamps.some(id=>!C.STAGE_FOUR.lamps.some(l=>l.id===id)))throw Error('存档路灯数据无效');
@@ -998,7 +1056,7 @@
       const legacyJoined = this.stage === 1 && this.recruited.includes('xueyue') && snapshot.recruitmentVersion !== 1;
       if (this.stage === 1 && snapshot.phase !== 'victory') this.recruited = [];
       this.recruitmentShown = snapshot.recruitmentVersion === 1 && !!snapshot.recruitmentShown;
-      this.nijikaJoined=this.stage===7&&snapshot.nijikaJoined===true;
+      this.nijikaJoined=this.stage===8||this.stage===7&&snapshot.nijikaJoined===true;
       this.livehouseEndingShown=this.stage===7&&snapshot.livehouseEndingShown===true;
       if(this.stage===7){
         if(snapshot.livehouseEndingShown!==undefined&&typeof snapshot.livehouseEndingShown!=='boolean'||this.livehouseEndingShown&&snapshot.phase!=='victory')throw Error('Live House 战后剧情状态无效');
@@ -1007,7 +1065,22 @@
         if(!Number.isInteger(snapshot.enemyScaleLevel)||snapshot.enemyScaleLevel<1||snapshot.enemyScaleLevel>97)throw Error('存档敌军等级无效');
         const expected=unitsForStage(this.stage,this.recruited);
         if(snapshot.units.length!==expected.length||snapshot.units.some(u=>!expected.some(t=>t.id===u.id)))throw Error('第七关单位数据无效');
-      }else this.recruited=this.recruited.filter(id=>id!=='nijika');
+      }else if(this.stage!==8)this.recruited=this.recruited.filter(id=>id!=='nijika');
+      this.stageEightIntroSeen=this.stage===8&&snapshot.stageEightIntroSeen===true;
+      this.enemyScalePower=0;
+      if(this.stage===8&&snapshot.enemyScaleVersion!==undefined){
+        if(![1,2,3].includes(snapshot.enemyScaleVersion)||!Number.isSafeInteger(snapshot.enemyScalePower)||snapshot.enemyScalePower<100||snapshot.enemyScalePower>100000)throw Error('第八关敌军强度数据无效');
+        this.enemyScalePower=snapshot.enemyScalePower;
+      }
+      if(this.stage===8){
+        if(typeof snapshot.stageEightIntroSeen!=='boolean'||!this.recruited.includes('nijika')||snapshot.nijikaLevelVersion!==1)throw Error('第八关开场状态无效');
+        if(!this.stageEightIntroSeen&&snapshot.phase!=='player')throw Error('第八关开场尚未完成');
+        const opened=snapshot.openedChests,expected=unitsForStage(8,this.recruited);
+        if(!Array.isArray(opened)||new Set(opened).size!==opened.length||opened.some(id=>!C.STAGE_EIGHT.chests.some(c=>c.id===id)))throw Error('存档宝箱数据无效');
+        if(!Number.isInteger(snapshot.enemyScaleLevel)||snapshot.enemyScaleLevel<1||snapshot.enemyScaleLevel>97)throw Error('存档敌军等级无效');
+        if(snapshot.units.length!==expected.length||snapshot.units.some(u=>!expected.some(t=>t.id===u.id)))throw Error('第八关单位数据无效');
+        this.openedChests=opened.slice();
+      }
       const fresh = unitsForStage(this.stage, this.recruited);
       if(this.stage===6){
         const ids=snapshot.summonedWaves;
@@ -1022,7 +1095,14 @@
         if(snapshot.units.length!==fresh.length||snapshot.units.some(u=>!expected.has(u.id)))throw Error('存档召唤单位无效');
       }
       this.enemyScaleLevel=0;
-      if(this.stage>=4)this.scaleParkEnemies(snapshot.enemyScaleLevel,fresh);
+      if(this.stage===8&&snapshot.enemyScaleVersion===1)this.scaleEighthEnemies(snapshot.enemyScaleLevel,fresh,false,true);
+      else if(this.stage>=4)this.scaleParkEnemies(snapshot.enemyScaleLevel,fresh,false,this.stage===8&&snapshot.enemyScaleVersion===undefined);
+      // Both v5.8.3 and v5.8.4 used these HP limits. Restore wounds against
+      // those limits before applying the corrected panel budgets below.
+      if(this.stage===8&&snapshot.enemyScaleVersion===2)for(const u of fresh.filter(u=>u.side==='enemy')){
+        const oldMaxHp=u.id==='dark_soyo'?42:u.id==='dark_tomori'?43:u.tags.includes('armor')?32:u.tags.includes('flying')?29:0;
+        if(oldMaxHp){u.maxHp=oldMaxHp;u.hp=oldMaxHp;}
+      }
       const byId = new Map(fresh.map((u) => [u.id, u]));
       const seen = new Set();
 
@@ -1042,7 +1122,7 @@
         unit.x = saved.x;
         unit.y = saved.y;
         unit.growthRngState=MyGO.Growth.seed(unit.id,snapshot.rngState);
-        if(this.stage===7&&unit.id==='nijika'&&saved.growth){
+        if(this.stage>=7&&unit.id==='nijika'&&saved.growth){
           // The free level has no growth. Keep the old validation allowance so
           // a migrated Lv.99 save can retain every previously earned stat.
           unit.growthBase.level=8;
@@ -1086,6 +1166,12 @@
         Object.assign(guard,{x:cells[0].x,y:cells[0].y});
       }
 
+      // Reconstruct old limits before applying the corrected panel budgets.
+      if(this.stage===8){
+        if(![2,3].includes(snapshot.enemyScaleVersion)){this.enemyScaleLevel=0;this.enemyScalePower=0;}
+        this.scaleParkEnemies(undefined,fresh,snapshot.enemyScaleVersion!==3);
+      }
+
       // 防御性检查：存活单位不能重叠。
       const occupied = new Set();
       for (const u of fresh) {
@@ -1105,7 +1191,7 @@
       if(nina && this.ninaLost) Object.assign(nina,{dead:true,hp:0,acted:true,side:'ally'});
       if(nina && this.recruited.includes('nina') && !nina.dead && !this.ninaLost) Object.assign(nina,{side:'player',acted:this.stage===3?true:nina.acted,
         quote:'你们真的来了……我叫井芹仁菜。接下来，让我也一起走吧。'});
-      this.mission = this.stage === 7 ? C.STAGE_SEVEN : this.stage === 6 ? C.STAGE_SIX : this.stage === 5 ? C.STAGE_FIVE : this.stage === 4 ? C.STAGE_FOUR : this.stage === 3 ? C.STAGE_THREE : this.stage === 2 ? C.STAGE_TWO : C.MISSION;
+      this.mission = missionForStage(this.stage);
       this.refreshParkDiscovery();
       this.turn = Math.max(1, Number(snapshot.turn) || 1);
       this.phase = ['enemy','ally'].includes(snapshot.phase) ? 'player' : snapshot.phase;

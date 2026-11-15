@@ -162,7 +162,7 @@
           this.takiAttackCount = (this.takiAttackCount || 0) + 1;
         }
       }
-      if (attacker.id === 'tomori' && !result.crit) {
+      if ((attacker.id === 'tomori' || attacker.id === 'dark_tomori') && !result.crit) {
         if (opt.action === 'attack2') this.tomoriAction = 'attack2';
         else {
           this.tomoriAction = (this.tomoriAttackCount || 0) % 2 ? 'attack2' : 'attack';
@@ -428,7 +428,7 @@
       const kind = a.weapon.type;
       const ranged = kind === 'bow' || kind === 'tome';
       const takiCustom = a.id === 'taki' && MyGO.Characters && MyGO.Characters.hasActions(a.id);
-      const swordCustom = (a.id === 'tomori' || a.id === 'xueyue') && MyGO.Characters && MyGO.Characters.hasActions(a.id);
+      const swordCustom = ((a.id === 'tomori' || a.id === 'dark_tomori') || a.id === 'xueyue') && MyGO.Characters && MyGO.Characters.hasActions(a.id);
       const armorCustom = !!MyGO.WatercourtArt?.isArmored(a.id);
       const retreatStart = takiCustom || swordCustom || armorCustom || a.id === 'nina' ? 0.70 : 0.62;
       const gap = a.id === 'rana' && MyGO.Characters && MyGO.Characters.hasActions(a.id)
@@ -514,7 +514,7 @@
         const after = 1 - Math.abs(t - 0.45) / 0.13;
         if (after > 0) {
           for (let i = 3; i >= 1; i--) {
-            const running = (armorCustom || a.id === 'tomori' || a.id === 'xueyue' || a.id === 'rana' || a.id === 'taki' || a.id === 'nina') && MyGO.Characters && MyGO.Characters.hasActions(a.id);
+            const running = (armorCustom || (a.id === 'tomori' || a.id === 'dark_tomori') || a.id === 'xueyue' || a.id === 'rana' || a.id === 'taki' || a.id === 'nina') && MyGO.Characters && MyGO.Characters.hasActions(a.id);
             this._sprite(ctx, a, atkX - i * 13, atkY, 1, 0, atkLean * 0.4, 0.06 * after,
               swordCustom && r.crit ? 'rush' : running ? 'run' : 'attack',
               swordCustom && r.crit ? Math.min(2, Math.floor(clamp01((t - DASH_START) / .20) * 3))
@@ -716,7 +716,7 @@
           defY = feetY;
           defLean = 0;
         }
-      } else if (customDef && (b.id === 'tomori' || b.id === 'xueyue')) {
+      } else if (customDef && ((b.id === 'tomori' || b.id === 'dark_tomori') || b.id === 'xueyue')) {
         const idleTick = Math.floor(t * (this.duration || 1800) / 150) % (b.id === 'xueyue' ? 14 : 12);
         defState = idleTick < 6 ? 'idle' : 'idle2';
         defFrame = idleTick < 6 ? idleTick : idleTick - 6;
@@ -775,7 +775,7 @@
       this._sprite(ctx, a, atkX, atkY, 1, 0, atkLean, 1, atkState, atkFrame,
         a.id === 'nina' ? (r.crit ? 'attack3' : r.kind === 'combo' ? 'attack2' : 'attack')
           : a.id === 'xueyue' ? (r.crit ? 'rush' : this.xueyueAction || 'attack')
-          : a.id === 'tomori' ? (r.crit ? 'rush' : this.tomoriAction || 'attack')
+          : (a.id === 'tomori' || a.id === 'dark_tomori') ? (r.crit ? 'rush' : this.tomoriAction || 'attack')
           : a.id === 'taki' ? (r.crit ? 'special' : this.takiAction || 'attack')
           : a.id === 'rana' ? (r.crit ? 'attack2' : 'attack') : r.crit ? 'flame' : 'fireball');
 
@@ -842,7 +842,7 @@
     _drawSwordSlash(ctx, t, atkX, atkY, defX, defY) {
       if (MyGO.CombatVfx?.weapon(ctx, 'sword', t, atkX, atkY, defX, defY)) return;
       // The new Tomori artwork already contains sword and slash trails.
-      if ((this.attacker.id === 'tomori' || this.attacker.id === 'xueyue')
+      if (((this.attacker.id === 'tomori' || this.attacker.id === 'dark_tomori') || this.attacker.id === 'xueyue')
         && MyGO.Characters && MyGO.Characters.hasActions(this.attacker.id)) return;
       if (t < 0.48 || t > 0.67) return;
       const p = clamp01((t - 0.48) / 0.19);
@@ -1315,7 +1315,7 @@
       const ctx = bg.getContext('2d');
       ctx.imageSmoothingEnabled = false;
       ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
-      if(this.stage===7&&MyGO.LivehouseArt)MyGO.LivehouseArt.drawBattleBackground(ctx,W,H);
+      if(this.stage>=7&&MyGO.LivehouseArt)MyGO.LivehouseArt.drawBattleBackground(ctx,W,H);
       else if(this.stage>=4&&MyGO.ParkMap)MyGO.ParkMap.drawBattleBackground(ctx,W,H,this.lampsLit);
       else this._paintBackground(ctx);
       this._backgroundKey=(this.stage||1)+'|'+!!this.lampsLit;
