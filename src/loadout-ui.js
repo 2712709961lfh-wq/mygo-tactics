@@ -19,11 +19,11 @@
     const job=M.Classes.get(u.classId);if(!job)return '';
     return '<aside class="class-current"><span>当前职业 · '+esc(job.tierName)+'</span><strong>'+esc(job.name)+' <small>'+esc(job.en)+'</small></strong><p>擅长 '+esc(job.specialties)+' · '+esc(job.movement)+' · 移动 '+u.move+' 格</p><p class="class-path">培养方向：'+esc(M.Classes.paths[u.id]||'按擅长技能选择后续职业')+'</p></aside>';
   }
-  function classCatalogue(u,tier,game){
+  function classCatalogue(u,tier,game,lock){
     return classSummary(u)+'<div class="loadout-section-title"><strong>风花雪月 · '+M.Classes.items.length+' 种职业</strong><select aria-label="职业阶段筛选" data-class-tier><option value="all"'+(tier==='all'?' selected':'')+'>全部阶段</option>'+M.Classes.tiers.map(t=>'<option value="'+t.id+'"'+(tier===t.id?' selected':'')+'>'+esc(t.name)+'</option>').join('')+'</select></div>'+
-      '<p class="loadout-footnote">初级 Lv.5 → 中级 Lv.10 → 高级 Lv.20 → 最上级 Lv.30。普通职业达到等级并使用对应转职证即可取得资格，无需技能等级考试。特殊职业保留性别、专用证件及前置职业限制。首次转职消耗证件；已取得资格可免费切换。战斗中转职结束本次行动。</p>'+
+      '<p class="loadout-footnote">初级 Lv.5 → 中级 Lv.10 → 高级 Lv.20 → 最上级 Lv.30。普通职业达到等级并使用对应转职证即可取得资格，无需技能等级考试。拳斗士不限性别，其他职业保留原有性别、专用证件及前置职业限制。首次转职消耗证件；已取得资格可免费切换。战斗中转职结束本次行动；撤退同伴也可转职，仍保持撤退与原有 HP。</p>'+
       M.Classes.tiers.filter(t=>tier==='all'||t.id===tier).map(t=>'<section class="class-tier"><h4>'+esc(t.name)+' <small>'+M.Classes.query(t.id).length+' 种 · Lv.'+t.level+' 起</small></h4><div class="class-grid">'+M.Classes.query(t.id).map(job=>{
-        const reason=game.reclassReason(u,job.id),certified=(u.certifiedClasses||[]).includes(job.id);
+        const reason=lock||game.reclassReason(u,job.id),certified=(u.certifiedClasses||[]).includes(job.id);
         return '<article class="class-card'+(job.id===u.classId?' is-current':'')+'"><div><strong>'+esc(job.name)+'</strong>'+(job.id===u.classId?'<span class="class-badge">当前职业</span>':'')+'</div><small>'+esc(job.en)+'</small><p>擅长 '+esc(job.specialties)+'</p><p>'+esc(job.requirements)+'</p><footer>移动 '+job.move+' · '+(job.magic?'可使用魔法':'不可使用魔法')+(job.gender?' · '+job.gender+'性限定':'')+(job.dlc?' · DLC':'')+'</footer><button type="button" data-reclass="'+job.id+'"'+(reason?' disabled':'')+' title="'+esc(reason||'战斗中转职会结束行动')+'">'+esc(reason||(certified?'切换职业 · 已取得资格':'使用转职证'))+'</button></article>';
       }).join('')+'</div></section>').join('')+
       '<p class="loadout-footnote">转职后移动、移动类型、武器类别、魔法使用与职业成长率立即生效，已学魔法记录保留。职业技能与精通奖励尚未实现。</p>';
@@ -34,7 +34,7 @@
     if(t.dataset.loadoutTab){this.loadoutTab=t.dataset.loadoutTab;this.renderFormationDetail();this.dom.formationDetail.scrollTop=0;return;}
     const u=this.players().find(u=>u.id===this.selectedUnitId);if(!u)return;
     try{
-      const reason=this.loadoutLock(u);if(reason)throw Error(reason);
+      const reason=t.hasAttribute('data-reclass')?this.reclassLock(u):this.loadoutLock(u);if(reason)throw Error(reason);
       if(t.hasAttribute('data-bag-equip'))this.ui.game.equipItem(u,+t.dataset.bagEquip);
       else if(t.hasAttribute('data-bag-store'))this.ui.game.transferItem(u,+t.dataset.bagStore,true);
       else if(t.hasAttribute('data-bag-take'))this.ui.game.transferItem(u,+t.dataset.bagTake,false);
@@ -46,13 +46,14 @@
     }catch(err){this.ui.showToast(err.message,'error',2200);}
   });this.dom.formationDetail.addEventListener('change',e=>{if(e.target.matches('[data-stock-filter]')){this.stockFilter=e.target.value;this.renderFormationDetail();}if(e.target.matches('[data-class-tier]')){this.classTier=e.target.value;this.renderFormationDetail();}});};
   EP.loadoutLock=function(u){return this.ui.busy?'正在结算战斗':this.ui.mode!=='idle'?'请先返回战场，完成或取消当前单位的行动':this.ui.game.loadoutReason(u);};
+  EP.reclassLock=function(u){return this.ui.busy?'正在结算战斗':this.ui.mode!=='idle'?'请先返回战场，完成或取消当前单位的行动':this.ui.game.reclassLockReason(u);};
   EP.renderFormationDetail=function(){
     const active=this.loadoutTab||'stats';
     if(active==='stats'){baseRender.call(this);const unit=this.players().find(u=>u.id===this.selectedUnitId);this.dom.formationDetail.insertAdjacentHTML('afterbegin',tabs(active)+(unit?classSummary(unit)+experienceSummary(unit):''));return;}
     const u=this.players().find(u=>u.id===this.selectedUnitId);if(!u)return;
     if(active==='growth'){this.dom.formationDetail.innerHTML=tabs(active)+growthCatalogue(u);this.renderPoseDock(u);return;}
     if(active==='classes'){
-      this.dom.formationDetail.innerHTML=tabs(active)+classCatalogue(u,this.classTier||'all',this.ui.game);
+      this.dom.formationDetail.innerHTML=tabs(active)+classCatalogue(u,this.classTier||'all',this.ui.game,this.reclassLock(u));
       this.renderPoseDock(u);return;
     }
     const lock=this.loadoutLock(u),dis=lock?' disabled':'';

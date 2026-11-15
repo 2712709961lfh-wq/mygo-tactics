@@ -16,6 +16,7 @@ test('44条职业无角色专属职业，DLC并入最上级，舞者归入中级
     assert.equal(D.query(tier).length,n,tier);
   assert.equal(D.query('beginner').map(i=>i.name).join(','),'剑客,士兵,战士,修道士');
   assert.equal(D.get('archer').minLevel,10); assert.equal(D.get('cavalier').minLevel,10);
+  assert.equal(D.get('brawler').gender,null);
   assert.equal(D.get('war_monk').gender,'男'); assert.equal(D.get('war_cleric').gender,'女');
   for (const id of ['lord','enlightened_one','armored_lord','emperor','high_lord','great_lord','wyvern_master','barbarossa','death_knight'])
     assert.equal(D.get(id),null,id);
@@ -77,7 +78,7 @@ test('雪月招募及跨章读档继续使用剑客，背包继承正常',()=>{
 
 test('职业目录按角色标注当前职业，阶段筛选只显示所选阶段',()=>{
   const g=new M.Game(),ui=Object.create(M.EntryScreen.prototype);
-  ui.ui={game:g};ui.players=()=>g.units.filter(u=>u.side==='player');
+  ui.ui={game:g,mode:'idle',busy:false};ui.players=()=>g.units.filter(u=>u.side==='player');
   ui.selectedUnitId='anon';ui.loadoutTab='classes';ui.renderPoseDock=()=>{};
   ui.dom={formationDetail:{innerHTML:''}};
   ui.renderFormationDetail();let html=ui.dom.formationDetail.innerHTML;

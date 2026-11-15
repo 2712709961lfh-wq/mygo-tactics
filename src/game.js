@@ -238,8 +238,17 @@
       this.convoy.splice(index,1);this.gold+=price;this.collectReservedLoot();return price;
     }
 
+    reclassLockReason(unit){
+      if(!unit||unit.side!=='player')return '只有已入队的同伴可以转职';
+      if(this.phase!=='player'&&this.phase!=='victory')return '请在我方阶段或战后转职';
+      // Class management also applies to withdrawn companions. It never heals
+      // or revives them; their acted flag cannot lock out roster management.
+      if(!unit.dead&&unit.acted&&this.phase!=='victory')return '该角色已行动，请在下回合转职';
+      return '';
+    }
+
     reclassReason(unit,id){
-      const reason=this.loadoutReason(unit),job=MyGO.Classes.get(id);if(reason)return reason;
+      const reason=this.reclassLockReason(unit),job=MyGO.Classes.get(id);if(reason)return reason;
       if(!unit.classId||!job)return '该角色不能转为此职业';
       if(job.id===unit.classId)return '当前已是该职业';
       if(unit.level<job.minLevel)return '需要达到 Lv.'+job.minLevel;

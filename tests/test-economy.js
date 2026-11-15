@@ -97,7 +97,7 @@ test('已取得资格可免费回切，跨章和新存档保存职业移动武�
 });
 test('保留性别与专用证件、前置资格；失败不消耗任何证件',()=>{
   const g=new M.Game(),u=g.getUnit('tomori');level(u,30);g.convoy.push(...['intermediate_seal','master_seal','dark_seal','abyssian_seal'].map(I.make));
-  unchanged(g,()=>g.reclassUnit(u,'brawler'),/男性/);unchanged(g,()=>g.reclassUnit(u,'dark_bishop'),/男性/);
+  unchanged(g,()=>g.reclassUnit(u,'grappler'),/男性/);unchanged(g,()=>g.reclassUnit(u,'dark_bishop'),/男性/);
   unchanged(g,()=>g.reclassUnit(u,'dancer'),/舞者转职证/);unchanged(g,()=>g.reclassUnit(u,'trickster'),/盗贼/);
   g.reclassUnit(u,'thief');u.acted=false;g.reclassUnit(u,'trickster');assert.equal(u.classId,'trickster');assert(!g.convoy.some(i=>i.id==='abyssian_seal'));
 });

@@ -35,7 +35,7 @@
       ['cavalier','战马骑士','Cavalier','枪术 C、马术 D','剑、枪、马术',7,false],
       ['brigand','土匪','Brigand','斧术 C','斧、格斗',5,false],
       ['archer','弓箭手','Archer','弓术 C','剑、弓',5,false],
-      ['brawler','拳斗士','Brawler','格斗术 C','斧、格斗',5,false,'男'],
+      ['brawler','拳斗士','Brawler','格斗术 C','斧、格斗',5,false],
       ['mage','术师','Mage','理学 C','理学、信仰',4,true],
       ['dark_mage','暗术师','Dark Mage','理学 C；消耗暗魔法准考证','理学、信仰',4,true,'男'],
       ['priest','牧师','Priest','信仰 C','理学、信仰',4,true],
