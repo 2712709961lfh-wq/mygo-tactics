@@ -29,9 +29,9 @@ test('跳过区段也按顺序每轮召唤；击败召唤物后读档不重生',
  const g=fresh();const wave=approach(g,11);assert.equal(wave.id,'mask-wave-1');const u=wave.units[0];g.applyCombat({attackerId:'rana',defenderId:u.id,hit:true,finalDamage:999});
  const h=reload(g);assert(h.getUnit(u.id).dead);assert.equal(h.summonNearParty(),null);h.beginEnemyPhase();assert.equal(h.summonNearParty(),null);h.beginNextPlayerPhase();h.beginEnemyPhase();assert.equal(h.summonNearParty().id,'mask-wave-2');
 });
-test('援军沿用队伍等级缩放，保留重装低魔防、飞行越水、弓特效',()=>{
- const g=fresh();g.scaleParkEnemies(15);const wave=approach(g,32),a=wave.units.find(u=>u.tags.includes('armor')),p=wave.units.find(u=>u.tags.includes('flying'));
- assert.equal(a.level,15);assert.equal(p.level,15);assert(a.def-a.res>=12);assert.equal(M.Grid.movementCost(g.map,p,6,14),1);assert.equal(M.Grid.movementCost(g.map,g.getUnit('tomori'),6,14),Infinity);
+test('高等级队伍遭遇的援军仍使用固定模板，保留重装弱点、飞行越水、弓特效',()=>{
+ const g=fresh();for(const u of g.living('player'))u.level=99;g.beginNextPlayerPhase();const wave=approach(g,32),a=wave.units.find(u=>u.tags.includes('armor')),p=wave.units.find(u=>u.tags.includes('flying'));
+ assert.equal(a.level,8);assert.equal(p.level,8);assert(a.def-a.res>=12);assert.equal(M.Grid.movementCost(g.map,p,6,14),1);assert.equal(M.Grid.movementCost(g.map,g.getUnit('tomori'),6,14),Infinity);
  assert.equal(M.Combat.preview(g.getUnit('anon'),p,g.map).effectiveness,3);assert.equal(reload(g).getUnit(a.id).maxHp,a.maxHp);
 });
 test('普通及暴击预演锁1 HP，连击不继续，实际结算不死亡且等待离场',()=>{

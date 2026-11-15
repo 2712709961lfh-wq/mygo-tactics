@@ -12,6 +12,10 @@
   const Pathfinding = MyGO.Pathfinding;
   const Combat = MyGO.Combat;
 
+  // Non-serialized live context lets combat/UI/AI inspect adjacent protectors,
+  // including after movement, recruitment, deaths and chapter restoration.
+  function bindCombatMap(game){Object.defineProperty(game.map,'units',{configurable:true,get:()=>game.units});}
+
   // Keep core-only consumers independent of optional chapter modules.
   function missionForStage(stage) {
     return stage===8?C.STAGE_EIGHT:stage===7?C.STAGE_SEVEN:stage===6?C.STAGE_SIX:stage===5?C.STAGE_FIVE:stage===4?C.STAGE_FOUR:stage===3?C.STAGE_THREE:stage===2?C.STAGE_TWO:C.MISSION;
@@ -145,6 +149,7 @@
       this.livehouseEndingShown=false;
       this.stageEightIntroSeen=false;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
+      bindCombatMap(this);
       this.units = unitsForStage(this.stage, this.recruited);
       this.mission = missionForStage(this.stage);
       this.convoy = MyGO.Inventory.stock();
@@ -160,7 +165,7 @@
       this.bossDiscovered=false;
       this.soyoBossBonus=false;
       this.enemyScaleLevel=0;this.enemyScalePower=0;
-      if(this.stage>=4)this.scaleParkEnemies();
+      if(this.stage>=4)this.applyFixedEnemyStats();
       this.turn = 1;
       this.phase = 'player'; // player | enemy | victory | defeat
       this.winner = null;
@@ -354,9 +359,11 @@
         if(['warp','rescue'].includes(s.effect))this.setUnitPosition(u.id,destination.x,destination.y);
         MyGO.Inventory.sync(u);
       }
+      const talentHealing=MyGO.Talents?.onSupport(caster,s,changes)||0;
+      if(talentHealing)changes.push({id:caster.id,amount:talentHealing,talent:'同心'});
       caster.acted=true;MyGO.Inventory.sync(caster);
       const growth=MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
-      return {spell:s,changes,affected:affected.map(u=>u.id),experience:growth?[growth]:[]};
+      return {spell:s,changes,talentHealing,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
     }
 
     expireStatuses(side) {
@@ -372,6 +379,7 @@
     _setupStage(stage) {
       this.stage = [2,3,4,5,6,7,8].includes(stage) ? stage : 1;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
+      bindCombatMap(this);
       this.units = unitsForStage(this.stage, this.recruited);
       this.mission = missionForStage(this.stage);
       this.gateOpen = false;
@@ -383,7 +391,7 @@
       this.litLamps=[];
       this.summonedWaves=[];this.maskRetreatPending=false;this.maskEscaped=false;this.lastSummonTurn=0;
       this.openedChests=[];this.bossDiscovered=false;this.soyoBossBonus=false;this.enemyScaleLevel=0;this.enemyScalePower=0;
-      if(this.stage>=4)this.scaleParkEnemies();
+      if(this.stage>=4)this.applyFixedEnemyStats();
     }
 
     /** Party vision moves with units; lamplight remains until the end of the map. */
@@ -423,10 +431,35 @@
       if(this.stage===4){const boss=this.getUnit('dark_soyo');if(boss&&this.isUnitVisible(boss))this.bossDiscovered=true;}
     }
 
-    /** Scale from authored stats, never from previously scaled stats; preserve HP ratio. */
-    scaleParkEnemies(level,units=this.units,force=false,legacyEighth=false) {
+    /** Campaign enemies use authored chapter values, independent of the party.
+     * Keep wounds and battle state when migrating an older scaled save. */
+    applyFixedEnemyStats(units=this.units) {
       if(this.stage<4)return;
-      if(this.stage===8&&!legacyEighth)return this.scaleEighthEnemies(level,units,force);
+      const mission=missionForStage(this.stage),templates=mission.enemies.concat(this.stage===6?mission.summonTemplates:[]);
+      for(const u of units.filter(u=>u.side==='enemy')){
+        const base=templates.find(t=>t.id===u.id),ratio=u.hp/u.maxHp;
+        const job=base.classId?MyGO.Classes.get(base.classId):null;
+        u.level=base.level;
+        for(const key of ['maxHp','str','mag','dex','spd','lck','def','res'])u[key]=base[key]||0;
+        u.move=job?job.move:base.move;
+        if(this.stage===7){
+          const weapon=C.WEAPONS[base.weapon],bonus=mission.enemyStatBonuses[weapon.damageType==='magic'?'magic':weapon.type];
+          for(const [key,value] of Object.entries(bonus))u[key]+=value;
+        }
+        if(this.stage===8){
+          const profile=mission.balanceStats[u.id]||mission.balanceStats[u.tags.includes('armor')?'armor':u.tags.includes('flying')?'flying':''];
+          if(profile)Object.assign(u,profile);
+        }
+        u.hp=u.dead?0:Math.max(1,Math.min(u.maxHp,Math.ceil(u.maxHp*ratio-1e-9)));
+      }
+      // Kept in snapshots solely for compatibility with pre-fixed-stat saves.
+      this.enemyScaleLevel=Math.min(...mission.enemies.map(u=>u.level));this.enemyScalePower=this.stage===8?100:0;
+    }
+
+    /** Legacy save reconstruction only. Never called by current gameplay. */
+    restoreLegacyEnemyScale(level,units=this.units,force=false,legacyEighth=false,legacySeventh=false) {
+      if(this.stage<4)return;
+      if(this.stage===8&&!legacyEighth)return this.restoreLegacyEighthScale(level,units,force);
       const party=units.filter(u=>u.side==='player');
       const target=level??Math.min(97,Math.ceil(party.reduce((n,u)=>n+u.level,0)/Math.max(1,party.length)));
       if(target<=this.enemyScaleLevel&&!force)return;
@@ -436,7 +469,11 @@
         const courtArmor=this.stage>=5&&u.tags.includes('armor');
         for(const [k,rate] of Object.entries({maxHp:courtArmor?(u.boss?2:1):u.boss?3:2,str:.65,mag:.65,dex:.5,spd:.35,def:.4,res:courtArmor?.15:.45,lck:.3}))
           u[k]=Math.max(k==='maxHp'?(u.boss?(courtArmor?22:26):12):0,base[k]+Math.round(d*rate));
-        u.hp=u.dead?0:Math.max(1,Math.ceil(u.maxHp*ratio));
+        if(this.stage===7&&!legacySeventh){
+          const weapon=C.WEAPONS[base.weapon],bonus=C.STAGE_SEVEN.enemyStatBonuses[weapon.damageType==='magic'?'magic':weapon.type];
+          for(const [key,value] of Object.entries(bonus))u[key]+=value;
+        }
+        u.hp=u.dead?0:Math.max(1,Math.ceil(u.maxHp*ratio-(this.stage===7?1e-9:0)));
       }
       this.enemyScaleLevel=target;
     }
@@ -444,7 +481,7 @@
     /** Fixed panel profiles for every chapter-eight enemy. Legacy modes rebuild
      * previous scaling limits before migrating wounds: v1 uses total power,
      * v2/v3 scaled ordinary soldiers from effective power. */
-    scaleEighthEnemies(level,units=this.units,force=false,legacy=false,legacyRegular=false) {
+    restoreLegacyEighthScale(level,units=this.units,force=false,legacy=false,legacyRegular=false) {
       const party=units.filter(u=>u.side==='player');
       const target=Math.min(97,Math.max(10,this.enemyScaleLevel||0,level||0,...party.map(u=>u.level)));
       const effectiveTotal=u=>Combat.statTotalOf(u)-(u.weapon.damageType==='magic'?(u.str||0):(u.mag||0));
@@ -500,7 +537,7 @@
       const summoned=placements.map(t=>createUnit({...t,mapCols:this.map.cols,mapRows:this.map.rows}));
       for(const u of summoned){u.acted=true;u.alerted=true;u.growthRngState=MyGO.Growth.seed(u.id,this.rng.serialize());}
       this.units.push(...summoned);this.summonedWaves.push(wave.id);this.lastSummonTurn=this.turn;
-      this.scaleParkEnemies(this.enemyScaleLevel,this.units,true);
+      this.applyFixedEnemyStats(summoned);
       this.getUnit('masked_stranger').acted=true;
       return {id:wave.id,name:wave.name,units:summoned};
     }
@@ -784,6 +821,7 @@
     }
 
     previewCombat(attacker, defender) {
+      bindCombatMap(this);
       if (!this.canAttack(attacker, defender)) {
         throw new Error('目标不在攻击范围内');
       }
@@ -848,6 +886,7 @@
         defender.acted = true;
         if (this.stage === 3 && defender.id === 'nina') this.ninaLost = true;
       }
+      result.talentHealed=attacker?(MyGO.Talents?.onKill(attacker,defender,killed)||0):0;
       result.applied = true;
       result.hpBeforeApply = before;
       result.hpAfterApply = defender.hp;
@@ -944,7 +983,6 @@
       this.expireStatuses('enemy');
       this.decayWard('player');
       this.turn += 1;
-      if(this.stage>=4)this.scaleParkEnemies();
       if(this.stage===3 && this.turn>=4){
         for(const enemy of this.living('enemy'))if(enemy.guardGroup==='south')enemy.alerted=true;
       }
@@ -972,6 +1010,7 @@
     serialize() {
       return {
         version: C.SAVE_VERSION,
+        ...(this.stage>=4?{fixedEnemyStatsVersion:1}:{}),
         stage: this.stage,
         mapRevision: this.stage === 1 ? C.MAP_REVISION : this.mission.mapRevision,
         turn: this.turn,
@@ -982,10 +1021,10 @@
         awakenedBells: this.awakenedBells.slice(),
         ...(this.stage===4?{litLamps:this.litLamps.slice(),bossDiscovered:this.bossDiscovered,
           soyoBossBonus:this.soyoBossBonus,enemyScaleLevel:this.enemyScaleLevel}:{}),
-        ...(this.stage===8?{stageEightIntroSeen:this.stageEightIntroSeen,enemyScaleVersion:4,enemyScalePower:this.enemyScalePower,nijikaLevelVersion:1,openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
+        ...(this.stage===8?{stageEightIntroSeen:this.stageEightIntroSeen,enemyScaleVersion:4,enemyScalePower:this.enemyScalePower,nijikaLevelVersion:1,lootLayoutVersion:1,openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===5?{openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===6?{summonedWaves:this.summonedWaves.slice(),lastSummonTurn:this.lastSummonTurn,maskRetreatPending:this.maskRetreatPending,maskEscaped:this.maskEscaped,enemyScaleLevel:this.enemyScaleLevel}:{}),
-        ...(this.stage===7?{nijikaJoined:this.nijikaJoined,nijikaLevelVersion:1,livehouseEndingShown:this.livehouseEndingShown,enemyScaleLevel:this.enemyScaleLevel}:{}),
+        ...(this.stage===7?{nijikaJoined:this.nijikaJoined,nijikaLevelVersion:1,livehouseEndingShown:this.livehouseEndingShown,enemyScaleLevel:this.enemyScaleLevel,enemyBalanceVersion:1}:{}),
         recruited: this.recruited.slice(),
         recruitmentVersion: 1,
         recruitmentShown: this.recruitmentShown,
@@ -1016,6 +1055,7 @@
         throw new Error('存档版本不兼容');
       }
       if (!Array.isArray(snapshot.units)) throw new Error('存档单位数据缺失');
+      if(snapshot.fixedEnemyStatsVersion!==undefined&&snapshot.fixedEnemyStatsVersion!==1)throw Error('存档固定敌军属性版本无效');
       if(snapshot.inventoryVersion!==undefined&&snapshot.inventoryVersion!==1)throw Error('背包存档版本不兼容');
       if (snapshot.stage === 2 && snapshot.mapRevision !== C.STAGE_TWO.mapRevision) {
         throw new Error('第二关地图已重新设计，请重开第二关；旧存档仍然保留。');
@@ -1052,6 +1092,7 @@
       this.bossDiscovered=this.stage===4&&!!snapshot.bossDiscovered;
       this.soyoBossBonus=this.stage===4&&!!snapshot.soyoBossBonus;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
+      bindCombatMap(this);
       this.gateOpen = !!snapshot.gateOpen;
       this._syncGateTiles();
       this.resonanceOpen = this.stage===1 && !!snapshot.resonanceOpen;
@@ -1068,6 +1109,7 @@
       this.nijikaJoined=this.stage===8||this.stage===7&&snapshot.nijikaJoined===true;
       this.livehouseEndingShown=this.stage===7&&snapshot.livehouseEndingShown===true;
       if(this.stage===7){
+        if(snapshot.enemyBalanceVersion!==undefined&&snapshot.enemyBalanceVersion!==1)throw Error('第七关敌军平衡版本无效');
         if(snapshot.livehouseEndingShown!==undefined&&typeof snapshot.livehouseEndingShown!=='boolean'||this.livehouseEndingShown&&snapshot.phase!=='victory')throw Error('Live House 战后剧情状态无效');
         if(typeof snapshot.nijikaJoined!=='boolean'||this.nijikaJoined!==this.recruited.includes('nijika'))throw Error('虹夏入队状态无效');
         if(snapshot.nijikaLevelVersion!==undefined&&snapshot.nijikaLevelVersion!==1)throw Error('虹夏等级版本无效');
@@ -1082,6 +1124,7 @@
         this.enemyScalePower=snapshot.enemyScalePower;
       }
       if(this.stage===8){
+        if(snapshot.lootLayoutVersion!==undefined&&snapshot.lootLayoutVersion!==1)throw Error('第八关宝箱布局版本无效');
         if(typeof snapshot.stageEightIntroSeen!=='boolean'||!this.recruited.includes('nijika')||snapshot.nijikaLevelVersion!==1)throw Error('第八关开场状态无效');
         if(!this.stageEightIntroSeen&&snapshot.phase!=='player')throw Error('第八关开场尚未完成');
         const opened=snapshot.openedChests,expected=unitsForStage(8,this.recruited);
@@ -1104,12 +1147,13 @@
         if(snapshot.units.length!==fresh.length||snapshot.units.some(u=>!expected.has(u.id)))throw Error('存档召唤单位无效');
       }
       this.enemyScaleLevel=0;
-      if(this.stage===8&&snapshot.enemyScaleVersion===1)this.scaleEighthEnemies(snapshot.enemyScaleLevel,fresh,false,true);
-      else if(this.stage===8&&[2,3].includes(snapshot.enemyScaleVersion))this.scaleEighthEnemies(snapshot.enemyScaleLevel,fresh,false,false,true);
-      else if(this.stage>=4)this.scaleParkEnemies(snapshot.enemyScaleLevel,fresh,false,this.stage===8&&snapshot.enemyScaleVersion===undefined);
+      if(this.stage>=4&&snapshot.fixedEnemyStatsVersion===1)this.applyFixedEnemyStats(fresh);
+      else if(this.stage===8&&snapshot.enemyScaleVersion===1)this.restoreLegacyEighthScale(snapshot.enemyScaleLevel,fresh,false,true);
+      else if(this.stage===8&&[2,3].includes(snapshot.enemyScaleVersion))this.restoreLegacyEighthScale(snapshot.enemyScaleLevel,fresh,false,false,true);
+      else if(this.stage>=4)this.restoreLegacyEnemyScale(snapshot.enemyScaleLevel,fresh,false,this.stage===8&&snapshot.enemyScaleVersion===undefined,this.stage===7&&snapshot.enemyBalanceVersion===undefined);
       // Both v5.8.3 and v5.8.4 used these HP limits. Restore wounds against
       // those limits before applying the corrected panel budgets below.
-      if(this.stage===8&&snapshot.enemyScaleVersion===2)for(const u of fresh.filter(u=>u.side==='enemy')){
+      if(this.stage===8&&snapshot.fixedEnemyStatsVersion===undefined&&snapshot.enemyScaleVersion===2)for(const u of fresh.filter(u=>u.side==='enemy')){
         const oldMaxHp=u.id==='dark_soyo'?42:u.id==='dark_tomori'?43:u.tags.includes('armor')?32:u.tags.includes('flying')?29:0;
         if(oldMaxHp){u.maxHp=oldMaxHp;u.hp=oldMaxHp;}
       }
@@ -1176,10 +1220,19 @@
         Object.assign(guard,{x:cells[0].x,y:cells[0].y});
       }
 
-      // Reconstruct old limits before applying the corrected panel budgets.
-      if(this.stage===8){
-        if(![2,3,4].includes(snapshot.enemyScaleVersion)){this.enemyScaleLevel=0;this.enemyScalePower=0;}
-        this.scaleParkEnemies(undefined,fresh,snapshot.enemyScaleVersion!==4);
+      // Old saves were restored against their original limits above. Migrate
+      // directly to fixed chapter stats, preserving the exact wound ratio.
+      if(this.stage>=4)this.applyFixedEnemyStats(fresh);
+
+      // Only untouched key carriers still at their old spawn adopt the closer
+      // layout. Keep battle progress and never displace another living unit.
+      if(this.stage===8&&snapshot.lootLayoutVersion===undefined&&!['victory','defeat'].includes(snapshot.phase)){
+        for(const [id,old] of Object.entries(C.STAGE_EIGHT.legacyKeySpawns)){
+          const u=byId.get(id),spawn=C.STAGE_EIGHT.enemies.find(t=>t.id===id);
+          if(u.dead||u.acted||u.alerted||u.hp!==u.maxHp||u.x!==old.x||u.y!==old.y)continue;
+          if(fresh.some(other=>other!==u&&!other.dead&&!other.escaped&&other.x===spawn.x&&other.y===spawn.y))continue;
+          u.x=spawn.x;u.y=spawn.y;
+        }
       }
 
       // 防御性检查：存活单位不能重叠。

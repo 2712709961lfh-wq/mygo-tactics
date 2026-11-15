@@ -24,7 +24,16 @@
   maxHp:30,str:7,mag:11,dex:10,spd:11,lck:13,def:7,res:9,hit:0,move:4,tags:[],weapon:'nosferatu',spells:['nosferatu','heal'],x:14,y:20,facing:'up',
   quote:'谢谢你们回应我！我叫伊地知虹夏，这次就让我和大家一起守住这里吧。',
   art:{kind:'girl',hair:'#e6c455',hairDark:'#aa792f',hairStyle:'pony',outfit:'#30334a',outfitDark:'#1c2232',accent:'#9f3743',skin:'#f8dfc5',eye:'#a95931'}};
- C.STAGE_SEVEN={id:'mission-07',mapRevision:1,cols,rows,chapter:'MISSION 07',chapterJp:'第七话',chapterEn:'CHAPTER 07',
+ // Add after level scaling so every foe gains exactly 17 panel points.
+ // Physical units gain 13 effective points; magic units gain 12 (excluding STR).
+ const enemyStatBonuses={
+  sword:{maxHp:4,str:3,mag:4,dex:2,spd:2,lck:1,def:1},
+  lance:{maxHp:4,str:3,mag:4,dex:1,spd:1,lck:1,def:2,res:1},
+  axe:{maxHp:5,str:3,mag:4,dex:1,spd:1,lck:1,def:2},
+  bow:{maxHp:3,str:3,mag:4,dex:3,spd:2,lck:1,def:1},
+  magic:{maxHp:3,str:5,mag:3,dex:2,spd:1,lck:1,def:1,res:1}
+ };
+ C.STAGE_SEVEN={id:'mission-07',mapRevision:1,cols,rows,chapter:'MISSION 07',chapterJp:'第七话',chapterEn:'CHAPTER 07',enemyStatBonuses,
   title:'繁星之下的求援',mapName:'STARRY · 地下 Live House',
   subtitle:'熟悉的舞台传来失真的回响。独自走入 Live House 的虹夏，被突然现身的黑影包围，直到门口响起了回应。',
   objective:'击败全部敌人，夺回 Live House 的舞台',

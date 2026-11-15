@@ -83,12 +83,12 @@
   /** 展示用闪避值（地形闪避 + 速度回避）。 */
   function avoidOf(unit, map) {
     const terrain = terrainOf(unit, map);
-    return Math.floor(speedOf(unit) * C.COMBAT.speedAvoidFactor) + terrain.avoid + (unit.gear?.avoid||0);
+    return Math.floor(speedOf(unit) * C.COMBAT.speedAvoidFactor) + terrain.avoid + (unit.gear?.avoid||0) + (MyGO.Talents?.avoidBonus(unit)||0);
   }
 
   /** 风花雪月：技巧和幸运共同产生暴击，防守方幸运抵消暴击。 */
   function critRateOf(unit) {
-    return Math.floor(((unit.dex || 0) + (unit.lck || 0)) / 2) + (unit.weapon.crit || 0) + (unit.gear?.crit||0);
+    return Math.floor((dexOf(unit) + (unit.lck || 0)) / 2) + (unit.weapon.crit || 0) + (unit.gear?.crit||0);
   }
 
   function critAvoidOf(unit) {
@@ -108,7 +108,8 @@
   }
 
   function speedOf(u){return Math.max(0,u.spd+(u.gear?.spd||0)-(u.status?.spdDown?5:0));}
-  function hitOf(u){return (u.weapon.absoluteHit?(u.weapon.damageType==='magic'?Math.floor(((u.dex||0)+(u.lck||0))/2):(u.dex||0)):(u.hit||0))+(u.weapon.hit||0)+(u.gear?.hit||0);}
+  function dexOf(u){return (u.dex||0)+(MyGO.Talents?.dexBonus(u)||0);}
+  function hitOf(u){return (u.weapon.absoluteHit?(u.weapon.damageType==='magic'?Math.floor((dexOf(u)+(u.lck||0))/2):dexOf(u)):(u.hit||0)+(MyGO.Talents?.dexBonus(u)||0))+(u.weapon.hit||0)+(u.gear?.hit||0);}
 
   function counterReason(attacker, defender) {
     if (!defender || defender.dead || defender.hp <= 0) return '单位已被击倒';
@@ -146,15 +147,17 @@
   function rollRound(attacker, defender, map, rng) {
     const plan = forecast(attacker, defender, map);
     const units = new Map([[attacker.id,MyGO.Inventory.copy(attacker)], [defender.id,MyGO.Inventory.copy(defender)]]);
+    const battleMap={...map,units:(map.units||[attacker,defender]).map(u=>units.get(u.id)||u)};
     const strikes = [];
     for (const step of plan.order) {
       const a = units.get(step.attackerId), b = units.get(step.defenderId);
       if (a.hp <= 0 || b.hp <= 0) break;
       if(!MyGO.Inventory.usable(a))continue;
-      const strike = {...roll(preview(a,b,map),rng), kind:step.kind,
+      const strike = {...roll(preview(a,b,battleMap),rng), kind:step.kind,
         attackerHp:a.hp, attackerMaxHp:a.maxHp,resourceId:a.inventory?a.weapon.id:null,weaponSnapshot:a.weapon};
       if(a.inventory)MyGO.Inventory.consume(a,a.weapon.id);
       strike.healed=MyGO.Inventory.useEffects(a,b,MyGO.Magic.get(a.weapon.id),strike.finalDamage,strike.hit);
+      strike.talentHealed=MyGO.Talents?.onKill(a,b,strike.hit&&strike.hpAfter<=0)||0;
       strike.attackerHpAfterStrike=a.hp;
       const reverse = b.id === defender.id ? plan.counter : plan;
       strike.response = reverse;
@@ -201,7 +204,8 @@
 
     // ③ 防守：物理吃守备和山地，魔法只吃魔防。
     const terrainDef = magic ? 0 : terrain.def;
-    const defense = magic ? (aw.ignoreRes?0:defender.res+(defender.gear?.res||0)+(defender.status?.ward||0)) : Math.max(0,defender.def+(defender.gear?.def||0)-(defender.status?.defDown?5:0)) + terrainDef;
+    const guard=MyGO.Talents?.guardBonus(defender,map)||0;
+    const defense = magic ? (aw.ignoreRes?0:defender.res+(defender.gear?.res||0)+(defender.status?.ward||0)+guard) : Math.max(0,defender.def+(defender.gear?.def||0)+guard-(defender.status?.defDown?5:0)) + terrainDef;
     const damage = Math.max(C.COMBAT.minDamage, attack - defense);
 
     const targetAvoid = avoidOf(defender,map);
@@ -286,10 +290,12 @@
   /** 返回某单位站上当前地形后的防御值，供信息面板展示。 */
   function defenseOf(unit, map, magic) {
     const terrain = terrainOf(unit, map);
-    return magic ? unit.res+(unit.gear?.res||0)+(unit.status?.ward||0) : Math.max(0,unit.def+(unit.gear?.def||0)-(unit.status?.defDown?5:0)) + terrain.def;
+    const guard=MyGO.Talents?.guardBonus(unit,map)||0;
+    return magic ? unit.res+(unit.gear?.res||0)+(unit.status?.ward||0)+guard : Math.max(0,unit.def+(unit.gear?.def||0)+guard-(unit.status?.defDown?5:0)) + terrain.def;
   }
 
   MyGO.Combat = {
+    dexOf,
     speedOf,
     hitOf,
     clamp,

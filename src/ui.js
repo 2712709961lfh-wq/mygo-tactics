@@ -1139,7 +1139,7 @@
         '  <div class="stat"><i>速度</i><b>' + unit.spd + '</b></div>',
         '  <div class="stat"><i>守备</i><b>' + unit.def + (!magic && terrain.def ? '<small>+' + terrain.def + '</small>' : '') + '</b></div>',
         '  <div class="stat"><i>魔防</i><b>' + unit.res + '</b></div>',
-        '  <div class="stat"><i>技巧</i><b>' + unit.dex + '</b></div>',
+        '  <div class="stat"><i>技巧</i><b>' + unit.dex + ((MyGO.Talents?.dexBonus(unit)||0)?'<small>+3 天赋</small>':'') + '</b></div>',
         '  <div class="stat warm"><i>幸运</i><b>' + unit.lck + '</b></div>',
         '  <div class="stat"><i>移动</i><b>' + unit.move + '</b></div>',
         '</div>',
@@ -1574,6 +1574,7 @@
 
       for (const strike of applied.strikes.filter(s=>s.applied)) {
         const target = this.game.getUnit(strike.defenderId);
+        if(strike.talentHealed){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('战斗爽 +'+strike.talentHealed,actor.x,actor.y-0.5,'#bcebd7',11);}
         if (strike.hit) {
           this.renderer.flash(target.id, strike.crit ? 'rgba(255, 209, 102, 0.72)' : 'rgba(255, 80, 110, 0.65)', 380);
           this.renderer.floatText('-' + strike.finalDamage, target.x, target.y, strike.crit ? '#ffe08a' : '#ff8fa4', strike.crit ? 12 : 10);
@@ -1613,7 +1614,7 @@
       await new Promise(resolve=>{
         this.openOverlay('<div class="modal-kicker">LEVEL UP / GROWTH</div><h2 class="modal-title" id="overlay-title">成长的足迹</h2>'+
           leveled.map(r=>'<section class="growth-level"><h3>'+esc(r.name)+' <span>Lv.'+r.before.level+' → Lv.'+r.after.level+'</span></h3><p>经验 +'+r.gained+' · '+(r.after.level>=99?'已达最高等级':r.after.exp+' / '+r.after.required+' EXP')+'</p>'+
-            r.levels.map(l=>'<div class="growth-level-grid">'+MyGO.GrowthData.keys.map(k=>'<div class="'+(l.gains[k]?'is-up':'')+'"><span>'+MyGO.GrowthData.labels[k]+'</span><strong>'+l.before[k]+' → '+l.after[k]+'</strong><b>'+(l.gains[k]?'+'+l.gains[k]:'—')+'</b></div>').join('')+'</div>'+(l.learned?.length?'<p class="learned-spells-notice">新习得：'+l.learned.map(id=>esc(MyGO.Magic.get(id).name)).join('、')+'</p>':'')).join('')+'</section>').join('')+
+            r.levels.map(l=>'<div class="growth-level-grid">'+MyGO.GrowthData.keys.map(k=>'<div class="'+(l.after[k]>l.before[k]?'is-up':'')+'"><span>'+MyGO.GrowthData.labels[k]+'</span><strong>'+l.before[k]+' → '+l.after[k]+'</strong><b>'+(l.after[k]!==l.before[k]?'+'+(l.after[k]-l.before[k]):'—')+'</b></div>').join('')+'</div>'+(l.awakened?'<p class="learned-spells-notice">个人天赋1觉醒：'+esc(l.awakened.name)+' · '+esc(l.awakened.description)+'</p>':'')+(l.learned?.length?'<p class="learned-spells-notice">新习得：'+l.learned.map(id=>esc(MyGO.Magic.get(id).name)).join('、')+'</p>':'')).join('')+'</section>').join('')+
           '<p class="modal-sub">属性提升已生效，成长结果会随存档与跨章保留。</p><div class="modal-actions"><button class="modal-btn primary" data-confirm>继续前行</button></div>','growth-modal',false);
         this.confirmHandler=resolve;
       });
@@ -1860,7 +1861,8 @@
       const rows = result.strikes.map((s,i) => '<div class="exchange-strike ' + (s.attackerSide !== 'enemy' ? 'is-player' : 'is-enemy') + '">' +
         '<span class="exchange-order">' + (i+1) + '</span><div><strong>' + label[s.kind] + ' · ' + esc(s.attackerName) +
         '</strong><small>→ ' + esc(s.defenderName) + ' · ' + esc(s.weaponName) + ' · 命中 ' + s.hitChance + '% · 暴击 ' + s.critChance + '%' +
-        (s.healed ? ' · 吸取回复 ' + s.healed : '') + '</small></div>' +
+        (s.healed ? ' · 吸取回复 ' + s.healed : '') +
+        (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') + '</small></div>' +
         '<b class="' + (s.crit ? 'crit-text' : s.hit ? 'dmg-text' : 'miss-text') + '">' +
         (s.hit ? (s.crit ? '暴击 ' : '') + s.finalDamage : 'MISS') + '</b></div>').join('');
       const hp = (name,before,after,max) => '<div class="result-hpbar"><div class="result-hp-label"><span>' + esc(name) +

@@ -44,6 +44,7 @@ const SCRIPTS = [
   'src/map-projection.js',
   'src/rng.js',
   'src/growth-data.js',
+  'src/talents.js',
   'src/growth.js',
   'src/grid.js',
   'src/pathfinding.js',

@@ -19,6 +19,7 @@
     u.exp=0;u.growthGains=Object.fromEntries(keys.map(k=>[k,0]));
     u.growthRngState=seed(u.id,2166136261);
     u.growthBase={level:u.level,stats:Object.fromEntries(keys.map(k=>[k,u[k]]))};
+    M.Talents?.sync(u);
   }
   function pack(u){return {version:1,level:u.level,exp:u.exp,gains:{...u.growthGains},rngState:u.growthRngState};}
   function restore(u,s,fullHp=false){
@@ -31,6 +32,7 @@
     u.level=s.level;u.exp=s.exp;u.growthRngState=s.rngState;
     u.growthGains=Object.fromEntries(keys.map(k=>[k,s.gains[k]]));
     for(const k of keys)u[k]=base.stats[k]+s.gains[k];
+    u._talent1Bonus=0;M.Talents?.sync(u);
     if(fullHp)u.hp=u.maxHp;
   }
   function rollLevel(u,rng){
@@ -48,11 +50,14 @@
     u.exp+=gained;const levels=[],rng=M.RNG.restore(u.growthRngState);
     while(u.level<MAX_LEVEL&&u.exp>=required(u.level)){
       u.exp-=required(u.level);const old=Object.fromEntries(keys.map(k=>[k,u[k]])),gains=rollLevel(u,rng);
+      const hadTalent=M.Talents?.active(u);
       u.level++;for(const k of keys){u[k]+=gains[k];u.growthGains[k]+=gains[k];}
+      M.Talents?.sync(u);
       // Preserve missing HP; growth does not fully heal an injured unit.
       u.hp+=gains.maxHp;
       const learned=M.Inventory.learn(u);M.Inventory.sync(u);
-      levels.push({level:u.level,before:old,gains,learned,after:Object.fromEntries(keys.map(k=>[k,u[k]]))});
+      const awakened=!hadTalent&&M.Talents?.active(u)?M.Talents.get(u):null;
+      levels.push({level:u.level,before:old,gains,learned,awakened,after:Object.fromEntries(keys.map(k=>[k,u[k]]))});
     }
     u.growthRngState=rng.serialize();if(u.level===MAX_LEVEL)u.exp=0;
     return {unitId:u.id,name:u.name,gained,before,after:{level:u.level,exp:u.exp,required:required(u.level)},levels};

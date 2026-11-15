@@ -24,7 +24,8 @@
     const counterDemo = params.get('counter-demo');
     const inventoryDemo = params.get('inventory-demo') === '1';
     const growthDemo = params.get('growth-demo');
-    if (recruitDemo || mapDemo || counterDemo || inventoryDemo || growthDemo) {
+    const talentDemo = params.get('talent-demo');
+    if (recruitDemo || mapDemo || counterDemo || inventoryDemo || growthDemo || talentDemo) {
       let saved = null;
       ui.saveManager = {
         save(game) { saved = { ok: true, snapshot: game.serialize(), savedAt: new Date().toISOString() };
@@ -49,7 +50,7 @@
         const entry = new global.MyGO.EntryScreen(ui);
         global.MYGO_ENTRY = entry;
         global.MyGO.entry = entry;
-        if (inventoryDemo || growthDemo) {
+        if (inventoryDemo || growthDemo || talentDemo) {
           // Isolated, deterministic fixture for checking inventory and support UI.
           ui.chapterPlayed=true;
           const soyo=ui.game.getUnit('soyo'),tomori=ui.game.getUnit('tomori');
@@ -57,6 +58,14 @@
           ui.game.units.filter(u=>u.side==='player'&&!['soyo','tomori'].includes(u.id)).forEach((u,n)=>Object.assign(u,{x:6,y:12+n}));
           for(const unit of ui.game.units)ui.renderer.snapUnit(unit);
           ui.updateAll();entry.open({force:true});
+          if(talentDemo){
+            const id=global.MyGO.Talents.get(talentDemo)?talentDemo:'tomori';
+            const member=ui.game.getUnit(id)||tomori;
+            if(member.side!=='player')member.side='player';
+            const target=params.get('talent-level')==='14'?14:15;
+            while(member.level<target)global.MyGO.Growth.award(member,global.MyGO.Growth.required(member.level));
+            ui.updateAll();entry.openFormation();entry.selectedUnitId=member.id;entry.loadoutTab='stats';entry.renderFormationList();entry.renderFormationDetail();
+          }
           if(growthDemo){
             soyo.exp=global.MyGO.Growth.required(soyo.level)-1;
             entry.openFormation();entry.selectedUnitId='soyo';entry.loadoutTab='growth';entry.renderFormationList();entry.renderFormationDetail();

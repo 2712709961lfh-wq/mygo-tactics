@@ -63,24 +63,23 @@ test('旧档补入护卫，出生格被占时只调整新护卫，真实存档�
  assert.equal(reload(g).getUnit('court-pegasus-guard-n').x,g.getUnit('court-pegasus-guard-n').x);
  const bad=plain(g.serialize());Object.assign(bad.units.find(u=>u.id==='court-pegasus-guard-n'),{x:27,y:9});assert.throws(()=>fresh().restore(bad),/位置重叠/);
 });
-test('重装与Boss降低HP及血量成长，初始爽世火焰次数足以击破四名重装',()=>{
+test('重装与Boss采用固定低HP模板，初始爽世火焰次数足以击破四名重装',()=>{
  const g=fresh(),s=g.getUnit('soyo'),armors=g.living('enemy').filter(u=>u.tags.includes('armor'));
- assert.equal(g.getUnit('court-armor-n').maxHp,21);assert.equal(g.getUnit('iron_warden').maxHp,30);
+ assert.equal(g.getUnit('court-armor-n').maxHp,24);assert.equal(g.getUnit('iron_warden').maxHp,36);
  const required=armors.reduce((n,e)=>n+Math.ceil(e.maxHp/M.Combat.preview(s,e,g.map).damage),0);
  assert.equal(required,9);assert(required<=s.spellUses.fire);
- g.scaleParkEnemies(8);assert.equal(g.getUnit('court-armor-n').maxHp,24);assert.equal(g.getUnit('iron_warden').maxHp,36);
- g.scaleParkEnemies(9);assert.equal(g.getUnit('court-armor-n').maxHp,25);assert.equal(g.getUnit('iron_warden').maxHp,38);
+ g.applyFixedEnemyStats();assert.equal(g.getUnit('court-armor-n').maxHp,24);assert.equal(g.getUnit('iron_warden').maxHp,36);
  const old=plain(g.serialize());for(const e of old.units)if(e.id==='court-armor-n')e.hp=36;
- const restored=fresh();restored.restore(old);assert.equal(restored.getUnit('court-armor-n').hp,25);
+ const restored=fresh();restored.restore(old);assert.equal(restored.getUnit('court-armor-n').hp,24);
 });
 test('重装守备远高于魔防，魔法伤害更高；弓对天马3倍武器威力，无森林地形回避',()=>{
  const g=fresh(),a=g.getUnit('court-armor-n'),p=g.getUnit('court-pegasus-n'),t=g.getUnit('tomori'),s=g.getUnit('soyo'),bow=g.getUnit('anon');
  assert(a.tags.includes('armor'));assert(a.def-a.res>=12);assert.equal(a.move,3);assert(M.Combat.preview(s,a,g.map).damage>M.Combat.preview(t,a,g.map).damage);
  assert.equal(M.Combat.preview(bow,p,g.map).effectiveness,3);p.x=2;p.y=2;assert.equal(M.Combat.terrainOf(p,g.map).avoid,0);
 });
-test('敌军随队伍升级成长、重装低魔防不丢失、血量比例与存档等级保持',()=>{
+test('队伍升级不改变重装固定属性、伤势与存档数值',()=>{
  const g=fresh(),a=g.getUnit('court-armor-n'),old=a.maxHp;a.hp=Math.floor(old/2);for(const u of g.units.filter(u=>u.side==='player'))M.Growth.award(u,10000);
- g.scaleParkEnemies();assert(a.maxHp>old);assert(a.def-a.res>12);assert(Math.abs(a.hp/a.maxHp-.5)<.08);assert.equal(reload(g).getUnit(a.id).maxHp,a.maxHp);
+ g.beginNextPlayerPhase();g.applyFixedEnemyStats();assert.equal(a.maxHp,old);assert(a.def-a.res>12);assert.equal(a.hp,Math.floor(old/2));assert.equal(reload(g).getUnit(a.id).maxHp,a.maxHp);
 });
 test('击败天马骑士获得真实钥匙、敌人失去钥匙、同一战报不可重复领取',()=>{
  const g=fresh(),p=g.getUnit('court-pegasus-n'),t=g.getUnit('tomori');assert(p.inventory.some(i=>i.id==='chest_key'));const r=hit(g,t.id,p.id);

@@ -29,6 +29,10 @@
       '<p class="loadout-footnote">转职后移动、移动类型、武器类别、魔法使用与职业成长率立即生效，已学魔法记录保留。职业技能与精通奖励尚未实现。</p>';
   }
   const EP=M.EntryScreen.prototype,baseRender=EP.renderFormationDetail,baseBind=EP.bind;
+  function talentSummary(u){
+    const t=M.Talents?.get(u);if(!t||u.side==='enemy')return '';
+    return '<aside class="class-current"><span>个人天赋1 · Lv.15觉醒 · '+(M.Talents.active(u)?'已觉醒':'未觉醒')+'</span><strong>'+esc(t.name)+'</strong><p>'+esc(t.description)+'</p></aside>';
+  }
   EP.bind=function(){baseBind.call(this);this.dom.formationDetail.addEventListener('click',e=>{
     const t=e.target.closest('button');if(!t)return;
     if(t.dataset.loadoutTab){this.loadoutTab=t.dataset.loadoutTab;this.renderFormationDetail();this.dom.formationDetail.scrollTop=0;return;}
@@ -49,9 +53,9 @@
   EP.reclassLock=function(u){return this.ui.busy?'正在结算战斗':this.ui.mode!=='idle'?'请先返回战场，完成或取消当前单位的行动':this.ui.game.reclassLockReason(u);};
   EP.renderFormationDetail=function(){
     const active=this.loadoutTab||'stats';
-    if(active==='stats'){baseRender.call(this);const unit=this.players().find(u=>u.id===this.selectedUnitId);this.dom.formationDetail.insertAdjacentHTML('afterbegin',tabs(active)+(unit?classSummary(unit)+experienceSummary(unit):''));return;}
+    if(active==='stats'){baseRender.call(this);const unit=this.players().find(u=>u.id===this.selectedUnitId);this.dom.formationDetail.insertAdjacentHTML('afterbegin',tabs(active)+(unit?classSummary(unit)+experienceSummary(unit)+talentSummary(unit):''));return;}
     const u=this.players().find(u=>u.id===this.selectedUnitId);if(!u)return;
-    if(active==='growth'){this.dom.formationDetail.innerHTML=tabs(active)+growthCatalogue(u);this.renderPoseDock(u);return;}
+    if(active==='growth'){this.dom.formationDetail.innerHTML=tabs(active)+talentSummary(u)+growthCatalogue(u);this.renderPoseDock(u);return;}
     if(active==='classes'){
       this.dom.formationDetail.innerHTML=tabs(active)+classCatalogue(u,this.classTier||'all',this.ui.game,this.reclassLock(u));
       this.renderPoseDock(u);return;
@@ -88,6 +92,9 @@
   const UP=M.UI.prototype,baseAction=UP.renderActionSide;
   const baseUnitInfo=UP.renderUnitInfo;
   UP.renderUnitInfo=function(u){baseUnitInfo.call(this,u);if(!u)return;
+    if(M.Talents?.get(u)&&u.side!=='enemy')this.dom.infoBody.insertAdjacentHTML('beforeend',talentSummary(u));
+    const guard=M.Talents?.guardBonus(u,this.game.map)||0;
+    if(guard)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">队友守护 · 守备／魔防＋1</span>');
     const line=this.dom.infoBody.querySelector('.weapon-line');
     if(line&&!u.weapon.cannotAttack)line.textContent+=' · '+(u.weapon.kind==='spell'?'剩余 '+u.spellUses[u.weaponId]+'/'+u.weapon.uses+' 次':'耐久 '+(u.inventory.find(i=>i.id===u.weaponId&&i.uses>0)?.uses||0)+'/'+u.weapon.uses);
     const labels={defDown:'守备−5',spdDown:'速度−5',moveDown:'移动−5',silence:'沉默',ward:'魔防支援'};

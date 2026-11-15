@@ -90,15 +90,12 @@ test('巡猎分批启动，未到回合的远方敌军等待，读档保留追�
   const restored=fresh();restored.restore(plain(g.serialize()));assert(restored.getUnit(south.id).alerted);
   g.turn=6;g.refreshAlerts();assert(fork.alerted);assert(!g.getUnit('dark_soyo').alerted);
 });
-test('敌人随队伍平均等级变强，回合刷新不叠加成长，并保留HP比例',()=>{
+test('敌人固定为关卡模板数值，玩家成长与回合刷新不改变敌军',()=>{
   const g=fresh(),e=g.getUnit('park-blade-1'),boss=g.getUnit('dark_soyo');
-  assert.equal(e.level,5);assert.equal(boss.level,7);const low={hp:e.maxHp,str:e.str,mag:boss.mag};
-  e.hp=Math.floor(e.maxHp/2);const ratio=e.hp/e.maxHp;
+  assert.equal(e.level,8);assert.equal(boss.level,10);e.hp=Math.floor(e.maxHp/2);
+  const unchanged=plain([e.level,e.maxHp,e.str,e.hp,boss.level,boss.mag]);
   for(const p of g.living('player'))M.Growth.award(p,M.Growth.required(p.level));
-  g.beginNextPlayerPhase();assert.equal(e.level,6);assert(e.maxHp>low.hp);assert(e.str>low.str);assert(boss.mag>=low.mag);
-  assert(Math.abs(e.hp/e.maxHp-ratio)<1/e.maxHp+.001);
-  const unchanged=plain([e.level,e.maxHp,e.str,e.hp]);g.scaleParkEnemies();assert.deepEqual(plain([e.level,e.maxHp,e.str,e.hp]),unchanged);
-  g.scaleParkEnemies(30);assert.equal(e.level,30);assert.equal(boss.level,32);assert(e.maxHp>low.hp+30);assert(boss.mag>low.mag);
+  g.beginNextPlayerPhase();g.applyFixedEnemyStats();assert.deepEqual(plain([e.level,e.maxHp,e.str,e.hp,boss.level,boss.mag]),unchanged);
 });
 test('爽世击杀与反击击杀Boss均双倍经验，普通队友和非致命伤不触发',()=>{
   for(const id of ['soyo','tomori']){
@@ -114,11 +111,11 @@ test('爽世击杀与反击击杀Boss均双倍经验，普通队友和非致命�
     {attackerId:s.id,defenderId:enemy.id,finalDamage:999,hit:true,kind:'counter'}]};
   counter.applyCombat(result);assert.equal(result.experience[0].gained,base*2);assert(counter.soyoBossBonus);
 });
-test('保存/恢复路灯、等级、HP、Boss发现、成长与已招募仁菜，不回滚缩放',()=>{
+test('保存/恢复路灯、固定敌军等级、HP、Boss发现、成长与已招募仁菜',()=>{
   const g=fresh({recruited:['xueyue','nina']}),t=g.getUnit('tomori');g.setUnitPosition(t.id,7,12);g.lightLamp(t);
-  g.scaleParkEnemies(12);g.getUnit('park-blade-1').hp=9;const snapshot=plain(g.serialize()),restored=new M.Game({stage:1});
+  g.getUnit('park-blade-1').hp=9;const snapshot=plain(g.serialize()),restored=new M.Game({stage:1});
   restored.restore(snapshot);assert.deepEqual(plain(restored.serialize()),snapshot);assert.equal(restored.getUnit('nina').side,'player');
-  assert.equal(restored.getUnit('park-blade-1').level,12);assert.equal(restored.getUnit('park-blade-1').hp,9);
+  assert.equal(restored.getUnit('park-blade-1').level,8);assert.equal(restored.getUnit('park-blade-1').hp,9);
   for(const bad of [{...snapshot,litLamps:['wrong']},{...snapshot,litLamps:['park-entry','park-entry']},{...snapshot,enemyScaleLevel:0},
     {...snapshot,mapRevision:0}])assert.throws(()=>fresh().restore(bad));
   hit(g,'soyo','dark_soyo');const win=fresh();win.restore(plain(g.serialize()));assert(win.soyoBossBonus);assert.equal(win.phase,'victory');

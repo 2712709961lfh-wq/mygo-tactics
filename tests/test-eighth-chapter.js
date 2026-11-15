@@ -18,7 +18,7 @@ test('30×36 expanded live house; all units, three chests and both phantoms reac
  assert.equal(g.map.cols,30);assert.equal(g.map.rows,36);assert.equal(g.livingCount('player'),8);assert.equal(g.livingCount('enemy'),17);
  for(const u of g.units){const k=u.x+','+u.y;assert(r.has(k),u.id);assert(!used.has(k),u.id);used.add(k);assert(Number.isFinite(M.Grid.movementCost(g.map,u,u.x,u.y)));}
  for(const c of g.mission.chests)assert(r.has(c.x+','+c.y),c.id);
- assert(g.living('player').every(u=>u.y>=18&&u.y<=20));assert(g.mission.enemies.every(u=>u.y<=15));
+ assert(g.living('player').every(u=>u.y>=18&&u.y<=20));assert(g.mission.enemies.every(u=>u.y<=17));
  assert(g.map.decor.some(o=>o.kind==='drums'&&o.y===4));assert(g.map.decor.some(o=>o.kind==='exit'&&o.y>34));
  for(let y=6;y<14;y++)assert.equal(g.map.tiles[y][15],'road');
 });
@@ -32,6 +32,34 @@ test('Phantoms have real classes, weapons, normal HP; mixed soldiers retain armo
  assert.equal(M.Combat.preview(g.getUnit('anon'),peg[0],g.map).effectiveness,3);
  assert(M.Combat.preview(g.getUnit('soyo'),armor[0],g.map).damage>M.Combat.preview(g.getUnit('tomori'),armor[0],g.map).damage);
  assert(!g.isUnitActive(s));
+});
+test('Chests and key carriers are close to the party and reachable before the boss area',()=>{
+ const g=fresh();g.completeEighthIntro();const party=g.living('player');
+ const expectedChests={'echo-seal':[9,20],'echo-gold':[20,19],'echo-sword':[15,13]},expectedKeys=[[10,17],[19,17],[15,14]];
+ const routes=party.map(u=>M.Pathfinding.getReachable(g.map,{...u,move:999},[],(x,y)=>y>=12));
+ const nearest=target=>Math.min(...routes.map(r=>r.get(target.x+','+target.y)?.cost??Infinity));
+ for(const c of g.mission.chests){assert.deepEqual([c.x,c.y],expectedChests[c.id]);assert(nearest(c)<=6,c.id+' close walk');assert(g.map.decor.some(o=>o.kind==='chest'&&o.id===c.id&&o.x===c.x&&o.y===c.y));}
+ expectedKeys.forEach(([x,y],i)=>{const u=g.getUnit('echo-pegasus-'+i);assert.deepEqual([u.x,u.y],[x,y]);assert(nearest(u)<=5,u.id+' close key');assert.equal(u.inventory.filter(i=>i.id==='chest_key').length,1);});
+ const t=g.getUnit('tomori');for(const target of g.mission.chests.concat(expectedKeys.map(([x,y])=>({x,y})))){
+  Object.assign(t,{x:target.x,y:target.y});for(const id of g.mission.phantomIds)assert(!g.isUnitActive(g.getUnit(id)),id+' stays outside loot route');
+ }
+});
+test('Old loot layouts move untouched carriers once, retaining opened chests and keys',()=>{
+ const g=fresh();g.completeEighthIntro();g.openedChests=['echo-gold'];
+ for(const [id,p] of Object.entries(C.STAGE_EIGHT.legacyKeySpawns))Object.assign(g.getUnit(id),p);
+ const s=plain(g.serialize());delete s.lootLayoutVersion;const h=reload({serialize:()=>s});
+ for(const id of Object.keys(C.STAGE_EIGHT.legacyKeySpawns)){const u=h.getUnit(id),spawn=C.STAGE_EIGHT.enemies.find(t=>t.id===id);assert.deepEqual([u.x,u.y],[spawn.x,spawn.y]);assert.equal(u.inventory.filter(i=>i.id==='chest_key').length,1);}
+ assert.deepEqual(plain(h.openedChests),['echo-gold']);assert.equal(h.serialize().lootLayoutVersion,1);assert.deepEqual(plain(reload(h).serialize()),plain(h.serialize()));
+});
+test('Loot migration keeps engaged/dead/moved carriers, occupied destinations and completed games',()=>{
+ for(const mode of ['wounded','alerted','acted','moved','dead','occupied','victory']){
+  const g=fresh();g.completeEighthIntro();for(const [id,p] of Object.entries(C.STAGE_EIGHT.legacyKeySpawns))Object.assign(g.getUnit(id),p);
+  const u=g.getUnit('echo-pegasus-0');if(mode==='wounded')u.hp--;if(mode==='alerted')u.alerted=true;if(mode==='acted')u.acted=true;if(mode==='moved')u.y--;if(mode==='dead')hit(g,u.id);
+  if(mode==='occupied')Object.assign(g.getUnit('tomori'),{x:10,y:17});if(mode==='victory'){hit(g,'dark_soyo');hit(g,'dark_tomori');}
+  const before=[u.x,u.y,u.hp,u.dead,u.acted,u.alerted],s=plain(g.serialize());delete s.lootLayoutVersion;const h=reload({serialize:()=>s}),after=h.getUnit(u.id);
+  assert.deepEqual([after.x,after.y,after.hp,after.dead,after.acted,after.alerted],before,mode);assert.equal(qty(h,'chest_key'),qty(g,'chest_key'),mode+' key quantity');
+ }
+ for(const value of [null,0,2,'1']){const bad=plain(fresh().serialize());bad.lootLayoutVersion=value;assert.throws(()=>fresh().restore(bad),/宝箱布局/);}
 });
 test('Opening skip commits atomically; pending/completed snapshots and dead Nijika round trip',()=>{
  const g=fresh();assert.equal(g.getUnit('nijika').side,'player');assert(g.recruited.includes('nijika'));assert(g.nijikaJoined);
@@ -68,7 +96,7 @@ test('Stage seven to eight preserves growth/class/equipment/gold and Nijika join
  g.gold=8731;g.convoy.push(I.make('steel_sword'));const loadout=g.exportLoadout(),h=fresh({recruited:g.recruited,loadout});
  assert.equal(h.gold,g.gold);assert.deepEqual(plain(M.Growth.pack(h.getUnit('nijika'))),plain(M.Growth.pack(n)));assert.deepEqual(plain(h.convoy),plain(g.convoy));
  assert.equal(h.getUnit('nijika').side,'player');assert.equal(h.livingCount('player'),8);assert.equal(h.getUnit('nijika').x,14);assert.equal(h.getUnit('nijika').y,18);assert(reload(h).getUnit('nijika').level===n.level);
- const s=h.getUnit('echo-armor-0'),before=stats(s);for(const u of h.living('player'))M.Growth.award(u,15000);h.scaleParkEnemies();assert.deepEqual(stats(s),before);assert(s.def-s.res>=12);assert.equal(reload(h).getUnit(s.id).maxHp,s.maxHp);
+ const s=h.getUnit('echo-armor-0'),before=stats(s);for(const u of h.living('player'))M.Growth.award(u,15000);h.beginNextPlayerPhase();assert.deepEqual(stats(s),before);assert(s.def-s.res>=12);assert.equal(reload(h).getUnit(s.id).maxHp,s.maxHp);
 });
 test('Reject corrupt flags, chest state, level, missing/duplicate units and blocked cells',()=>{
  const s=fresh().serialize();for(const mutate of [s=>s.stageEightIntroSeen='yes',s=>s.stageEightIntroSeen=undefined,s=>s.recruited=[],s=>s.openedChests=['wrong'],s=>s.openedChests=['echo-seal','echo-seal'],s=>s.enemyScaleLevel=0,s=>s.units.find(u=>u.id==='dark_soyo').classState.id='monk',s=>s.units.pop(),s=>s.units.push(s.units[0]),s=>s.mapRevision=9,s=>s.units[0].x=0]){const bad=plain(s);mutate(bad);assert.throws(()=>fresh().restore(bad));}
@@ -87,7 +115,7 @@ test('Panel totals are 120/102 while preserving requested stats and imperfect al
  assert(peg.spd>armor.spd);assert(peg.res>peg.def);assert(armor.spd<10&&armor.res<10);
 });
 test('All eight regular soldiers have 92-96 panel stats and lower useful combat stats',()=>{
- const g=fresh(),old=fresh();old.scaleEighthEnemies(undefined,old.units,true,false,true);
+ const g=fresh(),old=fresh();old.restoreLegacyEighthScale(undefined,old.units,true,false,true);
  const totals={'echo-blade':94,'echo-blade-w':93,'echo-axe':95,'echo-bow':93,'echo-bow-deep':95,'echo-lance-e':96,'echo-mage-w':92,'echo-mage-e':94};
  const previous={'echo-blade':[13,4,11,90],'echo-blade-w':[13,5,11,88],'echo-axe':[16,4,7,91],'echo-bow':[14,4,11,89],'echo-bow-deep':[14,5,11,90],'echo-lance-e':[14,5,10,91],'echo-mage-w':[7,13,7,85],'echo-mage-e':[8,13,7,86]};
  assert.equal(regular(g).length,8);
@@ -100,10 +128,10 @@ test('All eight regular soldiers have 92-96 panel stats and lower useful combat 
 test('Fixed profiles and wounded HP survive strong parties, repeated scaling and reloads',()=>{
  const g=fresh(),t=g.getUnit('tomori'),e=g.getUnit('echo-blade');e.hp=13;
  const state=plain(g.units.filter(u=>u.side==='enemy').map(u=>[u.hp,...stats(u)]));
- t.str+=50;g.beginNextPlayerPhase();for(let i=0;i<5;i++)g.scaleParkEnemies(undefined,g.units,true);
+ t.str+=50;g.beginNextPlayerPhase();for(let i=0;i<5;i++)g.applyFixedEnemyStats();
  assert.deepEqual(plain(g.units.filter(u=>u.side==='enemy').map(u=>[u.hp,...stats(u)])),state);
  const h=reload(g);assert.deepEqual(plain(h.units.filter(u=>u.side==='enemy').map(u=>[u.hp,...stats(u)])),state);
- t.str+=500;t.level=97;g.scaleParkEnemies();assert.deepEqual(plain(g.units.filter(u=>u.side==='enemy').map(u=>[u.hp,...stats(u)])),state);
+ t.str+=500;t.level=97;g.beginNextPlayerPhase();assert.deepEqual(plain(g.units.filter(u=>u.side==='enemy').map(u=>[u.hp,...stats(u)])),state);
 });
 test('Normal growth and next-stage imports survive repeat saves without strength drift',()=>{
  const g=fresh(),n=g.getUnit('nijika');for(let i=0;i<8;i++)M.Growth.award(n,M.Growth.required(n.level));g.beginNextPlayerPhase();const e=g.getUnit('dark_soyo');e.hp=7;
@@ -113,41 +141,41 @@ test('Normal growth and next-stage imports survive repeat saves without strength
 test('Old eighth saves upgrade enemy wounds proportionally, keep kills, chests and positions',()=>{
  const g=fresh();g.completeEighthIntro();
  // Construct the previous version's authored average-level stats.
- g.enemyScaleLevel=0;g.scaleParkEnemies(6,g.units,true,true);g.getUnit('echo-blade').hp=5;Object.assign(g.getUnit('echo-bow'),{hp:0,dead:true,acted:true});g.openedChests=['echo-gold'];
- const oldMax=g.getUnit('echo-blade').maxHp,s=plain(g.serialize());delete s.enemyScaleVersion;delete s.enemyScalePower;
+ g.enemyScaleLevel=0;g.restoreLegacyEnemyScale(6,g.units,true,true);g.getUnit('echo-blade').hp=5;Object.assign(g.getUnit('echo-bow'),{hp:0,dead:true,acted:true});g.openedChests=['echo-gold'];
+ const oldMax=g.getUnit('echo-blade').maxHp,s=plain(g.serialize());delete s.fixedEnemyStatsVersion;delete s.enemyScaleVersion;delete s.enemyScalePower;
  const h=new M.Game();h.restore(s);assert(h.enemyScaleLevel>=10);assert(h.getUnit('echo-blade').maxHp>oldMax);assert.equal(h.getUnit('echo-blade').hp,Math.ceil(h.getUnit('echo-blade').maxHp*5/oldMax));assert(h.getUnit('echo-bow').dead);assert.equal(h.getUnit('echo-bow').hp,0);assert.deepEqual(plain(h.openedChests),['echo-gold']);assert(h.stageEightIntroSeen);
  assert.equal(h.getUnit('echo-blade').x,g.getUnit('echo-blade').x);assert.equal(reload(h).getUnit('echo-blade').hp,h.getUnit('echo-blade').hp);
  for(const patch of [{enemyScaleVersion:9},{enemyScalePower:0},{enemyScalePower:'102'},{enemyScalePower:100001}]){const bad=plain(h.serialize());Object.assign(bad,patch);assert.throws(()=>fresh().restore(bad),/强度/);}
 });
 test('v5.8.2 inflated saves migrate to exact budgets without healing or reviving enemies',()=>{
- const g=fresh();g.completeEighthIntro();g.enemyScaleLevel=0;g.enemyScalePower=180;g.scaleEighthEnemies(20,g.units,true,true);
+ const g=fresh();g.completeEighthIntro();g.enemyScaleLevel=0;g.enemyScalePower=180;g.restoreLegacyEighthScale(20,g.units,true,true);
  const s=g.getUnit('dark_soyo'),a=g.getUnit('echo-armor-0'),p=g.getUnit('echo-pegasus-0');s.hp=13;a.hp=1;Object.assign(p,{dead:true,hp:0,acted:true});s.alerted=true;g.openedChests=['echo-gold'];
- const oldMax=s.maxHp,snapshot=plain(g.serialize());snapshot.enemyScaleVersion=1;
+ const oldMax=s.maxHp,snapshot=plain(g.serialize());delete snapshot.fixedEnemyStatsVersion;snapshot.enemyScaleVersion=1;
  const h=new M.Game();h.restore(snapshot);assert.equal(h.serialize().enemyScaleVersion,4);assert.equal(h.getUnit(s.id).hp,Math.ceil(38*13/oldMax));assert.equal(h.getUnit(a.id).hp,1);assert(h.getUnit(p.id).dead);assert.equal(h.getUnit(p.id).hp,0);assert(h.getUnit(s.id).alerted);
  assert.deepEqual(plain(h.openedChests),['echo-gold']);assert(h.stageEightIntroSeen);assert.equal(h.getUnit(s.id).x,s.x);for(const u of fixed(h))assert.equal(effective(u),expectedEffective(u));
  assert.deepEqual(plain(reload(h).serialize()),plain(h.serialize()));
 });
 test('v5.8.3/v5.8.4 saves retain wound ratios and progress with corrected panel totals',()=>{
- const g=fresh();g.scaleEighthEnemies(undefined,g.units,true,false,true);g.completeEighthIntro();g.openedChests=['echo-gold'];
+ const g=fresh();g.restoreLegacyEighthScale(undefined,g.units,true,false,true);g.completeEighthIntro();g.openedChests=['echo-gold'];
  const oldMax={dark_soyo:42,dark_tomori:43,armor:32,flying:29};
  for(const u of fixed(g)){u.maxHp=oldMax[u.id]||oldMax[u.tags.includes('armor')?'armor':'flying'];u.hp=Math.floor(u.maxHp/2);u.alerted=true;}
  Object.assign(g.getUnit('echo-pegasus-1'),{dead:true,hp:0,acted:true});g.getUnit('dark_soyo').hp=40;g.getUnit('echo-armor-0').hp=1;
- const snapshot=plain(g.serialize());snapshot.enemyScaleVersion=2;const h=reload({serialize:()=>snapshot});
+ const snapshot=plain(g.serialize());delete snapshot.fixedEnemyStatsVersion;snapshot.enemyScaleVersion=2;const h=reload({serialize:()=>snapshot});
  for(const u of h.units.filter(u=>u.side==='enemy'&&(u.boss||u.tags.includes('armor')||u.tags.includes('flying')))){
   const before=g.getUnit(u.id);assert.equal(M.Combat.statTotalOf(u),u.boss?120:102,u.id);assert.equal(u.hp,u.dead?0:Math.ceil(u.maxHp*before.hp/before.maxHp-1e-9),u.id+' proportional wounds');assert(u.alerted);assert.equal(u.x,before.x);assert.equal(u.y,before.y);
  }
  assert(h.getUnit('echo-pegasus-1').dead);assert.deepEqual(plain(h.openedChests),['echo-gold']);assert(h.stageEightIntroSeen);assert.equal(h.getUnit('echo-armor-0').move,4);assert.deepEqual(plain(reload(h).serialize()),plain(h.serialize()));
 });
 test('v5.8.5 scaled soldiers migrate wounds without clamping first or reviving dead soldiers',()=>{
- const g=fresh();g.scaleEighthEnemies(24,g.units,true,false,true);g.completeEighthIntro();g.openedChests=['echo-gold'];
+ const g=fresh();g.restoreLegacyEighthScale(24,g.units,true,false,true);g.completeEighthIntro();g.openedChests=['echo-gold'];
  for(const u of regular(g)){u.hp=Math.floor(u.maxHp*.8);u.alerted=true;}
  Object.assign(g.getUnit('echo-bow'),{hp:0,dead:true,acted:true});g.getUnit('echo-blade-w').hp=1;
- const snapshot=plain(g.serialize());snapshot.enemyScaleVersion=3;const h=reload({serialize:()=>snapshot});
+ const snapshot=plain(g.serialize());delete snapshot.fixedEnemyStatsVersion;snapshot.enemyScaleVersion=3;const h=reload({serialize:()=>snapshot});
  for(const u of regular(h)){const before=g.getUnit(u.id);assert.equal(u.hp,u.dead?0:Math.ceil(u.maxHp*before.hp/before.maxHp-1e-9),u.id);assert.equal(u.dead,before.dead);assert.equal(u.acted,before.acted);assert(u.alerted);assert.equal(u.x,before.x);assert.equal(u.y,before.y);assert(M.Combat.statTotalOf(u)>=92&&M.Combat.statTotalOf(u)<=96);}
  assert.deepEqual(plain(h.openedChests),['echo-gold']);assert(h.stageEightIntroSeen);assert.deepEqual(plain(reload(h).serialize()),plain(h.serialize()));
 });
 test('Exhausting magic does not switch a mage to physical stat scaling on reload',()=>{
- const g=fresh(),e=g.getUnit('echo-mage-w');e.spellUses.miasma=0;I.sync(e);g.getUnit('tomori').str+=50;g.scaleParkEnemies();const before=stats(e),h=reload(g);
+ const g=fresh(),e=g.getUnit('echo-mage-w');e.spellUses.miasma=0;I.sync(e);g.getUnit('tomori').str+=50;g.beginNextPlayerPhase();const before=stats(e),h=reload(g);
  assert.deepEqual(stats(h.getUnit(e.id)),before);assert.equal(h.getUnit(e.id).spellUses.miasma,0);
 });
 console.log('Eighth chapter: '+cases+' cases passed.');

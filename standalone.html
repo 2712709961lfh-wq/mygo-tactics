@@ -5088,7 +5088,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.8.8</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.9.1</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -7158,7 +7158,16 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   maxHp:30,str:7,mag:11,dex:10,spd:11,lck:13,def:7,res:9,hit:0,move:4,tags:[],weapon:'nosferatu',spells:['nosferatu','heal'],x:14,y:20,facing:'up',
   quote:'谢谢你们回应我！我叫伊地知虹夏，这次就让我和大家一起守住这里吧。',
   art:{kind:'girl',hair:'#e6c455',hairDark:'#aa792f',hairStyle:'pony',outfit:'#30334a',outfitDark:'#1c2232',accent:'#9f3743',skin:'#f8dfc5',eye:'#a95931'}};
- C.STAGE_SEVEN={id:'mission-07',mapRevision:1,cols,rows,chapter:'MISSION 07',chapterJp:'第七话',chapterEn:'CHAPTER 07',
+ // Add after level scaling so every foe gains exactly 17 panel points.
+ // Physical units gain 13 effective points; magic units gain 12 (excluding STR).
+ const enemyStatBonuses={
+  sword:{maxHp:4,str:3,mag:4,dex:2,spd:2,lck:1,def:1},
+  lance:{maxHp:4,str:3,mag:4,dex:1,spd:1,lck:1,def:2,res:1},
+  axe:{maxHp:5,str:3,mag:4,dex:1,spd:1,lck:1,def:2},
+  bow:{maxHp:3,str:3,mag:4,dex:3,spd:2,lck:1,def:1},
+  magic:{maxHp:3,str:5,mag:3,dex:2,spd:1,lck:1,def:1,res:1}
+ };
+ C.STAGE_SEVEN={id:'mission-07',mapRevision:1,cols,rows,chapter:'MISSION 07',chapterJp:'第七话',chapterEn:'CHAPTER 07',enemyStatBonuses,
   title:'繁星之下的求援',mapName:'STARRY · 地下 Live House',
   subtitle:'熟悉的舞台传来失真的回响。独自走入 Live House 的虹夏，被突然现身的黑影包围，直到门口响起了回应。',
   objective:'击败全部敌人，夺回 Live House 的舞台',
@@ -7181,9 +7190,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 (function(global){
  'use strict';const C=global.MyGO.CONFIG,base=C.STAGE_SEVEN;
  const chars=base.mapChars.slice(0,6).concat(Array(8).fill(base.mapChars[6]),base.mapChars.slice(6));
- const chests=[{id:'echo-seal',name:'西侧转职宝箱',x:4,y:23,item:'intermediate_seal'},
-  {id:'echo-gold',name:'东侧金币宝箱',x:25,y:17,gold:1500},
-  {id:'echo-sword',name:'后台武器宝箱',x:24,y:4,item:'steel_sword'}];
+ const chests=[{id:'echo-seal',name:'西侧转职宝箱',x:9,y:20,item:'intermediate_seal'},
+  {id:'echo-gold',name:'东侧金币宝箱',x:20,y:19,gold:1500},
+  {id:'echo-sword',name:'前沿武器宝箱',x:15,y:13,item:'steel_sword'}];
+ const legacyKeySpawns={'echo-pegasus-0':{x:8,y:15},'echo-pegasus-1':{x:21,y:10},'echo-pegasus-2':{x:22,y:6}};
  const defs=[['blade','shadow_blade_1',10,15],['axe','shadow_axe',19,15],['bow','shadow_bow',12,11],
   ['blade-w','shadow_blade_2',8,10],['lance-e','shadow_lance',21,12],['bow-deep','shadow_bow',20,5],
   ['mage-w','conductor',10,7],['mage-e','conductor',18,8]];
@@ -7195,7 +7205,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   name:type==='armor'?'暗幕重装':'携钥天马骑士',shortName:type==='armor'?'暗幕重装':'携钥天马',boss:false,key:false,hpFloor:0,dormant:false,
   drops:type==='pegasus'?['chest_key']:[],carriedItems:type==='pegasus'?['chest_key']:[],guardGroup:'echo-'+(y>10?'front':'rear'),guardRadius:6,facing:'down'});
  const enemies=regular.concat([[9,12],[20,13],[9,5],[20,8]].map(([x,y],i)=>special('armor',i,x,y)),
-  [[8,15],[21,10],[22,6]].map(([x,y],i)=>special('pegasus',i,x,y)),[
+  [[10,17],[19,17],[15,14]].map(([x,y],i)=>special('pegasus',i,x,y)),[
   {...C.UNITS.find(u=>u.id==='soyo'),id:'dark_soyo',name:'往日之影长崎爽世',shortName:'爽世之影',side:'enemy',classId:'warlock',className:'术士',
    level:12,maxHp:40,str:5,mag:15,dex:13,spd:9,lck:5,def:6,res:12,weapon:'miasma',spells:['miasma'],x:11,y:4,
    boss:true,hpFloor:0,tags:[],drops:[],carriedItems:[],dormant:false,guardRadius:5,guardGroup:'echo-phantoms',facing:'down',quote:'那些没有说出口的话……你还记得吗？'},
@@ -7219,11 +7229,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   armor:{maxHp:30,str:15,mag:4,dex:10,spd:6,lck:7,def:22,res:4,move:4}, // panel total 102
   flying:{maxHp:26,str:11,mag:6,dex:13,spd:14,lck:6,def:8,res:12} // panel total 102, move 6
  };
- C.STAGE_EIGHT={...base,id:'mission-08',mapRevision:1,rows:36,chapter:'MISSION 08',chapterJp:'第八话',chapterEn:'CHAPTER 08',balanceStats,
+ C.STAGE_EIGHT={...base,id:'mission-08',mapRevision:1,rows:36,chapter:'MISSION 08',chapterJp:'第八话',chapterEn:'CHAPTER 08',balanceStats,legacyKeySpawns,
   title:'无尽舞台的往日之影',mapName:'STARRY · 被暗幕扩张的舞台',
   subtitle:'神秘面具人再现，熟悉的舞台向黑暗深处延伸。幕布下，两个本不该站在对面的身影睁开了眼。',
   objective:'击败幻影：往日之影长崎爽世与往日之影高松灯',
-  gateHint:'众人留在舞台前沿。向北击败术士爽世之影与佣兵灯之影即可获胜。重装高守备低魔防；弓克制天马。三名携钥天马各掉一把钥匙，三个宝箱分别藏有中级转职证、1500 G、钢剑。先搜宝，再击败最后一名幻影。',
+  gateHint:'先清理出生区前方的三名携钥天马，每名掉一把钥匙。出生区西侧、东侧及正前方三个宝箱分别藏有中级转职证、1500 G、钢剑，开完箱再深入北侧挑战两名幻影。重装高守备低魔防；弓克制天马。击败最后一名幻影即通关。',
   terrain:C.buildTerrainGrid(chars),mapChars:chars,enemies,enemyCount:enemies.length,chests,phantomIds:['dark_soyo','dark_tomori'],
   spawns:{tomori:{x:13,y:18},anon:{x:14,y:19},rana:{x:15,y:18},soyo:{x:13,y:19},taki:{x:15,y:19},xueyue:{x:12,y:20},nina:{x:16,y:20},nijika:{x:14,y:18}},
   decor:base.decor.map(o=>({...o,y:o.y>=6?o.y+8:o.y})).concat(chests.map(c=>({...c,kind:'chest'})))};
@@ -7881,6 +7891,52 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   </script>
   <script>
+/* ===== src/talents.js ===== */
+/* Personal talent slot 1: level 15 awakening. No random rolls or save flags. */
+(function(global){
+  'use strict';
+  const M=global.MyGO=global.MyGO||{};
+  const LEVEL=15;
+  const data={
+    tomori:{name:'行动者',description:'速度＋2。',stat:'spd',amount:2},
+    rana:{name:'幸运猫',description:'对所有攻击的闪避率提升5个百分点。'},
+    soyo:{name:'魔力觉醒',description:'魔力＋2。',stat:'mag',amount:2},
+    taki:{name:'队友守护',description:'上下左右紧邻的存活队友守备、魔防＋1；不作用于自身。'},
+    anon:{name:'爆头',description:'使用弓箭攻击时，技巧＋3，参与命中与暴击计算。'},
+    nina:{name:'战斗爽',description:'每击败一个敌人回复5 HP，不超过生命上限；反击击破同样生效。'},
+    nijika:{name:'同心',description:'施放治疗魔法时，自身回复目标实际恢复的HP；群体治疗按实际回复总量计算，不超过自身生命上限。'}
+  };
+  for(const t of Object.values(data))Object.freeze(t);
+  Object.freeze(data);
+  function get(u){return data[typeof u==='string'?u:u?.id]||null;}
+  function active(u){return !!get(u)&&u.side!=='enemy'&&u.level>=LEVEL;}
+  // Permanent stat bonuses are separate from random growth. Reconstructing a
+  // save from base + gains derives the bonus once, never accumulating on reload.
+  function sync(u){
+    const t=get(u),before=u._talent1Bonus||0,next=active(u)&&t.stat?t.amount:0;
+    if(t?.stat)u[t.stat]+=next-before;
+    u._talent1Bonus=next;
+  }
+  function dexBonus(u){return active(u)&&u.id==='anon'&&u.weapon?.type==='bow'?3:0;}
+  function avoidBonus(u){return active(u)&&u.id==='rana'?5:0;}
+  function guardBonus(u,map){
+    if(!u||u.dead||u.hp<=0||u.escaped)return 0;
+    return (map?.units||[]).some(t=>t.id==='taki'&&active(t)&&!t.dead&&!t.escaped&&t.hp>0&&
+      t.id!==u.id&&!M.Grid.hostile(t,u)&&Math.abs(t.x-u.x)+Math.abs(t.y-u.y)===1)?1:0;
+  }
+  function heal(u,amount){const restored=Math.max(0,Math.min(amount,u.maxHp-u.hp));u.hp+=restored;return restored;}
+  function onKill(u,target,killed){
+    return killed&&active(u)&&u.id==='nina'&&!u.dead&&u.hp>0&&target.side==='enemy'?heal(u,5):0;
+  }
+  function onSupport(u,spell,changes){
+    return active(u)&&u.id==='nijika'&&['heal','fortify'].includes(spell.effect)?
+      heal(u,changes.reduce((sum,c)=>sum+Math.max(0,c.amount||0),0)):0;
+  }
+  M.Talents=Object.freeze({LEVEL,data,get,active,sync,dexBonus,avoidBonus,guardBonus,onKill,onSupport});
+})(window);
+
+  </script>
+  <script>
 /* ===== src/growth.js ===== */
 /* FE3H experience and random growth rules. Source details: docs/GROWTH.md. */
 (function(global){
@@ -7903,6 +7959,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     u.exp=0;u.growthGains=Object.fromEntries(keys.map(k=>[k,0]));
     u.growthRngState=seed(u.id,2166136261);
     u.growthBase={level:u.level,stats:Object.fromEntries(keys.map(k=>[k,u[k]]))};
+    M.Talents?.sync(u);
   }
   function pack(u){return {version:1,level:u.level,exp:u.exp,gains:{...u.growthGains},rngState:u.growthRngState};}
   function restore(u,s,fullHp=false){
@@ -7915,6 +7972,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     u.level=s.level;u.exp=s.exp;u.growthRngState=s.rngState;
     u.growthGains=Object.fromEntries(keys.map(k=>[k,s.gains[k]]));
     for(const k of keys)u[k]=base.stats[k]+s.gains[k];
+    u._talent1Bonus=0;M.Talents?.sync(u);
     if(fullHp)u.hp=u.maxHp;
   }
   function rollLevel(u,rng){
@@ -7932,11 +7990,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     u.exp+=gained;const levels=[],rng=M.RNG.restore(u.growthRngState);
     while(u.level<MAX_LEVEL&&u.exp>=required(u.level)){
       u.exp-=required(u.level);const old=Object.fromEntries(keys.map(k=>[k,u[k]])),gains=rollLevel(u,rng);
+      const hadTalent=M.Talents?.active(u);
       u.level++;for(const k of keys){u[k]+=gains[k];u.growthGains[k]+=gains[k];}
+      M.Talents?.sync(u);
       // Preserve missing HP; growth does not fully heal an injured unit.
       u.hp+=gains.maxHp;
       const learned=M.Inventory.learn(u);M.Inventory.sync(u);
-      levels.push({level:u.level,before:old,gains,learned,after:Object.fromEntries(keys.map(k=>[k,u[k]]))});
+      const awakened=!hadTalent&&M.Talents?.active(u)?M.Talents.get(u):null;
+      levels.push({level:u.level,before:old,gains,learned,awakened,after:Object.fromEntries(keys.map(k=>[k,u[k]]))});
     }
     u.growthRngState=rng.serialize();if(u.level===MAX_LEVEL)u.exp=0;
     return {unitId:u.id,name:u.name,gained,before,after:{level:u.level,exp:u.exp,required:required(u.level)},levels};
@@ -8310,12 +8371,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   /** 展示用闪避值（地形闪避 + 速度回避）。 */
   function avoidOf(unit, map) {
     const terrain = terrainOf(unit, map);
-    return Math.floor(speedOf(unit) * C.COMBAT.speedAvoidFactor) + terrain.avoid + (unit.gear?.avoid||0);
+    return Math.floor(speedOf(unit) * C.COMBAT.speedAvoidFactor) + terrain.avoid + (unit.gear?.avoid||0) + (MyGO.Talents?.avoidBonus(unit)||0);
   }
 
   /** 风花雪月：技巧和幸运共同产生暴击，防守方幸运抵消暴击。 */
   function critRateOf(unit) {
-    return Math.floor(((unit.dex || 0) + (unit.lck || 0)) / 2) + (unit.weapon.crit || 0) + (unit.gear?.crit||0);
+    return Math.floor((dexOf(unit) + (unit.lck || 0)) / 2) + (unit.weapon.crit || 0) + (unit.gear?.crit||0);
   }
 
   function critAvoidOf(unit) {
@@ -8335,7 +8396,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   }
 
   function speedOf(u){return Math.max(0,u.spd+(u.gear?.spd||0)-(u.status?.spdDown?5:0));}
-  function hitOf(u){return (u.weapon.absoluteHit?(u.weapon.damageType==='magic'?Math.floor(((u.dex||0)+(u.lck||0))/2):(u.dex||0)):(u.hit||0))+(u.weapon.hit||0)+(u.gear?.hit||0);}
+  function dexOf(u){return (u.dex||0)+(MyGO.Talents?.dexBonus(u)||0);}
+  function hitOf(u){return (u.weapon.absoluteHit?(u.weapon.damageType==='magic'?Math.floor((dexOf(u)+(u.lck||0))/2):dexOf(u)):(u.hit||0)+(MyGO.Talents?.dexBonus(u)||0))+(u.weapon.hit||0)+(u.gear?.hit||0);}
 
   function counterReason(attacker, defender) {
     if (!defender || defender.dead || defender.hp <= 0) return '单位已被击倒';
@@ -8373,15 +8435,17 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function rollRound(attacker, defender, map, rng) {
     const plan = forecast(attacker, defender, map);
     const units = new Map([[attacker.id,MyGO.Inventory.copy(attacker)], [defender.id,MyGO.Inventory.copy(defender)]]);
+    const battleMap={...map,units:(map.units||[attacker,defender]).map(u=>units.get(u.id)||u)};
     const strikes = [];
     for (const step of plan.order) {
       const a = units.get(step.attackerId), b = units.get(step.defenderId);
       if (a.hp <= 0 || b.hp <= 0) break;
       if(!MyGO.Inventory.usable(a))continue;
-      const strike = {...roll(preview(a,b,map),rng), kind:step.kind,
+      const strike = {...roll(preview(a,b,battleMap),rng), kind:step.kind,
         attackerHp:a.hp, attackerMaxHp:a.maxHp,resourceId:a.inventory?a.weapon.id:null,weaponSnapshot:a.weapon};
       if(a.inventory)MyGO.Inventory.consume(a,a.weapon.id);
       strike.healed=MyGO.Inventory.useEffects(a,b,MyGO.Magic.get(a.weapon.id),strike.finalDamage,strike.hit);
+      strike.talentHealed=MyGO.Talents?.onKill(a,b,strike.hit&&strike.hpAfter<=0)||0;
       strike.attackerHpAfterStrike=a.hp;
       const reverse = b.id === defender.id ? plan.counter : plan;
       strike.response = reverse;
@@ -8428,7 +8492,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
     // ③ 防守：物理吃守备和山地，魔法只吃魔防。
     const terrainDef = magic ? 0 : terrain.def;
-    const defense = magic ? (aw.ignoreRes?0:defender.res+(defender.gear?.res||0)+(defender.status?.ward||0)) : Math.max(0,defender.def+(defender.gear?.def||0)-(defender.status?.defDown?5:0)) + terrainDef;
+    const guard=MyGO.Talents?.guardBonus(defender,map)||0;
+    const defense = magic ? (aw.ignoreRes?0:defender.res+(defender.gear?.res||0)+(defender.status?.ward||0)+guard) : Math.max(0,defender.def+(defender.gear?.def||0)+guard-(defender.status?.defDown?5:0)) + terrainDef;
     const damage = Math.max(C.COMBAT.minDamage, attack - defense);
 
     const targetAvoid = avoidOf(defender,map);
@@ -8513,10 +8578,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   /** 返回某单位站上当前地形后的防御值，供信息面板展示。 */
   function defenseOf(unit, map, magic) {
     const terrain = terrainOf(unit, map);
-    return magic ? unit.res+(unit.gear?.res||0)+(unit.status?.ward||0) : Math.max(0,unit.def+(unit.gear?.def||0)-(unit.status?.defDown?5:0)) + terrain.def;
+    const guard=MyGO.Talents?.guardBonus(unit,map)||0;
+    return magic ? unit.res+(unit.gear?.res||0)+(unit.status?.ward||0)+guard : Math.max(0,unit.def+(unit.gear?.def||0)+guard-(unit.status?.defDown?5:0)) + terrain.def;
   }
 
   MyGO.Combat = {
+    dexOf,
     speedOf,
     hitOf,
     clamp,
@@ -8556,6 +8623,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const Grid = MyGO.Grid;
   const Pathfinding = MyGO.Pathfinding;
   const Combat = MyGO.Combat;
+
+  // Non-serialized live context lets combat/UI/AI inspect adjacent protectors,
+  // including after movement, recruitment, deaths and chapter restoration.
+  function bindCombatMap(game){Object.defineProperty(game.map,'units',{configurable:true,get:()=>game.units});}
 
   // Keep core-only consumers independent of optional chapter modules.
   function missionForStage(stage) {
@@ -8690,6 +8761,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.livehouseEndingShown=false;
       this.stageEightIntroSeen=false;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
+      bindCombatMap(this);
       this.units = unitsForStage(this.stage, this.recruited);
       this.mission = missionForStage(this.stage);
       this.convoy = MyGO.Inventory.stock();
@@ -8705,7 +8777,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.bossDiscovered=false;
       this.soyoBossBonus=false;
       this.enemyScaleLevel=0;this.enemyScalePower=0;
-      if(this.stage>=4)this.scaleParkEnemies();
+      if(this.stage>=4)this.applyFixedEnemyStats();
       this.turn = 1;
       this.phase = 'player'; // player | enemy | victory | defeat
       this.winner = null;
@@ -8899,9 +8971,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         if(['warp','rescue'].includes(s.effect))this.setUnitPosition(u.id,destination.x,destination.y);
         MyGO.Inventory.sync(u);
       }
+      const talentHealing=MyGO.Talents?.onSupport(caster,s,changes)||0;
+      if(talentHealing)changes.push({id:caster.id,amount:talentHealing,talent:'同心'});
       caster.acted=true;MyGO.Inventory.sync(caster);
       const growth=MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
-      return {spell:s,changes,affected:affected.map(u=>u.id),experience:growth?[growth]:[]};
+      return {spell:s,changes,talentHealing,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
     }
 
     expireStatuses(side) {
@@ -8917,6 +8991,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     _setupStage(stage) {
       this.stage = [2,3,4,5,6,7,8].includes(stage) ? stage : 1;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
+      bindCombatMap(this);
       this.units = unitsForStage(this.stage, this.recruited);
       this.mission = missionForStage(this.stage);
       this.gateOpen = false;
@@ -8928,7 +9003,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.litLamps=[];
       this.summonedWaves=[];this.maskRetreatPending=false;this.maskEscaped=false;this.lastSummonTurn=0;
       this.openedChests=[];this.bossDiscovered=false;this.soyoBossBonus=false;this.enemyScaleLevel=0;this.enemyScalePower=0;
-      if(this.stage>=4)this.scaleParkEnemies();
+      if(this.stage>=4)this.applyFixedEnemyStats();
     }
 
     /** Party vision moves with units; lamplight remains until the end of the map. */
@@ -8968,10 +9043,35 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(this.stage===4){const boss=this.getUnit('dark_soyo');if(boss&&this.isUnitVisible(boss))this.bossDiscovered=true;}
     }
 
-    /** Scale from authored stats, never from previously scaled stats; preserve HP ratio. */
-    scaleParkEnemies(level,units=this.units,force=false,legacyEighth=false) {
+    /** Campaign enemies use authored chapter values, independent of the party.
+     * Keep wounds and battle state when migrating an older scaled save. */
+    applyFixedEnemyStats(units=this.units) {
       if(this.stage<4)return;
-      if(this.stage===8&&!legacyEighth)return this.scaleEighthEnemies(level,units,force);
+      const mission=missionForStage(this.stage),templates=mission.enemies.concat(this.stage===6?mission.summonTemplates:[]);
+      for(const u of units.filter(u=>u.side==='enemy')){
+        const base=templates.find(t=>t.id===u.id),ratio=u.hp/u.maxHp;
+        const job=base.classId?MyGO.Classes.get(base.classId):null;
+        u.level=base.level;
+        for(const key of ['maxHp','str','mag','dex','spd','lck','def','res'])u[key]=base[key]||0;
+        u.move=job?job.move:base.move;
+        if(this.stage===7){
+          const weapon=C.WEAPONS[base.weapon],bonus=mission.enemyStatBonuses[weapon.damageType==='magic'?'magic':weapon.type];
+          for(const [key,value] of Object.entries(bonus))u[key]+=value;
+        }
+        if(this.stage===8){
+          const profile=mission.balanceStats[u.id]||mission.balanceStats[u.tags.includes('armor')?'armor':u.tags.includes('flying')?'flying':''];
+          if(profile)Object.assign(u,profile);
+        }
+        u.hp=u.dead?0:Math.max(1,Math.min(u.maxHp,Math.ceil(u.maxHp*ratio-1e-9)));
+      }
+      // Kept in snapshots solely for compatibility with pre-fixed-stat saves.
+      this.enemyScaleLevel=Math.min(...mission.enemies.map(u=>u.level));this.enemyScalePower=this.stage===8?100:0;
+    }
+
+    /** Legacy save reconstruction only. Never called by current gameplay. */
+    restoreLegacyEnemyScale(level,units=this.units,force=false,legacyEighth=false,legacySeventh=false) {
+      if(this.stage<4)return;
+      if(this.stage===8&&!legacyEighth)return this.restoreLegacyEighthScale(level,units,force);
       const party=units.filter(u=>u.side==='player');
       const target=level??Math.min(97,Math.ceil(party.reduce((n,u)=>n+u.level,0)/Math.max(1,party.length)));
       if(target<=this.enemyScaleLevel&&!force)return;
@@ -8981,7 +9081,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         const courtArmor=this.stage>=5&&u.tags.includes('armor');
         for(const [k,rate] of Object.entries({maxHp:courtArmor?(u.boss?2:1):u.boss?3:2,str:.65,mag:.65,dex:.5,spd:.35,def:.4,res:courtArmor?.15:.45,lck:.3}))
           u[k]=Math.max(k==='maxHp'?(u.boss?(courtArmor?22:26):12):0,base[k]+Math.round(d*rate));
-        u.hp=u.dead?0:Math.max(1,Math.ceil(u.maxHp*ratio));
+        if(this.stage===7&&!legacySeventh){
+          const weapon=C.WEAPONS[base.weapon],bonus=C.STAGE_SEVEN.enemyStatBonuses[weapon.damageType==='magic'?'magic':weapon.type];
+          for(const [key,value] of Object.entries(bonus))u[key]+=value;
+        }
+        u.hp=u.dead?0:Math.max(1,Math.ceil(u.maxHp*ratio-(this.stage===7?1e-9:0)));
       }
       this.enemyScaleLevel=target;
     }
@@ -8989,7 +9093,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     /** Fixed panel profiles for every chapter-eight enemy. Legacy modes rebuild
      * previous scaling limits before migrating wounds: v1 uses total power,
      * v2/v3 scaled ordinary soldiers from effective power. */
-    scaleEighthEnemies(level,units=this.units,force=false,legacy=false,legacyRegular=false) {
+    restoreLegacyEighthScale(level,units=this.units,force=false,legacy=false,legacyRegular=false) {
       const party=units.filter(u=>u.side==='player');
       const target=Math.min(97,Math.max(10,this.enemyScaleLevel||0,level||0,...party.map(u=>u.level)));
       const effectiveTotal=u=>Combat.statTotalOf(u)-(u.weapon.damageType==='magic'?(u.str||0):(u.mag||0));
@@ -9045,7 +9149,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const summoned=placements.map(t=>createUnit({...t,mapCols:this.map.cols,mapRows:this.map.rows}));
       for(const u of summoned){u.acted=true;u.alerted=true;u.growthRngState=MyGO.Growth.seed(u.id,this.rng.serialize());}
       this.units.push(...summoned);this.summonedWaves.push(wave.id);this.lastSummonTurn=this.turn;
-      this.scaleParkEnemies(this.enemyScaleLevel,this.units,true);
+      this.applyFixedEnemyStats(summoned);
       this.getUnit('masked_stranger').acted=true;
       return {id:wave.id,name:wave.name,units:summoned};
     }
@@ -9329,6 +9433,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     }
 
     previewCombat(attacker, defender) {
+      bindCombatMap(this);
       if (!this.canAttack(attacker, defender)) {
         throw new Error('目标不在攻击范围内');
       }
@@ -9393,6 +9498,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         defender.acted = true;
         if (this.stage === 3 && defender.id === 'nina') this.ninaLost = true;
       }
+      result.talentHealed=attacker?(MyGO.Talents?.onKill(attacker,defender,killed)||0):0;
       result.applied = true;
       result.hpBeforeApply = before;
       result.hpAfterApply = defender.hp;
@@ -9489,7 +9595,6 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.expireStatuses('enemy');
       this.decayWard('player');
       this.turn += 1;
-      if(this.stage>=4)this.scaleParkEnemies();
       if(this.stage===3 && this.turn>=4){
         for(const enemy of this.living('enemy'))if(enemy.guardGroup==='south')enemy.alerted=true;
       }
@@ -9517,6 +9622,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     serialize() {
       return {
         version: C.SAVE_VERSION,
+        ...(this.stage>=4?{fixedEnemyStatsVersion:1}:{}),
         stage: this.stage,
         mapRevision: this.stage === 1 ? C.MAP_REVISION : this.mission.mapRevision,
         turn: this.turn,
@@ -9527,10 +9633,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         awakenedBells: this.awakenedBells.slice(),
         ...(this.stage===4?{litLamps:this.litLamps.slice(),bossDiscovered:this.bossDiscovered,
           soyoBossBonus:this.soyoBossBonus,enemyScaleLevel:this.enemyScaleLevel}:{}),
-        ...(this.stage===8?{stageEightIntroSeen:this.stageEightIntroSeen,enemyScaleVersion:4,enemyScalePower:this.enemyScalePower,nijikaLevelVersion:1,openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
+        ...(this.stage===8?{stageEightIntroSeen:this.stageEightIntroSeen,enemyScaleVersion:4,enemyScalePower:this.enemyScalePower,nijikaLevelVersion:1,lootLayoutVersion:1,openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===5?{openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===6?{summonedWaves:this.summonedWaves.slice(),lastSummonTurn:this.lastSummonTurn,maskRetreatPending:this.maskRetreatPending,maskEscaped:this.maskEscaped,enemyScaleLevel:this.enemyScaleLevel}:{}),
-        ...(this.stage===7?{nijikaJoined:this.nijikaJoined,nijikaLevelVersion:1,livehouseEndingShown:this.livehouseEndingShown,enemyScaleLevel:this.enemyScaleLevel}:{}),
+        ...(this.stage===7?{nijikaJoined:this.nijikaJoined,nijikaLevelVersion:1,livehouseEndingShown:this.livehouseEndingShown,enemyScaleLevel:this.enemyScaleLevel,enemyBalanceVersion:1}:{}),
         recruited: this.recruited.slice(),
         recruitmentVersion: 1,
         recruitmentShown: this.recruitmentShown,
@@ -9561,6 +9667,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         throw new Error('存档版本不兼容');
       }
       if (!Array.isArray(snapshot.units)) throw new Error('存档单位数据缺失');
+      if(snapshot.fixedEnemyStatsVersion!==undefined&&snapshot.fixedEnemyStatsVersion!==1)throw Error('存档固定敌军属性版本无效');
       if(snapshot.inventoryVersion!==undefined&&snapshot.inventoryVersion!==1)throw Error('背包存档版本不兼容');
       if (snapshot.stage === 2 && snapshot.mapRevision !== C.STAGE_TWO.mapRevision) {
         throw new Error('第二关地图已重新设计，请重开第二关；旧存档仍然保留。');
@@ -9597,6 +9704,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.bossDiscovered=this.stage===4&&!!snapshot.bossDiscovered;
       this.soyoBossBonus=this.stage===4&&!!snapshot.soyoBossBonus;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
+      bindCombatMap(this);
       this.gateOpen = !!snapshot.gateOpen;
       this._syncGateTiles();
       this.resonanceOpen = this.stage===1 && !!snapshot.resonanceOpen;
@@ -9613,6 +9721,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.nijikaJoined=this.stage===8||this.stage===7&&snapshot.nijikaJoined===true;
       this.livehouseEndingShown=this.stage===7&&snapshot.livehouseEndingShown===true;
       if(this.stage===7){
+        if(snapshot.enemyBalanceVersion!==undefined&&snapshot.enemyBalanceVersion!==1)throw Error('第七关敌军平衡版本无效');
         if(snapshot.livehouseEndingShown!==undefined&&typeof snapshot.livehouseEndingShown!=='boolean'||this.livehouseEndingShown&&snapshot.phase!=='victory')throw Error('Live House 战后剧情状态无效');
         if(typeof snapshot.nijikaJoined!=='boolean'||this.nijikaJoined!==this.recruited.includes('nijika'))throw Error('虹夏入队状态无效');
         if(snapshot.nijikaLevelVersion!==undefined&&snapshot.nijikaLevelVersion!==1)throw Error('虹夏等级版本无效');
@@ -9627,6 +9736,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         this.enemyScalePower=snapshot.enemyScalePower;
       }
       if(this.stage===8){
+        if(snapshot.lootLayoutVersion!==undefined&&snapshot.lootLayoutVersion!==1)throw Error('第八关宝箱布局版本无效');
         if(typeof snapshot.stageEightIntroSeen!=='boolean'||!this.recruited.includes('nijika')||snapshot.nijikaLevelVersion!==1)throw Error('第八关开场状态无效');
         if(!this.stageEightIntroSeen&&snapshot.phase!=='player')throw Error('第八关开场尚未完成');
         const opened=snapshot.openedChests,expected=unitsForStage(8,this.recruited);
@@ -9649,12 +9759,13 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         if(snapshot.units.length!==fresh.length||snapshot.units.some(u=>!expected.has(u.id)))throw Error('存档召唤单位无效');
       }
       this.enemyScaleLevel=0;
-      if(this.stage===8&&snapshot.enemyScaleVersion===1)this.scaleEighthEnemies(snapshot.enemyScaleLevel,fresh,false,true);
-      else if(this.stage===8&&[2,3].includes(snapshot.enemyScaleVersion))this.scaleEighthEnemies(snapshot.enemyScaleLevel,fresh,false,false,true);
-      else if(this.stage>=4)this.scaleParkEnemies(snapshot.enemyScaleLevel,fresh,false,this.stage===8&&snapshot.enemyScaleVersion===undefined);
+      if(this.stage>=4&&snapshot.fixedEnemyStatsVersion===1)this.applyFixedEnemyStats(fresh);
+      else if(this.stage===8&&snapshot.enemyScaleVersion===1)this.restoreLegacyEighthScale(snapshot.enemyScaleLevel,fresh,false,true);
+      else if(this.stage===8&&[2,3].includes(snapshot.enemyScaleVersion))this.restoreLegacyEighthScale(snapshot.enemyScaleLevel,fresh,false,false,true);
+      else if(this.stage>=4)this.restoreLegacyEnemyScale(snapshot.enemyScaleLevel,fresh,false,this.stage===8&&snapshot.enemyScaleVersion===undefined,this.stage===7&&snapshot.enemyBalanceVersion===undefined);
       // Both v5.8.3 and v5.8.4 used these HP limits. Restore wounds against
       // those limits before applying the corrected panel budgets below.
-      if(this.stage===8&&snapshot.enemyScaleVersion===2)for(const u of fresh.filter(u=>u.side==='enemy')){
+      if(this.stage===8&&snapshot.fixedEnemyStatsVersion===undefined&&snapshot.enemyScaleVersion===2)for(const u of fresh.filter(u=>u.side==='enemy')){
         const oldMaxHp=u.id==='dark_soyo'?42:u.id==='dark_tomori'?43:u.tags.includes('armor')?32:u.tags.includes('flying')?29:0;
         if(oldMaxHp){u.maxHp=oldMaxHp;u.hp=oldMaxHp;}
       }
@@ -9721,10 +9832,19 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         Object.assign(guard,{x:cells[0].x,y:cells[0].y});
       }
 
-      // Reconstruct old limits before applying the corrected panel budgets.
-      if(this.stage===8){
-        if(![2,3,4].includes(snapshot.enemyScaleVersion)){this.enemyScaleLevel=0;this.enemyScalePower=0;}
-        this.scaleParkEnemies(undefined,fresh,snapshot.enemyScaleVersion!==4);
+      // Old saves were restored against their original limits above. Migrate
+      // directly to fixed chapter stats, preserving the exact wound ratio.
+      if(this.stage>=4)this.applyFixedEnemyStats(fresh);
+
+      // Only untouched key carriers still at their old spawn adopt the closer
+      // layout. Keep battle progress and never displace another living unit.
+      if(this.stage===8&&snapshot.lootLayoutVersion===undefined&&!['victory','defeat'].includes(snapshot.phase)){
+        for(const [id,old] of Object.entries(C.STAGE_EIGHT.legacyKeySpawns)){
+          const u=byId.get(id),spawn=C.STAGE_EIGHT.enemies.find(t=>t.id===id);
+          if(u.dead||u.acted||u.alerted||u.hp!==u.maxHp||u.x!==old.x||u.y!==old.y)continue;
+          if(fresh.some(other=>other!==u&&!other.dead&&!other.escaped&&other.x===spawn.x&&other.y===spawn.y))continue;
+          u.x=spawn.x;u.y=spawn.y;
+        }
       }
 
       // 防御性检查：存活单位不能重叠。
@@ -17423,7 +17543,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         '  <div class="stat"><i>速度</i><b>' + unit.spd + '</b></div>',
         '  <div class="stat"><i>守备</i><b>' + unit.def + (!magic && terrain.def ? '<small>+' + terrain.def + '</small>' : '') + '</b></div>',
         '  <div class="stat"><i>魔防</i><b>' + unit.res + '</b></div>',
-        '  <div class="stat"><i>技巧</i><b>' + unit.dex + '</b></div>',
+        '  <div class="stat"><i>技巧</i><b>' + unit.dex + ((MyGO.Talents?.dexBonus(unit)||0)?'<small>+3 天赋</small>':'') + '</b></div>',
         '  <div class="stat warm"><i>幸运</i><b>' + unit.lck + '</b></div>',
         '  <div class="stat"><i>移动</i><b>' + unit.move + '</b></div>',
         '</div>',
@@ -17858,6 +17978,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
       for (const strike of applied.strikes.filter(s=>s.applied)) {
         const target = this.game.getUnit(strike.defenderId);
+        if(strike.talentHealed){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('战斗爽 +'+strike.talentHealed,actor.x,actor.y-0.5,'#bcebd7',11);}
         if (strike.hit) {
           this.renderer.flash(target.id, strike.crit ? 'rgba(255, 209, 102, 0.72)' : 'rgba(255, 80, 110, 0.65)', 380);
           this.renderer.floatText('-' + strike.finalDamage, target.x, target.y, strike.crit ? '#ffe08a' : '#ff8fa4', strike.crit ? 12 : 10);
@@ -17897,7 +18018,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       await new Promise(resolve=>{
         this.openOverlay('<div class="modal-kicker">LEVEL UP / GROWTH</div><h2 class="modal-title" id="overlay-title">成长的足迹</h2>'+
           leveled.map(r=>'<section class="growth-level"><h3>'+esc(r.name)+' <span>Lv.'+r.before.level+' → Lv.'+r.after.level+'</span></h3><p>经验 +'+r.gained+' · '+(r.after.level>=99?'已达最高等级':r.after.exp+' / '+r.after.required+' EXP')+'</p>'+
-            r.levels.map(l=>'<div class="growth-level-grid">'+MyGO.GrowthData.keys.map(k=>'<div class="'+(l.gains[k]?'is-up':'')+'"><span>'+MyGO.GrowthData.labels[k]+'</span><strong>'+l.before[k]+' → '+l.after[k]+'</strong><b>'+(l.gains[k]?'+'+l.gains[k]:'—')+'</b></div>').join('')+'</div>'+(l.learned?.length?'<p class="learned-spells-notice">新习得：'+l.learned.map(id=>esc(MyGO.Magic.get(id).name)).join('、')+'</p>':'')).join('')+'</section>').join('')+
+            r.levels.map(l=>'<div class="growth-level-grid">'+MyGO.GrowthData.keys.map(k=>'<div class="'+(l.after[k]>l.before[k]?'is-up':'')+'"><span>'+MyGO.GrowthData.labels[k]+'</span><strong>'+l.before[k]+' → '+l.after[k]+'</strong><b>'+(l.after[k]!==l.before[k]?'+'+(l.after[k]-l.before[k]):'—')+'</b></div>').join('')+'</div>'+(l.awakened?'<p class="learned-spells-notice">个人天赋1觉醒：'+esc(l.awakened.name)+' · '+esc(l.awakened.description)+'</p>':'')+(l.learned?.length?'<p class="learned-spells-notice">新习得：'+l.learned.map(id=>esc(MyGO.Magic.get(id).name)).join('、')+'</p>':'')).join('')+'</section>').join('')+
           '<p class="modal-sub">属性提升已生效，成长结果会随存档与跨章保留。</p><div class="modal-actions"><button class="modal-btn primary" data-confirm>继续前行</button></div>','growth-modal',false);
         this.confirmHandler=resolve;
       });
@@ -18144,7 +18265,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const rows = result.strikes.map((s,i) => '<div class="exchange-strike ' + (s.attackerSide !== 'enemy' ? 'is-player' : 'is-enemy') + '">' +
         '<span class="exchange-order">' + (i+1) + '</span><div><strong>' + label[s.kind] + ' · ' + esc(s.attackerName) +
         '</strong><small>→ ' + esc(s.defenderName) + ' · ' + esc(s.weaponName) + ' · 命中 ' + s.hitChance + '% · 暴击 ' + s.critChance + '%' +
-        (s.healed ? ' · 吸取回复 ' + s.healed : '') + '</small></div>' +
+        (s.healed ? ' · 吸取回复 ' + s.healed : '') +
+        (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') + '</small></div>' +
         '<b class="' + (s.crit ? 'crit-text' : s.hit ? 'dmg-text' : 'miss-text') + '">' +
         (s.hit ? (s.crit ? '暴击 ' : '') + s.finalDamage : 'MISS') + '</b></div>').join('');
       const hp = (name,before,after,max) => '<div class="result-hpbar"><div class="result-hp-label"><span>' + esc(name) +
@@ -19519,9 +19641,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         { key: 'str', label: '力量', value: unit.str, hint: '物理攻击' },
         { key: 'mag', label: '魔力', value: unit.mag, hint: '魔法攻击' },
         { key: 'spd', label: '速度', value: unit.spd, hint: '影响回避' },
-        { key: 'def', label: '守备', value: unit.def, hint: '物理减伤' },
-        { key: 'res', label: '魔防', value: unit.res, hint: '魔法减伤' },
-        { key: 'dex', label: '技巧', value: unit.dex, hint: '影响暴击率' },
+        { key: 'def', label: '守备', value: unit.def+((MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)?'<small>+1 守护</small>':''), hint: '物理减伤' },
+        { key: 'res', label: '魔防', value: unit.res+((MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)?'<small>+1 守护</small>':''), hint: '魔法减伤' },
+        { key: 'dex', label: '技巧', value: unit.dex + ((MyGO.Talents?.dexBonus(unit)||0)?'<small>+3 天赋</small>':''), hint: '影响命中与暴击率' },
         { key: 'lck', label: '幸运', value: unit.lck, hint: '暴击与必杀回避' },
         { key: 'move', label: '移动', value: unit.move, hint: '行动距离' }
       ];
@@ -19727,6 +19849,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       '<p class="loadout-footnote">转职后移动、移动类型、武器类别、魔法使用与职业成长率立即生效，已学魔法记录保留。职业技能与精通奖励尚未实现。</p>';
   }
   const EP=M.EntryScreen.prototype,baseRender=EP.renderFormationDetail,baseBind=EP.bind;
+  function talentSummary(u){
+    const t=M.Talents?.get(u);if(!t||u.side==='enemy')return '';
+    return '<aside class="class-current"><span>个人天赋1 · Lv.15觉醒 · '+(M.Talents.active(u)?'已觉醒':'未觉醒')+'</span><strong>'+esc(t.name)+'</strong><p>'+esc(t.description)+'</p></aside>';
+  }
   EP.bind=function(){baseBind.call(this);this.dom.formationDetail.addEventListener('click',e=>{
     const t=e.target.closest('button');if(!t)return;
     if(t.dataset.loadoutTab){this.loadoutTab=t.dataset.loadoutTab;this.renderFormationDetail();this.dom.formationDetail.scrollTop=0;return;}
@@ -19747,9 +19873,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   EP.reclassLock=function(u){return this.ui.busy?'正在结算战斗':this.ui.mode!=='idle'?'请先返回战场，完成或取消当前单位的行动':this.ui.game.reclassLockReason(u);};
   EP.renderFormationDetail=function(){
     const active=this.loadoutTab||'stats';
-    if(active==='stats'){baseRender.call(this);const unit=this.players().find(u=>u.id===this.selectedUnitId);this.dom.formationDetail.insertAdjacentHTML('afterbegin',tabs(active)+(unit?classSummary(unit)+experienceSummary(unit):''));return;}
+    if(active==='stats'){baseRender.call(this);const unit=this.players().find(u=>u.id===this.selectedUnitId);this.dom.formationDetail.insertAdjacentHTML('afterbegin',tabs(active)+(unit?classSummary(unit)+experienceSummary(unit)+talentSummary(unit):''));return;}
     const u=this.players().find(u=>u.id===this.selectedUnitId);if(!u)return;
-    if(active==='growth'){this.dom.formationDetail.innerHTML=tabs(active)+growthCatalogue(u);this.renderPoseDock(u);return;}
+    if(active==='growth'){this.dom.formationDetail.innerHTML=tabs(active)+talentSummary(u)+growthCatalogue(u);this.renderPoseDock(u);return;}
     if(active==='classes'){
       this.dom.formationDetail.innerHTML=tabs(active)+classCatalogue(u,this.classTier||'all',this.ui.game,this.reclassLock(u));
       this.renderPoseDock(u);return;
@@ -19786,6 +19912,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const UP=M.UI.prototype,baseAction=UP.renderActionSide;
   const baseUnitInfo=UP.renderUnitInfo;
   UP.renderUnitInfo=function(u){baseUnitInfo.call(this,u);if(!u)return;
+    if(M.Talents?.get(u)&&u.side!=='enemy')this.dom.infoBody.insertAdjacentHTML('beforeend',talentSummary(u));
+    const guard=M.Talents?.guardBonus(u,this.game.map)||0;
+    if(guard)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">队友守护 · 守备／魔防＋1</span>');
     const line=this.dom.infoBody.querySelector('.weapon-line');
     if(line&&!u.weapon.cannotAttack)line.textContent+=' · '+(u.weapon.kind==='spell'?'剩余 '+u.spellUses[u.weaponId]+'/'+u.weapon.uses+' 次':'耐久 '+(u.inventory.find(i=>i.id===u.weaponId&&i.uses>0)?.uses||0)+'/'+u.weapon.uses);
     const labels={defDown:'守备−5',spdDown:'速度−5',moveDown:'移动−5',silence:'沉默',ward:'魔防支援'};
@@ -19965,7 +20094,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     const counterDemo = params.get('counter-demo');
     const inventoryDemo = params.get('inventory-demo') === '1';
     const growthDemo = params.get('growth-demo');
-    if (recruitDemo || mapDemo || counterDemo || inventoryDemo || growthDemo) {
+    const talentDemo = params.get('talent-demo');
+    if (recruitDemo || mapDemo || counterDemo || inventoryDemo || growthDemo || talentDemo) {
       let saved = null;
       ui.saveManager = {
         save(game) { saved = { ok: true, snapshot: game.serialize(), savedAt: new Date().toISOString() };
@@ -19990,7 +20120,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         const entry = new global.MyGO.EntryScreen(ui);
         global.MYGO_ENTRY = entry;
         global.MyGO.entry = entry;
-        if (inventoryDemo || growthDemo) {
+        if (inventoryDemo || growthDemo || talentDemo) {
           // Isolated, deterministic fixture for checking inventory and support UI.
           ui.chapterPlayed=true;
           const soyo=ui.game.getUnit('soyo'),tomori=ui.game.getUnit('tomori');
@@ -19998,6 +20128,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           ui.game.units.filter(u=>u.side==='player'&&!['soyo','tomori'].includes(u.id)).forEach((u,n)=>Object.assign(u,{x:6,y:12+n}));
           for(const unit of ui.game.units)ui.renderer.snapUnit(unit);
           ui.updateAll();entry.open({force:true});
+          if(talentDemo){
+            const id=global.MyGO.Talents.get(talentDemo)?talentDemo:'tomori';
+            const member=ui.game.getUnit(id)||tomori;
+            if(member.side!=='player')member.side='player';
+            const target=params.get('talent-level')==='14'?14:15;
+            while(member.level<target)global.MyGO.Growth.award(member,global.MyGO.Growth.required(member.level));
+            ui.updateAll();entry.openFormation();entry.selectedUnitId=member.id;entry.loadoutTab='stats';entry.renderFormationList();entry.renderFormationDetail();
+          }
           if(growthDemo){
             soyo.exp=global.MyGO.Growth.required(soyo.level)-1;
             entry.openFormation();entry.selectedUnitId='soyo';entry.loadoutTab='growth';entry.renderFormationList();entry.renderFormationDetail();
