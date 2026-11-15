@@ -500,11 +500,11 @@
       const range = Array.isArray(weapon.range) ? weapon.range.join('–') : '1';
       const statItems = [
         { key: 'hp', label: 'HP', value: unit.hp + '<small>/' + unit.maxHp + '</small>', hint: '生命值' },
-        { key: 'str', label: '力量', value: unit.str, hint: '物理攻击' },
+        { key: 'str', label: '力量', value: unit.str+((MyGO.Talents?.strBonus(unit,this.ui.game.map)||0)?'<small>+'+MyGO.Talents.strBonus(unit,this.ui.game.map)+' '+(unit.id==='xueyue'?'剑意':'护灯')+'</small>':''), hint: '物理攻击' },
         { key: 'mag', label: '魔力', value: unit.mag, hint: '魔法攻击' },
         { key: 'spd', label: '速度', value: unit.spd, hint: '影响回避' },
-        { key: 'def', label: '守备', value: unit.def+((MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)?'<small>+1 守护</small>':''), hint: '物理减伤' },
-        { key: 'res', label: '魔防', value: unit.res+((MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)?'<small>+1 守护</small>':''), hint: '魔法减伤' },
+        { key: 'def', label: '守备', value: unit.def+((MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)?'<small>+'+(MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)+' 守护</small>':''), hint: '物理减伤' },
+        { key: 'res', label: '魔防', value: unit.res+((MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)?'<small>+'+(MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)+' 守护</small>':''), hint: '魔法减伤' },
         { key: 'dex', label: '技巧', value: unit.dex + ((MyGO.Talents?.dexBonus(unit)||0)?'<small>+3 天赋</small>':''), hint: '影响命中与暴击率' },
         { key: 'lck', label: '幸运', value: unit.lck, hint: '暴击与必杀回避' },
         { key: 'move', label: '移动', value: unit.move, hint: '行动距离' }
@@ -576,7 +576,7 @@
         '<div class="formation-detail-foot">',
         '  <span class="formation-foot-mark">✦</span>',
         '  <p>本页数据直接来自当前对局，可在战斗中通过「标题 → 同行之人」再次查看。</p>',
-        '  <span class="formation-power">主要攻击属性 <b>' + (isMagic ? '魔力 ' + unit.mag : '力量 ' + unit.str) + '</b></span>',
+        '  <span class="formation-power">主要攻击属性 <b>' + (isMagic ? '魔力 ' + unit.mag : '力量 ' + MyGO.Combat.strOf(unit,this.ui?.game?.map)) + '</b></span>',
         '</div>'
       ].join('');
 

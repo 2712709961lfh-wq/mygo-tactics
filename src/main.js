@@ -62,7 +62,8 @@
             const id=global.MyGO.Talents.get(talentDemo)?talentDemo:'tomori';
             const member=ui.game.getUnit(id)||tomori;
             if(member.side!=='player')member.side='player';
-            const target=params.get('talent-level')==='14'?14:15;
+            const requested=Number(params.get('talent-level')||15);
+            const target=Number.isInteger(requested)&&requested>=1&&requested<=99?requested:15;
             while(member.level<target)global.MyGO.Growth.award(member,global.MyGO.Growth.required(member.level));
             ui.updateAll();entry.openFormation();entry.selectedUnitId=member.id;entry.loadoutTab='stats';entry.renderFormationList();entry.renderFormationDetail();
           }

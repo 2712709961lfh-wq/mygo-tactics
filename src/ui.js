@@ -1134,7 +1134,7 @@
         '  <span class="hp-values"><b>' + unit.hp + '</b><span> / ' + unit.maxHp + '</span></span>',
         '</div>',
         '<div class="stat-grid">',
-        '  <div class="stat' + (magic ? '' : ' accent') + '"><i>力量</i><b>' + unit.str + '</b></div>',
+        '  <div class="stat' + (magic ? '' : ' accent') + '"><i>力量</i><b>' + unit.str + ((MyGO.Talents?.strBonus(unit,this.game.map)||0)?'<small>+'+MyGO.Talents.strBonus(unit,this.game.map)+' '+(unit.id==='xueyue'?'剑意':'护灯')+'</small>':'') + '</b></div>',
         '  <div class="stat' + (magic ? ' accent' : '') + '"><i>魔力</i><b>' + unit.mag + '</b></div>',
         '  <div class="stat"><i>速度</i><b>' + unit.spd + '</b></div>',
         '  <div class="stat"><i>守备</i><b>' + unit.def + (!magic && terrain.def ? '<small>+' + terrain.def + '</small>' : '') + '</b></div>',
@@ -1151,7 +1151,7 @@
         '  <span>伤害类型 <b>' + (magic ? '魔法' : '物理') + '</b></span>',
         '  <span>' + (magic ? '战斗魔防' : '战斗守备') + ' <b>' + defense + '</b></span>',
         '  <span>回避 <b>' + avoid + '</b></span>',
-        '  <span>攻速 AS <b>' + Combat.attackSpeedOf(unit) + '</b></span>',
+        '  <span>攻速 AS <b>' + Combat.attackSpeedOf(unit,this.game.map) + '</b></span>',
         '  <span>脚下 <b>' + esc(terrain.name) + '</b></span>',
         '  <span>地形闪避 <b>+' + terrain.avoid + '</b></span>',
         '  <span>地形守备 <b>' + (magic ? '—' : '+' + terrain.def) + '</b></span>',
@@ -1532,7 +1532,7 @@
       this.setBusy(true);
       try {
         const result = await this.performAttackSequence(attacker, target, false);
-        this.game.markActed(attacker);
+        this.game.markActed(attacker,true);
         this.setBusy(false);
         this.resetSelection();
         this.updateAll();
@@ -1571,6 +1571,12 @@
       }
       await this.showResultModal(result, isEnemy);
       const applied = this.game.applyCombat(result);
+      for(const id of new Set(applied.strikes.filter(s=>s.applied&&s.talentResDown).map(s=>s.defenderId))){
+        const u=this.game.getUnit(id);this.renderer.floatText('魔力打击 · 魔防−2',u.x,u.y-0.65,'#cdb4f4',10);
+      }
+      for(const id of new Set(applied.strikes.filter(s=>s.applied&&s.frostApplied).map(s=>s.defenderId))){
+        const u=this.game.getUnit(id);this.renderer.floatText('冰霜剑气 · 速度−3',u.x,u.y-0.65,'#a6e8ff',10);
+      }
 
       for (const strike of applied.strikes.filter(s=>s.applied)) {
         const target = this.game.getUnit(strike.defenderId);
@@ -1614,7 +1620,7 @@
       await new Promise(resolve=>{
         this.openOverlay('<div class="modal-kicker">LEVEL UP / GROWTH</div><h2 class="modal-title" id="overlay-title">成长的足迹</h2>'+
           leveled.map(r=>'<section class="growth-level"><h3>'+esc(r.name)+' <span>Lv.'+r.before.level+' → Lv.'+r.after.level+'</span></h3><p>经验 +'+r.gained+' · '+(r.after.level>=99?'已达最高等级':r.after.exp+' / '+r.after.required+' EXP')+'</p>'+
-            r.levels.map(l=>'<div class="growth-level-grid">'+MyGO.GrowthData.keys.map(k=>'<div class="'+(l.after[k]>l.before[k]?'is-up':'')+'"><span>'+MyGO.GrowthData.labels[k]+'</span><strong>'+l.before[k]+' → '+l.after[k]+'</strong><b>'+(l.after[k]!==l.before[k]?'+'+(l.after[k]-l.before[k]):'—')+'</b></div>').join('')+'</div>'+(l.awakened?'<p class="learned-spells-notice">个人天赋1觉醒：'+esc(l.awakened.name)+' · '+esc(l.awakened.description)+'</p>':'')+(l.learned?.length?'<p class="learned-spells-notice">新习得：'+l.learned.map(id=>esc(MyGO.Magic.get(id).name)).join('、')+'</p>':'')).join('')+'</section>').join('')+
+            r.levels.map(l=>'<div class="growth-level-grid">'+MyGO.GrowthData.keys.map(k=>'<div class="'+(l.after[k]>l.before[k]?'is-up':'')+'"><span>'+MyGO.GrowthData.labels[k]+'</span><strong>'+l.before[k]+' → '+l.after[k]+'</strong><b>'+(l.after[k]!==l.before[k]?'+'+(l.after[k]-l.before[k]):'—')+'</b></div>').join('')+'</div>'+(l.awakened?'<p class="learned-spells-notice">个人天赋'+(l.awakened.slot||1)+'觉醒：'+esc(l.awakened.name)+' · '+esc(l.awakened.description)+'</p>':'')+(l.learned?.length?'<p class="learned-spells-notice">新习得：'+l.learned.map(id=>esc(MyGO.Magic.get(id).name)).join('、')+'</p>':'')).join('')+'</section>').join('')+
           '<p class="modal-sub">属性提升已生效，成长结果会随存档与跨章保留。</p><div class="modal-actions"><button class="modal-btn primary" data-confirm>继续前行</button></div>','growth-modal',false);
         this.confirmHandler=resolve;
       });

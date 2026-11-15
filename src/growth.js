@@ -32,7 +32,7 @@
     u.level=s.level;u.exp=s.exp;u.growthRngState=s.rngState;
     u.growthGains=Object.fromEntries(keys.map(k=>[k,s.gains[k]]));
     for(const k of keys)u[k]=base.stats[k]+s.gains[k];
-    u._talent1Bonus=0;M.Talents?.sync(u);
+    u._talent1Bonus=0;u._talentBonuses={};M.Talents?.sync(u);
     if(fullHp)u.hp=u.maxHp;
   }
   function rollLevel(u,rng){
@@ -46,18 +46,19 @@
   function award(u,amount,multiplier=1){
     if(!eligible(u)||u.level>=MAX_LEVEL||!Number.isInteger(amount)||amount<=0)return null;
     // One action grants at most the current level's full requirement; excess carries over.
-    const gained=Math.min(amount,required(u.level))*multiplier,before={level:u.level,exp:u.exp,required:required(u.level)};
+    const baseAmount=Math.min(amount,required(u.level))*multiplier;
+    const gained=M.Talents?.experience(u,baseAmount)??baseAmount,before={level:u.level,exp:u.exp,required:required(u.level)};
     u.exp+=gained;const levels=[],rng=M.RNG.restore(u.growthRngState);
     while(u.level<MAX_LEVEL&&u.exp>=required(u.level)){
       u.exp-=required(u.level);const old=Object.fromEntries(keys.map(k=>[k,u[k]])),gains=rollLevel(u,rng);
-      const hadTalent=M.Talents?.active(u);
+      const hadTalents=M.Talents?.list(u).filter(t=>t.active).map(t=>t.slot)||[];
       u.level++;for(const k of keys){u[k]+=gains[k];u.growthGains[k]+=gains[k];}
       M.Talents?.sync(u);
       // Preserve missing HP; growth does not fully heal an injured unit.
       u.hp+=gains.maxHp;
       const learned=M.Inventory.learn(u);M.Inventory.sync(u);
-      const awakened=!hadTalent&&M.Talents?.active(u)?M.Talents.get(u):null;
-      levels.push({level:u.level,before:old,gains,learned,awakened,after:Object.fromEntries(keys.map(k=>[k,u[k]]))});
+      const awakenings=M.Talents?.list(u).filter(t=>t.active&&!hadTalents.includes(t.slot))||[],awakened=awakenings[0]||null;
+      levels.push({level:u.level,before:old,gains,learned,awakened,awakenings,after:Object.fromEntries(keys.map(k=>[k,u[k]]))});
     }
     u.growthRngState=rng.serialize();if(u.level===MAX_LEVEL)u.exp=0;
     return {unitId:u.id,name:u.name,gained,before,after:{level:u.level,exp:u.exp,required:required(u.level)},levels};

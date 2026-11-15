@@ -11,12 +11,12 @@ function level(u,n){while(u.level<n)G.award(u,G.required(u.level));u.hp=u.maxHp;
 function fixture(){const g=game();g.map={cols:24,rows:24,tiles:Array.from({length:24},()=>Array(24).fill('plain'))};
   Object.defineProperty(g.map,'units',{configurable:true,get:()=>g.units});g.units.forEach((u,i)=>Object.assign(u,{x:i%24,y:18+Math.floor(i/24),acted:false}));return g;}
 function enemy(g){return g.units.find(u=>u.side==='enemy');}
-test('七个指定角色在15级觉醒，雪月和敌方幻影不获得未指定天赋',()=>{
-  const g=game();assert.equal(Object.keys(T.data).length,7);
+test('八个指定角色在15级觉醒，敌方幻影不获得我方天赋',()=>{
+  const g=game();assert.equal(Object.keys(T.data).length,8);
   for(const id of Object.keys(T.data)){const u=level(g.getUnit(id),14);assert(!T.active(u));
     const r=G.award(u,G.required(14));assert(T.active(u));assert.equal(r.levels[0].awakened.name,T.get(u).name);
     assert.equal(G.award(u,G.required(15)).levels[0].awakened,null);}
-  assert(!T.get(g.getUnit('xueyue')));assert(!T.active({id:'tomori',side:'enemy',level:99}));
+  assert.equal(T.get(g.getUnit('xueyue')).name,'剑意');assert(!T.active({id:'tomori',side:'enemy',level:99}));
 });
 test('灯速度+2、爽世魔力+2，独立于随机成长且同步不叠加',()=>{
   const g=game();for(const [id,key]of [['tomori','spd'],['soyo','mag']]){

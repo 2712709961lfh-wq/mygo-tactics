@@ -65,6 +65,7 @@
     [30,'rescue'],[35,'fortify'],[40,'warp']
   ].map(([level,id])=>Object.freeze({level,id})));
   M.Magic = Object.freeze({items:Object.freeze(items),learning,get:id=>items.find(s=>s.id===id),
-    rangeOf:(s,u)=>s.rangeText.includes('mag/')?[1,Math.max(1,Math.floor(u.mag/Number(s.rangeText.split('/')[1])))]:s.range.slice(),
+    rangeOf:(s,u)=>{const r=s.rangeText.includes('mag/')?[1,Math.max(1,Math.floor(u.mag/Number(s.rangeText.split('/')[1])))]:s.range.slice();r[1]+=M.Talents?.rangeBonus(u,s)||0;return r;},
+    healAmount:(s,u)=>{const amount=s.might+Math.floor(u.mag/3)+(u.gear?.heal||0);return M.Talents?.healingAmount(u,s,amount)??amount;},
     schoolName:s=>({black:'理学 · 黑魔法',dark:'理学 · 暗魔法',faith:'信仰 · 白魔法'}[s.school])});
 })(window);

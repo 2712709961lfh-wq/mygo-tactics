@@ -98,7 +98,7 @@
         if (occupant && Grid.hostile(occupant, unit)) continue;
 
         const nextCost = cur.cost + Grid.movementCost(map,unit,nx,ny);
-        if (nextCost > Math.max(0,unit.move+(unit.gear?.move||0)-(unit.status?.moveDown?5:0))) continue;
+        if (nextCost > Math.max(0,unit.move+(unit.gear?.move||0)-(MyGO.Talents?.penalty(unit,'moveDown',5)??(unit.status?.moveDown?5:0)))) continue;
 
         const nk = Grid.key(nx, ny);
         const old = records.get(nk);

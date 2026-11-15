@@ -268,7 +268,7 @@
       const job=MyGO.Classes.get(id);
       if(!unit.certifiedClasses.includes(id)&&job.seal){const bag=unit.inventory.some(i=>i.id===job.seal)?unit.inventory:this.convoy;bag.splice(bag.findIndex(i=>i.id===job.seal),1);}
       MyGO.Classes.apply(unit,id);
-      if(this.phase==='player')unit.acted=true;
+      if(this.phase==='player')this.markActed(unit);
       return job;
     }
 
@@ -290,7 +290,7 @@
       if(e.action==='antitoxin')delete unit.status.poison;
       if(e.action==='ward')unit.status.ward=7;
       slot.uses--;if(slot.uses===0)unit.inventory.splice(index,1);
-      unit.acted=true;MyGO.Inventory.sync(unit);return {item:e,healed};
+      this.markActed(unit);MyGO.Inventory.sync(unit);return {item:e,healed};
     }
 
     loadoutReason(unit) {
@@ -326,7 +326,7 @@
       const r=MyGO.Magic.rangeOf(s,caster),d=u=>Grid.manhattan(caster,u);
       if(s.effect==='silence')return this.units.filter(u=>!u.dead&&Grid.hostile(u,caster)&&(caster.side!=='player'||this.isUnitVisible(u))&&u.learnedSpells.length&&d(u)>=r[0]&&d(u)<=r[1]&&!u.status.silence);
       return this.living().filter(u=>!Grid.hostile(u,caster)&&u.id!==caster.id&&d(u)>0&&d(u)<=(s.effect==='warp'?1:r[1])&&
-        (['heal','fortify'].includes(s.effect)?u.hp<u.maxHp:s.effect==='restore'?['defDown','spdDown','moveDown','silence'].some(k=>u.status[k]):
+        (['heal','fortify'].includes(s.effect)?u.hp<u.maxHp:s.effect==='restore'?['defDown','spdDown','moveDown','silence','talentResDown','frostSpeedDown'].some(k=>u.status[k]):
         s.effect==='rescue'?this.supportDestinations(caster,spellId,u).length>0:s.effect==='ward'?!(u.status.ward>=7):true));
     }
 
@@ -352,8 +352,8 @@
       const affected=['fortify','restore'].includes(s.effect)?targets:[target];
       const changes=[];
       for(const u of affected){
-        if(['heal','fortify'].includes(s.effect)){const amount=Math.min(u.maxHp-u.hp,s.might+Math.floor(caster.mag/3)+(caster.gear.heal||0));u.hp+=amount;changes.push({id:u.id,amount});}
-        if(s.effect==='restore')for(const k of ['defDown','spdDown','moveDown','silence'])delete u.status[k];
+        if(['heal','fortify'].includes(s.effect)){const amount=Math.min(u.maxHp-u.hp,MyGO.Magic.healAmount(s,caster));u.hp+=amount;changes.push({id:u.id,amount});}
+        if(s.effect==='restore')for(const k of ['defDown','spdDown','moveDown','silence','talentResDown','frostSpeedDown','frostFresh'])delete u.status[k];
         if(s.effect==='ward')u.status.ward=7;
         if(s.effect==='silence'){u.status.silence=1;this.alertGroup(u);}
         if(['warp','rescue'].includes(s.effect))this.setUnitPosition(u.id,destination.x,destination.y);
@@ -361,7 +361,7 @@
       }
       const talentHealing=MyGO.Talents?.onSupport(caster,s,changes)||0;
       if(talentHealing)changes.push({id:caster.id,amount:talentHealing,talent:'同心'});
-      caster.acted=true;MyGO.Inventory.sync(caster);
+      this.markActed(caster);MyGO.Inventory.sync(caster);
       const growth=MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
       return {spell:s,changes,talentHealing,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
     }
@@ -369,6 +369,7 @@
     expireStatuses(side) {
       for(const u of this.living(side)){
         for(const k of ['defDown','spdDown','moveDown','silence'])delete u.status[k];
+        MyGO.Talents?.expireFrost(u);
         MyGO.Inventory.sync(u);
       }
     }
@@ -420,7 +421,7 @@
 
     lightLamp(unit) {
       if(!this.canLightLamp(unit))return null;
-      const lamp=this.nearbyUnlitLamp(unit);this.litLamps.push(lamp.id);unit.acted=true;
+      const lamp=this.nearbyUnlitLamp(unit);this.litLamps.push(lamp.id);this.markActed(unit);
       // The switch echoes along walkable ground, beyond the pool of light.
       const heard=Pathfinding.getReachable(this.map,{id:'__lamp_noise__',side:'player',...lamp,move:this.mission.lampNoiseRadius},[]);
       for(const enemy of this.living('enemy'))if(!enemy.boss&&heard.has(Grid.key(enemy.x,enemy.y)))this.alertGroup(enemy);
@@ -648,12 +649,33 @@
       return unit;
     }
 
-    markActed(unit) {
-      if (unit) unit.acted = true;
+    markActed(unit,attacked=false) {
+      if(!unit)return;
+      unit.talentAttacked=!!unit.talentAttacked||attacked;
+      if(!unit.acted)unit.talentSwapReady=unit.id==='anon'&&!!MyGO.Talents?.active(unit,3)&&!unit.talentAttacked;
+      unit.acted=true;
     }
 
     resetActed(side) {
-      for (const unit of this.living(side)) unit.acted = false;
+      for (const unit of this.living(side)){unit.acted=false;unit.talentAttacked=false;unit.talentSwapReady=false;}
+    }
+
+    talentSwapTargets(unit) {
+      if(!unit||!this.isPlayerPhase()||unit.side!=='player'||unit.dead||unit.escaped||unit.hp<=0||!unit.acted||
+        !unit.talentSwapReady||unit.talentAttacked||unit.id!=='anon'||!MyGO.Talents?.active(unit,3))return [];
+      return this.living().filter(t=>t.id!==unit.id&&!t.escaped&&!Grid.hostile(t,unit)&&Grid.manhattan(unit,t)===1&&
+        Number.isFinite(Grid.movementCost(this.map,unit,t.x,t.y))&&Number.isFinite(Grid.movementCost(this.map,t,unit.x,unit.y)));
+    }
+
+    talentSwap(unit,target) {
+      if(!this.talentSwapTargets(unit).some(t=>t===target))throw Error('当前无法与该队友交换位置');
+      const {x,y}=unit;unit.x=target.x;unit.y=target.y;target.x=x;target.y=y;
+      unit.talentSwapReady=false;
+      this.refreshParkDiscovery();return {unitId:unit.id,targetId:target.id};
+    }
+
+    skipTalentSwap(unit){
+      if(unit?.id==='anon')unit.talentSwapReady=false;
     }
 
     /** 打开庭院大门，并同步地图格。返回是否是第一次打开。 */
@@ -683,7 +705,7 @@
       const gate = this.gateForKey(unit);
       unit.inventory.splice(unit.inventory.findIndex(i => i.id === 'courtyard_key'), 1);
       this.openGate();
-      unit.acted = true;
+      this.markActed(unit);
       MyGO.Inventory.sync(unit);
       return gate;
     }
@@ -719,7 +741,7 @@
     openChest(unit){
       if(!this.canOpenChest(unit))return null;
       const chest=this.nearbyChest(unit),index=unit.inventory.findIndex(i=>i.id==='chest_key'&&i.uses>0);
-      unit.inventory.splice(index,1);this.openedChests.push(chest.id);unit.acted=true;
+      unit.inventory.splice(index,1);this.openedChests.push(chest.id);this.markActed(unit);
       const drop=chest.item?this.awardLoot(unit,chest.item):null;
       if(chest.gold)this.gold+=chest.gold;
       MyGO.Inventory.sync(unit);return {chest,drop,gold:chest.gold||0};
@@ -780,7 +802,7 @@
       if(!this.canActivateResonance(unit)) return false;
       this.resonanceOpen=true;
       this._syncResonance();
-      unit.acted=true;
+      this.markActed(unit);
       return true;
     }
 
@@ -799,7 +821,7 @@
       const bell=this.bellAt(unit.x,unit.y);
       this.awakenedBells.push(bell.id);
       unit.hp=Math.min(unit.maxHp,unit.hp+Math.ceil(unit.maxHp*.3));
-      unit.acted=true;
+      this.markActed(unit);
       for(const enemy of this.living('enemy'))if(enemy.guardGroup===bell.group)enemy.alerted=true;
       this.checkOutcome();
       return bell;
@@ -842,6 +864,8 @@
       if (!result) throw new Error('缺少战斗结果');
       if (result.applied) throw new Error('该战斗结果已结算');
       if (result.strikes) {
+        const initiator=this.getUnit(result.attackerId);
+        if(initiator?.side==='player'&&this.phase==='player'){initiator.talentAttacked=true;initiator.talentSwapReady=false;}
         const participants=[result.attackerId,result.defenderId].map(id=>this.getUnit(id)).filter(Boolean).map(u=>({...u}));
         for (const strike of result.strikes) {
           const a = this.getUnit(strike.attackerId), b = this.getUnit(strike.defenderId);
@@ -854,6 +878,11 @@
           }
           if(strike.retreatTriggered)result.retreatTriggered=true;
           if (strike.killed||strike.retreatTriggered) break;
+        }
+        for(const strike of result.strikes.filter(s=>s.applied)){
+          const a=this.getUnit(strike.attackerId),b=this.getUnit(strike.defenderId);
+          strike.talentResDown=!!(a&&b&&MyGO.Talents?.afterMagic(a,b,strike.hit,strike.magic));
+          strike.frostApplied=!!(a&&b&&MyGO.Talents?.afterDamage(a,b,Math.max(0,strike.hpBeforeApply-strike.hpAfterApply),strike.hit,this.phase));
         }
         result.applied = true;
         result.hpBeforeApply = result.defenderHp;
@@ -870,6 +899,9 @@
         return { ...result, killed: false, skipped: true };
       }
       const attacker = this.getUnit(result.attackerId);
+      if(!deferExperience&&attacker?.side==='player'&&this.phase==='player'&&!['counter','followup'].includes(result.kind)){
+        attacker.talentAttacked=true;attacker.talentSwapReady=false;
+      }
       const participants=[attacker,defender].filter(Boolean).map(u=>({...u}));
       if(result.resourceId && attacker) {
         MyGO.Inventory.consume(attacker,result.resourceId);
@@ -900,6 +932,8 @@
         for(const id of defender.drops){const at=defender.inventory.findIndex(i=>i.id===id);if(at>=0)defender.inventory.splice(at,1);}
       }
       if(attacker)MyGO.Inventory.sync(attacker);
+      if(!deferExperience&&attacker)result.talentResDown=!!MyGO.Talents?.afterMagic(attacker,defender,result.hit,result.magic);
+      if(!deferExperience&&attacker)result.frostApplied=!!MyGO.Talents?.afterDamage(attacker,defender,Math.max(0,before-defender.hp),result.hit,this.phase);
       MyGO.Inventory.sync(defender);
       this.checkOutcome();
       if(!deferExperience)result.experience=this.awardCombatExperience([result],participants);
@@ -981,6 +1015,7 @@
     beginNextPlayerPhase() {
       if (this.isOver()) return false;
       this.expireStatuses('enemy');
+      for(const u of this.units)delete u.status.talentResDown;
       this.decayWard('player');
       this.turn += 1;
       if(this.stage===3 && this.turn>=4){
@@ -1000,7 +1035,7 @@
     /** 玩家全体存活单位是否都已行动。 */
     allPlayerActed() {
       const list = this.living('player');
-      return list.length > 0 && list.every((u) => u.acted);
+      return list.length > 0 && list.every((u) => u.acted&&!this.talentSwapTargets(u).length);
     }
 
     /**
@@ -1041,6 +1076,8 @@
           y: u.y,
           hp: u.hp,
           acted: u.acted,
+          talentSwapReady:!!u.talentSwapReady,
+          talentAttacked:!!u.talentAttacked,
           dead: u.dead,
           alerted: u.alerted,
           growth: MyGO.GrowthData.personal[u.id] ? MyGO.Growth.pack(u) : undefined,
@@ -1192,6 +1229,9 @@
         unit.hp = Math.max(0, Math.min(unit.maxHp, Number(saved.hp) || 0));
         unit.dead = !!saved.dead || unit.hp <= 0;
         unit.acted = !!saved.acted || unit.dead;
+        if(saved.talentSwapReady!==undefined&&typeof saved.talentSwapReady!=='boolean'||saved.talentAttacked!==undefined&&typeof saved.talentAttacked!=='boolean')throw Error('存档天赋行动状态无效');
+        unit.talentAttacked=!!saved.talentAttacked;
+        unit.talentSwapReady=unit.id==='anon'&&!!MyGO.Talents?.active(unit,3)&&unit.acted&&!unit.dead&&!unit.talentAttacked&&!!saved.talentSwapReady;
         unit.alerted = !!saved.alerted;
         MyGO.Inventory.restore(unit,saved,false);
         if (this.stage === 1 && unit.id === 'xueyue' && legacyJoined) {

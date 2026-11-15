@@ -102,12 +102,14 @@
   }
 
   /** 风花雪月攻速：武器重量与辅助装备重量共同参与计算。 */
-  function attackSpeedOf(unit) {
+  function attackSpeedOf(unit,map,context) {
     const weight = (unit.weapon.weight || 0) + (unit.equipmentWeight || 0);
-    return Math.max(0, speedOf(unit) - Math.max(0, weight - Math.floor((unit.str || 0) / 5)));
+    return Math.max(0, speedOf(unit) - Math.max(0, weight - Math.floor(strOf(unit,map,context) / 5)));
   }
 
-  function speedOf(u){return Math.max(0,u.spd+(u.gear?.spd||0)-(u.status?.spdDown?5:0));}
+  function penalty(u,key,amount){return MyGO.Talents?.penalty(u,key,amount)??(u.status?.[key]?amount:0);}
+  function speedOf(u){return Math.max(0,u.spd+(u.gear?.spd||0)-Math.max(penalty(u,'spdDown',5),penalty(u,'frostSpeedDown',3)));}
+  function strOf(u,map,context){return (u.str||0)+(MyGO.Talents?.strBonus(u,map,context)||0);}
   function dexOf(u){return (u.dex||0)+(MyGO.Talents?.dexBonus(u)||0);}
   function hitOf(u){return (u.weapon.absoluteHit?(u.weapon.damageType==='magic'?Math.floor((dexOf(u)+(u.lck||0))/2):dexOf(u)):(u.hit||0)+(MyGO.Talents?.dexBonus(u)||0))+(u.weapon.hit||0)+(u.gear?.hit||0);}
 
@@ -123,10 +125,11 @@
 
   /** 预告只表示可执行的顺序；实际命中/暴击与死亡截断在 rollRound 决定。 */
   function forecast(attacker, defender, map) {
-    const first = preview(attacker, defender, map);
+    const context={initiatorId:attacker.id};
+    const first = preview(attacker, defender, map,context);
     const reason = counterReason(attacker, defender);
-    const counter = reason ? null : preview(defender, attacker, map);
-    const attackSpeed = attackSpeedOf(attacker), defenderAttackSpeed = attackSpeedOf(defender);
+    const counter = reason ? null : preview(defender, attacker, map,context);
+    const attackSpeed = attackSpeedOf(attacker,map,context), defenderAttackSpeed = attackSpeedOf(defender,map,context);
     const order = [{attackerId:attacker.id, defenderId:defender.id, kind:'attack'}];
     if (attacker.weapon.brave || attacker.weapon.type === 'gauntlet') order.push({attackerId:attacker.id, defenderId:defender.id, kind:'combo'});
     if (counter) order.push({attackerId:defender.id, defenderId:attacker.id, kind:'counter'});
@@ -153,7 +156,7 @@
       const a = units.get(step.attackerId), b = units.get(step.defenderId);
       if (a.hp <= 0 || b.hp <= 0) break;
       if(!MyGO.Inventory.usable(a))continue;
-      const strike = {...roll(preview(a,b,battleMap),rng), kind:step.kind,
+      const strike = {...roll(preview(a,b,battleMap,{initiatorId:attacker.id}),rng), kind:step.kind,
         attackerHp:a.hp, attackerMaxHp:a.maxHp,resourceId:a.inventory?a.weapon.id:null,weaponSnapshot:a.weapon};
       if(a.inventory)MyGO.Inventory.consume(a,a.weapon.id);
       strike.healed=MyGO.Inventory.useEffects(a,b,MyGO.Magic.get(a.weapon.id),strike.finalDamage,strike.hit);
@@ -180,7 +183,7 @@
    * 生成不会改变游戏状态的战斗预览。
    * 返回字段足够供 UI、AI 与结算共用。
    */
-  function preview(attacker, defender, map) {
+  function preview(attacker, defender, map,context={initiatorId:attacker.id}) {
     if (!attacker || !defender) throw new Error('战斗预览缺少单位');
     if (!Grid.hostile(attacker, defender)) throw new Error('不能攻击友军');
 
@@ -198,15 +201,17 @@
 
     // ② 攻击力：对应属性 + 武器威力 + 技能/骑士团等固定修正。
     //    当前角色 atkMod 均为 0，后续加技能时直接写入该字段即可。
-    const atkStat = magic ? (attacker.mag || 0) : attacker.str;
+    const atkStat = magic ? (attacker.mag || 0) : strOf(attacker,map,context);
     const attackMod = (attacker.atkMod || 0) + (aw.atkMod || 0) + (magic ? attacker.gear?.magic||0 : 0);
     const attack = atkStat + weaponPower + attackMod;
 
     // ③ 防守：物理吃守备和山地，魔法只吃魔防。
     const terrainDef = magic ? 0 : terrain.def;
-    const guard=MyGO.Talents?.guardBonus(defender,map)||0;
-    const defense = magic ? (aw.ignoreRes?0:defender.res+(defender.gear?.res||0)+(defender.status?.ward||0)+guard) : Math.max(0,defender.def+(defender.gear?.def||0)+guard-(defender.status?.defDown?5:0)) + terrainDef;
-    const damage = Math.max(C.COMBAT.minDamage, attack - defense);
+    const defense = magic&&aw.ignoreRes?0:defenseOf(defender,map,magic);
+    const damageFactor=MyGO.Talents?.counterFactor(attacker,defender,context)||1;
+    const baseDamage = Math.max(C.COMBAT.minDamage, attack - defense);
+    const damage = Math.floor(baseDamage*(damageFactor===0.8?4:5)/5);
+    const critDamage = Math.floor(baseDamage*C.COMBAT.critMultiplier*(damageFactor===0.8?4:5)/5);
 
     const targetAvoid = avoidOf(defender,map);
     const rawHit = hitOf(attacker) + triangle * C.TRIANGLE_BONUS.hit - targetAvoid;
@@ -244,16 +249,17 @@
       defenseName: magic ? '魔防' : '守备',
       targetAvoid,
       damage,
+      damageFactor,
       hit,
       baseCrit,
       targetCritAvoid,
       crit,
-      critDamage: damage * C.COMBAT.critMultiplier,
+      critDamage,
       hpFloor:defender.hpFloor||0,
       defenderHp: defender.hp,
       defenderMaxHp: defender.maxHp,
       hpAfterHit: Math.max(defender.hpFloor||0, defender.hp - damage),
-      hpAfterCrit: Math.max(defender.hpFloor||0, defender.hp - damage * C.COMBAT.critMultiplier)
+      hpAfterCrit: Math.max(defender.hpFloor||0, defender.hp - critDamage)
     };
   }
 
@@ -267,7 +273,7 @@
     const hit = hitRoll <= previewData.hit;
     const crit = hit && critRoll <= previewData.crit;
     const damage = hit
-      ? previewData.damage * (crit ? C.COMBAT.critMultiplier : 1)
+      ? (crit ? previewData.critDamage??previewData.damage*C.COMBAT.critMultiplier : previewData.damage)
       : 0;
 
     return {
@@ -291,11 +297,12 @@
   function defenseOf(unit, map, magic) {
     const terrain = terrainOf(unit, map);
     const guard=MyGO.Talents?.guardBonus(unit,map)||0;
-    return magic ? unit.res+(unit.gear?.res||0)+(unit.status?.ward||0)+guard : Math.max(0,unit.def+(unit.gear?.def||0)+guard-(unit.status?.defDown?5:0)) + terrain.def;
+    return magic ? Math.max(0,unit.res+(unit.gear?.res||0)+(unit.status?.ward||0)+guard-penalty(unit,'talentResDown',2)) : Math.max(0,unit.def+(unit.gear?.def||0)+guard-penalty(unit,'defDown',5)) + terrain.def;
   }
 
   MyGO.Combat = {
     dexOf,
+    strOf,
     speedOf,
     hitOf,
     clamp,

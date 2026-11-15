@@ -90,7 +90,14 @@
     if(s.learnedSpells.some(id=>!u.learnedSpells.includes(id)&&!(u.id==='soyo'&&retiredSoyoSpells.has(id))))throw Error('角色尚未学会该魔法');
     for(const id of u.learnedSpells){const n=s.spellUses?.[id];if(n!==undefined&&(!Number.isInteger(n)||n<0||n>Magic.get(id).uses))throw Error('存档魔法次数无效');u.spellUses[id]=refresh?Magic.get(id).uses:(n??Magic.get(id).uses);}
     u.equippedWeapon=s.equippedWeapon;u.equippedAccessory=s.equippedAccessory;
-    u.status={};if(!refresh)for(const k of ['defDown','spdDown','moveDown','silence','ward','poison']){const n=s.status?.[k];if(Number.isInteger(n)&&n>0&&n<=7)u.status[k]=n;}
+    u.status={};if(!refresh)for(const k of ['defDown','spdDown','moveDown','silence','ward','poison','talentResDown']){const n=s.status?.[k];if(Number.isInteger(n)&&n>0&&n<=7)u.status[k]=n;}
+    if(!refresh){
+      const turns=s.status?.frostSpeedDown,fresh=s.status?.frostFresh;
+      if((turns!==undefined&&![1,2].includes(turns))||(fresh!==undefined&&(fresh!==1||turns===undefined)))throw Error('存档冰霜剑气状态无效');
+      if(turns!==undefined)u.status.frostSpeedDown=turns;
+      if(fresh===1)u.status.frostFresh=1;
+    }
+    M.Talents?.sync(u);
     sync(u);
   }
   function stock(){return [...Array.from({length:25},()=>make('vulnerary')),...['iron_sword','iron_lance','iron_axe','iron_bow','iron_gauntlets'].map(make)];}
@@ -105,7 +112,7 @@
   function select(u,id){if(!options(u).includes(id))throw Error('攻击手段不可用');u.equippedWeapon=id;sync(u);}
   function useEffects(a,b,s,damage,hit){
     if(!hit||!s)return 0;
-    if(['defDown','spdDown','moveDown','silence'].includes(s.effect))b.status[s.effect]=1;
+    if(['defDown','spdDown','moveDown','silence'].includes(s.effect)&&!(s.effect!=='silence'&&M.Talents?.immune(b)))b.status[s.effect]=1;
     const heal=s.effect==='drain'?Math.min(a.maxHp-a.hp,Math.floor(Math.min(b.hp,damage)/2)):0;
     a.hp+=heal;return heal;
   }

@@ -5088,7 +5088,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.9.1</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.10.1</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -5745,7 +5745,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     [30,'rescue'],[35,'fortify'],[40,'warp']
   ].map(([level,id])=>Object.freeze({level,id})));
   M.Magic = Object.freeze({items:Object.freeze(items),learning,get:id=>items.find(s=>s.id===id),
-    rangeOf:(s,u)=>s.rangeText.includes('mag/')?[1,Math.max(1,Math.floor(u.mag/Number(s.rangeText.split('/')[1])))]:s.range.slice(),
+    rangeOf:(s,u)=>{const r=s.rangeText.includes('mag/')?[1,Math.max(1,Math.floor(u.mag/Number(s.rangeText.split('/')[1])))]:s.range.slice();r[1]+=M.Talents?.rangeBonus(u,s)||0;return r;},
+    healAmount:(s,u)=>{const amount=s.might+Math.floor(u.mag/3)+(u.gear?.heal||0);return M.Talents?.healingAmount(u,s,amount)??amount;},
     schoolName:s=>({black:'理学 · 黑魔法',dark:'理学 · 暗魔法',faith:'信仰 · 白魔法'}[s.school])});
 })(window);
 
@@ -5873,7 +5874,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     if(s.learnedSpells.some(id=>!u.learnedSpells.includes(id)&&!(u.id==='soyo'&&retiredSoyoSpells.has(id))))throw Error('角色尚未学会该魔法');
     for(const id of u.learnedSpells){const n=s.spellUses?.[id];if(n!==undefined&&(!Number.isInteger(n)||n<0||n>Magic.get(id).uses))throw Error('存档魔法次数无效');u.spellUses[id]=refresh?Magic.get(id).uses:(n??Magic.get(id).uses);}
     u.equippedWeapon=s.equippedWeapon;u.equippedAccessory=s.equippedAccessory;
-    u.status={};if(!refresh)for(const k of ['defDown','spdDown','moveDown','silence','ward','poison']){const n=s.status?.[k];if(Number.isInteger(n)&&n>0&&n<=7)u.status[k]=n;}
+    u.status={};if(!refresh)for(const k of ['defDown','spdDown','moveDown','silence','ward','poison','talentResDown']){const n=s.status?.[k];if(Number.isInteger(n)&&n>0&&n<=7)u.status[k]=n;}
+    if(!refresh){
+      const turns=s.status?.frostSpeedDown,fresh=s.status?.frostFresh;
+      if((turns!==undefined&&![1,2].includes(turns))||(fresh!==undefined&&(fresh!==1||turns===undefined)))throw Error('存档冰霜剑气状态无效');
+      if(turns!==undefined)u.status.frostSpeedDown=turns;
+      if(fresh===1)u.status.frostFresh=1;
+    }
+    M.Talents?.sync(u);
     sync(u);
   }
   function stock(){return [...Array.from({length:25},()=>make('vulnerary')),...['iron_sword','iron_lance','iron_axe','iron_bow','iron_gauntlets'].map(make)];}
@@ -5888,7 +5896,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function select(u,id){if(!options(u).includes(id))throw Error('攻击手段不可用');u.equippedWeapon=id;sync(u);}
   function useEffects(a,b,s,damage,hit){
     if(!hit||!s)return 0;
-    if(['defDown','spdDown','moveDown','silence'].includes(s.effect))b.status[s.effect]=1;
+    if(['defDown','spdDown','moveDown','silence'].includes(s.effect)&&!(s.effect!=='silence'&&M.Talents?.immune(b)))b.status[s.effect]=1;
     const heal=s.effect==='drain'?Math.min(a.maxHp-a.hp,Math.floor(Math.min(b.hp,damage)/2)):0;
     a.hp+=heal;return heal;
   }
@@ -7892,12 +7900,13 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   </script>
   <script>
 /* ===== src/talents.js ===== */
-/* Personal talent slot 1: level 15 awakening. No random rolls or save flags. */
+/* Three personal talent slots, derived from level rather than saved unlock flags. */
 (function(global){
   'use strict';
   const M=global.MyGO=global.MyGO||{};
   const LEVEL=15;
   const data={
+    xueyue:{name:'剑意',description:'装备剑时力量＋3，切换其他武器或未装备时失效。'},
     tomori:{name:'行动者',description:'速度＋2。',stat:'spd',amount:2},
     rana:{name:'幸运猫',description:'对所有攻击的闪避率提升5个百分点。'},
     soyo:{name:'魔力觉醒',description:'魔力＋2。',stat:'mag',amount:2},
@@ -7906,23 +7915,82 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     nina:{name:'战斗爽',description:'每击败一个敌人回复5 HP，不超过生命上限；反击击破同样生效。'},
     nijika:{name:'同心',description:'施放治疗魔法时，自身回复目标实际恢复的HP；群体治疗按实际回复总量计算，不超过自身生命上限。'}
   };
-  for(const t of Object.values(data))Object.freeze(t);
-  Object.freeze(data);
-  function get(u){return data[typeof u==='string'?u:u?.id]||null;}
-  function active(u){return !!get(u)&&u.side!=='enemy'&&u.level>=LEVEL;}
+  const levels=[0,15,20,25];
+  const data2={
+    xueyue:{name:'疾风',description:'速度＋2。',stats:{spd:2}},
+    tomori:{name:'有在努力',description:'获得的经验值＋20%，向上取整。'},
+    rana:{name:'哈气',description:'免疫战斗中的能力削弱，包括守备、速度、移动和魔防降低；不免疫伤害或沉默。'},
+    soyo:{name:'魔力护盾',description:'魔防＋2。',stats:{res:2}},
+    taki:{name:'自我防备',description:'守备、魔防＋1。',stats:{def:1,res:1}},
+    anon:{name:'熟能生巧',description:'技巧＋2。',stats:{dex:2}},
+    nina:{name:'威吓',description:'主动发起战斗时，受到敌人的反击伤害×80%，向下取整；包括敌方追击。'},
+    nijika:{name:'妈妈守护',description:'恢复HP的治疗魔法最大射程＋2。'}
+  };
+  const data3={
+    xueyue:{name:'冰霜剑气',description:'对敌人造成实际伤害后，交战结束时使存活目标速度−3，持续两个完整的目标方回合；反击也生效，重复施加刷新、不叠加。'},
+    tomori:{name:'勇气赞歌',description:'主动发起战斗时力量＋3，持续本次交战。'},
+    rana:{name:'技术高手',description:'技巧＋2。',stats:{dex:2}},
+    soyo:{name:'魔力打击',description:'魔法命中后，交战结束时使存活目标魔防−2，持续至下次我方阶段开始；重复命中刷新，不叠加。'},
+    taki:{name:'护灯',description:'与高松灯同时存活在场时，灯守备、魔防＋1，自己力量＋1；可与队友守护叠加。'},
+    anon:{name:'幸福者退让',description:'完成行动且本次未攻击时，可与上下左右相邻的一名队友交换位置，每次行动限一次；双方须能停留在交换后的地形。'},
+    nina:{name:'天赋异禀',description:'技巧＋2。',stats:{dex:2}},
+    nijika:{name:'量大管饱',description:'治疗魔法回复量＋20%，向上取整，再按目标缺失HP结算。'}
+  };
+  const catalogues=[null,data,data2,data3];
+  for(const catalogue of catalogues.slice(1)){
+    for(const t of Object.values(catalogue)){if(t.stats)Object.freeze(t.stats);Object.freeze(t);}
+    Object.freeze(catalogue);
+  }
+  function get(u,slot=1){return catalogues[slot]?.[typeof u==='string'?u:u?.id]||null;}
+  function active(u,slot=1){return !!get(u,slot)&&u.side!=='enemy'&&u.level>=levels[slot];}
+  function list(u){return [1,2,3].filter(slot=>get(u,slot)).map(slot=>({slot,level:levels[slot],...get(u,slot),active:active(u,slot)}));}
   // Permanent stat bonuses are separate from random growth. Reconstructing a
   // save from base + gains derives the bonus once, never accumulating on reload.
   function sync(u){
-    const t=get(u),before=u._talent1Bonus||0,next=active(u)&&t.stat?t.amount:0;
-    if(t?.stat)u[t.stat]+=next-before;
-    u._talent1Bonus=next;
+    const first=get(u),before=u._talentBonuses||((u._talent1Bonus&&first?.stat)?{[first.stat]:u._talent1Bonus}:{}),next={};
+    for(const t of list(u).filter(t=>t.active))for(const [k,n]of Object.entries(t.stats||(t.stat?{[t.stat]:t.amount}:{})))next[k]=(next[k]||0)+n;
+    for(const k of new Set([...Object.keys(before),...Object.keys(next)]))u[k]+=(next[k]||0)-(before[k]||0);
+    u._talentBonuses=next;u._talent1Bonus=active(u)&&first?.stat?first.amount:0;
+    // Cleanse legacy stat penalties as soon as Haqi awakens or a save is read.
+    if(immune(u)&&u.status)for(const k of ['defDown','spdDown','moveDown','talentResDown','frostSpeedDown','frostFresh'])delete u.status[k];
   }
+  function immune(u){return active(u,2)&&u.id==='rana';}
+  function penalty(u,key,amount){return immune(u)?0:(u.status?.[key]?amount:0);}
+  function experience(u,amount){return active(u,2)&&u.id==='tomori'?Math.ceil(amount*6/5):amount;}
+  function healingSpell(s){return !!s&&['heal','fortify'].includes(s.effect);}
+  function rangeBonus(u,s){return active(u,2)&&u.id==='nijika'&&healingSpell(s)?2:0;}
+  function healingAmount(u,s,amount){return active(u,3)&&u.id==='nijika'&&healingSpell(s)?Math.ceil(amount*6/5):amount;}
   function dexBonus(u){return active(u)&&u.id==='anon'&&u.weapon?.type==='bow'?3:0;}
   function avoidBonus(u){return active(u)&&u.id==='rana'?5:0;}
   function guardBonus(u,map){
     if(!u||u.dead||u.hp<=0||u.escaped)return 0;
-    return (map?.units||[]).some(t=>t.id==='taki'&&active(t)&&!t.dead&&!t.escaped&&t.hp>0&&
+    const aura=(map?.units||[]).some(t=>t.id==='taki'&&active(t)&&present(t)&&
       t.id!==u.id&&!M.Grid.hostile(t,u)&&Math.abs(t.x-u.x)+Math.abs(t.y-u.y)===1)?1:0;
+    return aura+(u.id==='tomori'&&bond(map,u)?1:0);
+  }
+  function present(u){return !!u&&!u.dead&&!u.escaped&&u.hp>0;}
+  function bond(map,unit){
+    const units=map?.units||[],t=units.find(u=>u.id==='taki'),lamp=units.find(u=>u.id==='tomori');
+    return present(t)&&active(t,3)&&present(lamp)&&lamp.side!=='enemy'&&!M.Grid.hostile(t,lamp)&&(!unit||!M.Grid.hostile(t,unit));
+  }
+  function strBonus(u,map,context){return (u.id==='taki'&&bond(map,u)?1:0)+(u.id==='tomori'&&active(u,3)&&context?.initiatorId===u.id?3:0)+
+    (u.id==='xueyue'&&active(u)&&u.weapon?.type==='sword'?3:0);}
+  function counterFactor(attacker,defender,context){return attacker.side==='enemy'&&defender.id==='nina'&&active(defender,2)&&context?.initiatorId===defender.id?0.8:1;}
+  function afterMagic(attacker,target,hit,magic){
+    if(!hit||!magic||attacker.id!=='soyo'||!active(attacker,3)||!present(target)||!M.Grid.hostile(attacker,target)||immune(target))return false;
+    target.status.talentResDown=2;return true;
+  }
+  function afterDamage(attacker,target,damage,hit,phase){
+    if(!hit||damage<=0||attacker.id!=='xueyue'||!active(attacker,3)||!present(target)||!M.Grid.hostile(attacker,target)||immune(target))return false;
+    target.status.frostSpeedDown=2;
+    // A counter applies midway through the target's phase. Count the next two
+    // complete phases rather than consuming one turn immediately after combat.
+    if(phase===target.side)target.status.frostFresh=1;else delete target.status.frostFresh;
+    return true;
+  }
+  function expireFrost(u){
+    if(u.status.frostFresh){delete u.status.frostFresh;return;}
+    if(u.status.frostSpeedDown&&--u.status.frostSpeedDown===0)delete u.status.frostSpeedDown;
   }
   function heal(u,amount){const restored=Math.max(0,Math.min(amount,u.maxHp-u.hp));u.hp+=restored;return restored;}
   function onKill(u,target,killed){
@@ -7932,7 +8000,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     return active(u)&&u.id==='nijika'&&['heal','fortify'].includes(spell.effect)?
       heal(u,changes.reduce((sum,c)=>sum+Math.max(0,c.amount||0),0)):0;
   }
-  M.Talents=Object.freeze({LEVEL,data,get,active,sync,dexBonus,avoidBonus,guardBonus,onKill,onSupport});
+  M.Talents=Object.freeze({LEVEL,data,data2,data3,levels:Object.freeze(levels),get,active,list,sync,immune,penalty,experience,
+    healingSpell,rangeBonus,healingAmount,dexBonus,avoidBonus,guardBonus,bond,strBonus,counterFactor,afterMagic,afterDamage,expireFrost,onKill,onSupport});
 })(window);
 
   </script>
@@ -7972,7 +8041,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     u.level=s.level;u.exp=s.exp;u.growthRngState=s.rngState;
     u.growthGains=Object.fromEntries(keys.map(k=>[k,s.gains[k]]));
     for(const k of keys)u[k]=base.stats[k]+s.gains[k];
-    u._talent1Bonus=0;M.Talents?.sync(u);
+    u._talent1Bonus=0;u._talentBonuses={};M.Talents?.sync(u);
     if(fullHp)u.hp=u.maxHp;
   }
   function rollLevel(u,rng){
@@ -7986,18 +8055,19 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function award(u,amount,multiplier=1){
     if(!eligible(u)||u.level>=MAX_LEVEL||!Number.isInteger(amount)||amount<=0)return null;
     // One action grants at most the current level's full requirement; excess carries over.
-    const gained=Math.min(amount,required(u.level))*multiplier,before={level:u.level,exp:u.exp,required:required(u.level)};
+    const baseAmount=Math.min(amount,required(u.level))*multiplier;
+    const gained=M.Talents?.experience(u,baseAmount)??baseAmount,before={level:u.level,exp:u.exp,required:required(u.level)};
     u.exp+=gained;const levels=[],rng=M.RNG.restore(u.growthRngState);
     while(u.level<MAX_LEVEL&&u.exp>=required(u.level)){
       u.exp-=required(u.level);const old=Object.fromEntries(keys.map(k=>[k,u[k]])),gains=rollLevel(u,rng);
-      const hadTalent=M.Talents?.active(u);
+      const hadTalents=M.Talents?.list(u).filter(t=>t.active).map(t=>t.slot)||[];
       u.level++;for(const k of keys){u[k]+=gains[k];u.growthGains[k]+=gains[k];}
       M.Talents?.sync(u);
       // Preserve missing HP; growth does not fully heal an injured unit.
       u.hp+=gains.maxHp;
       const learned=M.Inventory.learn(u);M.Inventory.sync(u);
-      const awakened=!hadTalent&&M.Talents?.active(u)?M.Talents.get(u):null;
-      levels.push({level:u.level,before:old,gains,learned,awakened,after:Object.fromEntries(keys.map(k=>[k,u[k]]))});
+      const awakenings=M.Talents?.list(u).filter(t=>t.active&&!hadTalents.includes(t.slot))||[],awakened=awakenings[0]||null;
+      levels.push({level:u.level,before:old,gains,learned,awakened,awakenings,after:Object.fromEntries(keys.map(k=>[k,u[k]]))});
     }
     u.growthRngState=rng.serialize();if(u.level===MAX_LEVEL)u.exp=0;
     return {unitId:u.id,name:u.name,gained,before,after:{level:u.level,exp:u.exp,required:required(u.level)},levels};
@@ -8195,7 +8265,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         if (occupant && Grid.hostile(occupant, unit)) continue;
 
         const nextCost = cur.cost + Grid.movementCost(map,unit,nx,ny);
-        if (nextCost > Math.max(0,unit.move+(unit.gear?.move||0)-(unit.status?.moveDown?5:0))) continue;
+        if (nextCost > Math.max(0,unit.move+(unit.gear?.move||0)-(MyGO.Talents?.penalty(unit,'moveDown',5)??(unit.status?.moveDown?5:0)))) continue;
 
         const nk = Grid.key(nx, ny);
         const old = records.get(nk);
@@ -8390,12 +8460,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   }
 
   /** 风花雪月攻速：武器重量与辅助装备重量共同参与计算。 */
-  function attackSpeedOf(unit) {
+  function attackSpeedOf(unit,map,context) {
     const weight = (unit.weapon.weight || 0) + (unit.equipmentWeight || 0);
-    return Math.max(0, speedOf(unit) - Math.max(0, weight - Math.floor((unit.str || 0) / 5)));
+    return Math.max(0, speedOf(unit) - Math.max(0, weight - Math.floor(strOf(unit,map,context) / 5)));
   }
 
-  function speedOf(u){return Math.max(0,u.spd+(u.gear?.spd||0)-(u.status?.spdDown?5:0));}
+  function penalty(u,key,amount){return MyGO.Talents?.penalty(u,key,amount)??(u.status?.[key]?amount:0);}
+  function speedOf(u){return Math.max(0,u.spd+(u.gear?.spd||0)-Math.max(penalty(u,'spdDown',5),penalty(u,'frostSpeedDown',3)));}
+  function strOf(u,map,context){return (u.str||0)+(MyGO.Talents?.strBonus(u,map,context)||0);}
   function dexOf(u){return (u.dex||0)+(MyGO.Talents?.dexBonus(u)||0);}
   function hitOf(u){return (u.weapon.absoluteHit?(u.weapon.damageType==='magic'?Math.floor((dexOf(u)+(u.lck||0))/2):dexOf(u)):(u.hit||0)+(MyGO.Talents?.dexBonus(u)||0))+(u.weapon.hit||0)+(u.gear?.hit||0);}
 
@@ -8411,10 +8483,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   /** 预告只表示可执行的顺序；实际命中/暴击与死亡截断在 rollRound 决定。 */
   function forecast(attacker, defender, map) {
-    const first = preview(attacker, defender, map);
+    const context={initiatorId:attacker.id};
+    const first = preview(attacker, defender, map,context);
     const reason = counterReason(attacker, defender);
-    const counter = reason ? null : preview(defender, attacker, map);
-    const attackSpeed = attackSpeedOf(attacker), defenderAttackSpeed = attackSpeedOf(defender);
+    const counter = reason ? null : preview(defender, attacker, map,context);
+    const attackSpeed = attackSpeedOf(attacker,map,context), defenderAttackSpeed = attackSpeedOf(defender,map,context);
     const order = [{attackerId:attacker.id, defenderId:defender.id, kind:'attack'}];
     if (attacker.weapon.brave || attacker.weapon.type === 'gauntlet') order.push({attackerId:attacker.id, defenderId:defender.id, kind:'combo'});
     if (counter) order.push({attackerId:defender.id, defenderId:attacker.id, kind:'counter'});
@@ -8441,7 +8514,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const a = units.get(step.attackerId), b = units.get(step.defenderId);
       if (a.hp <= 0 || b.hp <= 0) break;
       if(!MyGO.Inventory.usable(a))continue;
-      const strike = {...roll(preview(a,b,battleMap),rng), kind:step.kind,
+      const strike = {...roll(preview(a,b,battleMap,{initiatorId:attacker.id}),rng), kind:step.kind,
         attackerHp:a.hp, attackerMaxHp:a.maxHp,resourceId:a.inventory?a.weapon.id:null,weaponSnapshot:a.weapon};
       if(a.inventory)MyGO.Inventory.consume(a,a.weapon.id);
       strike.healed=MyGO.Inventory.useEffects(a,b,MyGO.Magic.get(a.weapon.id),strike.finalDamage,strike.hit);
@@ -8468,7 +8541,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
    * 生成不会改变游戏状态的战斗预览。
    * 返回字段足够供 UI、AI 与结算共用。
    */
-  function preview(attacker, defender, map) {
+  function preview(attacker, defender, map,context={initiatorId:attacker.id}) {
     if (!attacker || !defender) throw new Error('战斗预览缺少单位');
     if (!Grid.hostile(attacker, defender)) throw new Error('不能攻击友军');
 
@@ -8486,15 +8559,17 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
     // ② 攻击力：对应属性 + 武器威力 + 技能/骑士团等固定修正。
     //    当前角色 atkMod 均为 0，后续加技能时直接写入该字段即可。
-    const atkStat = magic ? (attacker.mag || 0) : attacker.str;
+    const atkStat = magic ? (attacker.mag || 0) : strOf(attacker,map,context);
     const attackMod = (attacker.atkMod || 0) + (aw.atkMod || 0) + (magic ? attacker.gear?.magic||0 : 0);
     const attack = atkStat + weaponPower + attackMod;
 
     // ③ 防守：物理吃守备和山地，魔法只吃魔防。
     const terrainDef = magic ? 0 : terrain.def;
-    const guard=MyGO.Talents?.guardBonus(defender,map)||0;
-    const defense = magic ? (aw.ignoreRes?0:defender.res+(defender.gear?.res||0)+(defender.status?.ward||0)+guard) : Math.max(0,defender.def+(defender.gear?.def||0)+guard-(defender.status?.defDown?5:0)) + terrainDef;
-    const damage = Math.max(C.COMBAT.minDamage, attack - defense);
+    const defense = magic&&aw.ignoreRes?0:defenseOf(defender,map,magic);
+    const damageFactor=MyGO.Talents?.counterFactor(attacker,defender,context)||1;
+    const baseDamage = Math.max(C.COMBAT.minDamage, attack - defense);
+    const damage = Math.floor(baseDamage*(damageFactor===0.8?4:5)/5);
+    const critDamage = Math.floor(baseDamage*C.COMBAT.critMultiplier*(damageFactor===0.8?4:5)/5);
 
     const targetAvoid = avoidOf(defender,map);
     const rawHit = hitOf(attacker) + triangle * C.TRIANGLE_BONUS.hit - targetAvoid;
@@ -8532,16 +8607,17 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       defenseName: magic ? '魔防' : '守备',
       targetAvoid,
       damage,
+      damageFactor,
       hit,
       baseCrit,
       targetCritAvoid,
       crit,
-      critDamage: damage * C.COMBAT.critMultiplier,
+      critDamage,
       hpFloor:defender.hpFloor||0,
       defenderHp: defender.hp,
       defenderMaxHp: defender.maxHp,
       hpAfterHit: Math.max(defender.hpFloor||0, defender.hp - damage),
-      hpAfterCrit: Math.max(defender.hpFloor||0, defender.hp - damage * C.COMBAT.critMultiplier)
+      hpAfterCrit: Math.max(defender.hpFloor||0, defender.hp - critDamage)
     };
   }
 
@@ -8555,7 +8631,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     const hit = hitRoll <= previewData.hit;
     const crit = hit && critRoll <= previewData.crit;
     const damage = hit
-      ? previewData.damage * (crit ? C.COMBAT.critMultiplier : 1)
+      ? (crit ? previewData.critDamage??previewData.damage*C.COMBAT.critMultiplier : previewData.damage)
       : 0;
 
     return {
@@ -8579,11 +8655,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function defenseOf(unit, map, magic) {
     const terrain = terrainOf(unit, map);
     const guard=MyGO.Talents?.guardBonus(unit,map)||0;
-    return magic ? unit.res+(unit.gear?.res||0)+(unit.status?.ward||0)+guard : Math.max(0,unit.def+(unit.gear?.def||0)+guard-(unit.status?.defDown?5:0)) + terrain.def;
+    return magic ? Math.max(0,unit.res+(unit.gear?.res||0)+(unit.status?.ward||0)+guard-penalty(unit,'talentResDown',2)) : Math.max(0,unit.def+(unit.gear?.def||0)+guard-penalty(unit,'defDown',5)) + terrain.def;
   }
 
   MyGO.Combat = {
     dexOf,
+    strOf,
     speedOf,
     hitOf,
     clamp,
@@ -8880,7 +8957,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const job=MyGO.Classes.get(id);
       if(!unit.certifiedClasses.includes(id)&&job.seal){const bag=unit.inventory.some(i=>i.id===job.seal)?unit.inventory:this.convoy;bag.splice(bag.findIndex(i=>i.id===job.seal),1);}
       MyGO.Classes.apply(unit,id);
-      if(this.phase==='player')unit.acted=true;
+      if(this.phase==='player')this.markActed(unit);
       return job;
     }
 
@@ -8902,7 +8979,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(e.action==='antitoxin')delete unit.status.poison;
       if(e.action==='ward')unit.status.ward=7;
       slot.uses--;if(slot.uses===0)unit.inventory.splice(index,1);
-      unit.acted=true;MyGO.Inventory.sync(unit);return {item:e,healed};
+      this.markActed(unit);MyGO.Inventory.sync(unit);return {item:e,healed};
     }
 
     loadoutReason(unit) {
@@ -8938,7 +9015,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const r=MyGO.Magic.rangeOf(s,caster),d=u=>Grid.manhattan(caster,u);
       if(s.effect==='silence')return this.units.filter(u=>!u.dead&&Grid.hostile(u,caster)&&(caster.side!=='player'||this.isUnitVisible(u))&&u.learnedSpells.length&&d(u)>=r[0]&&d(u)<=r[1]&&!u.status.silence);
       return this.living().filter(u=>!Grid.hostile(u,caster)&&u.id!==caster.id&&d(u)>0&&d(u)<=(s.effect==='warp'?1:r[1])&&
-        (['heal','fortify'].includes(s.effect)?u.hp<u.maxHp:s.effect==='restore'?['defDown','spdDown','moveDown','silence'].some(k=>u.status[k]):
+        (['heal','fortify'].includes(s.effect)?u.hp<u.maxHp:s.effect==='restore'?['defDown','spdDown','moveDown','silence','talentResDown','frostSpeedDown'].some(k=>u.status[k]):
         s.effect==='rescue'?this.supportDestinations(caster,spellId,u).length>0:s.effect==='ward'?!(u.status.ward>=7):true));
     }
 
@@ -8964,8 +9041,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const affected=['fortify','restore'].includes(s.effect)?targets:[target];
       const changes=[];
       for(const u of affected){
-        if(['heal','fortify'].includes(s.effect)){const amount=Math.min(u.maxHp-u.hp,s.might+Math.floor(caster.mag/3)+(caster.gear.heal||0));u.hp+=amount;changes.push({id:u.id,amount});}
-        if(s.effect==='restore')for(const k of ['defDown','spdDown','moveDown','silence'])delete u.status[k];
+        if(['heal','fortify'].includes(s.effect)){const amount=Math.min(u.maxHp-u.hp,MyGO.Magic.healAmount(s,caster));u.hp+=amount;changes.push({id:u.id,amount});}
+        if(s.effect==='restore')for(const k of ['defDown','spdDown','moveDown','silence','talentResDown','frostSpeedDown','frostFresh'])delete u.status[k];
         if(s.effect==='ward')u.status.ward=7;
         if(s.effect==='silence'){u.status.silence=1;this.alertGroup(u);}
         if(['warp','rescue'].includes(s.effect))this.setUnitPosition(u.id,destination.x,destination.y);
@@ -8973,7 +9050,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       }
       const talentHealing=MyGO.Talents?.onSupport(caster,s,changes)||0;
       if(talentHealing)changes.push({id:caster.id,amount:talentHealing,talent:'同心'});
-      caster.acted=true;MyGO.Inventory.sync(caster);
+      this.markActed(caster);MyGO.Inventory.sync(caster);
       const growth=MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
       return {spell:s,changes,talentHealing,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
     }
@@ -8981,6 +9058,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     expireStatuses(side) {
       for(const u of this.living(side)){
         for(const k of ['defDown','spdDown','moveDown','silence'])delete u.status[k];
+        MyGO.Talents?.expireFrost(u);
         MyGO.Inventory.sync(u);
       }
     }
@@ -9032,7 +9110,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
     lightLamp(unit) {
       if(!this.canLightLamp(unit))return null;
-      const lamp=this.nearbyUnlitLamp(unit);this.litLamps.push(lamp.id);unit.acted=true;
+      const lamp=this.nearbyUnlitLamp(unit);this.litLamps.push(lamp.id);this.markActed(unit);
       // The switch echoes along walkable ground, beyond the pool of light.
       const heard=Pathfinding.getReachable(this.map,{id:'__lamp_noise__',side:'player',...lamp,move:this.mission.lampNoiseRadius},[]);
       for(const enemy of this.living('enemy'))if(!enemy.boss&&heard.has(Grid.key(enemy.x,enemy.y)))this.alertGroup(enemy);
@@ -9260,12 +9338,33 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       return unit;
     }
 
-    markActed(unit) {
-      if (unit) unit.acted = true;
+    markActed(unit,attacked=false) {
+      if(!unit)return;
+      unit.talentAttacked=!!unit.talentAttacked||attacked;
+      if(!unit.acted)unit.talentSwapReady=unit.id==='anon'&&!!MyGO.Talents?.active(unit,3)&&!unit.talentAttacked;
+      unit.acted=true;
     }
 
     resetActed(side) {
-      for (const unit of this.living(side)) unit.acted = false;
+      for (const unit of this.living(side)){unit.acted=false;unit.talentAttacked=false;unit.talentSwapReady=false;}
+    }
+
+    talentSwapTargets(unit) {
+      if(!unit||!this.isPlayerPhase()||unit.side!=='player'||unit.dead||unit.escaped||unit.hp<=0||!unit.acted||
+        !unit.talentSwapReady||unit.talentAttacked||unit.id!=='anon'||!MyGO.Talents?.active(unit,3))return [];
+      return this.living().filter(t=>t.id!==unit.id&&!t.escaped&&!Grid.hostile(t,unit)&&Grid.manhattan(unit,t)===1&&
+        Number.isFinite(Grid.movementCost(this.map,unit,t.x,t.y))&&Number.isFinite(Grid.movementCost(this.map,t,unit.x,unit.y)));
+    }
+
+    talentSwap(unit,target) {
+      if(!this.talentSwapTargets(unit).some(t=>t===target))throw Error('当前无法与该队友交换位置');
+      const {x,y}=unit;unit.x=target.x;unit.y=target.y;target.x=x;target.y=y;
+      unit.talentSwapReady=false;
+      this.refreshParkDiscovery();return {unitId:unit.id,targetId:target.id};
+    }
+
+    skipTalentSwap(unit){
+      if(unit?.id==='anon')unit.talentSwapReady=false;
     }
 
     /** 打开庭院大门，并同步地图格。返回是否是第一次打开。 */
@@ -9295,7 +9394,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const gate = this.gateForKey(unit);
       unit.inventory.splice(unit.inventory.findIndex(i => i.id === 'courtyard_key'), 1);
       this.openGate();
-      unit.acted = true;
+      this.markActed(unit);
       MyGO.Inventory.sync(unit);
       return gate;
     }
@@ -9331,7 +9430,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     openChest(unit){
       if(!this.canOpenChest(unit))return null;
       const chest=this.nearbyChest(unit),index=unit.inventory.findIndex(i=>i.id==='chest_key'&&i.uses>0);
-      unit.inventory.splice(index,1);this.openedChests.push(chest.id);unit.acted=true;
+      unit.inventory.splice(index,1);this.openedChests.push(chest.id);this.markActed(unit);
       const drop=chest.item?this.awardLoot(unit,chest.item):null;
       if(chest.gold)this.gold+=chest.gold;
       MyGO.Inventory.sync(unit);return {chest,drop,gold:chest.gold||0};
@@ -9392,7 +9491,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(!this.canActivateResonance(unit)) return false;
       this.resonanceOpen=true;
       this._syncResonance();
-      unit.acted=true;
+      this.markActed(unit);
       return true;
     }
 
@@ -9411,7 +9510,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const bell=this.bellAt(unit.x,unit.y);
       this.awakenedBells.push(bell.id);
       unit.hp=Math.min(unit.maxHp,unit.hp+Math.ceil(unit.maxHp*.3));
-      unit.acted=true;
+      this.markActed(unit);
       for(const enemy of this.living('enemy'))if(enemy.guardGroup===bell.group)enemy.alerted=true;
       this.checkOutcome();
       return bell;
@@ -9454,6 +9553,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if (!result) throw new Error('缺少战斗结果');
       if (result.applied) throw new Error('该战斗结果已结算');
       if (result.strikes) {
+        const initiator=this.getUnit(result.attackerId);
+        if(initiator?.side==='player'&&this.phase==='player'){initiator.talentAttacked=true;initiator.talentSwapReady=false;}
         const participants=[result.attackerId,result.defenderId].map(id=>this.getUnit(id)).filter(Boolean).map(u=>({...u}));
         for (const strike of result.strikes) {
           const a = this.getUnit(strike.attackerId), b = this.getUnit(strike.defenderId);
@@ -9466,6 +9567,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           }
           if(strike.retreatTriggered)result.retreatTriggered=true;
           if (strike.killed||strike.retreatTriggered) break;
+        }
+        for(const strike of result.strikes.filter(s=>s.applied)){
+          const a=this.getUnit(strike.attackerId),b=this.getUnit(strike.defenderId);
+          strike.talentResDown=!!(a&&b&&MyGO.Talents?.afterMagic(a,b,strike.hit,strike.magic));
+          strike.frostApplied=!!(a&&b&&MyGO.Talents?.afterDamage(a,b,Math.max(0,strike.hpBeforeApply-strike.hpAfterApply),strike.hit,this.phase));
         }
         result.applied = true;
         result.hpBeforeApply = result.defenderHp;
@@ -9482,6 +9588,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         return { ...result, killed: false, skipped: true };
       }
       const attacker = this.getUnit(result.attackerId);
+      if(!deferExperience&&attacker?.side==='player'&&this.phase==='player'&&!['counter','followup'].includes(result.kind)){
+        attacker.talentAttacked=true;attacker.talentSwapReady=false;
+      }
       const participants=[attacker,defender].filter(Boolean).map(u=>({...u}));
       if(result.resourceId && attacker) {
         MyGO.Inventory.consume(attacker,result.resourceId);
@@ -9512,6 +9621,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         for(const id of defender.drops){const at=defender.inventory.findIndex(i=>i.id===id);if(at>=0)defender.inventory.splice(at,1);}
       }
       if(attacker)MyGO.Inventory.sync(attacker);
+      if(!deferExperience&&attacker)result.talentResDown=!!MyGO.Talents?.afterMagic(attacker,defender,result.hit,result.magic);
+      if(!deferExperience&&attacker)result.frostApplied=!!MyGO.Talents?.afterDamage(attacker,defender,Math.max(0,before-defender.hp),result.hit,this.phase);
       MyGO.Inventory.sync(defender);
       this.checkOutcome();
       if(!deferExperience)result.experience=this.awardCombatExperience([result],participants);
@@ -9593,6 +9704,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     beginNextPlayerPhase() {
       if (this.isOver()) return false;
       this.expireStatuses('enemy');
+      for(const u of this.units)delete u.status.talentResDown;
       this.decayWard('player');
       this.turn += 1;
       if(this.stage===3 && this.turn>=4){
@@ -9612,7 +9724,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     /** 玩家全体存活单位是否都已行动。 */
     allPlayerActed() {
       const list = this.living('player');
-      return list.length > 0 && list.every((u) => u.acted);
+      return list.length > 0 && list.every((u) => u.acted&&!this.talentSwapTargets(u).length);
     }
 
     /**
@@ -9653,6 +9765,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           y: u.y,
           hp: u.hp,
           acted: u.acted,
+          talentSwapReady:!!u.talentSwapReady,
+          talentAttacked:!!u.talentAttacked,
           dead: u.dead,
           alerted: u.alerted,
           growth: MyGO.GrowthData.personal[u.id] ? MyGO.Growth.pack(u) : undefined,
@@ -9804,6 +9918,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         unit.hp = Math.max(0, Math.min(unit.maxHp, Number(saved.hp) || 0));
         unit.dead = !!saved.dead || unit.hp <= 0;
         unit.acted = !!saved.acted || unit.dead;
+        if(saved.talentSwapReady!==undefined&&typeof saved.talentSwapReady!=='boolean'||saved.talentAttacked!==undefined&&typeof saved.talentAttacked!=='boolean')throw Error('存档天赋行动状态无效');
+        unit.talentAttacked=!!saved.talentAttacked;
+        unit.talentSwapReady=unit.id==='anon'&&!!MyGO.Talents?.active(unit,3)&&unit.acted&&!unit.dead&&!unit.talentAttacked&&!!saved.talentSwapReady;
         unit.alerted = !!saved.alerted;
         MyGO.Inventory.restore(unit,saved,false);
         if (this.stage === 1 && unit.id === 'xueyue' && legacyJoined) {
@@ -17538,7 +17655,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         '  <span class="hp-values"><b>' + unit.hp + '</b><span> / ' + unit.maxHp + '</span></span>',
         '</div>',
         '<div class="stat-grid">',
-        '  <div class="stat' + (magic ? '' : ' accent') + '"><i>力量</i><b>' + unit.str + '</b></div>',
+        '  <div class="stat' + (magic ? '' : ' accent') + '"><i>力量</i><b>' + unit.str + ((MyGO.Talents?.strBonus(unit,this.game.map)||0)?'<small>+'+MyGO.Talents.strBonus(unit,this.game.map)+' '+(unit.id==='xueyue'?'剑意':'护灯')+'</small>':'') + '</b></div>',
         '  <div class="stat' + (magic ? ' accent' : '') + '"><i>魔力</i><b>' + unit.mag + '</b></div>',
         '  <div class="stat"><i>速度</i><b>' + unit.spd + '</b></div>',
         '  <div class="stat"><i>守备</i><b>' + unit.def + (!magic && terrain.def ? '<small>+' + terrain.def + '</small>' : '') + '</b></div>',
@@ -17555,7 +17672,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         '  <span>伤害类型 <b>' + (magic ? '魔法' : '物理') + '</b></span>',
         '  <span>' + (magic ? '战斗魔防' : '战斗守备') + ' <b>' + defense + '</b></span>',
         '  <span>回避 <b>' + avoid + '</b></span>',
-        '  <span>攻速 AS <b>' + Combat.attackSpeedOf(unit) + '</b></span>',
+        '  <span>攻速 AS <b>' + Combat.attackSpeedOf(unit,this.game.map) + '</b></span>',
         '  <span>脚下 <b>' + esc(terrain.name) + '</b></span>',
         '  <span>地形闪避 <b>+' + terrain.avoid + '</b></span>',
         '  <span>地形守备 <b>' + (magic ? '—' : '+' + terrain.def) + '</b></span>',
@@ -17936,7 +18053,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.setBusy(true);
       try {
         const result = await this.performAttackSequence(attacker, target, false);
-        this.game.markActed(attacker);
+        this.game.markActed(attacker,true);
         this.setBusy(false);
         this.resetSelection();
         this.updateAll();
@@ -17975,6 +18092,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       }
       await this.showResultModal(result, isEnemy);
       const applied = this.game.applyCombat(result);
+      for(const id of new Set(applied.strikes.filter(s=>s.applied&&s.talentResDown).map(s=>s.defenderId))){
+        const u=this.game.getUnit(id);this.renderer.floatText('魔力打击 · 魔防−2',u.x,u.y-0.65,'#cdb4f4',10);
+      }
+      for(const id of new Set(applied.strikes.filter(s=>s.applied&&s.frostApplied).map(s=>s.defenderId))){
+        const u=this.game.getUnit(id);this.renderer.floatText('冰霜剑气 · 速度−3',u.x,u.y-0.65,'#a6e8ff',10);
+      }
 
       for (const strike of applied.strikes.filter(s=>s.applied)) {
         const target = this.game.getUnit(strike.defenderId);
@@ -18018,7 +18141,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       await new Promise(resolve=>{
         this.openOverlay('<div class="modal-kicker">LEVEL UP / GROWTH</div><h2 class="modal-title" id="overlay-title">成长的足迹</h2>'+
           leveled.map(r=>'<section class="growth-level"><h3>'+esc(r.name)+' <span>Lv.'+r.before.level+' → Lv.'+r.after.level+'</span></h3><p>经验 +'+r.gained+' · '+(r.after.level>=99?'已达最高等级':r.after.exp+' / '+r.after.required+' EXP')+'</p>'+
-            r.levels.map(l=>'<div class="growth-level-grid">'+MyGO.GrowthData.keys.map(k=>'<div class="'+(l.after[k]>l.before[k]?'is-up':'')+'"><span>'+MyGO.GrowthData.labels[k]+'</span><strong>'+l.before[k]+' → '+l.after[k]+'</strong><b>'+(l.after[k]!==l.before[k]?'+'+(l.after[k]-l.before[k]):'—')+'</b></div>').join('')+'</div>'+(l.awakened?'<p class="learned-spells-notice">个人天赋1觉醒：'+esc(l.awakened.name)+' · '+esc(l.awakened.description)+'</p>':'')+(l.learned?.length?'<p class="learned-spells-notice">新习得：'+l.learned.map(id=>esc(MyGO.Magic.get(id).name)).join('、')+'</p>':'')).join('')+'</section>').join('')+
+            r.levels.map(l=>'<div class="growth-level-grid">'+MyGO.GrowthData.keys.map(k=>'<div class="'+(l.after[k]>l.before[k]?'is-up':'')+'"><span>'+MyGO.GrowthData.labels[k]+'</span><strong>'+l.before[k]+' → '+l.after[k]+'</strong><b>'+(l.after[k]!==l.before[k]?'+'+(l.after[k]-l.before[k]):'—')+'</b></div>').join('')+'</div>'+(l.awakened?'<p class="learned-spells-notice">个人天赋'+(l.awakened.slot||1)+'觉醒：'+esc(l.awakened.name)+' · '+esc(l.awakened.description)+'</p>':'')+(l.learned?.length?'<p class="learned-spells-notice">新习得：'+l.learned.map(id=>esc(MyGO.Magic.get(id).name)).join('、')+'</p>':'')).join('')+'</section>').join('')+
           '<p class="modal-sub">属性提升已生效，成长结果会随存档与跨章保留。</p><div class="modal-actions"><button class="modal-btn primary" data-confirm>继续前行</button></div>','growth-modal',false);
         this.confirmHandler=resolve;
       });
@@ -19638,11 +19761,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const range = Array.isArray(weapon.range) ? weapon.range.join('–') : '1';
       const statItems = [
         { key: 'hp', label: 'HP', value: unit.hp + '<small>/' + unit.maxHp + '</small>', hint: '生命值' },
-        { key: 'str', label: '力量', value: unit.str, hint: '物理攻击' },
+        { key: 'str', label: '力量', value: unit.str+((MyGO.Talents?.strBonus(unit,this.ui.game.map)||0)?'<small>+'+MyGO.Talents.strBonus(unit,this.ui.game.map)+' '+(unit.id==='xueyue'?'剑意':'护灯')+'</small>':''), hint: '物理攻击' },
         { key: 'mag', label: '魔力', value: unit.mag, hint: '魔法攻击' },
         { key: 'spd', label: '速度', value: unit.spd, hint: '影响回避' },
-        { key: 'def', label: '守备', value: unit.def+((MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)?'<small>+1 守护</small>':''), hint: '物理减伤' },
-        { key: 'res', label: '魔防', value: unit.res+((MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)?'<small>+1 守护</small>':''), hint: '魔法减伤' },
+        { key: 'def', label: '守备', value: unit.def+((MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)?'<small>+'+(MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)+' 守护</small>':''), hint: '物理减伤' },
+        { key: 'res', label: '魔防', value: unit.res+((MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)?'<small>+'+(MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)+' 守护</small>':''), hint: '魔法减伤' },
         { key: 'dex', label: '技巧', value: unit.dex + ((MyGO.Talents?.dexBonus(unit)||0)?'<small>+3 天赋</small>':''), hint: '影响命中与暴击率' },
         { key: 'lck', label: '幸运', value: unit.lck, hint: '暴击与必杀回避' },
         { key: 'move', label: '移动', value: unit.move, hint: '行动距离' }
@@ -19714,7 +19837,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         '<div class="formation-detail-foot">',
         '  <span class="formation-foot-mark">✦</span>',
         '  <p>本页数据直接来自当前对局，可在战斗中通过「标题 → 同行之人」再次查看。</p>',
-        '  <span class="formation-power">主要攻击属性 <b>' + (isMagic ? '魔力 ' + unit.mag : '力量 ' + unit.str) + '</b></span>',
+        '  <span class="formation-power">主要攻击属性 <b>' + (isMagic ? '魔力 ' + unit.mag : '力量 ' + MyGO.Combat.strOf(unit,this.ui?.game?.map)) + '</b></span>',
         '</div>'
       ].join('');
 
@@ -19825,8 +19948,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function icon(e){if(e.kind==='key')return '<span class="key-item-icon" aria-hidden="true">⚿</span>';const id=e.kind==='spell'?'spell_'+e.id:e.icon;
     return '<img alt="" src="'+(global.MYGO_EQUIPMENT_ICONS?.[id]||'assets/equipment/icons/'+id+'.png')+'">';}
-  function stats(e){return e.kind==='weapon'?'威力 '+e.might+' · 命中 '+e.hit+' · 重量 '+e.weight+' · 射程 '+e.range:
-    e.kind==='spell'?'威力 '+e.might+' · 命中 '+e.hit+' · 重量 '+e.weight+' · 射程 '+e.rangeText.replace('mag/','魔力/') :e.effect;}
+  function stats(e,u){return e.kind==='weapon'?'威力 '+e.might+' · 命中 '+e.hit+' · 重量 '+e.weight+' · 射程 '+e.range:
+    e.kind==='spell'?'威力 '+e.might+' · 命中 '+e.hit+' · 重量 '+e.weight+' · 射程 '+(u?Magic.rangeOf(e,u).join('–'):e.rangeText.replace('mag/','魔力/')) :e.effect;}
   function tabs(active){return '<nav class="loadout-tabs" aria-label="角色资料页">'+[['stats','能力资料'],['growth','成长率'],['bag','背包配置'],['magic','已学魔法'],['classes','职业目录']].map(([id,n])=>'<button type="button" data-loadout-tab="'+id+'" aria-pressed="'+(active===id)+'">'+n+'</button>').join('')+'</nav>';}
   function experienceSummary(u){const need=M.Growth.required(u.level),pct=need?Math.floor(u.exp/need*100):100;
     return '<div class="growth-exp"><div><strong>Lv.'+u.level+'</strong><span>'+(need?'EXP '+u.exp+' / '+need+' · 距下一级 '+(need-u.exp):'EXP MAX · 已达最高等级')+'</span></div><div class="growth-exp-track" role="progressbar" aria-label="升级经验" aria-valuemin="0" aria-valuemax="'+(need||1)+'" aria-valuenow="'+(need?u.exp:1)+'"><i style="width:'+pct+'%"></i></div></div>';}
@@ -19851,7 +19974,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const EP=M.EntryScreen.prototype,baseRender=EP.renderFormationDetail,baseBind=EP.bind;
   function talentSummary(u){
     const t=M.Talents?.get(u);if(!t||u.side==='enemy')return '';
-    return '<aside class="class-current"><span>个人天赋1 · Lv.15觉醒 · '+(M.Talents.active(u)?'已觉醒':'未觉醒')+'</span><strong>'+esc(t.name)+'</strong><p>'+esc(t.description)+'</p></aside>';
+    return M.Talents.list(u).map(t=>'<aside class="class-current"><span>个人天赋'+t.slot+' · Lv.'+t.level+'觉醒 · '+(t.active?'已觉醒':'未觉醒')+'</span><strong>'+esc(t.name)+'</strong><p>'+esc(t.description)+'</p></aside>').join('');
   }
   EP.bind=function(){baseBind.call(this);this.dom.formationDetail.addEventListener('click',e=>{
     const t=e.target.closest('button');if(!t)return;
@@ -19901,9 +20024,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       body=(!I.magicAllowed(u)?'<p class="loadout-notice is-locked">当前职业不能使用魔法；已学记录保留，转为魔法职业后可继续施放。</p>':'')+'<div class="loadout-section-title"><strong>已学魔法 <small>'+u.learnedSpells.length+' 种</small></strong><span>不占背包 · 每次出手消耗 1 次 · 下一章恢复</span></div><div class="spell-list">'+
         (u.learnedSpells.length?u.learnedSpells.map(id=>{
           const s=Magic.get(id),selected=u.equippedWeapon===id;
-          return '<article class="spell-card'+(selected?' is-equipped':'')+'"><span class="bag-icon">'+icon(s)+'</span><div class="bag-copy"><strong>'+esc(s.name)+' <small>'+esc(s.en)+'</small></strong><small>'+Magic.schoolName(s)+' · '+s.rank+' · '+esc(stats(s))+'</small><p>'+esc(s.description)+'</p></div><div class="spell-charge"><b>'+u.spellUses[id]+'<small>/'+s.uses+'</small></b>'+(s.support?'<small>战斗中使用辅助魔法</small>':'<button type="button" data-spell-equip="'+id+'"'+(dis||(!I.magicAllowed(u)||!u.spellUses[id]?' disabled':''))+'>'+(selected?'当前攻击':'设为攻击')+'</button>')+'</div></article>';
+          return '<article class="spell-card'+(selected?' is-equipped':'')+'"><span class="bag-icon">'+icon(s)+'</span><div class="bag-copy"><strong>'+esc(s.name)+' <small>'+esc(s.en)+'</small></strong><small>'+Magic.schoolName(s)+' · '+s.rank+' · '+esc(stats(s,u))+'</small><p>'+esc(s.description)+'</p></div><div class="spell-charge"><b>'+u.spellUses[id]+'<small>/'+s.uses+'</small></b>'+(s.support?'<small>战斗中使用辅助魔法</small>':'<button type="button" data-spell-equip="'+id+'"'+(dis||(!I.magicAllowed(u)||!u.spellUses[id]?' disabled':''))+'>'+(selected?'当前攻击':'设为攻击')+'</button>')+'</div></article>';
         }).join(''):'<p class="loadout-empty">该角色目前未学会魔法。法师的魔法记录在这里，无需领取魔法书。</p>')+'</div>'+
-        '<div class="loadout-section-title"><strong>等级学法术</strong><span>法师按等级自动习得；原作法术效果，等级安排为本作设定</span></div><div class="spell-reference">'+(u.mageTrained||M.Classes.get(u.classId)?.magic?Magic.learning.map(row=>'<article><strong>Lv.'+row.level+' · '+esc(Magic.get(row.id).name)+'</strong><p>'+(u.learnedSpells.includes(row.id)?'已习得':'达到等级后自动习得')+'</p></article>').join(''):'<p>转为可使用魔法的职业后开始学习。</p>')+'</div><details class="spell-codex"><summary>风花雪月魔法图鉴 · 36 种可学习魔法</summary><p class="loadout-footnote">数值来自 Serenes Forest。下表为参考图鉴；各角色只可使用已学魔法，当前职业须允许魔法。</p>'+['black','dark','faith'].map(school=>'<h4>'+Magic.schoolName({school})+'</h4><div class="spell-reference">'+Magic.items.filter(s=>s.school===school).map(s=>'<article><strong>'+esc(s.name)+' <small>'+s.rank+' · '+s.uses+'次</small></strong><small>'+esc(s.en)+' · '+esc(stats(s))+'</small><p>'+esc(s.description)+'</p></article>').join('')+'</div>').join('')+'</details>';
+        '<div class="loadout-section-title"><strong>等级学法术</strong><span>法师按等级自动习得；原作法术效果，等级安排为本作设定</span></div><div class="spell-reference">'+(u.mageTrained||M.Classes.get(u.classId)?.magic?Magic.learning.map(row=>'<article><strong>Lv.'+row.level+' · '+esc(Magic.get(row.id).name)+'</strong><p>'+(u.learnedSpells.includes(row.id)?'已习得':'达到等级后自动习得')+'</p></article>').join(''):'<p>转为可使用魔法的职业后开始学习。</p>')+'</div><details class="spell-codex"><summary>风花雪月魔法图鉴 · 36 种可学习魔法</summary><p class="loadout-footnote">数值来自 Serenes Forest。下表为参考图鉴；各角色只可使用已学魔法，当前职业须允许魔法。</p>'+['black','dark','faith'].map(school=>'<h4>'+Magic.schoolName({school})+'</h4><div class="spell-reference">'+Magic.items.filter(s=>s.school===school).map(s=>'<article><strong>'+esc(s.name)+' <small>'+s.rank+' · '+s.uses+'次</small></strong><small>'+esc(s.en)+' · '+esc(stats(s,u))+'</small><p>'+esc(s.description)+'</p></article>').join('')+'</div>').join('')+'</details>';
     }
     this.dom.formationDetail.innerHTML=header+body;
     this.drawPortrait(this.dom.formationDetail.querySelector('[data-loadout-portrait]'),u,true);this.renderPoseDock(u);
@@ -19914,16 +20037,44 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   UP.renderUnitInfo=function(u){baseUnitInfo.call(this,u);if(!u)return;
     if(M.Talents?.get(u)&&u.side!=='enemy')this.dom.infoBody.insertAdjacentHTML('beforeend',talentSummary(u));
     const guard=M.Talents?.guardBonus(u,this.game.map)||0;
-    if(guard)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">队友守护 · 守备／魔防＋1</span>');
+    if(guard)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">天赋守护 · 守备／魔防＋'+guard+'</span>');
     const line=this.dom.infoBody.querySelector('.weapon-line');
     if(line&&!u.weapon.cannotAttack)line.textContent+=' · '+(u.weapon.kind==='spell'?'剩余 '+u.spellUses[u.weaponId]+'/'+u.weapon.uses+' 次':'耐久 '+(u.inventory.find(i=>i.id===u.weaponId&&i.uses>0)?.uses||0)+'/'+u.weapon.uses);
-    const labels={defDown:'守备−5',spdDown:'速度−5',moveDown:'移动−5',silence:'沉默',ward:'魔防支援'};
-    for(const [id,n] of Object.entries(u.status))if(n)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+labels[id]+(id==='ward'?'＋'+n:'')+'</span>');
+    const labels={defDown:'守备−5',spdDown:'速度−5',moveDown:'移动−5',talentResDown:'魔力打击 · 魔防−2',frostSpeedDown:'冰霜剑气 · 速度−3',silence:'沉默',ward:'魔防支援',poison:'中毒'};
+    for(const [id,n] of Object.entries(u.status))if(n&&id!=='frostFresh'&&!(M.Talents?.immune(u)&&['defDown','spdDown','moveDown','talentResDown','frostSpeedDown'].includes(id)))this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(labels[id]||id)+(id==='ward'?'＋'+n:id==='frostSpeedDown'?' · 剩余'+n+'回合':'')+'</span>');
     if(u.equippedAccessory)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(I.item(u.equippedAccessory).name)+'</span>');
   };
   UP.renderActionSide=function(u){baseAction.call(this,u);
     const button=document.createElement('button');button.type='button';button.className='action-btn loadout-action';button.textContent='武器 / 魔法 · '+u.weapon.name;button.addEventListener('click',()=>this.showAttackLoadout(u));this.dom.actionButtons.appendChild(button);this.dom.actionButtons.classList.add("has-extra-action");
+    if(u.id==='anon'&&M.Talents?.active(u,3)){
+      const swap=document.createElement('button');swap.type='button';swap.className='action-btn';swap.textContent='待机后交换 · 幸福者退让';
+      swap.onclick=()=>{this.game.markActed(u);this.resetSelection({silent:true});this.updateAll();this.showTalentSwap(u);};this.dom.actionButtons.appendChild(swap);
+    }
   };
+  UP.showTalentSwap=function(u){
+    if(this.busy||this.dom.overlayRoot?.hidden===false)return;
+    const targets=this.game.talentSwapTargets(u);if(!targets.length){this.game.skipTalentSwap(u);this.updateAll();return;}
+    this.openOverlay('<div class="modal-kicker">PERSONAL TALENT 3</div><h2 class="modal-title" id="overlay-title">幸福者退让 · 交换位置</h2><p class="modal-sub">爱音本次未攻击，可与一名相邻队友交换位置。队友保留原有行动状态，爱音仍为已行动。</p><div class="battle-loadout-list">'+targets.map(t=>'<button class="battle-loadout-row" data-talent-swap="'+esc(t.id)+'"><span><strong>'+esc(t.name)+'</strong><small>位置 '+(t.x+1)+','+(t.y+1)+' · '+(t.acted?'已行动':'未行动')+'</small></span><b>交换</b></button>').join('')+'</div><div class="modal-actions"><button class="modal-btn" data-talent-swap-skip>不交换</button></div>','loadout-modal',true);
+    this.dom.overlayCard.querySelector('[data-talent-swap-skip]').onclick=()=>{this.game.skipTalentSwap(u);this.closeOverlay();this.updateAll();};
+    this.dom.overlayCard.querySelectorAll('[data-talent-swap]').forEach(b=>b.onclick=()=>{
+      const target=this.game.getUnit(b.dataset.talentSwap);
+      try{this.game.talentSwap(u,target);this.renderer.snapUnit(u);this.renderer.snapUnit(target);this.closeOverlay();this.resetSelection({silent:true});this.updateAll();this.showToast('幸福者退让：爱音与'+target.name+'交换了位置。','success',2400);}
+      catch(err){this.closeOverlay();this.showToast(err.message,'error',2200);this.updateAll();}
+    });
+  };
+  const baseWait=UP.waitActiveUnit,baseInspect=UP.inspectUnit;
+  UP.waitActiveUnit=function(){const u=this.game.getUnit(this.activeId);baseWait.call(this);if(u&&this.game.talentSwapTargets(u).length)this.showTalentSwap(u);};
+  UP.inspectUnit=function(u){baseInspect.call(this,u);if(this.game.talentSwapTargets(u).length){
+    const b=document.createElement('button');b.type='button';b.className='action-btn primary';b.textContent='幸福者退让 · 交换位置';b.onclick=()=>this.showTalentSwap(u);this.dom.actionButtons.appendChild(b);
+  }};
+  UP.offerTalentSwap=function(){
+    if(this.busy||this.chapterOpen||this.mode!=='idle'||this.game.isOver()||this.dom.overlayRoot?.hidden!==true||
+      M.entry?.ui===this&&(!M.entry.dom.root.hidden||!M.entry.dom.formation.hidden))return;
+    const u=this.game.getUnit('anon');if(this.game.talentSwapTargets(u).length)this.showTalentSwap(u);
+  };
+  const baseUpdate=UP.updateAll,baseBusy=UP.setBusy;
+  UP.updateAll=function(){baseUpdate.call(this);this.offerTalentSwap();};
+  UP.setBusy=function(value){baseBusy.call(this,value);if(!value)this.offerTalentSwap();};
   UP.showAttackLoadout=function(u){
     if(this.busy||u.acted||!this.game.isPlayerPhase())return;
     const attacks=I.options(u),support=u.learnedSpells.filter(id=>Magic.get(id).support);
@@ -19935,7 +20086,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     this.dom.overlayCard.querySelectorAll('[data-support-choice]').forEach(b=>b.addEventListener('click',()=>this.chooseSupportTarget(u,b.dataset.supportChoice)));
   };
   UP.chooseSupportTarget=function(caster,id){
-    const s=Magic.get(id),targets=this.game.supportTargets(caster,id),amount=s.might+Math.floor(caster.mag/3)+(caster.gear.heal||0);
+    const s=Magic.get(id),targets=this.game.supportTargets(caster,id),amount=Magic.healAmount(s,caster);
     this.openOverlay('<div class="modal-kicker">FAITH MAGIC</div><h2 class="modal-title" id="overlay-title">'+esc(s.name)+' · 选择目标</h2><p class="modal-sub">'+esc(s.description)+' 剩余 '+caster.spellUses[id]+'/'+s.uses+' 次。</p><div class="battle-loadout-list">'+targets.map(t=>'<button class="battle-loadout-row" data-support-target="'+esc(t.id)+'"><span><strong>'+esc(t.name)+'</strong><small>HP '+t.hp+'/'+t.maxHp+' · 距离 '+M.Grid.manhattan(caster,t)+' 格'+(['heal','fortify'].includes(s.effect)?' · 预计回复 '+Math.min(t.maxHp-t.hp,amount):'')+'</small></span><b>'+(s.effect==='fortify'||s.effect==='restore'?'范围内全体':'选择')+'</b></button>').join('')+'</div><div class="modal-actions"><button class="modal-btn" data-support-back>返回魔法</button></div>','loadout-modal',true);
     this.dom.overlayCard.querySelector('[data-support-back]').onclick=()=>this.showAttackLoadout(caster);
     this.dom.overlayCard.querySelectorAll('[data-support-target]').forEach(b=>b.onclick=()=>{
@@ -20132,7 +20283,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             const id=global.MyGO.Talents.get(talentDemo)?talentDemo:'tomori';
             const member=ui.game.getUnit(id)||tomori;
             if(member.side!=='player')member.side='player';
-            const target=params.get('talent-level')==='14'?14:15;
+            const requested=Number(params.get('talent-level')||15);
+            const target=Number.isInteger(requested)&&requested>=1&&requested<=99?requested:15;
             while(member.level<target)global.MyGO.Growth.award(member,global.MyGO.Growth.required(member.level));
             ui.updateAll();entry.openFormation();entry.selectedUnitId=member.id;entry.loadoutTab='stats';entry.renderFormationList();entry.renderFormationDetail();
           }
