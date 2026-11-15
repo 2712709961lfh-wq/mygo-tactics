@@ -26,6 +26,15 @@
  // Panel budgets count all nine stats, including HP and movement.
  // Preserve the requested attack/mobility trades without optimizing away off-role stats.
  const balanceStats={
+  // v5.8.7: main attack -2, speed -1, off-role attack +3; panel totals stay fixed.
+  'echo-blade':{maxHp:32,str:11,mag:7,dex:12,spd:10,lck:7,def:7,res:4}, // 94, move 4
+  'echo-blade-w':{maxHp:31,str:11,mag:8,dex:12,spd:10,lck:6,def:7,res:4}, // 93, move 4
+  'echo-axe':{maxHp:37,str:14,mag:7,dex:9,spd:6,lck:5,def:10,res:4}, // 95, move 3
+  'echo-bow':{maxHp:30,str:12,mag:7,dex:13,spd:10,lck:7,def:6,res:4}, // 93, move 4
+  'echo-bow-deep':{maxHp:31,str:12,mag:8,dex:13,spd:10,lck:7,def:6,res:4}, // 95, move 4
+  'echo-lance-e':{maxHp:33,str:12,mag:8,dex:11,spd:9,lck:6,def:9,res:4}, // 96, move 4
+  'echo-mage-w':{maxHp:28,str:10,mag:11,dex:13,spd:6,lck:8,def:4,res:8}, // 92, move 4
+  'echo-mage-e':{maxHp:29,str:11,mag:11,dex:13,spd:6,lck:8,def:4,res:8}, // 94, move 4
   dark_soyo:{maxHp:38,str:7,mag:20,dex:14,spd:10,lck:6,def:7,res:14}, // panel total 120, move 4
   dark_tomori:{maxHp:40,str:16,mag:5,dex:15,spd:16,lck:6,def:11,res:6}, // panel total 120, move 5
   armor:{maxHp:30,str:15,mag:4,dex:10,spd:6,lck:7,def:22,res:4,move:4}, // panel total 102

@@ -432,10 +432,10 @@
       this.enemyScaleLevel=target;
     }
 
-    /** Fixed panel totals for phantoms/armor/pegasi; ordinary soldiers
-     * follow party effective power. Legacy mode reconstructs v5.8.2 HP limits
-     * before migrating wounds, and must keep the original total-stat formula. */
-    scaleEighthEnemies(level,units=this.units,force=false,legacy=false) {
+    /** Fixed panel profiles for every chapter-eight enemy. Legacy modes rebuild
+     * previous scaling limits before migrating wounds: v1 uses total power,
+     * v2/v3 scaled ordinary soldiers from effective power. */
+    scaleEighthEnemies(level,units=this.units,force=false,legacy=false,legacyRegular=false) {
       const party=units.filter(u=>u.side==='player');
       const target=Math.min(97,Math.max(10,this.enemyScaleLevel||0,level||0,...party.map(u=>u.level)));
       const effectiveTotal=u=>Combat.statTotalOf(u)-(u.weapon.damageType==='magic'?(u.str||0):(u.mag||0));
@@ -445,7 +445,7 @@
         const base=C.STAGE_EIGHT.enemies.find(t=>t.id===u.id),ratio=u.hp/u.maxHp;
         const armor=u.tags.includes('armor'),flying=u.tags.includes('flying'),magic=C.WEAPONS[base.weapon].damageType==='magic';
         u.level=Math.min(99,target+(u.boss?2:0));const delta=u.level-base.level;
-        const fixed=!legacy&&(C.STAGE_EIGHT.balanceStats[u.id]||C.STAGE_EIGHT.balanceStats[armor?'armor':flying?'flying':'']);
+        const fixed=!legacy&&(!legacyRegular||u.boss||armor||flying)&&(C.STAGE_EIGHT.balanceStats[u.id]||C.STAGE_EIGHT.balanceStats[armor?'armor':flying?'flying':'']);
         if(fixed){
           Object.assign(u,fixed);
           u.hp=u.dead?0:Math.max(1,Math.ceil(u.maxHp*ratio-1e-9));
@@ -973,7 +973,7 @@
         awakenedBells: this.awakenedBells.slice(),
         ...(this.stage===4?{litLamps:this.litLamps.slice(),bossDiscovered:this.bossDiscovered,
           soyoBossBonus:this.soyoBossBonus,enemyScaleLevel:this.enemyScaleLevel}:{}),
-        ...(this.stage===8?{stageEightIntroSeen:this.stageEightIntroSeen,enemyScaleVersion:3,enemyScalePower:this.enemyScalePower,nijikaLevelVersion:1,openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
+        ...(this.stage===8?{stageEightIntroSeen:this.stageEightIntroSeen,enemyScaleVersion:4,enemyScalePower:this.enemyScalePower,nijikaLevelVersion:1,openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===5?{openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===6?{summonedWaves:this.summonedWaves.slice(),lastSummonTurn:this.lastSummonTurn,maskRetreatPending:this.maskRetreatPending,maskEscaped:this.maskEscaped,enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===7?{nijikaJoined:this.nijikaJoined,nijikaLevelVersion:1,livehouseEndingShown:this.livehouseEndingShown,enemyScaleLevel:this.enemyScaleLevel}:{}),
@@ -1069,7 +1069,7 @@
       this.stageEightIntroSeen=this.stage===8&&snapshot.stageEightIntroSeen===true;
       this.enemyScalePower=0;
       if(this.stage===8&&snapshot.enemyScaleVersion!==undefined){
-        if(![1,2,3].includes(snapshot.enemyScaleVersion)||!Number.isSafeInteger(snapshot.enemyScalePower)||snapshot.enemyScalePower<100||snapshot.enemyScalePower>100000)throw Error('第八关敌军强度数据无效');
+        if(![1,2,3,4].includes(snapshot.enemyScaleVersion)||!Number.isSafeInteger(snapshot.enemyScalePower)||snapshot.enemyScalePower<100||snapshot.enemyScalePower>100000)throw Error('第八关敌军强度数据无效');
         this.enemyScalePower=snapshot.enemyScalePower;
       }
       if(this.stage===8){
@@ -1096,6 +1096,7 @@
       }
       this.enemyScaleLevel=0;
       if(this.stage===8&&snapshot.enemyScaleVersion===1)this.scaleEighthEnemies(snapshot.enemyScaleLevel,fresh,false,true);
+      else if(this.stage===8&&[2,3].includes(snapshot.enemyScaleVersion))this.scaleEighthEnemies(snapshot.enemyScaleLevel,fresh,false,false,true);
       else if(this.stage>=4)this.scaleParkEnemies(snapshot.enemyScaleLevel,fresh,false,this.stage===8&&snapshot.enemyScaleVersion===undefined);
       // Both v5.8.3 and v5.8.4 used these HP limits. Restore wounds against
       // those limits before applying the corrected panel budgets below.
@@ -1168,8 +1169,8 @@
 
       // Reconstruct old limits before applying the corrected panel budgets.
       if(this.stage===8){
-        if(![2,3].includes(snapshot.enemyScaleVersion)){this.enemyScaleLevel=0;this.enemyScalePower=0;}
-        this.scaleParkEnemies(undefined,fresh,snapshot.enemyScaleVersion!==3);
+        if(![2,3,4].includes(snapshot.enemyScaleVersion)){this.enemyScaleLevel=0;this.enemyScalePower=0;}
+        this.scaleParkEnemies(undefined,fresh,snapshot.enemyScaleVersion!==4);
       }
 
       // 防御性检查：存活单位不能重叠。
