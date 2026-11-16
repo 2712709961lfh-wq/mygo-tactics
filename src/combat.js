@@ -140,7 +140,12 @@
     else if (counter && !defender.weapon.noFollowup && defenderAttackSpeed - attackSpeed >= 4) order.push({attackerId:defender.id, defenderId:attacker.id, kind:'followup'});
     const remaining=u=>u.weapon.kind==='spell'?(u.spellUses?.[u.weapon.id]||0):u.inventory?u.inventory.filter(i=>i.id===u.weapon.id).reduce((n,i)=>n+i.uses,0):99;
     const counts={};
-    const executable=order.filter(step=>{const u=step.attackerId===attacker.id?attacker:defender;counts[u.id]=(counts[u.id]||0)+1;return counts[u.id]<=remaining(u);});
+    const executable=order.filter(step=>{
+      const u=step.attackerId===attacker.id?attacker:defender;counts[u.id]=(counts[u.id]||0)+1;
+      if(counts[u.id]<=remaining(u))return true;
+      if(remaining(u)>0&&MyGO.Talents?.canPreserve(u,u.weapon.kind)){step.resourceConditional=true;return true;}
+      return false;
+    });
     return {...first, counter, canCounter:!!counter, counterReason:reason, attackSpeed, defenderAttackSpeed, order:executable,
       attackCount:executable.filter(s=>s.attackerId===attacker.id).length,
       counterCount:executable.filter(s=>s.attackerId===defender.id).length};
@@ -149,8 +154,8 @@
   /** 锁定整场结果，在虚拟 HP 上逐击掷骰，确认前不修改任何真实单位。 */
   function rollRound(attacker, defender, map, rng) {
     const plan = forecast(attacker, defender, map);
-    const units = new Map([[attacker.id,MyGO.Inventory.copy(attacker)], [defender.id,MyGO.Inventory.copy(defender)]]);
-    const battleMap={...map,units:(map.units||[attacker,defender]).map(u=>units.get(u.id)||u)};
+    const units = new Map([...(map.units||[]),attacker,defender].map(u=>[u.id,MyGO.Inventory.copy(u)]));
+    const battleMap={...map,units:[...units.values()]};
     const strikes = [];
     for (const step of plan.order) {
       const a = units.get(step.attackerId), b = units.get(step.defenderId);
@@ -158,14 +163,16 @@
       if(!MyGO.Inventory.usable(a))continue;
       const strike = {...roll(preview(a,b,battleMap,{initiatorId:attacker.id}),rng), kind:step.kind,
         attackerHp:a.hp, attackerMaxHp:a.maxHp,resourceId:a.inventory?a.weapon.id:null,weaponSnapshot:a.weapon};
-      if(a.inventory)MyGO.Inventory.consume(a,a.weapon.id);
+      strike.resourcePreserved=!!(a.inventory&&MyGO.Talents?.preserveUse(a,a.weapon.kind,rng));
+      if(a.inventory)MyGO.Inventory.consume(a,a.weapon.id,strike.resourcePreserved);
       strike.healed=MyGO.Inventory.useEffects(a,b,MyGO.Magic.get(a.weapon.id),strike.finalDamage,strike.hit);
       strike.talentHealed=MyGO.Talents?.onKill(a,b,strike.hit&&strike.hpAfter<=0)||0;
+      b.hp = strike.hpAfter;
+      strike.angel=MyGO.Talents?.onAngel(a,b,strike.hit&&b.hp<=0,battleMap)||null;
       strike.attackerHpAfterStrike=a.hp;
       const reverse = b.id === defender.id ? plan.counter : plan;
       strike.response = reverse;
       strike.counterReason = b.id === defender.id ? plan.counterReason : '';
-      b.hp = strike.hpAfter;
       strikes.push(strike);
       if(b.hpFloor&&b.hp===b.hpFloor&&strike.finalDamage>0){strike.retreatTriggered=true;break;}
     }

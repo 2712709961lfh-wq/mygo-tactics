@@ -14,7 +14,7 @@ function enemy(g){return g.units.find(u=>u.side==='enemy');}
 function equip(u,id){u.inventory=[M.Inventory.make(id)];u.equippedWeapon=id;M.Inventory.sync(u);}
 
 test('八人20/25级分别觉醒一次，升级报告含正确天赋槽位',()=>{
-  const g=game();for(const slot of [2,3])for(const id of Object.keys(T.data)){
+  const g=game();for(const slot of [2,3])for(const id of Object.keys(T.data).filter(id=>g.getUnit(id))){
     const u=level(g.getUnit(id),T.levels[slot]-1);assert(!T.active(u,slot));
     const r=G.award(u,G.required(u.level)-u.exp),a=r.levels.flatMap(l=>l.awakenings).find(t=>t.slot===slot);
     assert(a,id+'/'+slot);assert.equal(a.name,T.get(u,slot).name);assert(T.active(u,slot));
@@ -24,13 +24,13 @@ test('八人20/25级分别觉醒一次，升级报告含正确天赋槽位',()=>
 });
 test('固定能力奖励独立于随机成长，旧档、转职与跨章重建均不叠加',()=>{
   const g=game(),expected={xueyue:{spd:2},tomori:{spd:2},soyo:{mag:2,res:2},taki:{def:1,res:1},anon:{dex:2},rana:{dex:2},nina:{dex:2},nijika:{}};
-  for(const id of Object.keys(T.data)){
+  for(const id of Object.keys(T.data).filter(id=>g.getUnit(id))){
     const u=level(g.getUnit(id),25);for(const k of M.GrowthData.keys)assert.equal(u[k],u.growthBase.stats[k]+u.growthGains[k]+(expected[id][k]||0),id+'/'+k);
     for(let n=0;n<3;n++)T.sync(u);
   }
   const save=JSON.parse(JSON.stringify(g.serialize())),h=game();
   const next=new M.Game({stage:8,recruited:['nina','xueyue','nijika'],loadout:g.exportLoadout(),seed:9});
-  for(let i=0;i<3;i++){h.restore(save);for(const id of Object.keys(T.data))for(const k of M.GrowthData.keys){assert.equal(h.getUnit(id)[k],g.getUnit(id)[k]);assert.equal(next.getUnit(id)[k],g.getUnit(id)[k]);}}
+  for(let i=0;i<3;i++){h.restore(save);for(const id of Object.keys(T.data).filter(id=>g.getUnit(id)))for(const k of M.GrowthData.keys){assert.equal(h.getUnit(id)[k],g.getUnit(id)[k]);assert.equal(next.getUnit(id)[k],g.getUnit(id)[k]);}}
   const u=h.getUnit('anon'),dex=u.dex;M.Classes.apply(u,'archer');assert.equal(u.dex,dex);T.sync(u);assert.equal(u.dex,dex);
 });
 test('有在努力按每次经验结算向上取整，包含战斗和治疗，20级当次经验不追补',()=>{

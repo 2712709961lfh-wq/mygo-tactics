@@ -1324,7 +1324,7 @@
           : '<span class="hint-line">无法反击 · ' + esc(preview.counterReason) + '</span>') +
         '<span class="hint-line">攻速 ' + preview.attackSpeed + ' / ' + preview.defenderAttackSpeed +
         ' · ' + preview.order.map(s => (s.attackerId === active.id ? '我方' : '敌方') +
-          (s.kind === 'counter' ? '反击' : s.kind === 'followup' ? '追击' : '首击')).join(' → ') +
+          (s.kind === 'counter' ? '反击' : s.kind === 'followup' ? '追击' : '首击')+(s.resourceConditional?'（须触发爱笑女孩保留次数）':'')).join(' → ') +
         '<br>任一方被击倒，后续攻击取消。</span>';
     }
 
@@ -1597,6 +1597,11 @@
       for (const strike of applied.strikes.filter(s=>s.applied)) {
         const target = this.game.getUnit(strike.defenderId);
         if(strike.talentHealed){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('战斗爽 +'+strike.talentHealed,actor.x,actor.y-0.5,'#bcebd7',11);}
+        if(strike.resourcePreserved){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('爱笑女孩 · 未消耗次数',actor.x,actor.y-0.8,'#f5d7eb',10);}
+        if(strike.angel){
+          const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('天使 −'+strike.angel.cost+' HP',actor.x,actor.y-0.5,'#f5d7eb',11);
+          for(const c of strike.angel.healing){const u=this.game.getUnit(c.id);this.renderer.floatText('天使 +'+c.amount,u.x,u.y-0.5,'#bcebd7',11);}
+        }
         if (strike.hit) {
           this.renderer.flash(target.id, strike.crit ? 'rgba(255, 209, 102, 0.72)' : 'rgba(255, 80, 110, 0.65)', 380);
           this.renderer.floatText('-' + strike.finalDamage, target.x, target.y, strike.crit ? '#ffe08a' : '#ff8fa4', strike.crit ? 12 : 10);
@@ -1884,7 +1889,9 @@
         '<span class="exchange-order">' + (i+1) + '</span><div><strong>' + label[s.kind] + ' · ' + esc(s.attackerName) +
         '</strong><small>→ ' + esc(s.defenderName) + ' · ' + esc(s.weaponName) + ' · 命中 ' + s.hitChance + '% · 暴击 ' + s.critChance + '%' +
         (s.healed ? ' · 吸取回复 ' + s.healed : '') +
-        (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') + '</small></div>' +
+        (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') +
+        (s.resourcePreserved ? ' · 爱笑女孩：未消耗次数' : '') +
+        (s.angel ? ' · 天使：自身−'+s.angel.cost+' HP，'+s.angel.healing.map(c=>esc(this.game.getUnit(c.id)?.name||c.id)+'＋'+c.amount+' HP').join('、') : '') + '</small></div>' +
         '<b class="' + (s.crit ? 'crit-text' : s.hit ? 'dmg-text' : 'miss-text') + '">' +
         (s.hit ? (s.crit ? '暴击 ' : '') + s.finalDamage : 'MISS') + '</b></div>').join('');
       const hp = (name,before,after,max) => '<div class="result-hpbar"><div class="result-hp-label"><span>' + esc(name) +
@@ -1897,8 +1904,8 @@
         (plan.canCounter ? '射程内可反击' : '无法反击 · ' + esc(plan.counterReason)) + '</span></div><div class="exchange-list">' + rows + '</div>' +
         hp(result.attackerName,result.attackerHp,result.attackerHpAfter,result.attackerMaxHp) +
         hp(result.defenderName,result.defenderHp,result.defenderHpAfter,result.defenderMaxHp) +
-        '<div class="result-note">' + (result.strikes.length < plan.order.length ? '一方已被击倒，后续攻击取消。' : '首击、反击与追击依次结算。') +
-        ' 拳套主动攻击时两连击，反击时不会额外连击。反击不消耗行动。每次出手消耗 1 耐久或魔法次数。点击确认后统一结算 HP、耐久和魔法次数。</div>' +
+        '<div class="result-note">' + (result.strikes.length < plan.order.length ? '因单位倒下、撤离或次数耗尽，后续攻击取消。' : '首击、反击与追击依次结算。') +
+        ' 拳套主动攻击时两连击，反击时不会额外连击。反击不消耗行动。每次出手消耗 1 耐久或魔法次数，爱笑女孩触发时保留次数。点击确认后统一结算 HP、耐久和魔法次数。</div>' +
         '<div class="modal-actions"><button class="modal-btn primary" type="button" data-confirm>确认结算</button></div>';
       return new Promise(resolve => {
         this.confirmHandler = () => resolve(result);

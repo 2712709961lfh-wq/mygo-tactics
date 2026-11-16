@@ -12,8 +12,8 @@ function fixture(){const g=game();g.map={cols:24,rows:24,tiles:Array.from({lengt
   Object.defineProperty(g.map,'units',{configurable:true,get:()=>g.units});g.units.forEach((u,i)=>Object.assign(u,{x:i%24,y:18+Math.floor(i/24),acted:false}));return g;}
 function enemy(g){return g.units.find(u=>u.side==='enemy');}
 test('八个指定角色在15级觉醒，敌方幻影不获得我方天赋',()=>{
-  const g=game();assert.equal(Object.keys(T.data).length,8);
-  for(const id of Object.keys(T.data)){const u=level(g.getUnit(id),14);assert(!T.active(u));
+  const g=game();assert.equal(Object.keys(T.data).length,9);
+  for(const id of Object.keys(T.data).filter(id=>g.getUnit(id))){const u=level(g.getUnit(id),14);assert(!T.active(u));
     const r=G.award(u,G.required(14));assert(T.active(u));assert.equal(r.levels[0].awakened.name,T.get(u).name);
     assert.equal(G.award(u,G.required(15)).levels[0].awakened,null);}
   assert.equal(T.get(g.getUnit('xueyue')).name,'剑意');assert(!T.active({id:'tomori',side:'enemy',level:99}));
@@ -29,11 +29,11 @@ test('灯速度+2、爽世魔力+2，独立于随机成长且同步不叠加',()
   }
 });
 test('觉醒旧档按等级重建，重复读取与跨章继承均不重复加属性',()=>{
-  const g=game();for(const id of Object.keys(T.data))level(g.getUnit(id),15);
+  const g=game();for(const id of Object.keys(T.data).filter(id=>g.getUnit(id)))level(g.getUnit(id),15);
   const snapshot=JSON.parse(JSON.stringify(g.serialize())),next=new M.Game({stage:8,recruited:['nina','xueyue','nijika'],loadout:g.exportLoadout(),seed:5});
   const restored=game();for(let i=0;i<3;i++){
     restored.restore(snapshot);
-    for(const id of Object.keys(T.data)){const a=g.getUnit(id),b=restored.getUnit(id),c=next.getUnit(id);
+    for(const id of Object.keys(T.data).filter(id=>g.getUnit(id))){const a=g.getUnit(id),b=restored.getUnit(id),c=next.getUnit(id);
       assert(T.active(b));for(const k of M.GrowthData.keys){assert.equal(b[k],a[k],id+'/'+k);assert.equal(c[k],a[k]);}}
   }
   assert.equal(restored.map.units,restored.units);
@@ -103,7 +103,7 @@ test('同心按实际治疗量回复自己，群疗合计一次、满血封顶�
 test('角色资料显示未觉醒/已觉醒与完整效果说明',()=>{
   const g=game(),u=g.getUnit('tomori');
   const ctx={loadoutTab:'growth',players:()=>[u],selectedUnitId:u.id,dom:{formationDetail:{innerHTML:''}},renderPoseDock(){}};
-  M.EntryScreen.prototype.renderFormationDetail.call(ctx);assert(ctx.dom.formationDetail.innerHTML.includes('未觉醒'));assert(ctx.dom.formationDetail.innerHTML.includes('行动者'));
+  M.EntryScreen.prototype.renderFormationDetail.call(ctx);assert(ctx.dom.formationDetail.innerHTML.includes('未觉醒'));assert(ctx.dom.formationDetail.innerHTML.includes('行动派'));
   level(u,15);M.EntryScreen.prototype.renderFormationDetail.call(ctx);assert(ctx.dom.formationDetail.innerHTML.includes('已觉醒'));
 });
 console.log(count+' talent tests passed.');

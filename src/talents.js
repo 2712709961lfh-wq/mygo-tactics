@@ -5,7 +5,8 @@
   const LEVEL=15;
   const data={
     xueyue:{name:'剑意',description:'装备剑时力量＋3，切换其他武器或未装备时失效。'},
-    tomori:{name:'行动者',description:'速度＋2。',stat:'spd',amount:2},
+    subaru:{name:'爱笑女孩',description:'使用魔法或药品时，有25%几率不消耗次数；每次出手独立判定，仍须有剩余次数。'},
+    tomori:{name:'行动派',description:'速度＋2。',stat:'spd',amount:2},
     rana:{name:'幸运猫',description:'对所有攻击的闪避率提升5个百分点。'},
     soyo:{name:'魔力觉醒',description:'魔力＋2。',stat:'mag',amount:2},
     taki:{name:'队友守护',description:'上下左右紧邻的存活队友守备、魔防＋1；不作用于自身。'},
@@ -15,6 +16,7 @@
   };
   const levels=[0,15,20,25];
   const data2={
+    subaru:{name:'魔力延伸',description:'伤害型魔法最大射程＋1，最小射程不变；不影响辅助魔法或魔法武器。'},
     xueyue:{name:'疾风',description:'速度＋2。',stats:{spd:2}},
     tomori:{name:'有在努力',description:'获得的经验值＋20%，向上取整。'},
     rana:{name:'哈气',description:'免疫战斗中的能力削弱，包括守备、速度、移动和魔防降低；不免疫伤害或沉默。'},
@@ -25,7 +27,8 @@
     nijika:{name:'妈妈守护',description:'恢复HP的治疗魔法最大射程＋2。'}
   };
   const data3={
-    xueyue:{name:'冰霜剑气',description:'对敌人造成实际伤害后，交战结束时使存活目标速度−3，持续两个完整的目标方回合；反击也生效，重复施加刷新、不叠加。'},
+    subaru:{name:'天使',description:'击败敌人且有存活队友受伤时，自身扣除2 HP（最低保留1 HP），其他存活队友各回复5 HP，不超过上限；反击击破也生效。'},
+    xueyue:{name:'冰霜剑气',description:'使用剑攻击并对敌人造成实际伤害后，交战结束时使存活目标速度−3，持续两个完整的目标方回合；反击也生效，重复施加刷新、不叠加。'},
     tomori:{name:'勇气赞歌',description:'主动发起战斗时力量＋3，持续本次交战。'},
     rana:{name:'技术高手',description:'技巧＋2。',stats:{dex:2}},
     soyo:{name:'魔力打击',description:'魔法命中后，交战结束时使存活目标魔防−2，持续至下次我方阶段开始；重复命中刷新，不叠加。'},
@@ -56,7 +59,13 @@
   function penalty(u,key,amount){return immune(u)?0:(u.status?.[key]?amount:0);}
   function experience(u,amount){return active(u,2)&&u.id==='tomori'?Math.ceil(amount*6/5):amount;}
   function healingSpell(s){return !!s&&['heal','fortify'].includes(s.effect);}
-  function rangeBonus(u,s){return active(u,2)&&u.id==='nijika'&&healingSpell(s)?2:0;}
+  function rangeBonus(u,s){
+    if(!active(u,2))return 0;
+    if(u.id==='subaru'&&s?.kind==='spell'&&!s.support)return 1;
+    return u.id==='nijika'&&healingSpell(s)?2:0;
+  }
+  function canPreserve(u,kind){return u?.id==='subaru'&&active(u)&&['spell','consumable'].includes(kind);}
+  function preserveUse(u,kind,rng){return canPreserve(u,kind)&&rng.int(1,100)<=25;}
   function healingAmount(u,s,amount){return active(u,3)&&u.id==='nijika'&&healingSpell(s)?Math.ceil(amount*6/5):amount;}
   function dexBonus(u){return active(u)&&u.id==='anon'&&u.weapon?.type==='bow'?3:0;}
   function avoidBonus(u){return active(u)&&u.id==='rana'?5:0;}
@@ -78,8 +87,8 @@
     if(!hit||!magic||attacker.id!=='soyo'||!active(attacker,3)||!present(target)||!M.Grid.hostile(attacker,target)||immune(target))return false;
     target.status.talentResDown=2;return true;
   }
-  function afterDamage(attacker,target,damage,hit,phase){
-    if(!hit||damage<=0||attacker.id!=='xueyue'||!active(attacker,3)||!present(target)||!M.Grid.hostile(attacker,target)||immune(target))return false;
+  function afterDamage(attacker,target,damage,hit,phase,weaponType=attacker.weapon?.type){
+    if(weaponType!=='sword'||!hit||damage<=0||attacker.id!=='xueyue'||!active(attacker,3)||!present(target)||!M.Grid.hostile(attacker,target)||immune(target))return false;
     target.status.frostSpeedDown=2;
     // A counter applies midway through the target's phase. Count the next two
     // complete phases rather than consuming one turn immediately after combat.
@@ -94,10 +103,17 @@
   function onKill(u,target,killed){
     return killed&&active(u)&&u.id==='nina'&&!u.dead&&u.hp>0&&target.side==='enemy'?heal(u,5):0;
   }
+  function onAngel(u,target,killed,map){
+    if(!killed||u?.id!=='subaru'||!active(u,3)||!present(u)||target.side!=='enemy')return null;
+    const teammates=(map?.units||[]).filter(t=>t.id!==u.id&&present(t)&&!M.Grid.hostile(u,t));
+    if(!teammates.some(t=>t.hp<t.maxHp))return null;
+    const cost=Math.min(2,u.hp-1);u.hp-=cost;
+    return {cost,healing:teammates.map(t=>({id:t.id,amount:heal(t,5)})).filter(t=>t.amount>0)};
+  }
   function onSupport(u,spell,changes){
     return active(u)&&u.id==='nijika'&&['heal','fortify'].includes(spell.effect)?
       heal(u,changes.reduce((sum,c)=>sum+Math.max(0,c.amount||0),0)):0;
   }
   M.Talents=Object.freeze({LEVEL,data,data2,data3,levels:Object.freeze(levels),get,active,list,sync,immune,penalty,experience,
-    healingSpell,rangeBonus,healingAmount,dexBonus,avoidBonus,guardBonus,bond,strBonus,counterFactor,afterMagic,afterDamage,expireFrost,onKill,onSupport});
+    healingSpell,rangeBonus,canPreserve,preserveUse,healingAmount,dexBonus,avoidBonus,guardBonus,bond,strBonus,counterFactor,afterMagic,afterDamage,expireFrost,onKill,onAngel,onSupport});
 })(window);

@@ -335,8 +335,9 @@
       if(e.action==='heal'){healed=Math.min(e.power,unit.maxHp-unit.hp);unit.hp+=healed;}
       if(e.action==='antitoxin')delete unit.status.poison;
       if(e.action==='ward')unit.status.ward=7;
-      slot.uses--;if(slot.uses===0)unit.inventory.splice(index,1);
-      this.markActed(unit);MyGO.Inventory.sync(unit);return {item:e,healed};
+      const resourcePreserved=!!MyGO.Talents?.preserveUse(unit,e.kind,this.rng);
+      if(!resourcePreserved){slot.uses--;if(slot.uses===0)unit.inventory.splice(index,1);}
+      this.markActed(unit);MyGO.Inventory.sync(unit);return {item:e,healed,resourcePreserved};
     }
 
     loadoutReason(unit) {
@@ -394,7 +395,8 @@
         destination=destination||cells[0];
         if(!destination||!cells.some(c=>c.x===destination.x&&c.y===destination.y))throw Error('传送落点无效');
       }
-      MyGO.Inventory.consume(caster,spellId);
+      const resourcePreserved=!!MyGO.Talents?.preserveUse(caster,s.kind,this.rng);
+      MyGO.Inventory.consume(caster,spellId,resourcePreserved);
       const affected=['fortify','restore'].includes(s.effect)?targets:[target];
       const changes=[];
       for(const u of affected){
@@ -409,7 +411,7 @@
       if(talentHealing)changes.push({id:caster.id,amount:talentHealing,talent:'同心'});
       this.markActed(caster);MyGO.Inventory.sync(caster);
       const growth=MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
-      return {spell:s,changes,talentHealing,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
+      return {spell:s,changes,talentHealing,resourcePreserved,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
     }
 
     expireStatuses(side) {
@@ -942,7 +944,7 @@
         for(const strike of result.strikes.filter(s=>s.applied)){
           const a=this.getUnit(strike.attackerId),b=this.getUnit(strike.defenderId);
           strike.talentResDown=!!(a&&b&&MyGO.Talents?.afterMagic(a,b,strike.hit,strike.magic));
-          strike.frostApplied=!!(a&&b&&MyGO.Talents?.afterDamage(a,b,Math.max(0,strike.hpBeforeApply-strike.hpAfterApply),strike.hit,this.phase));
+          strike.frostApplied=!!(a&&b&&MyGO.Talents?.afterDamage(a,b,Math.max(0,strike.hpBeforeApply-strike.hpAfterApply),strike.hit,this.phase,strike.weaponType||strike.weaponSnapshot?.type||a.weapon?.type));
         }
         result.applied = true;
         result.hpBeforeApply = result.defenderHp;
@@ -964,7 +966,7 @@
       }
       const participants=[attacker,defender].filter(Boolean).map(u=>({...u}));
       if(result.resourceId && attacker) {
-        MyGO.Inventory.consume(attacker,result.resourceId);
+        MyGO.Inventory.consume(attacker,result.resourceId,result.resourcePreserved);
         MyGO.Inventory.useEffects(attacker,defender,MyGO.Magic.get(result.resourceId),result.finalDamage,result.hit);
       }
       const before = defender.hp;
@@ -979,6 +981,7 @@
         if (this.stage === 3 && defender.id === 'nina') this.ninaLost = true;
       }
       result.talentHealed=attacker?(MyGO.Talents?.onKill(attacker,defender,killed)||0):0;
+      result.angel=attacker?(MyGO.Talents?.onAngel(attacker,defender,killed,this.map)||null):null;
       result.applied = true;
       result.hpBeforeApply = before;
       result.hpAfterApply = defender.hp;
@@ -1002,7 +1005,7 @@
       }
       if(attacker)MyGO.Inventory.sync(attacker);
       if(!deferExperience&&attacker)result.talentResDown=!!MyGO.Talents?.afterMagic(attacker,defender,result.hit,result.magic);
-      if(!deferExperience&&attacker)result.frostApplied=!!MyGO.Talents?.afterDamage(attacker,defender,Math.max(0,before-defender.hp),result.hit,this.phase);
+      if(!deferExperience&&attacker)result.frostApplied=!!MyGO.Talents?.afterDamage(attacker,defender,Math.max(0,before-defender.hp),result.hit,this.phase,result.weaponType||result.weaponSnapshot?.type||attacker.weapon?.type);
       MyGO.Inventory.sync(defender);
       this.checkOutcome();
       if(!deferExperience)result.experience=this.awardCombatExperience([result],participants);

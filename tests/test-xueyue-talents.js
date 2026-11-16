@@ -82,6 +82,18 @@ test('主动命中持续两个敌方阶段，反击命中不消耗当前半回�
   }
 });
 
+test('冰霜剑气只限剑攻击，按实际出手武器判断，最后耐久与自动换装不改变本击资格',()=>{
+  for(const id of ['iron_sword','levin_sword','iron_lance','iron_axe','iron_bow','fire']){
+    const {g,x,e}=fixture();x.weaponTypes=['sword','lance','axe','bow'];x.classId='mage';x.spd=0;e.spd=0;e.cannotCounter=true;x.mag=20;
+    x.inventory=[I.make(id==='fire'?'iron_sword':id),I.make(id==='iron_sword'?'iron_lance':'iron_sword')];
+    if(id==='fire'){x.learnedSpells.push('fire');x.spellUses.fire=1;}else x.inventory[0].uses=1;
+    if(id==='iron_bow')e.x=6;
+    x.equippedWeapon=id;I.sync(x);const sword=x.weapon.type==='sword',r=g.rollCombat(x,e);
+    assert.equal(r.strikes.length,1);g.applyCombat(r);assert.equal(!!e.status.frostSpeedDown,sword,id);
+    assert.notEqual(x.weapon.id,id,'last use should switch equipment');
+  }
+});
+
 test('存档保留减速剩余回合和反击计时，拒绝无效状态，跨章清除临时减益',()=>{
   for(const state of [{frostSpeedDown:2},{frostSpeedDown:1},{frostSpeedDown:2,frostFresh:1}]){
     const g=game(),e=g.units.find(u=>u.side==='enemy');e.status={...state};

@@ -1,4 +1,4 @@
-/* Personal growth rates: character assets/角色成长值.xlsx, Sheet1!A1:I9 (%), updated 2026-11-14.
+/* Personal growth rates: character assets/角色成长值.xlsx, Sheet1!A1:I10 (%), updated 2026-11-16.
  * Class modifiers: Serenes Forest FE3H player growths, verified 2026-11-12.
  * Eight supplied stats only; movement and charm are not rolled. */
 (function(global){
@@ -106,12 +106,23 @@
       "spd": 35,
       "lck": 50,
       "def": 35,
-      "res": 40
+      "res": 45
+    }
+  },
+  "subaru": {
+    "name": "安和昴",
+    "rates": {
+      "maxHp": 40,
+      "str": 25,
+      "mag": 65,
+      "dex": 45,
+      "spd": 30,
+      "lck": 55,
+      "def": 25,
+      "res": 45
     }
   }
 };
-  // Authored starting growth for the newly supplied Subaru; existing workbook rates stay intact.
-  personal.subaru={name:'安和昴',rates:{maxHp:40,str:20,mag:50,dex:45,spd:45,lck:40,def:25,res:40}};
   const classRates={
   "commoner": {
     "maxHp": 0,

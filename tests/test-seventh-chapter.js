@@ -21,7 +21,7 @@ test('Opening joins Nijika once, immediately actionable with magic and healing',
  const h=game(['xueyue','nina']);h.joinNijika();assert.equal(h.livingCount('player'),8);
 });
 test('Updated workbook Nijika values are exact and upgrade persists',()=>{
- const g=game();g.joinNijika();const n=g.getUnit('nijika');assert.equal(M.GrowthData.keys.map(k=>M.Growth.personalRates(n)[k]).join(','),'45,30,35,35,35,50,35,40');
+ const g=game();g.joinNijika();const n=g.getUnit('nijika');assert.equal(M.GrowthData.keys.map(k=>M.Growth.personalRates(n)[k]).join(','),'45,30,35,35,35,50,35,45');
  const r=M.Growth.award(n,M.Growth.required(n.level));assert.equal(n.level,10);assert(Object.values(r.levels[0].gains).filter(v=>v>0).length>=2);n.exp=36;n.hp=7;
  const h=game();h.restore(g.serialize());assert.deepEqual(plain(M.Growth.pack(h.getUnit('nijika'))),plain(M.Growth.pack(n)));assert.equal(h.getUnit('nijika').hp,7);assert(h.nijikaJoined);assert.equal(h.getUnit('nijika').side,'player');
 });

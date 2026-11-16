@@ -5088,7 +5088,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.13.4</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.14.1</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -5843,6 +5843,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     let id=u.equippedWeapon;
     if(!options(u).includes(id))id=options(u)[0]||'unarmed';
     u.equippedWeapon=id;u.weaponId=id;u.weapon=weapons[id]||unarmed;
+    if(u.weapon.kind==='spell'){
+      const range=Magic.rangeOf(u.weapon,u);
+      if(range.some((n,i)=>n!==u.weapon.range[i]))u.weapon={...u.weapon,range};
+    }
     const candidate=u.inventory.find(i=>i.id===u.equippedAccessory)&&item(u.equippedAccessory);
     const e=candidate?.kind==='equipment'?candidate:null;
     u.equippedAccessory=e?e.id:null;u.equipmentWeight=e?e.weight:0;
@@ -5857,9 +5861,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     u.spellUses=Object.fromEntries(u.learnedSpells.map(id=>[id,Magic.get(id).uses]));
     u.status={};u.equippedWeapon=w.id;u.equippedAccessory=null;learn(u);sync(u);
   }
-  function consume(u,id){
-    if(Magic.get(id)){if(!(u.spellUses[id]>0))throw Error('魔法次数不足');u.spellUses[id]--;}
-    else {const i=u.inventory.find(i=>i.id===id&&i.uses>0);if(!i)throw Error('武器耐久不足');i.uses--;}
+  function consume(u,id,preserved=false){
+    if(Magic.get(id)){if(!(u.spellUses[id]>0))throw Error('魔法次数不足');if(!preserved)u.spellUses[id]--;}
+    else {const i=u.inventory.find(i=>i.id===id&&i.uses>0);if(!i)throw Error('武器耐久不足');if(!preserved)i.uses--;}
   }
   function copy(u){return {...u,inventory:u.inventory?.map(i=>({...i})),learnedSpells:u.learnedSpells?.slice(),spellUses:{...u.spellUses},status:{...u.status},gear:{...u.gear}};}
   function pack(u){return{inventory:u.inventory.map(i=>({...i})),equippedWeapon:u.equippedWeapon,equippedAccessory:u.equippedAccessory,
@@ -7443,7 +7447,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   </script>
   <script>
 /* ===== src/growth-data.js ===== */
-/* Personal growth rates: character assets/角色成长值.xlsx, Sheet1!A1:I9 (%), updated 2026-11-14.
+/* Personal growth rates: character assets/角色成长值.xlsx, Sheet1!A1:I10 (%), updated 2026-11-16.
  * Class modifiers: Serenes Forest FE3H player growths, verified 2026-11-12.
  * Eight supplied stats only; movement and charm are not rolled. */
 (function(global){
@@ -7551,12 +7555,23 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       "spd": 35,
       "lck": 50,
       "def": 35,
-      "res": 40
+      "res": 45
+    }
+  },
+  "subaru": {
+    "name": "安和昴",
+    "rates": {
+      "maxHp": 40,
+      "str": 25,
+      "mag": 65,
+      "dex": 45,
+      "spd": 30,
+      "lck": 55,
+      "def": 25,
+      "res": 45
     }
   }
 };
-  // Authored starting growth for the newly supplied Subaru; existing workbook rates stay intact.
-  personal.subaru={name:'安和昴',rates:{maxHp:40,str:20,mag:50,dex:45,spd:45,lck:40,def:25,res:40}};
   const classRates={
   "commoner": {
     "maxHp": 0,
@@ -8016,7 +8031,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const LEVEL=15;
   const data={
     xueyue:{name:'剑意',description:'装备剑时力量＋3，切换其他武器或未装备时失效。'},
-    tomori:{name:'行动者',description:'速度＋2。',stat:'spd',amount:2},
+    subaru:{name:'爱笑女孩',description:'使用魔法或药品时，有25%几率不消耗次数；每次出手独立判定，仍须有剩余次数。'},
+    tomori:{name:'行动派',description:'速度＋2。',stat:'spd',amount:2},
     rana:{name:'幸运猫',description:'对所有攻击的闪避率提升5个百分点。'},
     soyo:{name:'魔力觉醒',description:'魔力＋2。',stat:'mag',amount:2},
     taki:{name:'队友守护',description:'上下左右紧邻的存活队友守备、魔防＋1；不作用于自身。'},
@@ -8026,6 +8042,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   };
   const levels=[0,15,20,25];
   const data2={
+    subaru:{name:'魔力延伸',description:'伤害型魔法最大射程＋1，最小射程不变；不影响辅助魔法或魔法武器。'},
     xueyue:{name:'疾风',description:'速度＋2。',stats:{spd:2}},
     tomori:{name:'有在努力',description:'获得的经验值＋20%，向上取整。'},
     rana:{name:'哈气',description:'免疫战斗中的能力削弱，包括守备、速度、移动和魔防降低；不免疫伤害或沉默。'},
@@ -8036,7 +8053,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     nijika:{name:'妈妈守护',description:'恢复HP的治疗魔法最大射程＋2。'}
   };
   const data3={
-    xueyue:{name:'冰霜剑气',description:'对敌人造成实际伤害后，交战结束时使存活目标速度−3，持续两个完整的目标方回合；反击也生效，重复施加刷新、不叠加。'},
+    subaru:{name:'天使',description:'击败敌人且有存活队友受伤时，自身扣除2 HP（最低保留1 HP），其他存活队友各回复5 HP，不超过上限；反击击破也生效。'},
+    xueyue:{name:'冰霜剑气',description:'使用剑攻击并对敌人造成实际伤害后，交战结束时使存活目标速度−3，持续两个完整的目标方回合；反击也生效，重复施加刷新、不叠加。'},
     tomori:{name:'勇气赞歌',description:'主动发起战斗时力量＋3，持续本次交战。'},
     rana:{name:'技术高手',description:'技巧＋2。',stats:{dex:2}},
     soyo:{name:'魔力打击',description:'魔法命中后，交战结束时使存活目标魔防−2，持续至下次我方阶段开始；重复命中刷新，不叠加。'},
@@ -8067,7 +8085,13 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function penalty(u,key,amount){return immune(u)?0:(u.status?.[key]?amount:0);}
   function experience(u,amount){return active(u,2)&&u.id==='tomori'?Math.ceil(amount*6/5):amount;}
   function healingSpell(s){return !!s&&['heal','fortify'].includes(s.effect);}
-  function rangeBonus(u,s){return active(u,2)&&u.id==='nijika'&&healingSpell(s)?2:0;}
+  function rangeBonus(u,s){
+    if(!active(u,2))return 0;
+    if(u.id==='subaru'&&s?.kind==='spell'&&!s.support)return 1;
+    return u.id==='nijika'&&healingSpell(s)?2:0;
+  }
+  function canPreserve(u,kind){return u?.id==='subaru'&&active(u)&&['spell','consumable'].includes(kind);}
+  function preserveUse(u,kind,rng){return canPreserve(u,kind)&&rng.int(1,100)<=25;}
   function healingAmount(u,s,amount){return active(u,3)&&u.id==='nijika'&&healingSpell(s)?Math.ceil(amount*6/5):amount;}
   function dexBonus(u){return active(u)&&u.id==='anon'&&u.weapon?.type==='bow'?3:0;}
   function avoidBonus(u){return active(u)&&u.id==='rana'?5:0;}
@@ -8089,8 +8113,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     if(!hit||!magic||attacker.id!=='soyo'||!active(attacker,3)||!present(target)||!M.Grid.hostile(attacker,target)||immune(target))return false;
     target.status.talentResDown=2;return true;
   }
-  function afterDamage(attacker,target,damage,hit,phase){
-    if(!hit||damage<=0||attacker.id!=='xueyue'||!active(attacker,3)||!present(target)||!M.Grid.hostile(attacker,target)||immune(target))return false;
+  function afterDamage(attacker,target,damage,hit,phase,weaponType=attacker.weapon?.type){
+    if(weaponType!=='sword'||!hit||damage<=0||attacker.id!=='xueyue'||!active(attacker,3)||!present(target)||!M.Grid.hostile(attacker,target)||immune(target))return false;
     target.status.frostSpeedDown=2;
     // A counter applies midway through the target's phase. Count the next two
     // complete phases rather than consuming one turn immediately after combat.
@@ -8105,12 +8129,19 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function onKill(u,target,killed){
     return killed&&active(u)&&u.id==='nina'&&!u.dead&&u.hp>0&&target.side==='enemy'?heal(u,5):0;
   }
+  function onAngel(u,target,killed,map){
+    if(!killed||u?.id!=='subaru'||!active(u,3)||!present(u)||target.side!=='enemy')return null;
+    const teammates=(map?.units||[]).filter(t=>t.id!==u.id&&present(t)&&!M.Grid.hostile(u,t));
+    if(!teammates.some(t=>t.hp<t.maxHp))return null;
+    const cost=Math.min(2,u.hp-1);u.hp-=cost;
+    return {cost,healing:teammates.map(t=>({id:t.id,amount:heal(t,5)})).filter(t=>t.amount>0)};
+  }
   function onSupport(u,spell,changes){
     return active(u)&&u.id==='nijika'&&['heal','fortify'].includes(spell.effect)?
       heal(u,changes.reduce((sum,c)=>sum+Math.max(0,c.amount||0),0)):0;
   }
   M.Talents=Object.freeze({LEVEL,data,data2,data3,levels:Object.freeze(levels),get,active,list,sync,immune,penalty,experience,
-    healingSpell,rangeBonus,healingAmount,dexBonus,avoidBonus,guardBonus,bond,strBonus,counterFactor,afterMagic,afterDamage,expireFrost,onKill,onSupport});
+    healingSpell,rangeBonus,canPreserve,preserveUse,healingAmount,dexBonus,avoidBonus,guardBonus,bond,strBonus,counterFactor,afterMagic,afterDamage,expireFrost,onKill,onAngel,onSupport});
 })(window);
 
   </script>
@@ -8607,7 +8638,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     else if (counter && !defender.weapon.noFollowup && defenderAttackSpeed - attackSpeed >= 4) order.push({attackerId:defender.id, defenderId:attacker.id, kind:'followup'});
     const remaining=u=>u.weapon.kind==='spell'?(u.spellUses?.[u.weapon.id]||0):u.inventory?u.inventory.filter(i=>i.id===u.weapon.id).reduce((n,i)=>n+i.uses,0):99;
     const counts={};
-    const executable=order.filter(step=>{const u=step.attackerId===attacker.id?attacker:defender;counts[u.id]=(counts[u.id]||0)+1;return counts[u.id]<=remaining(u);});
+    const executable=order.filter(step=>{
+      const u=step.attackerId===attacker.id?attacker:defender;counts[u.id]=(counts[u.id]||0)+1;
+      if(counts[u.id]<=remaining(u))return true;
+      if(remaining(u)>0&&MyGO.Talents?.canPreserve(u,u.weapon.kind)){step.resourceConditional=true;return true;}
+      return false;
+    });
     return {...first, counter, canCounter:!!counter, counterReason:reason, attackSpeed, defenderAttackSpeed, order:executable,
       attackCount:executable.filter(s=>s.attackerId===attacker.id).length,
       counterCount:executable.filter(s=>s.attackerId===defender.id).length};
@@ -8616,8 +8652,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   /** 锁定整场结果，在虚拟 HP 上逐击掷骰，确认前不修改任何真实单位。 */
   function rollRound(attacker, defender, map, rng) {
     const plan = forecast(attacker, defender, map);
-    const units = new Map([[attacker.id,MyGO.Inventory.copy(attacker)], [defender.id,MyGO.Inventory.copy(defender)]]);
-    const battleMap={...map,units:(map.units||[attacker,defender]).map(u=>units.get(u.id)||u)};
+    const units = new Map([...(map.units||[]),attacker,defender].map(u=>[u.id,MyGO.Inventory.copy(u)]));
+    const battleMap={...map,units:[...units.values()]};
     const strikes = [];
     for (const step of plan.order) {
       const a = units.get(step.attackerId), b = units.get(step.defenderId);
@@ -8625,14 +8661,16 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(!MyGO.Inventory.usable(a))continue;
       const strike = {...roll(preview(a,b,battleMap,{initiatorId:attacker.id}),rng), kind:step.kind,
         attackerHp:a.hp, attackerMaxHp:a.maxHp,resourceId:a.inventory?a.weapon.id:null,weaponSnapshot:a.weapon};
-      if(a.inventory)MyGO.Inventory.consume(a,a.weapon.id);
+      strike.resourcePreserved=!!(a.inventory&&MyGO.Talents?.preserveUse(a,a.weapon.kind,rng));
+      if(a.inventory)MyGO.Inventory.consume(a,a.weapon.id,strike.resourcePreserved);
       strike.healed=MyGO.Inventory.useEffects(a,b,MyGO.Magic.get(a.weapon.id),strike.finalDamage,strike.hit);
       strike.talentHealed=MyGO.Talents?.onKill(a,b,strike.hit&&strike.hpAfter<=0)||0;
+      b.hp = strike.hpAfter;
+      strike.angel=MyGO.Talents?.onAngel(a,b,strike.hit&&b.hp<=0,battleMap)||null;
       strike.attackerHpAfterStrike=a.hp;
       const reverse = b.id === defender.id ? plan.counter : plan;
       strike.response = reverse;
       strike.counterReason = b.id === defender.id ? plan.counterReason : '';
-      b.hp = strike.hpAfter;
       strikes.push(strike);
       if(b.hpFloor&&b.hp===b.hpFloor&&strike.finalDamage>0){strike.retreatTriggered=true;break;}
     }
@@ -9133,8 +9171,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(e.action==='heal'){healed=Math.min(e.power,unit.maxHp-unit.hp);unit.hp+=healed;}
       if(e.action==='antitoxin')delete unit.status.poison;
       if(e.action==='ward')unit.status.ward=7;
-      slot.uses--;if(slot.uses===0)unit.inventory.splice(index,1);
-      this.markActed(unit);MyGO.Inventory.sync(unit);return {item:e,healed};
+      const resourcePreserved=!!MyGO.Talents?.preserveUse(unit,e.kind,this.rng);
+      if(!resourcePreserved){slot.uses--;if(slot.uses===0)unit.inventory.splice(index,1);}
+      this.markActed(unit);MyGO.Inventory.sync(unit);return {item:e,healed,resourcePreserved};
     }
 
     loadoutReason(unit) {
@@ -9192,7 +9231,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         destination=destination||cells[0];
         if(!destination||!cells.some(c=>c.x===destination.x&&c.y===destination.y))throw Error('传送落点无效');
       }
-      MyGO.Inventory.consume(caster,spellId);
+      const resourcePreserved=!!MyGO.Talents?.preserveUse(caster,s.kind,this.rng);
+      MyGO.Inventory.consume(caster,spellId,resourcePreserved);
       const affected=['fortify','restore'].includes(s.effect)?targets:[target];
       const changes=[];
       for(const u of affected){
@@ -9207,7 +9247,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(talentHealing)changes.push({id:caster.id,amount:talentHealing,talent:'同心'});
       this.markActed(caster);MyGO.Inventory.sync(caster);
       const growth=MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
-      return {spell:s,changes,talentHealing,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
+      return {spell:s,changes,talentHealing,resourcePreserved,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
     }
 
     expireStatuses(side) {
@@ -9740,7 +9780,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         for(const strike of result.strikes.filter(s=>s.applied)){
           const a=this.getUnit(strike.attackerId),b=this.getUnit(strike.defenderId);
           strike.talentResDown=!!(a&&b&&MyGO.Talents?.afterMagic(a,b,strike.hit,strike.magic));
-          strike.frostApplied=!!(a&&b&&MyGO.Talents?.afterDamage(a,b,Math.max(0,strike.hpBeforeApply-strike.hpAfterApply),strike.hit,this.phase));
+          strike.frostApplied=!!(a&&b&&MyGO.Talents?.afterDamage(a,b,Math.max(0,strike.hpBeforeApply-strike.hpAfterApply),strike.hit,this.phase,strike.weaponType||strike.weaponSnapshot?.type||a.weapon?.type));
         }
         result.applied = true;
         result.hpBeforeApply = result.defenderHp;
@@ -9762,7 +9802,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       }
       const participants=[attacker,defender].filter(Boolean).map(u=>({...u}));
       if(result.resourceId && attacker) {
-        MyGO.Inventory.consume(attacker,result.resourceId);
+        MyGO.Inventory.consume(attacker,result.resourceId,result.resourcePreserved);
         MyGO.Inventory.useEffects(attacker,defender,MyGO.Magic.get(result.resourceId),result.finalDamage,result.hit);
       }
       const before = defender.hp;
@@ -9777,6 +9817,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         if (this.stage === 3 && defender.id === 'nina') this.ninaLost = true;
       }
       result.talentHealed=attacker?(MyGO.Talents?.onKill(attacker,defender,killed)||0):0;
+      result.angel=attacker?(MyGO.Talents?.onAngel(attacker,defender,killed,this.map)||null):null;
       result.applied = true;
       result.hpBeforeApply = before;
       result.hpAfterApply = defender.hp;
@@ -9800,7 +9841,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       }
       if(attacker)MyGO.Inventory.sync(attacker);
       if(!deferExperience&&attacker)result.talentResDown=!!MyGO.Talents?.afterMagic(attacker,defender,result.hit,result.magic);
-      if(!deferExperience&&attacker)result.frostApplied=!!MyGO.Talents?.afterDamage(attacker,defender,Math.max(0,before-defender.hp),result.hit,this.phase);
+      if(!deferExperience&&attacker)result.frostApplied=!!MyGO.Talents?.afterDamage(attacker,defender,Math.max(0,before-defender.hp),result.hit,this.phase,result.weaponType||result.weaponSnapshot?.type||attacker.weapon?.type);
       MyGO.Inventory.sync(defender);
       this.checkOutcome();
       if(!deferExperience)result.experience=this.awardCombatExperience([result],participants);
@@ -18234,7 +18275,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           : '<span class="hint-line">无法反击 · ' + esc(preview.counterReason) + '</span>') +
         '<span class="hint-line">攻速 ' + preview.attackSpeed + ' / ' + preview.defenderAttackSpeed +
         ' · ' + preview.order.map(s => (s.attackerId === active.id ? '我方' : '敌方') +
-          (s.kind === 'counter' ? '反击' : s.kind === 'followup' ? '追击' : '首击')).join(' → ') +
+          (s.kind === 'counter' ? '反击' : s.kind === 'followup' ? '追击' : '首击')+(s.resourceConditional?'（须触发爱笑女孩保留次数）':'')).join(' → ') +
         '<br>任一方被击倒，后续攻击取消。</span>';
     }
 
@@ -18507,6 +18548,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       for (const strike of applied.strikes.filter(s=>s.applied)) {
         const target = this.game.getUnit(strike.defenderId);
         if(strike.talentHealed){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('战斗爽 +'+strike.talentHealed,actor.x,actor.y-0.5,'#bcebd7',11);}
+        if(strike.resourcePreserved){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('爱笑女孩 · 未消耗次数',actor.x,actor.y-0.8,'#f5d7eb',10);}
+        if(strike.angel){
+          const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('天使 −'+strike.angel.cost+' HP',actor.x,actor.y-0.5,'#f5d7eb',11);
+          for(const c of strike.angel.healing){const u=this.game.getUnit(c.id);this.renderer.floatText('天使 +'+c.amount,u.x,u.y-0.5,'#bcebd7',11);}
+        }
         if (strike.hit) {
           this.renderer.flash(target.id, strike.crit ? 'rgba(255, 209, 102, 0.72)' : 'rgba(255, 80, 110, 0.65)', 380);
           this.renderer.floatText('-' + strike.finalDamage, target.x, target.y, strike.crit ? '#ffe08a' : '#ff8fa4', strike.crit ? 12 : 10);
@@ -18794,7 +18840,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         '<span class="exchange-order">' + (i+1) + '</span><div><strong>' + label[s.kind] + ' · ' + esc(s.attackerName) +
         '</strong><small>→ ' + esc(s.defenderName) + ' · ' + esc(s.weaponName) + ' · 命中 ' + s.hitChance + '% · 暴击 ' + s.critChance + '%' +
         (s.healed ? ' · 吸取回复 ' + s.healed : '') +
-        (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') + '</small></div>' +
+        (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') +
+        (s.resourcePreserved ? ' · 爱笑女孩：未消耗次数' : '') +
+        (s.angel ? ' · 天使：自身−'+s.angel.cost+' HP，'+s.angel.healing.map(c=>esc(this.game.getUnit(c.id)?.name||c.id)+'＋'+c.amount+' HP').join('、') : '') + '</small></div>' +
         '<b class="' + (s.crit ? 'crit-text' : s.hit ? 'dmg-text' : 'miss-text') + '">' +
         (s.hit ? (s.crit ? '暴击 ' : '') + s.finalDamage : 'MISS') + '</b></div>').join('');
       const hp = (name,before,after,max) => '<div class="result-hpbar"><div class="result-hp-label"><span>' + esc(name) +
@@ -18807,8 +18855,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         (plan.canCounter ? '射程内可反击' : '无法反击 · ' + esc(plan.counterReason)) + '</span></div><div class="exchange-list">' + rows + '</div>' +
         hp(result.attackerName,result.attackerHp,result.attackerHpAfter,result.attackerMaxHp) +
         hp(result.defenderName,result.defenderHp,result.defenderHpAfter,result.defenderMaxHp) +
-        '<div class="result-note">' + (result.strikes.length < plan.order.length ? '一方已被击倒，后续攻击取消。' : '首击、反击与追击依次结算。') +
-        ' 拳套主动攻击时两连击，反击时不会额外连击。反击不消耗行动。每次出手消耗 1 耐久或魔法次数。点击确认后统一结算 HP、耐久和魔法次数。</div>' +
+        '<div class="result-note">' + (result.strikes.length < plan.order.length ? '因单位倒下、撤离或次数耗尽，后续攻击取消。' : '首击、反击与追击依次结算。') +
+        ' 拳套主动攻击时两连击，反击时不会额外连击。反击不消耗行动。每次出手消耗 1 耐久或魔法次数，爱笑女孩触发时保留次数。点击确认后统一结算 HP、耐久和魔法次数。</div>' +
         '<div class="modal-actions"><button class="modal-btn primary" type="button" data-confirm>确认结算</button></div>';
       return new Promise(resolve => {
         this.confirmHandler = () => resolve(result);
@@ -20555,7 +20603,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       else if(t.hasAttribute('data-bag-take'))this.ui.game.transferItem(u,+t.dataset.bagTake,false);
       else if(t.hasAttribute('data-spell-equip'))this.ui.game.selectAttack(u,t.dataset.spellEquip);
       else if(t.hasAttribute('data-reclass')){this.ui.game.reclassUnit(u,t.dataset.reclass);this.ui.showToast(u.name+'转职为'+u.className,'success',2500);}
-      else if(t.hasAttribute('data-medicine-use')){const r=this.ui.game.useMedicine(u,+t.dataset.medicineUse);this.ui.showToast(u.name+'使用'+r.item.name+(r.healed?'，回复 '+r.healed+' HP':''),'success',2500);}
+      else if(t.hasAttribute('data-medicine-use')){const r=this.ui.game.useMedicine(u,+t.dataset.medicineUse);this.ui.showToast(u.name+'使用'+r.item.name+(r.healed?'，回复 '+r.healed+' HP':'')+(r.resourcePreserved?' · 爱笑女孩：未消耗次数':''),'success',2500);}
       else return;
       this.renderFormationList();this.renderFormationDetail();this.ui.updateAll();
     }catch(err){this.ui.showToast(err.message,'error',2200);}
@@ -20671,7 +20719,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       try{const result=this.game.castSupport(caster,id,target,destination);this.closeOverlay();this.pendingWarp=null;
         for(const tid of result.affected){const t=this.game.getUnit(tid);this.renderer.snapUnit(t);this.renderer.floatText(result.changes.find(c=>c.id===tid)?.amount?'+'+result.changes.find(c=>c.id===tid).amount:s.name,t.x,t.y,'#bcebd7',11);}
         await this.showGrowthResults(result.experience);
-        this.resetSelection({silent:true});this.updateAll();this.renderIdleInfo();this.showToast(caster.name+'施放了'+s.name+'，剩余 '+caster.spellUses[id]+' 次。'+(result.experience.length?' 经验 +'+result.experience[0].gained:''),'success',2600);
+        this.resetSelection({silent:true});this.updateAll();this.renderIdleInfo();this.showToast(caster.name+'施放了'+s.name+'，剩余 '+caster.spellUses[id]+' 次。'+(result.resourcePreserved?' 爱笑女孩：未消耗次数。':'')+(result.experience.length?' 经验 +'+result.experience[0].gained:''),'success',2600);
       }catch(e){this.showToast(e.message,'error');}finally{this.setBusy(false);}
     };
   };

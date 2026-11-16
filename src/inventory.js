@@ -54,6 +54,10 @@
     let id=u.equippedWeapon;
     if(!options(u).includes(id))id=options(u)[0]||'unarmed';
     u.equippedWeapon=id;u.weaponId=id;u.weapon=weapons[id]||unarmed;
+    if(u.weapon.kind==='spell'){
+      const range=Magic.rangeOf(u.weapon,u);
+      if(range.some((n,i)=>n!==u.weapon.range[i]))u.weapon={...u.weapon,range};
+    }
     const candidate=u.inventory.find(i=>i.id===u.equippedAccessory)&&item(u.equippedAccessory);
     const e=candidate?.kind==='equipment'?candidate:null;
     u.equippedAccessory=e?e.id:null;u.equipmentWeight=e?e.weight:0;
@@ -68,9 +72,9 @@
     u.spellUses=Object.fromEntries(u.learnedSpells.map(id=>[id,Magic.get(id).uses]));
     u.status={};u.equippedWeapon=w.id;u.equippedAccessory=null;learn(u);sync(u);
   }
-  function consume(u,id){
-    if(Magic.get(id)){if(!(u.spellUses[id]>0))throw Error('魔法次数不足');u.spellUses[id]--;}
-    else {const i=u.inventory.find(i=>i.id===id&&i.uses>0);if(!i)throw Error('武器耐久不足');i.uses--;}
+  function consume(u,id,preserved=false){
+    if(Magic.get(id)){if(!(u.spellUses[id]>0))throw Error('魔法次数不足');if(!preserved)u.spellUses[id]--;}
+    else {const i=u.inventory.find(i=>i.id===id&&i.uses>0);if(!i)throw Error('武器耐久不足');if(!preserved)i.uses--;}
   }
   function copy(u){return {...u,inventory:u.inventory?.map(i=>({...i})),learnedSpells:u.learnedSpells?.slice(),spellUses:{...u.spellUses},status:{...u.status},gear:{...u.gear}};}
   function pack(u){return{inventory:u.inventory.map(i=>({...i})),equippedWeapon:u.equippedWeapon,equippedAccessory:u.equippedAccessory,
