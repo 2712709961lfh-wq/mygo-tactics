@@ -97,6 +97,7 @@
       : PORTRAIT_FILE;
     return format(file, id) + (id === 'xueyue' && kind === 'idle' ? '?v=xueyue-standing-2'
       : id === 'soyo' && kind === 'portrait' ? '?v=soyo-portrait-restored-1'
+      : id === 'subaru' && kind === 'portrait' ? '?v=subaru-portrait-aligned-1'
       : id === 'soyo' && kind === 'down' ? '?v=soyo-actions-1'
       : (id === 'tomori' || id === 'rana' || id === 'anon' || id === 'taki' || id === 'xueyue')
         && (kind === 'actions' || kind === 'down' || kind === 'projectile')

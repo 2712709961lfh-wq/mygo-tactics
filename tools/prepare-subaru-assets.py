@@ -3,11 +3,12 @@ from pathlib import Path
 from collections import deque
 from PIL import Image
 import numpy as np
-import shutil,json
+import shutil,json,sys
 ROOT=Path(__file__).resolve().parents[1]
 SRC=ROOT/'assets/characters/subaru-source';SRC.mkdir(parents=True,exist_ok=True)
 names={'actions':'bzkjoibzkjoibzkj','hurt':'j9zcckj9zcckj9zc','walk':'b44xsxb44xsxb44x','idle':'rlmr3wrlmr3wrlmr','portrait':'nwoe4lnwoe4lnwoe'}
-for name,code in names.items():shutil.copyfile(Path('D:/')/('Gemini_Generated_Image_'+code+'.jpg'),SRC/(name+'.jpg'))
+if '--portrait-only' not in sys.argv:
+ for name,code in names.items():shutil.copyfile(Path('D:/')/('Gemini_Generated_Image_'+code+'.jpg'),SRC/(name+'.jpg'))
 OUT=ROOT/'assets/characters'
 for folder in ['actions','idle','walk','sprites']:(OUT/folder).mkdir(exist_ok=True)
 def key(im,white=False):
@@ -28,6 +29,33 @@ def key(im,white=False):
  a[:,:,3]=np.where(alpha<25,0,alpha).astype(np.uint8)
  fringe=(alpha<255);a[:,:,1]=np.where(fringe,np.minimum(rgb[:,:,1],np.maximum(rgb[:,:,0],rgb[:,:,2])+2),rgb[:,:,1])
  return Image.fromarray(a)
+def prepare_portrait():
+ # JPEG flecks at the edge must not determine the portrait crop.
+ # Keep the connected character silhouette, then use the shared portrait size.
+ im=key(Image.open(SRC/'portrait.jpg'),True)
+ pixels=np.array(im);mask=pixels[:,:,3]>0;seen=np.zeros(mask.shape,dtype=bool);largest=[]
+ for y,x in np.argwhere(mask):
+  if seen[y,x]:continue
+  component=[];q=deque([(int(x),int(y))]);seen[y,x]=True
+  while q:
+   xx,yy=q.popleft();component.append((yy,xx))
+   for nx,ny in [(xx-1,yy),(xx+1,yy),(xx,yy-1),(xx,yy+1)]:
+    if 0<=nx<im.width and 0<=ny<im.height and mask[ny,nx] and not seen[ny,nx]:
+     seen[ny,nx]=True;q.append((nx,ny))
+  if len(component)>len(largest):largest=component
+ if not largest:raise ValueError('Empty Subaru portrait')
+ keep=np.zeros(mask.shape,dtype=bool)
+ for y,x in largest:keep[y,x]=True
+ pixels[~keep]=0
+ portrait=Image.fromarray(pixels);portrait=portrait.crop(portrait.getbbox())
+ portrait.thumbnail((420,580),Image.Resampling.NEAREST)
+ portrait.save(OUT/'sprites/subaru-portrait.png',optimize=True)
+ print('Prepared tightly cropped Subaru portrait:',portrait.size)
+
+if '--portrait-only' in sys.argv:
+ prepare_portrait()
+ raise SystemExit(0)
+
 def fit(im,w,h,body):
  box=im.getbbox()
  if not box:raise ValueError('Empty frame')
@@ -63,7 +91,7 @@ for row,inrow in enumerate([1,0,2,3]):
   if (inrow==2 and col==2) or (inrow==3 and col==0):crop=crop.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
   walks.alpha_composite(fit(crop,128,128,112),(col*128,row*128))
 walks.save(OUT/'walk/subaru-walk.png',optimize=True)
-portrait=key(Image.open(SRC/'portrait.jpg'),True);portrait=portrait.crop(portrait.getbbox());portrait.thumbnail((420,580),Image.Resampling.NEAREST);portrait.save(OUT/'sprites/subaru-portrait.png',optimize=True)
+prepare_portrait()
 down=atlas.crop((4*CW,7*CH,5*CW,8*CH));down.crop(down.getbbox()).save(OUT/'sprites/subaru-down.png',optimize=True)
 sheet=Image.new('RGBA',(320,768))
 for row,walkrow in enumerate([0,3,1,2]):

@@ -20,7 +20,7 @@
    ['高松灯','“又有敌人……大家小心！”','tomori'],
    ['伊地知虹夏','“看最里面！那扇门……刚才还没有。守在前面的天马，身上好像有钥匙。”','nijika'],
    [nina?'井芹仁菜':'椎名立希',nina?'“别把我们的排练室弄成这种样子！先打倒它，再把那扇门打开！”':'“先击败守门的天马，拿到钥匙。我们一起打开那扇门。”',nina?'nina':'taki'],
-   ['任务目标 · 击败 Boss，打开奇怪的门','击败裂空天马，获得门的钥匙与钢枪。随后派队员到北端门旁使用钥匙，打开出口。','nijika']];
+   ['任务目标 · 击败 Boss，打开奇怪的门','击败裂空天马，获得门的钥匙与钢枪，再到北端开门。门后还有同伴与敌人在等待，完成后续战斗才能通关。','nijika']];
   const bounds=[2300,5100,8700,11900,14900,17500,20400],enemies=g.living('enemy'),party=g.living('player'),positions=party.map(u=>({u,x:u.x,y:u.y}));
   const oldView=r.view,start=performance.now();let raf=0,part=-1,stopped=false,last=start,camera={x:0,y:5,w:28,h:16};
   r.setView({mode:'idle'});g._liveIntro={visible:u=>u.side!=='enemy',doorAlpha:0};
@@ -66,10 +66,17 @@
   this.busy=true;g._doorOpenedAt=performance.now();this.renderer.terrainLayer=null;
   this.renderer.floatText('奇怪的门开启了',gate.x,gate.y-.4,'#bceaff',12);this.renderer.shake(500,2);
   this.resetSelection({silent:true});this.updateAll();this.revealCell(gate.x,gate.y);
-  this.renderTerrainInfo(gate.x,gate.y);this.dom.contextTitle.textContent='出口已开启';
-  this.dom.contextText.textContent='钥匙化作光芒，门后的道路打开了。即将结算本章。';
-  this.setActions([{label:'出口已开启',disabled:true}]);
+  this.renderTerrainInfo(gate.x,gate.y);this.dom.contextTitle.textContent='门后传来打斗声';
+  this.dom.contextText.textContent='钥匙化作光芒，门后的道路打开了。继续第九关，与门后的同伴会合。';
+  this.setActions([{label:'正在穿过奇怪的门',disabled:true}]);
   this.showToast('钥匙化作光芒，门后的道路打开了。','success',2000);
-  setTimeout(()=>{if(this.game!==g)return;this.busy=false;this.updateAll();this.showEndScreen();},1550);
+  setTimeout(()=>{if(this.game!==g)return;this.continueRehearsal();},1550);
+ };
+ M.UI.prototype.continueRehearsal=function(){
+  if(!this.game.beginRehearsalFinale()){this.busy=false;return;}
+  this.busy=false;this.endShown=false;this.chapterPlayed=false;
+  this.renderer.setGame(this.game);this.resetSelection({silent:true});
+  this.syncMission();this.updateAll();this.renderIdleInfo();this.setZoom(1,false);
+  this.playChapterIntro();
  };
 })(window);

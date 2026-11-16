@@ -10,7 +10,7 @@
 | `D:/Gemini_Generated_Image_rlmr3wrlmr3wrlmr.jpg` | `idle.jpg` | 四方向地图待机 |
 | `D:/Gemini_Generated_Image_nwoe4lnwoe4lnwoe.jpg` | `portrait.jpg` | 人物头像及资料立绘 |
 
-`tools/prepare-subaru-assets.py` 去除绿色背景并清理边缘，头像仅去除与外界连通的白底，保留人物内部白色。少数侧向行走帧镜像为同一朝向，统一脚底锚点，去除动作区域外的文字标记。
+`tools/prepare-subaru-assets.py` 去除绿色背景并清理边缘，头像去除与外界连通的白底，保留人物内部白色，并只保留人物主体连通区域后紧贴轮廓裁切，避免边缘杂点撑大透明留白。少数侧向行走帧镜像为同一朝向，统一脚底锚点，去除动作区域外的文字标记。
 
 输出位于 `assets/characters/`：
 
@@ -22,3 +22,5 @@
 第十关的排练室继续使用第九关代码绘制的场景。鼓组与电吉他来自 AntumDeluge / OpenClipart 的 CC0 Music Icons，完整说明见 [第七关素材来源](../../chapter-seven/SOURCES.md)。重装沿用 LPC 衍生图集（CC BY-SA 3.0），天马沿用 Spring Spring 的 CC0 图集，完整作者和许可见 [第五关素材来源](../../chapter-five/SOURCES.md)。
 
 仁菜幻影复用项目现有的仁菜素材，在运行时添加暗色及紫色光环。光门、召唤阵和幻影光效由代码绘制，不含新增下载图像。普通版使用本地文件，单文件版嵌入相同素材，无外部运行时请求。
+
+2026-11-16（v5.12.3）：修正头像偏右、偏小与脚底悬空；输出为369×580透明PNG，继续使用与其他角色相同的展示规则。可运行 `python tools/prepare-subaru-assets.py --portrait-only`，从本目录的原图副本单独重建头像，不重新生成动作和地图图集。

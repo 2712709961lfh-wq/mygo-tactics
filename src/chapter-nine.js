@@ -43,8 +43,8 @@
  C.STAGE_NINE={id:'mission-09',mapRevision:1,cols,rows,chapter:'MISSION 09',chapterJp:'第九话',chapterEn:'CHAPTER 09',
   title:'门后的排练回声',mapName:'刺团的排练室 · 异常扩张空间',
   subtitle:'休息室的门后，是仁菜熟悉的排练室。镜面与吸音墙向远处延伸，一扇陌生的门浮现在尽头。',
-  objective:'击败裂空天马，取得钥匙并打开奇怪的门',
-  gateHint:'沿中央地毯向北推进，绕过音箱与乐器架。重装怕魔法，天马怕弓。击败北端的裂空天马获得门的钥匙与钢枪；持钥匙的队员到最北端门旁选择开门，才能通关。',
+  objective:'击败裂空天马并开门，与昴会合后击败所有敌人',
+  gateHint:'沿中央地毯向北推进，绕过音箱与乐器架。重装怕魔法，天马怕弓。击败裂空天马获得门的钥匙与钢枪；队员到北端门旁开门后继续本关剧情，与昴会合并清除仁菜幻影及其余敌人，才会通关。',
   terrain,decor,enemies,enemyCount:enemies.length,bossId:boss.id,door:{x:13,y:2},
   legacyMaxHp:Object.fromEntries(enemies.filter(e=>!e.boss).map(e=>[e.id,e.id.includes('armor')?35:e.id.includes('pegasus')?30:e.id.includes('axe')?38:32])),
   spawns:{tomori:{x:12,y:28},anon:{x:14,y:29},rana:{x:15,y:28},soyo:{x:12,y:29},taki:{x:15,y:29},xueyue:{x:11,y:30},nina:{x:13,y:27},nijika:{x:14,y:28}}};

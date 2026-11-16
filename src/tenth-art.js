@@ -3,7 +3,7 @@
  'use strict';const M=global.MyGO,C=M.Characters,T=M.CONFIG.TILE;
  M.TenthMap={...M.RehearsalMap,drawGround(c,map){
   M.RehearsalMap.drawGround(c,map);c.save();c.fillStyle='#46494a';c.fillRect(3*T,45,8*T,17);
-  c.fillStyle='#e2d7b9';c.textAlign='center';c.font='bold 10px sans-serif';c.fillText('REHEARSAL  /  10',7*T,59);
+  c.fillStyle='#e2d7b9';c.textAlign='center';c.font='bold 10px sans-serif';c.fillText('REHEARSAL  /  09',7*T,59);
   c.fillStyle='#68635c';c.fillRect(10*T,32*T+23,8*T,20);c.fillStyle='#e4d9bc';c.fillText('奇怪的门的另一侧',14*T,33*T+8);c.restore();
  },drawObject(c,v,o){
   if(o.kind!=='entrance')return M.RehearsalMap.drawObject(c,v,o);

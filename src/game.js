@@ -134,6 +134,9 @@
   }
 
   class Game {
+    // 10 remains an internal encounter key for old saves; both encounters are chapter 9.
+    get chapterNumber(){return this.stage===10?9:this.stage;}
+    get rehearsalTransitionPending(){return this.stage===9&&this.gateOpen&&this.stageNineIntroSeen&&!!this.getUnit('rift_pegasus')?.dead&&!this.isOver();}
     constructor(options) {
       const opts = options || {};
       this.stage = [2,3,4,5,6,7,8,9,10].includes(opts.stage) ? opts.stage : 1;
@@ -160,7 +163,7 @@
       this.convoy = MyGO.Inventory.stock();
       this.lootReserve=[];
       this.gold=MyGO.Shop.START_GOLD;
-      this.shopPurchases={};this.shopChapter=this.stage;this.rewardedChapters=[];
+      this.shopPurchases={};this.shopChapter=this.chapterNumber;this.rewardedChapters=[];
       this.rng = new MyGO.RNG(opts.seed);
       for(const u of this.units)u.growthRngState=MyGO.Growth.seed(u.id,this.rng.serialize());
       if (opts.loadout) this.importLoadout(opts.loadout);
@@ -192,6 +195,24 @@
         MyGO.Inventory.learn(u);MyGO.Inventory.sync(u);
       }
       delete this._liveIntro;for(const unit of this.units)delete unit._summonAlpha;
+    }
+
+    beginRehearsalFinale() {
+      if(!this.rehearsalTransitionPending||!C.STAGE_TEN||!this.livingCount('player'))return false;
+      const party=this.units.filter(u=>u.side==='player');
+      this.rehearsalFirstDefeated=this.units.filter(u=>u.side==='enemy'&&u.dead).length;
+      for(const u of party){
+        Object.assign(u,C.STAGE_TEN.spawns[u.id],{acted:!!u.dead,talentSwapReady:false,talentAttacked:false,facing:'up'});
+        delete u._walking;delete u._summonAlpha;
+      }
+      this.stage=10;this.mission=C.STAGE_TEN;
+      this.units=party.concat(C.STAGE_TEN.enemies.map(createUnit),[createUnit(C.SUBARU)]);
+      const subaru=this.getUnit('subaru');subaru.growthRngState=MyGO.Growth.seed(subaru.id,this.rng.serialize());
+      this.gateOpen=false;this.stageTenIntroSeen=false;this.subaruJoined=false;
+      this.phase='player';this.winner=null;this.lastHealing=[];
+      delete this._liveIntro;delete this._doorOpenedAt;
+      bindCombatMap(this);this.applyFixedEnemyStats();
+      return true;
     }
 
     completeNinthIntro() {
@@ -233,15 +254,16 @@
     packEconomy(){return {version:1,gold:this.gold,chapter:this.shopChapter,purchases:{...this.shopPurchases},rewarded:this.rewardedChapters.slice()};}
 
     restoreEconomy(data){
-      if(data===undefined){this.gold=MyGO.Shop.START_GOLD;this.shopPurchases={};this.shopChapter=this.stage;this.rewardedChapters=[];return;}
+      if(data===undefined){this.gold=MyGO.Shop.START_GOLD;this.shopPurchases={};this.shopChapter=this.chapterNumber;this.rewardedChapters=[];return;}
       if(!data||data.version!==1||!Number.isSafeInteger(data.gold)||data.gold<0||data.gold>99999999||
         !Number.isInteger(data.chapter)||data.chapter<1||data.chapter>this.stage||
         !data.purchases||typeof data.purchases!=='object'||Array.isArray(data.purchases)||
         !Array.isArray(data.rewarded)||new Set(data.rewarded).size!==data.rewarded.length||data.rewarded.some(c=>!Number.isInteger(c)||c<1||c>this.stage))throw Error('存档商店数据无效');
       for(const [id,n] of Object.entries(data.purchases)){const p=MyGO.Shop.get(id);
         if(!p||p.stage>data.chapter||!Number.isInteger(n)||n<0||p.limit===null||n>p.limit)throw Error('存档限购数据无效');}
-      this.gold=data.gold;this.shopChapter=this.stage;
-      this.shopPurchases=data.chapter===this.stage?{...data.purchases}:{};this.rewardedChapters=data.rewarded.slice();
+      this.gold=data.gold;this.shopChapter=this.chapterNumber;
+      this.shopPurchases=[this.stage,this.chapterNumber].includes(data.chapter)?{...data.purchases}:{};
+      this.rewardedChapters=[...new Set(data.rewarded.map(n=>n===10?9:n))];
     }
 
     shopReason(){return this.phase!=='player'&&this.phase!=='victory'?'请在我方阶段或战后购物':'';}
@@ -602,7 +624,7 @@
 
     /** 当前阶段是否接受玩家操作。 */
     isPlayerPhase() {
-      return this.phase === 'player';
+      return this.phase === 'player'&&!this.rehearsalTransitionPending;
     }
 
     isOver() {
@@ -870,6 +892,7 @@
     }
 
     _syncGateTiles() {
+      if(this.stage===10)return; // The shared room's door stays open in part two.
       const from = this.gateOpen ? 'gate' : 'gateOpen';
       const to = this.gateOpen ? 'gateOpen' : 'gate';
       for (let y = 0; y < this.map.rows; y++) {
@@ -1009,7 +1032,7 @@
      */
     checkOutcome() {
       if (this.isOver()) return this.winner;
-      const victory=this.stage===10 ? this.stageTenIntroSeen&&this.subaruJoined&&this.livingCount('enemy')===0 : this.stage===9 ? this.stageNineIntroSeen&&this.gateOpen&&!!this.getUnit(this.mission.bossId)?.dead : this.stage===8 ? this.stageEightIntroSeen&&this.mission.phantomIds.every(id=>this.getUnit(id)?.dead) : this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
+      const victory=this.stage===10 ? this.stageTenIntroSeen&&this.subaruJoined&&this.livingCount('enemy')===0 : this.stage===9 ? false : this.stage===8 ? this.stageEightIntroSeen&&this.mission.phantomIds.every(id=>this.getUnit(id)?.dead) : this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
         ? this.awakenedBells.length>=this.mission.requiredBells && !!this.getUnit('conductor')?.dead
         : this.livingCount('enemy')===0;
       if (this.livingCount('player') === 0) {
@@ -1018,7 +1041,7 @@
       } else if (victory) {
         this.phase = 'victory';
         this.winner = 'player';
-        if(!this.rewardedChapters.includes(this.stage)){this.gold+=MyGO.Shop.CHAPTER_REWARD;this.rewardedChapters.push(this.stage);}
+        if(!this.rewardedChapters.includes(this.chapterNumber)){this.gold+=MyGO.Shop.CHAPTER_REWARD;this.rewardedChapters.push(this.chapterNumber);}
         if (this.stage === 1 && this.getUnit('xueyue')?.dead) this.recruited = ['xueyue'];
         if (this.stage === 3) {
           const nina=this.getUnit('nina');
@@ -1033,7 +1056,7 @@
 
     /** 玩家结束回合，进入敌方阶段。 */
     beginEnemyPhase() {
-      if (this.phase !== 'player' || this.isOver()) return false;
+      if (!this.isPlayerPhase() || this.isOver()) return false;
       this.expireStatuses('player');
       this.decayWard('enemy');
       this.phase = 'enemy';
@@ -1093,7 +1116,9 @@
         version: C.SAVE_VERSION,
         ...(this.stage>=4?{fixedEnemyStatsVersion:1}:{}),
         ...([9,10].includes(this.stage)?{rehearsalBalanceVersion:1,rehearsalBossBalanceVersion:1}:{}),
-        stage: this.stage,
+        stage: this.chapterNumber,
+        ...([9,10].includes(this.stage)?{rehearsalChapterVersion:1,rehearsalPart:this.stage===10?2:1,
+          rehearsalFirstDefeated:this.stage===10?(this.rehearsalFirstDefeated||0):0}:{}),
         mapRevision: this.stage === 1 ? C.MAP_REVISION : this.mission.mapRevision,
         turn: this.turn,
         phase: this.phase,
@@ -1141,6 +1166,12 @@
         throw new Error('存档版本不兼容');
       }
       if (!Array.isArray(snapshot.units)) throw new Error('存档单位数据缺失');
+      if(snapshot.rehearsalChapterVersion!==undefined){
+        if(snapshot.rehearsalChapterVersion!==1||snapshot.stage!==9||![1,2].includes(snapshot.rehearsalPart)||
+          !Number.isInteger(snapshot.rehearsalFirstDefeated)||snapshot.rehearsalFirstDefeated<0||snapshot.rehearsalFirstDefeated>C.STAGE_NINE.enemies.length||
+          snapshot.rehearsalPart===1&&snapshot.rehearsalFirstDefeated!==0)throw Error('存档第九关合并进度无效');
+        if(snapshot.rehearsalPart===2)snapshot={...snapshot,stage:10};
+      }else if(snapshot.rehearsalPart!==undefined)throw Error('存档第九关合并进度无效');
       if(snapshot.fixedEnemyStatsVersion!==undefined&&snapshot.fixedEnemyStatsVersion!==1)throw Error('存档固定敌军属性版本无效');
       if(snapshot.rehearsalBalanceVersion!==undefined&&snapshot.rehearsalBalanceVersion!==1)throw Error('存档排练室属性版本无效');
       if(snapshot.rehearsalBossBalanceVersion!==undefined&&snapshot.rehearsalBossBalanceVersion!==1)throw Error('存档排练室Boss属性版本无效');
@@ -1149,7 +1180,7 @@
         throw new Error('第二关地图已重新设计，请重开第二关；旧存档仍然保留。');
       }
       if (snapshot.stage === 3 && snapshot.mapRevision !== C.STAGE_THREE.mapRevision) throw new Error('第三关地图版本不兼容');
-      if(snapshot.stage===10&&snapshot.mapRevision!==C.STAGE_TEN.mapRevision)throw Error('第十关地图版本不兼容');
+      if(snapshot.stage===10&&snapshot.mapRevision!==C.STAGE_TEN.mapRevision)throw Error('第九关后半段地图版本不兼容');
       if(snapshot.stage===9&&snapshot.mapRevision!==C.STAGE_NINE.mapRevision)throw Error('第九关地图版本不兼容');
       if(snapshot.stage===8&&snapshot.mapRevision!==C.STAGE_EIGHT.mapRevision)throw Error('第八关地图版本不兼容');
       if(snapshot.stage===7&&snapshot.mapRevision!==C.STAGE_SEVEN.mapRevision)throw Error('第七关地图版本不兼容');
@@ -1211,12 +1242,12 @@
       this.stageTenIntroSeen=this.stage===10&&snapshot.stageTenIntroSeen===true;
       this.subaruJoined=this.stage===10&&snapshot.subaruJoined===true;
       if(this.stage===10){
-        if(typeof snapshot.stageTenIntroSeen!=='boolean'||typeof snapshot.subaruJoined!=='boolean'||this.subaruJoined!==this.stageTenIntroSeen||this.subaruJoined!==this.recruited.includes('subaru')||!this.recruited.includes('nijika')||snapshot.nijikaLevelVersion!==1||snapshot.fixedEnemyStatsVersion!==1)throw Error('第十关开场或昴入队状态无效');
-        if(!this.stageTenIntroSeen&&snapshot.phase!=='player')throw Error('第十关开场尚未完成');
+        if(typeof snapshot.stageTenIntroSeen!=='boolean'||typeof snapshot.subaruJoined!=='boolean'||this.subaruJoined!==this.stageTenIntroSeen||this.subaruJoined!==this.recruited.includes('subaru')||!this.recruited.includes('nijika')||snapshot.nijikaLevelVersion!==1||snapshot.fixedEnemyStatsVersion!==1)throw Error('第九关后半段开场或昴入队状态无效');
+        if(!this.stageTenIntroSeen&&snapshot.phase!=='player')throw Error('第九关后半段开场尚未完成');
         const expected=unitsForStage(10,this.recruited);
-        if(snapshot.units.length!==expected.length||snapshot.units.some(u=>!expected.some(t=>t.id===u.id)))throw Error('第十关单位数据无效');
-        if(snapshot.gateOpen!==false)throw Error('第十关门状态无效');
-        if(snapshot.phase==='victory'&&snapshot.units.some(u=>expected.some(t=>t.id===u.id&&t.side==='enemy')&&!u.dead&&u.hp>0))throw Error('第十关敌军尚未清除');
+        if(snapshot.units.length!==expected.length||snapshot.units.some(u=>!expected.some(t=>t.id===u.id)))throw Error('第九关后半段单位数据无效');
+        if(snapshot.gateOpen!==false)throw Error('第九关后半段门状态无效');
+        if(snapshot.phase==='victory'&&snapshot.units.some(u=>expected.some(t=>t.id===u.id&&t.side==='enemy')&&!u.dead&&u.hp>0))throw Error('第九关后半段敌军尚未清除');
       }
       this.stageNineIntroSeen=this.stage===9&&snapshot.stageNineIntroSeen===true;
       if(this.stage===9){
@@ -1383,6 +1414,12 @@
       this.winner = snapshot.winner || null;
       if (this.stage === 1 && this.phase === 'victory' && this.getUnit('xueyue')?.dead) this.recruited = ['xueyue'];
       this.rng = MyGO.RNG.restore(snapshot.rngState);
+      this.rehearsalFirstDefeated=this.stage===10?(snapshot.rehearsalFirstDefeated??0):0;
+      if(this.stage===9&&this.gateOpen&&this.getUnit('rift_pegasus')?.dead&&this.livingCount('player')>0){
+        // Old chapter-nine clear saves resume at the second encounter. Any
+        // previously paid reward remains paid and will not be granted again.
+        this.phase='player';this.winner=null;this.beginRehearsalFinale();
+      }
       // 保留终局快照的胜负状态；非终局快照则由棋盘状态重新推导。
       this.checkOutcome();
       return true;

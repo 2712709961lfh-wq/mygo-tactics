@@ -32,8 +32,8 @@
   quote:'它没有回答。只有模仿仁菜的拳头，一次次打向眼前的人。'};
  const enemies=regular.concat([special('armor',0,10,19),special('armor',1,18,16),special('armor',2,15,8),special('pegasus',0,6,23),special('pegasus',1,22,10),phantom]);
  const terrain=base.terrain.map(r=>r.slice());terrain[2][13]='gateOpen';
- C.STAGE_TEN={...base,id:'mission-10',mapRevision:1,chapter:'MISSION 10',chapterJp:'第十话',chapterEn:'CHAPTER 10',
-  title:'回环休息室的真假仁菜',mapName:'刺团的排练室 · 门后的回环',
+ C.STAGE_TEN={...base,id:'mission-09-finale',mapRevision:1,chapter:'MISSION 09',chapterJp:'第九话',chapterEn:'CHAPTER 09',
+  title:base.title,mapName:'刺团的排练室 · 门后的回环',
   subtitle:'奇怪的门后依然是熟悉的排练室。中央，安和昴正被一个与仁菜一模一样的身影攻击。',
   objective:'击败所有敌人',gateHint:'昴会在开场对话后直接加入队伍。由南侧入口赶往中央，与她会合并清理四周敌人。仁菜幻影为拳斗士，钢拳套可连续攻击，避免让脆弱队员独自承受；魔法对付重装、弓对付天马。击败幻影后仍须清除其余敌人才会通关。',
   terrain,enemies,enemyCount:enemies.length,bossId:phantom.id,

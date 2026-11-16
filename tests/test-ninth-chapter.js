@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('node:assert/strict');
 const w={console};w.window=w;vm.createContext(w);
-for(const f of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','rng','growth-data','talents','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
+for(const f of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','talents','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
 const M=w.MyGO,I=M.Inventory,plain=x=>JSON.parse(JSON.stringify(x)),fresh=opts=>new M.Game({stage:9,seed:9911,...opts}),reload=g=>{const h=new M.Game();h.restore(plain(g.serialize()));return h;};
 const hit=g=>g.applyCombat({attackerId:'tomori',defenderId:'rift_pegasus',hit:true,finalDamage:999});
 const qty=(g,id)=>g.living('player').flatMap(u=>u.inventory).concat(g.convoy,g.lootReserve).filter(i=>i.id===id).length;
@@ -45,12 +45,12 @@ test('Key must be present, Boss defeated, intro complete, unit adjacent, alive a
  for(const bag of [u.inventory,g.convoy,g.lootReserve])for(let i=bag.length-1;i>=0;i--)if(bag[i].id==='strange_door_key')bag.splice(i,1);
  assert(!g.canUseGateKey(u));assert.equal(g.useGateKey(u),false);
 });
-test('Opening consumes the key, finishes action, opens terrain and grants victory/reward once',()=>{
+test('Opening consumes the key and continues the same chapter without victory or reward',()=>{
  const g=fresh();g.completeNinthIntro();hit(g);const u=approach(g),gold=g.gold;
  assert.deepEqual(plain(g.useGateKey(u)),{x:13,y:2});assert(u.acted);assert.equal(qty(g,'strange_door_key'),0);
- assert(g.gateOpen);assert.equal(g.map.tiles[2][13],'gateOpen');assert.equal(g.phase,'victory');assert.equal(g.gold,gold+2000);
- assert.equal(g.useGateKey(u),false);g.checkOutcome();assert.equal(g.gold,gold+2000);
- const h=reload(g);assert(h.gateOpen);assert.equal(h.phase,'victory');assert.equal(h.gold,g.gold);assert.equal(h.map.tiles[2][13],'gateOpen');
+ assert(g.gateOpen);assert.equal(g.map.tiles[2][13],'gateOpen');assert.equal(g.phase,'player');assert(g.rehearsalTransitionPending);assert.equal(g.gold,gold);
+ assert.equal(g.useGateKey(u),false);g.checkOutcome();assert.equal(g.gold,gold);
+ const h=reload(g);assert.equal(h.serialize().rehearsalPart,2);assert.equal(h.phase,'player');assert.equal(h.gold,g.gold);assert.equal(h.map.tiles[2][13],'gateOpen');
 });
 test('All enemies dead still requires opening the door; unopened intro cannot grant victory',()=>{
  const g=fresh();for(const e of g.living('enemy')){e.hp=0;e.dead=true;}g.checkOutcome();assert.equal(g.phase,'player');
@@ -62,7 +62,7 @@ test('Full bags and full convoy retain both rewards and allow reserved key to op
   if(fullConvoy)g.convoy=Array.from({length:500},()=>I.make('iron_sword'));
   const before=qty(g,'steel_lance');hit(g);assert.equal(qty(g,'strange_door_key'),1);assert.equal(qty(g,'steel_lance'),before+1);
   if(fullConvoy)assert.equal(g.lootReserve.length,2);else assert(g.convoy.some(i=>i.id==='strange_door_key'));
-  const h=reload(g),actor=approach(h);assert(h.canUseGateKey(actor));h.useGateKey(actor);assert.equal(h.phase,'victory');assert.equal(qty(h,'strange_door_key'),0);
+  const h=reload(g),actor=approach(h);assert(h.canUseGateKey(actor));h.useGateKey(actor);assert(h.rehearsalTransitionPending);assert.equal(qty(h,'strange_door_key'),0);
  }
 });
 test('Chapter8→9 carries growth, talents, weapons, money, reserve and recruited roster',()=>{
@@ -80,7 +80,7 @@ test('A fallen key carrier returns the unique door key to convoy/reserve for sur
   const result=g.applyCombat({attackerId:'rehearsal-bow-b',defenderId:'tomori',hit:true,finalDamage:999});
   assert(g.getUnit('tomori').dead);assert.equal(result.drops[0].id,'strange_door_key');assert.equal(qty(g,'strange_door_key'),1);
   assert(!(g.getUnit('tomori').inventory.some(i=>i.id==='strange_door_key')));
-  const h=reload(g),u=h.getUnit('anon');Object.assign(u,{x:13,y:3,acted:false});assert(h.canUseGateKey(u));h.useGateKey(u);assert.equal(h.phase,'victory');
+  const h=reload(g),u=h.getUnit('anon');Object.assign(u,{x:13,y:3,acted:false});assert(h.canUseGateKey(u));h.useGateKey(u);assert(h.rehearsalTransitionPending);
  }
 });
 test('Fixed enemy values survive party growth, imported loads, turns and restoration',()=>{

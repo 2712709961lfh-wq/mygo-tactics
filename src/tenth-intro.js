@@ -6,7 +6,7 @@
   if(g.stageTenIntroSeen){this.finishChapterIntro();return;}
   root.classList.add('livehouse-intro');root.querySelector('.livehouse-opening')?.remove();
   const scene=document.createElement('div');scene.className='livehouse-opening tenth-opening';
-  scene.innerHTML='<div class="live-opening-head"><small>CHAPTER 10 / THE ROOM BEYOND</small><h2>回环休息室的真假仁菜</h2><span>奇怪的门的另一侧 · 中央传来打斗声</span></div>'+
+  scene.innerHTML='<div class="live-opening-head"><small>CHAPTER 09 / THE ROOM BEYOND</small><h2>门后的排练回声</h2><span>后半段 · 奇怪的门的另一侧 · 中央传来打斗声</span></div>'+
    '<canvas class="live-opening-canvas" width="1200" height="660" aria-label="众人穿过奇怪的门，发现安和昴与拳斗士仁菜幻影交战，对话后四周出现更多敌人，昴加入队伍"></canvas>'+
    '<div class="live-opening-caption" aria-live="polite"><canvas width="110" height="125"></canvas><div><small></small><p></p></div></div>'+
    '<div class="live-opening-skip">自动播放 · 点击 / Enter / Esc 跳过演出</div>';
