@@ -41,6 +41,8 @@ const SCRIPTS = [
   'src/chapter-six.js',
   'src/chapter-seven.js',
   'src/chapter-eight.js',
+  'src/chapter-nine.js',
+  'src/chapter-ten.js',
   'src/map-projection.js',
   'src/rng.js',
   'src/growth-data.js',
@@ -62,6 +64,8 @@ const SCRIPTS = [
   'src/masked-court-art.js',
   'src/livehouse-art.js',
   'src/eighth-art.js',
+  'src/rehearsal-art.js',
+  'src/tenth-art.js',
   'src/renderer.js',
   'src/combat-vfx.js',
   'src/battle.js',
@@ -71,6 +75,8 @@ const SCRIPTS = [
   'src/masked-court-ui.js',
   'src/livehouse-intro.js',
   'src/eighth-intro.js',
+  'src/ninth-intro.js',
+  'src/tenth-intro.js',
   'src/equipment-ui.js',
   'src/entry.js',
   'src/loadout-ui.js',
@@ -79,7 +85,7 @@ const SCRIPTS = [
 ];
 
 const STYLES = ['styles.css', 'entry.css', 'soul-ui.css', 'diary-ui.css', 'equipment.css'];
-const CHARACTER_IDS = ['tomori', 'anon', 'rana', 'soyo', 'taki', 'xueyue', 'nina', 'nijika'];
+const CHARACTER_IDS = ['tomori', 'anon', 'rana', 'soyo', 'taki', 'xueyue', 'nina', 'nijika', 'subaru'];
 const CHARACTER_DIR = 'assets/characters/sprites';
 const WALK_DIR = 'assets/characters/walk';
 const IDLE_DIR = 'assets/characters/idle';
@@ -197,7 +203,7 @@ function main() {
       for (const [key, file] of Object.entries(files)) {
         embedded[id][key] = `data:image/png;base64,${fs.readFileSync(path.join(ROOT, 'assets/characters/actions', file)).toString('base64')}`;
       }
-    } else if (id === 'tomori' || id === 'rana' || id === 'taki' || id === 'xueyue' || id === 'nina' || id === 'nijika') {
+    } else if (id === 'tomori' || id === 'rana' || id === 'taki' || id === 'xueyue' || id === 'nina' || id === 'nijika' || id === 'subaru') {
       embedded[id].actions = `data:image/png;base64,${fs.readFileSync(path.join(ROOT, 'assets/characters/actions', `${id}-actions.png`)).toString('base64')}`;
     }
   }

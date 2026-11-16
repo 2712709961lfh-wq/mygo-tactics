@@ -110,6 +110,8 @@
     }
   }
 };
+  // Authored starting growth for the newly supplied Subaru; existing workbook rates stay intact.
+  personal.subaru={name:'安和昴',rates:{maxHp:40,str:20,mag:50,dex:45,spd:45,lck:40,def:25,res:40}};
   const classRates={
   "commoner": {
     "maxHp": 0,

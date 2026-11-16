@@ -1,0 +1,41 @@
+{
+  "cellWidth": 192,
+  "cellHeight": 160,
+  "anchorX": 80,
+  "anchorY": 144,
+  "bodyHeight": 104,
+  "frames": {
+    "idle": {
+      "row": 0,
+      "count": 6
+    },
+    "walk": {
+      "row": 1,
+      "count": 7
+    },
+    "run": {
+      "row": 2,
+      "count": 8
+    },
+    "attack": {
+      "row": 3,
+      "count": 8
+    },
+    "attack2": {
+      "row": 4,
+      "count": 4
+    },
+    "jump": {
+      "row": 5,
+      "count": 8
+    },
+    "hurt": {
+      "row": 6,
+      "count": 3
+    },
+    "down": {
+      "row": 7,
+      "count": 5
+    }
+  }
+}

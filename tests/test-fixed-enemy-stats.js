@@ -2,7 +2,7 @@
 'use strict';
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('node:assert/strict');
 const w={console};w.window=w;vm.createContext(w);
-for(const f of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','rng','growth-data','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
+for(const f of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
 const M=w.MyGO,plain=x=>JSON.parse(JSON.stringify(x)),keys=['level','maxHp','str','mag','dex','spd','lck','def','res','move'];
 const fresh=(stage,opts={})=>new M.Game({stage,recruited:['xueyue','nina'],seed:1115,...opts});
 const enemies=g=>g.units.filter(u=>u.side==='enemy');
@@ -15,14 +15,14 @@ function summonAll(g){for(let i=0;i<4;i++){
  g.getUnit('tomori').y=11;g.phase='enemy';const wave=g.summonNearParty();assert(wave);g.beginNextPlayerPhase();
 }g.phase='player';}
 let count=0;function test(name,f){f();count++;console.log('✓ '+name);}
-test('Chapters 1-8 ignore imported party power, level, roster and later growth; no live scaling calls',()=>{
+test('Chapters 1-10 ignore imported party power, level, roster and later growth; no live scaling calls',()=>{
  const oldPark=M.Game.prototype.restoreLegacyEnemyScale,oldEighth=M.Game.prototype.restoreLegacyEighthScale;
  M.Game.prototype.restoreLegacyEnemyScale=M.Game.prototype.restoreLegacyEighthScale=()=>{throw Error('Live scaling must never run');};
- try{for(let stage=1;stage<=8;stage++){
+ try{for(let stage=1;stage<=10;stage++){
   const base=fresh(stage),before=stats(base),grown=fresh(stage);growParty(grown);
   assert.deepEqual(stats(fresh(stage,{loadout:grown.exportLoadout()})),before,'import chapter '+stage);
   assert.deepEqual(stats(fresh(stage,{recruited:[]})),before,'roster chapter '+stage);
-  growParty(base);if(stage===7)base.joinNijika();
+  growParty(base);if(stage===7)base.joinNijika();if(stage===10)base.completeTenthIntro();
   const e=enemies(base)[0];e.hp=3;for(let i=0;i<3;i++)base.beginNextPlayerPhase();
   assert.deepEqual(stats(base),before,'turns chapter '+stage);assert.equal(e.hp,3);
   const h=reload(base);assert.deepEqual(stats(h),before,'reload chapter '+stage);assert.equal(h.getUnit(e.id).hp,3);

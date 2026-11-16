@@ -98,7 +98,7 @@
       const map = this.game.map;
       if(this.game.stage>=4&&MyGO.ParkMap){
         lc.fillStyle='#050c17';lc.fillRect(0,0,this.logicalWidth,this.logicalHeight);
-        lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
+        lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===10?MyGO.TenthMap:this.game.stage===9?MyGO.RehearsalMap:this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
         this._depthScene=null;this._parkFogKey=null;this.terrainLayer=layer;return;
       }
       if (this.game.stage >= 2 && MyGO.MoonMap) {
@@ -855,7 +855,7 @@
     /** Upright pieces and scenery share foot depth above an undistorted square board. */
     _renderDepth(now) {
       const ctx=this.ctx,P=MyGO.MapProjection,v=this.projection;
-      const first=this.game.stage===1,art=this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:this.game.stage===4?MyGO.ParkMap:first?MyGO.GardenMap:MyGO.MoonMap;
+      const first=this.game.stage===1,art=this.game.stage===10?MyGO.TenthMap:this.game.stage===9?MyGO.RehearsalMap:this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:this.game.stage===4?MyGO.ParkMap:first?MyGO.GardenMap:MyGO.MoonMap;
       this.time=now;
       ctx.clearRect(0,0,this.logicalWidth,this.logicalHeight);
       if(!this.terrainLayer)this._buildTerrainLayer();
@@ -892,6 +892,7 @@
         art.drawObject(ctx,v,item);ctx.restore();
       }
       if(this.game.stage===4)art.drawFog(ctx,v,this.game,this);
+      if(this.game.stage>=9)MyGO.RehearsalMap.drawEffects(ctx,v,this.game,now);
       if(this.game.stage===6)MyGO.MaskedCourtArt.drawMapEffects(ctx,v,this.game,now);
       // Status bars stay visible even behind a flowering canopy.
       for(const {u,p,visual} of units){
@@ -903,7 +904,7 @@
         ctx.fillStyle='#122032';ctx.fillRect(p.x-w/2-1,p.y-48,w+2,4);
         ctx.fillStyle=ratio>.6?'#8be4b5':ratio>.3?'#e5d18a':'#fa8798';ctx.fillRect(p.x-w/2,p.y-47,w*ratio,2);
         if(u.boss){ctx.fillStyle='#ebcf8c';ctx.fillRect(p.x-w/2-4,p.y-48,2,4);}
-        if(u.key||u.inventory?.some(i=>i.id==='chest_key')){
+        if(u.key||u.inventory?.some(i=>['chest_key','strange_door_key'].includes(i.id))){
           ctx.save();ctx.strokeStyle='#ffe3a0';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x+18,p.y-42,3,0,Math.PI*2);ctx.moveTo(p.x+18,p.y-39);ctx.lineTo(p.x+18,p.y-31);ctx.lineTo(p.x+22,p.y-31);ctx.moveTo(p.x+18,p.y-34);ctx.lineTo(p.x+21,p.y-34);ctx.stroke();ctx.restore();
         }
       }

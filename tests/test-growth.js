@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const world={console,document:{readyState:'loading'},addEventListener:()=>{}};world.window=world;vm.createContext(world);
-for(const name of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','rng','growth-data','growth','grid','pathfinding','combat','game','ui','entry','loadout-ui'])
+for(const name of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','growth','grid','pathfinding','combat','game','ui','entry','loadout-ui'])
   vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),world,{filename:name+'.js'});
 const M=world.MyGO,G=M.Growth,D=M.GrowthData;let count=0;
 function test(name,fn){fn();count++;console.log('✓ '+name);}
@@ -9,9 +9,9 @@ function setup(){const g=new M.Game({seed:947}),a=g.getUnit('tomori'),b=g.getUni
   g.map={cols:20,rows:20,tiles:Array.from({length:20},()=>Array(20).fill('plain'))};
   g.units.forEach((u,n)=>Object.assign(u,{x:n%20,y:Math.floor(n/20)+12}));Object.assign(a,{x:4,y:4});Object.assign(b,{x:5,y:4});return{g,a,b};}
 function plain(v){return JSON.parse(JSON.stringify(v));}
-test('八人八项成长率与2026-11-14新版Excel逐项一致',()=>{
+test('原有八人成长率与新版Excel一致，昴采用新增作者配置',()=>{
   const expected={tomori:[45,35,30,50,55,45,25,30],anon:[35,35,20,55,50,35,25,35],rana:[40,35,35,40,60,45,30,35],soyo:[25,15,60,60,50,10,15,40],taki:[55,50,25,45,35,40,35,20],xueyue:[30,45,30,40,50,50,25,20],nina:[45,50,20,50,45,35,30,25],nijika:[45,30,35,35,35,50,35,40]};
-  assert.equal(Object.keys(D.personal).length,8);for(const [id,values] of Object.entries(expected))assert.deepEqual(D.keys.map(k=>D.personal[id].rates[k]).join(','),values.join(','));
+  assert.equal(Object.keys(D.personal).length,9);assert.equal(D.keys.map(k=>D.personal.subaru.rates[k]).join(','),'40,20,50,45,45,40,25,40');for(const [id,values] of Object.entries(expected))assert.deepEqual(D.keys.map(k=>D.personal[id].rates[k]).join(','),values.join(','));
 });
 test('44个职业成长修正齐全，当前职业实际成长含负修正',()=>{
   for(const c of M.Classes.items)assert(D.classes[c.id],c.id);assert.equal(Object.keys(D.classes).length,44);
@@ -33,7 +33,7 @@ test('升级逐项随机，100%以上保证整数部分，零成长不增加',()
   const fake={MyGO:{GrowthData:{...D,personal:{fake:{rates:{maxHp:150,str:100}}}}}};vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../src/growth.js'),'utf8'),{window:fake});
   const gains=fake.MyGO.Growth.rollLevel({id:'fake'},{int:()=>49});assert.equal(gains.maxHp,2);assert.equal(gains.str,1);assert.equal(gains.mag,0);
 });
-test('八名同伴每次升级至少两项，移动不随升级增长',()=>{for(const id of Object.keys(D.personal)){const g=new M.Game({stage:id==='nijika'?7:3,recruited:['xueyue'],seed:76}),u=g.getUnit(id);u.side='player';const move=u.move;for(let n=0;n<20;n++){const report=G.award(u,G.required(u.level));assert.equal(report.levels.length,1);assert(Object.values(report.levels[0].gains).filter(n=>n>0).length>=2);}assert.equal(u.move,move);}});
+test('九名同伴每次升级至少两项，移动不随升级增长',()=>{for(const id of Object.keys(D.personal)){const g=new M.Game({stage:id==='subaru'?10:id==='nijika'?7:3,recruited:['xueyue'],seed:76}),u=g.getUnit(id);u.side='player';const move=u.move;for(let n=0;n<20;n++){const report=G.award(u,G.required(u.level));assert.equal(report.levels.length,1);assert(Object.values(report.levels[0].gains).filter(n=>n>0).length>=2);}assert.equal(u.move,move);}});
 test('仁菜战士成长使用新数据，招募后升级与经验可完整读档',()=>{
   const g=new M.Game({stage:3,recruited:['xueyue'],seed:46}),n=g.getUnit('nina');
   assert.equal(D.keys.map(k=>G.rates(n)[k]).join(','),'55,55,20,50,45,35,30,20');

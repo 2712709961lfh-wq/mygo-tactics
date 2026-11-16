@@ -35,6 +35,20 @@ function draw(state, frame, facing = 'right', action, id = 'soyo') {
   assert(chars.hasActions('anon'));
   assert(chars.hasActions('taki'));
   assert(chars.hasActions('xueyue'));
+  assert(chars.hasActions('subaru'));
+  const subaru=JSON.parse(fs.readFileSync(path.join(root,'assets/characters/actions/subaru-actions.json')));
+  assert.equal(Object.values(subaru.frames).reduce((n,x)=>n+x.count,0),49);
+  for(const [state,spec] of Object.entries(subaru.frames)){
+    const pose=draw(state,999,'right',undefined,'subaru');
+    assert(pose[1].file.includes('subaru-actions.png'));
+    assert.equal(pose[2],(spec.count-1)*subaru.cellWidth);assert.equal(pose[3],spec.row*subaru.cellHeight);
+    assert.equal(pose[6],-subaru.anchorX*(90/subaru.bodyHeight));assert.equal(pose[7],-subaru.anchorY*(90/subaru.bodyHeight));
+  }
+  assert.equal(draw('attack',999,'left','attack2','subaru')[3],4*subaru.cellHeight);
+  for(const facing of ['up','down','left','right'])for(const moving of [false,true]){
+    calls.length=0;chars.drawMap(ctx,{id:'subaru',facing,_walking:moving},0,60,60,0);
+    assert(calls.some(x=>x[0]==='drawImage'&&x[1].file.includes(moving?'/walk/':'/idle/')));
+  }
   const snow = JSON.parse(fs.readFileSync(path.join(root, 'assets/characters/actions/xueyue-actions.json')));
   assert.equal(Object.values(snow.frames).reduce((n, x) => n + x.count, 0), 61);
   for (const [state, spec] of Object.entries(snow.frames)) {

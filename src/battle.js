@@ -430,7 +430,7 @@
       const takiCustom = a.id === 'taki' && MyGO.Characters && MyGO.Characters.hasActions(a.id);
       const swordCustom = ((a.id === 'tomori' || a.id === 'dark_tomori') || a.id === 'xueyue') && MyGO.Characters && MyGO.Characters.hasActions(a.id);
       const armorCustom = !!MyGO.WatercourtArt?.isArmored(a.id);
-      const retreatStart = takiCustom || swordCustom || armorCustom || a.id === 'nina' ? 0.70 : 0.62;
+      const retreatStart = takiCustom || swordCustom || armorCustom || (a.id === 'nina'||a.id==='dark_nina') ? 0.70 : 0.62;
       const gap = a.id === 'rana' && MyGO.Characters && MyGO.Characters.hasActions(a.id)
         ? 80 : armorCustom ? (kind==='lance'?72:64) : MELEE_GAP[kind] || 60;
       const dashTarget = defHome - gap;
@@ -514,7 +514,7 @@
         const after = 1 - Math.abs(t - 0.45) / 0.13;
         if (after > 0) {
           for (let i = 3; i >= 1; i--) {
-            const running = (armorCustom || (a.id === 'tomori' || a.id === 'dark_tomori') || a.id === 'xueyue' || a.id === 'rana' || a.id === 'taki' || a.id === 'nina') && MyGO.Characters && MyGO.Characters.hasActions(a.id);
+            const running = (armorCustom || (a.id === 'tomori' || a.id === 'dark_tomori') || a.id === 'xueyue' || a.id === 'rana' || a.id === 'taki' || (a.id === 'nina'||a.id==='dark_nina')) && MyGO.Characters && MyGO.Characters.hasActions(a.id);
             this._sprite(ctx, a, atkX - i * 13, atkY, 1, 0, atkLean * 0.4, 0.06 * after,
               swordCustom && r.crit ? 'rush' : running ? 'run' : 'attack',
               swordCustom && r.crit ? Math.min(2, Math.floor(clamp01((t - DASH_START) / .20) * 3))
@@ -533,9 +533,9 @@
       let atkState = t >= (customAtk ? 0.18 : 0.34) && t < (customAtk ? 0.70 : 0.68) ? 'attack' : 'idle';
       // 攻击行第 0 帧是正面举武器，后续帧包含转身，战斗中固定用第 0 帧。
       let atkFrame = customAtk ? (t > 0.62 ? 1 : Math.min(6, Math.floor(clamp01((t - 0.18) / 0.34) * 7))) : 0;
-      if(customAtk&&a.id==='nijika'){
+      if(customAtk&&['nijika','subaru'].includes(a.id)){
         atkState=t>=.18&&t<.74?'attack':'idle';
-        atkFrame=atkState==='attack'?Math.min(7,Math.floor(clamp01((t-.18)/.54)*8)):Math.floor(t*(this.duration||1800)/160)%8;
+        atkFrame=atkState==='attack'?Math.min(a.id==='subaru'&&r.crit?3:7,Math.floor(clamp01((t-.18)/.54)*(a.id==='subaru'&&r.crit?4:8))):Math.floor(t*(this.duration||1800)/160)%(a.id==='subaru'?6:8);
         atkY=feetY;atkLean=0;
       }
       if(armorCustom){
@@ -549,7 +549,7 @@
         }else if(t>=.70&&t<.84){atkState='walk';atkFrame=Math.floor(t*(this.duration||1800)/90)%8;}
         atkY=feetY;atkLean=0;
       }
-      if (customAtk && a.id === 'nina') {
+      if (customAtk && (a.id === 'nina'||a.id==='dark_nina')) {
         atkState='idle';atkFrame=Math.floor(t*(this.duration||1800)/140)%6;
         if(t>=DASH_START&&t<DASH_END){atkState='run';atkFrame=Math.floor(t*(this.duration||1800)/55)%8;}
         else if(t>=DASH_END&&t<.70){
@@ -735,7 +735,7 @@
           defY = feetY;
           defLean = 0;
         }
-      } else if (customDef && b.id === 'nina') {
+      } else if (customDef && (b.id === 'nina'||b.id==='dark_nina')) {
         defState='idle';defFrame=Math.floor(t*(this.duration||1800)/140)%6;
         if(hit&&(r.killed||r.hpAfter<=0)&&impactAge>=140){
           defState='down';defFrame=Math.min(2,Math.floor((impactAge-140)/120));
@@ -756,11 +756,11 @@
         defState='idle';defFrame=Math.floor(t*(this.duration||1800)/180)%MyGO.MaskedCourtArt.specs.idle[1];
         if(hit&&impactAge>=0&&impactAge<360){defState='hurt';defFrame=MyGO.MaskedCourtArt.frameAt('hurt',impactAge/360);defY=feetY;defLean=0;}
         if(!hit){defY=feetY;defLean=0;}
-      } else if (customDef&&b.id==='nijika') {
-        defFrame=Math.floor(t*(this.duration||1800)/160)%8;
+      } else if (customDef&&['nijika','subaru'].includes(b.id)) {
+        defFrame=Math.floor(t*(this.duration||1800)/160)%(b.id==='subaru'?6:8);
         if(defState==='hurt')defFrame=Math.min(2,Math.floor(impactAge/110));
-        if(defState==='down'){defFrame=Math.min(5,Math.floor((impactAge-220)/85));defY=feetY;defLean=0;}
-        if(!hit){defState='idle';defY=feetY;defLean=0;}
+        if(defState==='down'){defFrame=Math.min(b.id==='subaru'?4:5,Math.floor((impactAge-220)/85));defY=feetY;defLean=0;}
+        if(!hit){defState=b.id==='subaru'&&impactAge>=0&&impactAge<560?'jump':'idle';if(defState==='jump')defFrame=Math.min(7,Math.floor(impactAge/70));defY=feetY;defLean=0;}
       } else if (customDef) {
         if (!hit && impactAge >= 0 && impactAge < 540) {
           defState = 'jump';
@@ -773,11 +773,11 @@
       }
       this._sprite(ctx, b, defX, defY, -1, defFlash, defLean, defAlpha, defState, defFrame);
       this._sprite(ctx, a, atkX, atkY, 1, 0, atkLean, 1, atkState, atkFrame,
-        a.id === 'nina' ? (r.crit ? 'attack3' : r.kind === 'combo' ? 'attack2' : 'attack')
+        (a.id === 'nina'||a.id==='dark_nina') ? (r.crit ? 'attack3' : r.kind === 'combo' ? 'attack2' : 'attack')
           : a.id === 'xueyue' ? (r.crit ? 'rush' : this.xueyueAction || 'attack')
           : (a.id === 'tomori' || a.id === 'dark_tomori') ? (r.crit ? 'rush' : this.tomoriAction || 'attack')
           : a.id === 'taki' ? (r.crit ? 'special' : this.takiAction || 'attack')
-          : a.id === 'rana' ? (r.crit ? 'attack2' : 'attack') : r.crit ? 'flame' : 'fireball');
+          : a.id === 'subaru' ? (r.crit?'attack2':'attack') : a.id === 'rana' ? (r.crit ? 'attack2' : 'attack') : r.crit ? 'flame' : 'fireball');
 
       // 按武器类型绘制攻击动作与飞行道具。
       this._drawWeaponFx(ctx, kind, t, atkX, atkY, defX, feetY);
@@ -1315,7 +1315,8 @@
       const ctx = bg.getContext('2d');
       ctx.imageSmoothingEnabled = false;
       ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
-      if(this.stage>=7&&MyGO.LivehouseArt)MyGO.LivehouseArt.drawBattleBackground(ctx,W,H);
+      if(this.stage>=9&&MyGO.RehearsalMap)MyGO.RehearsalMap.drawBattleBackground(ctx,W,H);
+      else if(this.stage>=7&&MyGO.LivehouseArt)MyGO.LivehouseArt.drawBattleBackground(ctx,W,H);
       else if(this.stage>=4&&MyGO.ParkMap)MyGO.ParkMap.drawBattleBackground(ctx,W,H,this.lampsLit);
       else this._paintBackground(ctx);
       this._backgroundKey=(this.stage||1)+'|'+!!this.lampsLit;

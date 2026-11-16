@@ -95,7 +95,8 @@
     rana:'士兵 → 战马骑士 / 飞马骑士 → 圣骑士 / 飞龙骑士',
     soyo:'修道士 → 术师 / 牧师 → 术士 / 主教 → 格莫瑞',
     taki:'战士 → 土匪 → 勇士 → 飞龙将领',
-    xueyue:'剑客 → 佣兵 / 盗贼 → 刀剑将领 / 暗杀者'
+    xueyue:'剑客 → 佣兵 / 盗贼 → 刀剑将领 / 暗杀者',
+    subaru:'术师 → 术士 / 主教 → 格莫瑞'
   });
   function apply(u,id){
     const job=byId.get(id);if(!job)throw Error('未知职业');

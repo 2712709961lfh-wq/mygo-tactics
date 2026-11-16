@@ -8,10 +8,12 @@
   const accessoryIds=['leather_shield','iron_shield','steel_shield','silver_shield','talisman_shield','hexlock_shield','accuracy_ring','critical_ring','evasion_ring','speed_ring','march_ring','magic_staff','healing_staff'];
   const courtyardKey=Object.freeze({id:'courtyard_key',name:'内庭钥匙',kind:'key',category:'key',uses:1,icon:'accuracy-ring',
     effect:'开启第一关内庭大门。持有者须站在门旁使用，使用后消耗钥匙并结束行动。'});
+  const strangeDoorKey=Object.freeze({id:'strange_door_key',name:'奇怪的门的钥匙',kind:'key',category:'key',uses:1,icon:'accuracy-ring',
+    effect:'第九关击败裂空天马后，在奇怪的门旁使用并通关。钥匙在运输队或战利品暂存中时也可使用。'});
   const chestKey=Object.freeze({id:'chest_key',name:'宝箱钥匙',kind:'key',category:'key',uses:1,icon:'accuracy-ring',
     effect:'持有者站在宝箱上或相邻1格，消耗钥匙开箱并结束行动。'});
   const supplyIds=E.items.filter(e=>['consumable','seal'].includes(e.kind)).map(e=>e.id);
-  const allowed=new Set([...E.items.map(e=>e.id),courtyardKey.id,chestKey.id]);
+  const allowed=new Set([...E.items.map(e=>e.id),courtyardKey.id,chestKey.id,strangeDoorKey.id]);
   // Soyo's original v4.8 spell list is accepted only for save migration.
   const retiredSoyoSpells=new Set(['wind','thunder','thoron','nosferatu','physic','restore','ward','rescue','warp','silence','fortify']);
   const weapons=Object.fromEntries(E.items.filter(e=>e.kind==='weapon').map(e=>{
@@ -23,7 +25,7 @@
   for(const s of Magic.items)if(!s.support)weapons[s.id]=Object.freeze({...s,absoluteHit:true});
   const unarmed=Object.freeze({id:'unarmed',name:'未装备攻击手段',type:'none',range:[0,0],might:0,hit:0,crit:0,weight:0,damageType:'physical',cannotAttack:true,color:'#aaa'});
   weapons.unarmed=unarmed;
-  function item(id){return id===courtyardKey.id?courtyardKey:id===chestKey.id?chestKey:E.get(id);}
+  function item(id){return id===strangeDoorKey.id?strangeDoorKey:id===courtyardKey.id?courtyardKey:id===chestKey.id?chestKey:E.get(id);}
   function make(id){if(!allowed.has(id))throw Error('该物品尚未开放配置');const e=item(id);return{id,uses:e.uses};}
   function magicAllowed(u){return !u.classId||!!M.Classes?.get(u.classId)?.magic;}
   function canEquip(u,e){
