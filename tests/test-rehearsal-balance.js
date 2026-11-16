@@ -5,23 +5,52 @@ for(const f of ['equipment-data','magic-data','inventory','class-data','config',
 const M=w.MyGO,plain=x=>JSON.parse(JSON.stringify(x)),fresh=stage=>new M.Game({stage,recruited:['xueyue','nina'],seed:1116});
 const reload=s=>{const g=fresh(1);g.restore(plain(s));return g;};
 let count=0;function test(name,fn){fn();count++;console.log('✓ '+name);}
-test('Ch9/10 ordinary budgets match the supplied save scale and retain distinct effective stats',()=>{
+test('Both halves use original chapter-nine ordinary budgets and retain distinct effective stats',()=>{
  for(const stage of [9,10]){
   const g=fresh(stage),normals=g.units.filter(u=>u.side==='enemy'&&!u.boss);
   for(const u of normals){
    const total=M.Combat.statTotalOf(u),special=u.tags.includes('armor')||u.tags.includes('flying');
-   const [low,high]=stage===9?(special?[114,115]:[108,111]):(special?[119,120]:[116,119]);
-   assert(total>=low&&total<=high,u.id+': '+total);assert.equal(u.level,stage===9?(special?13:12):14);
+   const [low,high]=special?[114,115]:[108,111];
+   assert(total>=low&&total<=high,u.id+': '+total);assert.equal(u.level,special?13:12);
    if(u.weapon.damageType==='magic'){assert(u.mag>u.str);assert(u.str>=8);}else {assert(u.str>u.mag);assert(u.mag>=6);}
-   if(u.tags.includes('armor')){assert.equal(u.def,stage===9?20:21);assert.equal(u.res,5);assert.equal(u.move,3);}
+   if(u.tags.includes('armor')){assert.equal(u.def,20);assert.equal(u.res,5);assert.equal(u.move,3);}
    if(u.tags.includes('flying'))assert.equal(u.move,6);
   }
   assert(new Set(normals.map(u=>M.Combat.statTotalOf(u))).size>=4);
  }
 });
+test('Every finale ordinary unit matches its corresponding first-half level and all nine stats',()=>{
+ const first=fresh(9),last=fresh(10),keys=['level','maxHp','str','mag','dex','spd','lck','def','res','move'];
+ const sources=['sword-a','axe-a','bow-a','lance-a','mage-a','sword-b','bow-b'];
+ for(const u of last.units.filter(u=>u.side==='enemy'&&!u.boss)){
+  const type=u.tags.includes('armor')?'armor-0':u.tags.includes('flying')?'pegasus-0':sources[Number(u.id.split('-').pop())%7];
+  assert.deepEqual(keys.map(k=>u[k]),keys.map(k=>first.getUnit('rehearsal-'+type)[k]),u.id);
+ }
+});
+test('Previous finale saves migrate wounds once while retaining enemy deaths, positions, status and progress',()=>{
+ for(const legacyChapter of [false,true])for(const wound of ['full','half','one','dead']){
+  const g=fresh(10);g.completeTenthIntro();const s=plain(g.serialize());delete s.rehearsalFinaleBalanceVersion;
+  if(legacyChapter){s.stage=10;delete s.rehearsalChapterVersion;delete s.rehearsalPart;delete s.rehearsalFirstDefeated;}
+  for(const [id,oldMax]of Object.entries(g.mission.legacyFinaleMaxHp)){
+   const u=s.units.find(u=>u.id===id);u.hp=wound==='full'?oldMax:wound==='half'?Math.floor(oldMax/2):wound==='one'?1:0;
+   u.dead=wound==='dead';u.acted=true;u.alerted=true;u.status={frostSpeedDown:1};
+  }
+  const h=reload(s);
+  for(const [id,oldMax]of Object.entries(g.mission.legacyFinaleMaxHp)){
+   const u=h.getUnit(id),old=s.units.find(u=>u.id===id);
+   assert.equal(u.hp,Math.ceil(u.maxHp*old.hp/oldMax),id);assert.equal(u.dead,old.dead);
+   assert.equal(u.x,old.x);assert.equal(u.y,old.y);assert(u.acted&&u.alerted);assert.equal(u.status.frostSpeedDown,1);
+  }
+  assert.equal(h.gold,g.gold);assert(h.subaruJoined);assert.equal(h.getUnit('subaru').hp,g.getUnit('subaru').hp);
+  assert.equal(h.getUnit('dark_nina').hp,g.getUnit('dark_nina').hp);
+  const save=plain(h.serialize());assert.equal(save.rehearsalFinaleBalanceVersion,1);
+  assert.deepEqual(plain(reload(save).serialize()),save);
+ }
+ for(const bad of [0,2,null,'1',true]){const s=plain(fresh(10).serialize());s.rehearsalFinaleBalanceVersion=bad;assert.throws(()=>reload(s),/后半段属性版本/);}
+});
 test('Boss stat vectors exactly match the supplied chapter 9/10 values',()=>{
  const keys=['level','maxHp','str','mag','dex','spd','lck','def','res','move'];
- assert.deepEqual(keys.map(k=>fresh(9).getUnit('rift_pegasus')[k]),[15,40,17,8,16,16,9,11,18,6]);
+ assert.deepEqual(keys.map(k=>fresh(9).getUnit('rift_pegasus')[k]),[15,40,16,8,14,16,8,10,18,6]);
  assert.deepEqual(keys.map(k=>fresh(10).getUnit('dark_nina')[k]),[16,43,15,7,15,19,8,11,9,5]);
 });
 test('Boss old saves preserve HP ratio, deaths and battle state, and migrate only once',()=>{

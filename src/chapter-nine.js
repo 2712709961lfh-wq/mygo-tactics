@@ -36,7 +36,7 @@
   ...(type==='armor'?{maxHp:33,str:16,mag:7,dex:12,spd:8,lck:10,def:20,res:5}:{maxHp:29,str:13,mag:7,dex:14,spd:15,lck:10,def:9,res:12}),
   boss:false,key:false,hpFloor:0,dormant:false,drops:[],carriedItems:[],guardRadius:5,guardGroup:y>=14?'rehearsal-middle':'rehearsal-rear',facing:'down'});
  const boss={...special('pegasus','boss',13,5),id:'rift_pegasus',name:'裂空天马·门之守卫',shortName:'裂空天马',
-  level:15,maxHp:40,str:17,mag:8,dex:16,spd:16,lck:9,def:11,res:18,move:6,weapon:'steel_lance',boss:true,key:true,
+  level:15,maxHp:40,str:16,mag:8,dex:14,spd:16,lck:8,def:10,res:18,move:6,weapon:'steel_lance',boss:true,key:true,
   drops:['strange_door_key','steel_lance'],carriedItems:['strange_door_key'],guardGroup:'rehearsal-door',guardRadius:6,
   quote:'苍白的羽翼拖着裂隙的光。它守护的门后，究竟通向哪里？'};
  const enemies=regular.concat([special('armor',0,12,17),special('armor',1,16,10),special('pegasus',0,6,14),special('pegasus',1,21,13),boss]);

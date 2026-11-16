@@ -1128,7 +1128,7 @@
         awakenedBells: this.awakenedBells.slice(),
         ...(this.stage===4?{litLamps:this.litLamps.slice(),bossDiscovered:this.bossDiscovered,
           soyoBossBonus:this.soyoBossBonus,enemyScaleLevel:this.enemyScaleLevel}:{}),
-        ...(this.stage===10?{stageTenIntroSeen:this.stageTenIntroSeen,subaruJoined:this.subaruJoined,nijikaLevelVersion:1}:{}),
+        ...(this.stage===10?{stageTenIntroSeen:this.stageTenIntroSeen,subaruJoined:this.subaruJoined,nijikaLevelVersion:1,rehearsalFinaleBalanceVersion:1}:{}),
         ...(this.stage===9?{stageNineIntroSeen:this.stageNineIntroSeen,nijikaLevelVersion:1}:{}),
         ...(this.stage===8?{stageEightIntroSeen:this.stageEightIntroSeen,enemyScaleVersion:4,enemyScalePower:this.enemyScalePower,nijikaLevelVersion:1,lootLayoutVersion:1,openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
         ...(this.stage===5?{openedChests:this.openedChests.slice(),enemyScaleLevel:this.enemyScaleLevel}:{}),
@@ -1175,6 +1175,7 @@
       if(snapshot.fixedEnemyStatsVersion!==undefined&&snapshot.fixedEnemyStatsVersion!==1)throw Error('存档固定敌军属性版本无效');
       if(snapshot.rehearsalBalanceVersion!==undefined&&snapshot.rehearsalBalanceVersion!==1)throw Error('存档排练室属性版本无效');
       if(snapshot.rehearsalBossBalanceVersion!==undefined&&snapshot.rehearsalBossBalanceVersion!==1)throw Error('存档排练室Boss属性版本无效');
+      if(snapshot.rehearsalFinaleBalanceVersion!==undefined&&snapshot.rehearsalFinaleBalanceVersion!==1)throw Error('存档排练室后半段属性版本无效');
       if(snapshot.inventoryVersion!==undefined&&snapshot.inventoryVersion!==1)throw Error('背包存档版本不兼容');
       if (snapshot.stage === 2 && snapshot.mapRevision !== C.STAGE_TWO.mapRevision) {
         throw new Error('第二关地图已重新设计，请重开第二关；旧存档仍然保留。');
@@ -1335,6 +1336,10 @@
         if(snapshot.rehearsalBalanceVersion===undefined&&legacyMaxHp){
           const oldMax=legacyMaxHp+(saved.id==='subaru'?(saved.growth?.gains?.maxHp||0):0);
           unit.hp=Math.max(0,Math.min(unit.maxHp,Math.ceil(unit.maxHp*(Number(saved.hp)||0)/oldMax-1e-9)));
+        }
+        const legacyFinaleMaxHp=this.stage===10?C.STAGE_TEN.legacyFinaleMaxHp[saved.id]:undefined;
+        if(snapshot.rehearsalBalanceVersion===1&&snapshot.rehearsalFinaleBalanceVersion===undefined&&legacyFinaleMaxHp){
+          unit.hp=Math.max(0,Math.min(unit.maxHp,Math.ceil(unit.maxHp*(Number(saved.hp)||0)/legacyFinaleMaxHp-1e-9)));
         }
         if([9,10].includes(this.stage)&&unit.boss&&snapshot.rehearsalBossBalanceVersion===undefined){
           unit.hp=Math.max(0,Math.min(unit.maxHp,Math.ceil(unit.maxHp*(Number(saved.hp)||0)/46-1e-9)));
