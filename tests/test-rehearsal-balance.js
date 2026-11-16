@@ -10,10 +10,10 @@ test('Both halves use original chapter-nine ordinary budgets and retain distinct
   const g=fresh(stage),normals=g.units.filter(u=>u.side==='enemy'&&!u.boss);
   for(const u of normals){
    const total=M.Combat.statTotalOf(u),special=u.tags.includes('armor')||u.tags.includes('flying');
-   const [low,high]=special?[114,115]:[108,111];
+   const [low,high]=u.tags.includes('armor')?[104,104]:u.tags.includes('flying')?[106,106]:[99,102];
    assert(total>=low&&total<=high,u.id+': '+total);assert.equal(u.level,special?13:12);
    if(u.weapon.damageType==='magic'){assert(u.mag>u.str);assert(u.str>=8);}else {assert(u.str>u.mag);assert(u.mag>=6);}
-   if(u.tags.includes('armor')){assert.equal(u.def,20);assert.equal(u.res,5);assert.equal(u.move,3);}
+   if(u.tags.includes('armor')){assert.equal(u.def,18);assert.equal(u.res,3);assert.equal(u.move,3);assert.equal(u.mag,7);}
    if(u.tags.includes('flying'))assert.equal(u.move,6);
   }
   assert(new Set(normals.map(u=>M.Combat.statTotalOf(u))).size>=4);
@@ -25,6 +25,47 @@ test('Every finale ordinary unit matches its corresponding first-half level and 
  for(const u of last.units.filter(u=>u.side==='enemy'&&!u.boss)){
   const type=u.tags.includes('armor')?'armor-0':u.tags.includes('flying')?'pegasus-0':sources[Number(u.id.split('-').pop())%7];
   assert.deepEqual(keys.map(k=>u[k]),keys.map(k=>first.getUnit('rehearsal-'+type)[k]),u.id);
+ }
+});
+
+test('Chapter-wide reduction removes two HP and two points of the actual damage stat',()=>{
+ const before={
+  'sword-a':[31,13,7],'axe-a':[35,16,6],'bow-a':[29,13,7],'lance-a':[33,14,6],
+  'mage-a':[28,8,15],'sword-b':[30,14,6],'bow-b':[30,12,8],armor:[33,16,7],pegasus:[29,13,7]
+ };
+ const sources=['sword-a','axe-a','bow-a','lance-a','mage-a','sword-b','bow-b'];
+ for(const stage of [9,10])for(const u of fresh(stage).units.filter(u=>u.side==='enemy'&&!u.boss)){
+  const type=u.tags.includes('armor')?'armor':u.tags.includes('flying')?'pegasus':stage===9?u.id.slice('rehearsal-'.length):sources[Number(u.id.split('-').pop())%7];
+  const [hp,str,mag]=before[type],magic=u.weapon.damageType==='magic';
+  assert.deepEqual([u.maxHp,u.str,u.mag],[hp-2,str-(magic?0:2),mag-(magic?2:0)],u.id);
+ }
+});
+
+test('Recent saves migrate all enemy HP once, retain battle state and leave player wounds unchanged',()=>{
+ for(const stage of [9,10])for(const wound of ['full','half','one','dead']){
+  const g=fresh(stage);if(stage===9)g.completeNinthIntro();else g.completeTenthIntro();
+  for(const u of g.units.filter(u=>u.side==='player'))u.hp=Math.max(1,u.hp-5);
+  const s=plain(g.serialize());delete s.rehearsalHpVersion;
+  for(const [id,oldMax]of Object.entries(g.mission.legacyRecentMaxHp)){
+   const u=s.units.find(u=>u.id===id);
+   Object.assign(u,{hp:wound==='full'?oldMax:wound==='half'?Math.floor(oldMax/2):wound==='one'?1:0,
+    dead:wound==='dead',acted:true,alerted:true,status:{frostSpeedDown:1}});
+  }
+  const h=reload(s);
+  for(const [id,oldMax]of Object.entries(g.mission.legacyRecentMaxHp)){
+   const u=h.getUnit(id),old=s.units.find(u=>u.id===id);
+   assert.equal(u.hp,Math.ceil(u.maxHp*old.hp/oldMax),id);assert.equal(u.dead,old.dead);
+   assert.equal(u.x,old.x);assert.equal(u.y,old.y);assert(u.acted&&u.alerted);assert.equal(u.status.frostSpeedDown,1);
+  }
+  for(const u of g.units.filter(u=>u.side==='player')){
+   const restored=h.getUnit(u.id);assert.equal(restored.hp,u.hp,u.id);assert.equal(restored.maxHp,u.maxHp);assert.equal(M.Combat.statTotalOf(restored),M.Combat.statTotalOf(u));
+  }
+  assert.equal(h.turn,g.turn);assert.equal(h.gold,g.gold+(stage===10&&wound==='dead'?2000:0));
+  const save=plain(h.serialize());assert.equal(save.rehearsalHpVersion,1);
+  assert.deepEqual(plain(reload(save).serialize()),save);
+ }
+ for(const stage of [9,10])for(const value of [0,2,null,'1',true]){
+  const s=plain(fresh(stage).serialize());s.rehearsalHpVersion=value;assert.throws(()=>reload(s),/排练室生命版本/);
  }
 });
 test('Previous finale saves migrate wounds once while retaining enemy deaths, positions, status and progress',()=>{
@@ -50,8 +91,8 @@ test('Previous finale saves migrate wounds once while retaining enemy deaths, po
 });
 test('Boss stat vectors exactly match the supplied chapter 9/10 values',()=>{
  const keys=['level','maxHp','str','mag','dex','spd','lck','def','res','move'];
- assert.deepEqual(keys.map(k=>fresh(9).getUnit('rift_pegasus')[k]),[15,40,16,8,14,16,8,10,18,6]);
- assert.deepEqual(keys.map(k=>fresh(10).getUnit('dark_nina')[k]),[16,43,15,7,15,19,8,11,9,5]);
+ assert.deepEqual(keys.map(k=>fresh(9).getUnit('rift_pegasus')[k]),[15,39,16,8,14,16,8,10,18,6]);
+ assert.deepEqual(keys.map(k=>fresh(10).getUnit('dark_nina')[k]),[16,41,15,7,15,19,8,11,9,5]);
 });
 test('Boss old saves preserve HP ratio, deaths and battle state, and migrate only once',()=>{
  for(const stage of [9,10])for(const hp of [46,23,1,0])for(const ordinaryLegacy of [false,true]){

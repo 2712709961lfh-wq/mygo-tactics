@@ -17,7 +17,7 @@ test('28×34 room has connected party, equipment lanes, enemies and locked exit'
 test('Boss has enhanced pegasus stats, a usable steel lance, key and exact drops',()=>{
  const g=fresh(),b=g.getUnit('rift_pegasus'),p=g.getUnit('rehearsal-pegasus-0');
  assert(b.boss&&b.tags.includes('flying'));assert.equal(b.weaponId,'steel_lance');assert(I.usable(b));
- assert.equal(M.Combat.statTotalOf(b),136);assert(M.Combat.statTotalOf(b)>M.Combat.statTotalOf(p));assert.equal(M.Combat.preview(g.getUnit('anon'),b,g.map).effectiveness,3);
+ assert.equal(M.Combat.statTotalOf(b),135);assert(M.Combat.statTotalOf(b)>M.Combat.statTotalOf(p));assert.equal(M.Combat.preview(g.getUnit('anon'),b,g.map).effectiveness,3);
  assert.deepEqual(plain(b.drops),['strange_door_key','steel_lance']);assert(b.inventory.some(i=>i.id==='strange_door_key'));
  assert(g.living('enemy').filter(u=>u.tags.includes('armor')).every(u=>u.def-u.res>=15));
 });

@@ -1115,7 +1115,7 @@
       return {
         version: C.SAVE_VERSION,
         ...(this.stage>=4?{fixedEnemyStatsVersion:1}:{}),
-        ...([9,10].includes(this.stage)?{rehearsalBalanceVersion:1,rehearsalBossBalanceVersion:1}:{}),
+        ...([9,10].includes(this.stage)?{rehearsalBalanceVersion:1,rehearsalBossBalanceVersion:1,rehearsalHpVersion:1}:{}),
         stage: this.chapterNumber,
         ...([9,10].includes(this.stage)?{rehearsalChapterVersion:1,rehearsalPart:this.stage===10?2:1,
           rehearsalFirstDefeated:this.stage===10?(this.rehearsalFirstDefeated||0):0}:{}),
@@ -1175,6 +1175,7 @@
       if(snapshot.fixedEnemyStatsVersion!==undefined&&snapshot.fixedEnemyStatsVersion!==1)throw Error('存档固定敌军属性版本无效');
       if(snapshot.rehearsalBalanceVersion!==undefined&&snapshot.rehearsalBalanceVersion!==1)throw Error('存档排练室属性版本无效');
       if(snapshot.rehearsalBossBalanceVersion!==undefined&&snapshot.rehearsalBossBalanceVersion!==1)throw Error('存档排练室Boss属性版本无效');
+      if(snapshot.rehearsalHpVersion!==undefined&&snapshot.rehearsalHpVersion!==1)throw Error('存档排练室生命版本无效');
       if(snapshot.rehearsalFinaleBalanceVersion!==undefined&&snapshot.rehearsalFinaleBalanceVersion!==1)throw Error('存档排练室后半段属性版本无效');
       if(snapshot.inventoryVersion!==undefined&&snapshot.inventoryVersion!==1)throw Error('背包存档版本不兼容');
       if (snapshot.stage === 2 && snapshot.mapRevision !== C.STAGE_TWO.mapRevision) {
@@ -1332,17 +1333,16 @@
         MyGO.Classes.restore(unit,saved.classState);
         if(!Number.isFinite(Grid.movementCost(this.map,unit,saved.x,saved.y)))throw Error('存档停留在阻挡地形');
         unit.hp = Math.max(0, Math.min(unit.maxHp, Number(saved.hp) || 0));
-        const legacyMaxHp=[9,10].includes(this.stage)?missionForStage(this.stage).legacyMaxHp[saved.id]:undefined;
-        if(snapshot.rehearsalBalanceVersion===undefined&&legacyMaxHp){
-          const oldMax=legacyMaxHp+(saved.id==='subaru'?(saved.growth?.gains?.maxHp||0):0);
-          unit.hp=Math.max(0,Math.min(unit.maxHp,Math.ceil(unit.maxHp*(Number(saved.hp)||0)/oldMax-1e-9)));
-        }
-        const legacyFinaleMaxHp=this.stage===10?C.STAGE_TEN.legacyFinaleMaxHp[saved.id]:undefined;
-        if(snapshot.rehearsalBalanceVersion===1&&snapshot.rehearsalFinaleBalanceVersion===undefined&&legacyFinaleMaxHp){
-          unit.hp=Math.max(0,Math.min(unit.maxHp,Math.ceil(unit.maxHp*(Number(saved.hp)||0)/legacyFinaleMaxHp-1e-9)));
-        }
-        if([9,10].includes(this.stage)&&unit.boss&&snapshot.rehearsalBossBalanceVersion===undefined){
-          unit.hp=Math.max(0,Math.min(unit.maxHp,Math.ceil(unit.maxHp*(Number(saved.hp)||0)/46-1e-9)));
+        if([9,10].includes(this.stage)){
+          const mission=missionForStage(this.stage),legacyMax=mission.legacyMaxHp[saved.id];
+          const legacyFinaleMax=this.stage===10?mission.legacyFinaleMaxHp[saved.id]:undefined;
+          let oldMax;
+          // Select the save's original HP ceiling, then convert exactly once.
+          if(unit.boss&&snapshot.rehearsalBossBalanceVersion===undefined)oldMax=46;
+          else if(snapshot.rehearsalBalanceVersion===undefined&&legacyMax)oldMax=legacyMax+(saved.id==='subaru'?(saved.growth?.gains?.maxHp||0):0);
+          else if(snapshot.rehearsalFinaleBalanceVersion===undefined&&legacyFinaleMax)oldMax=legacyFinaleMax;
+          else if(snapshot.rehearsalHpVersion===undefined)oldMax=mission.legacyRecentMaxHp[saved.id];
+          if(oldMax)unit.hp=Math.max(0,Math.min(unit.maxHp,Math.ceil(unit.maxHp*(Number(saved.hp)||0)/oldMax-1e-9)));
         }
         unit.dead = !!saved.dead || unit.hp <= 0;
         unit.acted = !!saved.acted || unit.dead;

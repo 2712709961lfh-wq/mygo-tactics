@@ -15,7 +15,7 @@
   name:type==='armor'?'回环重装':'回环天马骑士',shortName:type==='armor'?'回环重装':'回环天马',
   guardGroup:y>=20?'loop-south':y>=13?'loop-center':'loop-north',guardRadius:6,facing:y>=17?'up':'down'});
  const phantom={...C.NINA,id:'dark_nina',name:'井芹仁菜幻影',shortName:'仁菜幻影',side:'enemy',classId:'brawler',className:'拳斗士',
-  level:16,maxHp:43,str:15,mag:7,dex:15,spd:19,lck:8,def:11,res:9,move:5,weapon:'steel_gauntlets',spells:[],x:13,y:14,
+  level:16,maxHp:41,str:15,mag:7,dex:15,spd:19,lck:8,def:11,res:9,move:5,weapon:'steel_gauntlets',spells:[],x:13,y:14,
   boss:true,key:false,hpFloor:0,dormant:false,tags:[],drops:[],carriedItems:[],guardGroup:'loop-phantom',guardRadius:5,facing:'down',
   quote:'它没有回答。只有模仿仁菜的拳头，一次次打向眼前的人。'};
  const enemies=regular.concat([special('armor',0,10,19),special('armor',1,18,16),special('armor',2,15,8),special('pegasus',0,6,23),special('pegasus',1,22,10),phantom]);
@@ -25,6 +25,8 @@
   subtitle:'奇怪的门后依然是熟悉的排练室。中央，安和昴正被一个与仁菜一模一样的身影攻击。',
   objective:'击败所有敌人',gateHint:'昴会在开场对话后直接加入队伍。由南侧入口赶往中央，与她会合并清理四周敌人。仁菜幻影为拳斗士，钢拳套可连续攻击，避免让脆弱队员独自承受；魔法对付重装、弓对付天马。击败幻影后仍须清除其余敌人才会通关。',
   terrain,enemies,enemyCount:enemies.length,bossId:phantom.id,
+  legacyRecentMaxHp:{dark_nina:43,...Object.fromEntries(regular.map((e,i)=>[e.id,base.legacyRecentMaxHp[sources[i%sources.length]]])),
+   'loop-armor-0':33,'loop-armor-1':33,'loop-armor-2':33,'loop-pegasus-0':29,'loop-pegasus-1':29},
   legacyFinaleMaxHp:Object.fromEntries(enemies.filter(e=>!e.boss).map(e=>[e.id,e.id.includes('armor')?35:e.id.includes('pegasus')?30:[32,36,31,34,30,32,30,32,36][Number(e.id.split('-').pop())]])),
   legacyMaxHp:{subaru:33,...Object.fromEntries(enemies.filter(e=>!e.boss).map(e=>[e.id,e.id.includes('armor')?38:e.id.includes('pegasus')?32:[1,8].includes(Number(e.id.split('-').pop()))?40:34]))},
   spawns:{tomori:{x:12,y:22},anon:{x:14,y:23},rana:{x:15,y:22},soyo:{x:12,y:23},taki:{x:15,y:23},xueyue:{x:11,y:24},nina:{x:13,y:21},nijika:{x:14,y:22}}};

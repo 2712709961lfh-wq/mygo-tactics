@@ -5088,7 +5088,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.13.2</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.13.4</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -7277,13 +7277,13 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
  // Fixed budgets calibrated to the player's Lv.9/11/13/14 save totals.
  // Keep imperfect distributions: physical units retain some unused magic.
  const stats={
-  'sword-a':{maxHp:31,str:13,mag:7,dex:14,spd:13,lck:9,def:10,res:7},
-  'axe-a':{maxHp:35,str:16,mag:6,dex:12,spd:9,lck:10,def:13,res:6},
-  'bow-a':{maxHp:29,str:13,mag:7,dex:16,spd:13,lck:10,def:9,res:8},
-  'lance-a':{maxHp:33,str:14,mag:6,dex:13,spd:11,lck:9,def:13,res:8},
-  'mage-a':{maxHp:28,str:8,mag:15,dex:14,spd:12,lck:10,def:8,res:12},
-  'sword-b':{maxHp:30,str:14,mag:6,dex:14,spd:14,lck:10,def:10,res:7},
-  'bow-b':{maxHp:30,str:12,mag:8,dex:15,spd:14,lck:9,def:9,res:9}
+  'sword-a':{maxHp:29,str:11,mag:7,dex:13,spd:12,lck:9,def:8,res:6},
+  'axe-a':{maxHp:33,str:14,mag:6,dex:11,spd:8,lck:10,def:11,res:5},
+  'bow-a':{maxHp:27,str:11,mag:7,dex:15,spd:12,lck:10,def:7,res:7},
+  'lance-a':{maxHp:31,str:12,mag:6,dex:12,spd:10,lck:9,def:11,res:7},
+  'mage-a':{maxHp:26,str:8,mag:13,dex:13,spd:11,lck:10,def:6,res:11},
+  'sword-b':{maxHp:28,str:12,mag:6,dex:13,spd:13,lck:10,def:8,res:6},
+  'bow-b':{maxHp:28,str:10,mag:8,dex:14,spd:13,lck:9,def:7,res:8}
  };
  const regular=[['sword-a','shadow_blade_1',10,24],['axe-a','shadow_axe',18,24],['bow-a','shadow_bow',8,18],
   ['lance-a','shadow_lance',19,18],['mage-a','conductor',10,12],['sword-b','shadow_blade_2',17,11],['bow-b','shadow_bow',17,7]]
@@ -7294,10 +7294,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
    drops:[],carriedItems:[],guardGroup:y>=20?'rehearsal-entry':y>=14?'rehearsal-middle':'rehearsal-rear',guardRadius:5,facing:'down',quote:'熟悉的排练声，被扭曲成了不肯散去的回声。'}));
  const special=(type,i,x,y)=>({...C.STAGE_FIVE.enemies.find(u=>u.art==='park-'+type),id:'rehearsal-'+type+'-'+i,x,y,
   side:'enemy',level:13,name:type==='armor'?'隔音重装':'回声天马骑士',shortName:type==='armor'?'隔音重装':'回声天马',
-  ...(type==='armor'?{maxHp:33,str:16,mag:7,dex:12,spd:8,lck:10,def:20,res:5}:{maxHp:29,str:13,mag:7,dex:14,spd:15,lck:10,def:9,res:12}),
+  ...(type==='armor'?{maxHp:31,str:14,mag:7,dex:11,spd:7,lck:10,def:18,res:3}:{maxHp:27,str:11,mag:7,dex:13,spd:14,lck:10,def:7,res:11}),
   boss:false,key:false,hpFloor:0,dormant:false,drops:[],carriedItems:[],guardRadius:5,guardGroup:y>=14?'rehearsal-middle':'rehearsal-rear',facing:'down'});
  const boss={...special('pegasus','boss',13,5),id:'rift_pegasus',name:'裂空天马·门之守卫',shortName:'裂空天马',
-  level:15,maxHp:40,str:16,mag:8,dex:14,spd:16,lck:8,def:10,res:18,move:6,weapon:'steel_lance',boss:true,key:true,
+  level:15,maxHp:39,str:16,mag:8,dex:14,spd:16,lck:8,def:10,res:18,move:6,weapon:'steel_lance',boss:true,key:true,
   drops:['strange_door_key','steel_lance'],carriedItems:['strange_door_key'],guardGroup:'rehearsal-door',guardRadius:6,
   quote:'苍白的羽翼拖着裂隙的光。它守护的门后，究竟通向哪里？'};
  const enemies=regular.concat([special('armor',0,12,17),special('armor',1,16,10),special('pegasus',0,6,14),special('pegasus',1,21,13),boss]);
@@ -7307,6 +7307,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   objective:'击败裂空天马并开门，与昴会合后击败所有敌人',
   gateHint:'沿中央地毯向北推进，绕过音箱与乐器架。重装怕魔法，天马怕弓。击败裂空天马获得门的钥匙与钢枪；队员到北端门旁开门后继续本关剧情，与昴会合并清除仁菜幻影及其余敌人，才会通关。',
   terrain,decor,enemies,enemyCount:enemies.length,bossId:boss.id,door:{x:13,y:2},
+  // HP ceilings in v5.12.1-v5.13.3, before this chapter-wide HP reduction.
+  legacyRecentMaxHp:{'rehearsal-sword-a':31,'rehearsal-axe-a':35,'rehearsal-bow-a':29,'rehearsal-lance-a':33,
+   'rehearsal-mage-a':28,'rehearsal-sword-b':30,'rehearsal-bow-b':30,'rehearsal-armor-0':33,'rehearsal-armor-1':33,
+   'rehearsal-pegasus-0':29,'rehearsal-pegasus-1':29,rift_pegasus:40},
   legacyMaxHp:Object.fromEntries(enemies.filter(e=>!e.boss).map(e=>[e.id,e.id.includes('armor')?35:e.id.includes('pegasus')?30:e.id.includes('axe')?38:32])),
   spawns:{tomori:{x:12,y:28},anon:{x:14,y:29},rana:{x:15,y:28},soyo:{x:12,y:29},taki:{x:15,y:29},xueyue:{x:11,y:30},nina:{x:13,y:27},nijika:{x:14,y:28}}};
  const prev=C.missionForStage;C.missionForStage=stage=>stage===9?C.STAGE_NINE:prev(stage);
@@ -7332,7 +7336,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   name:type==='armor'?'回环重装':'回环天马骑士',shortName:type==='armor'?'回环重装':'回环天马',
   guardGroup:y>=20?'loop-south':y>=13?'loop-center':'loop-north',guardRadius:6,facing:y>=17?'up':'down'});
  const phantom={...C.NINA,id:'dark_nina',name:'井芹仁菜幻影',shortName:'仁菜幻影',side:'enemy',classId:'brawler',className:'拳斗士',
-  level:16,maxHp:43,str:15,mag:7,dex:15,spd:19,lck:8,def:11,res:9,move:5,weapon:'steel_gauntlets',spells:[],x:13,y:14,
+  level:16,maxHp:41,str:15,mag:7,dex:15,spd:19,lck:8,def:11,res:9,move:5,weapon:'steel_gauntlets',spells:[],x:13,y:14,
   boss:true,key:false,hpFloor:0,dormant:false,tags:[],drops:[],carriedItems:[],guardGroup:'loop-phantom',guardRadius:5,facing:'down',
   quote:'它没有回答。只有模仿仁菜的拳头，一次次打向眼前的人。'};
  const enemies=regular.concat([special('armor',0,10,19),special('armor',1,18,16),special('armor',2,15,8),special('pegasus',0,6,23),special('pegasus',1,22,10),phantom]);
@@ -7342,6 +7346,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   subtitle:'奇怪的门后依然是熟悉的排练室。中央，安和昴正被一个与仁菜一模一样的身影攻击。',
   objective:'击败所有敌人',gateHint:'昴会在开场对话后直接加入队伍。由南侧入口赶往中央，与她会合并清理四周敌人。仁菜幻影为拳斗士，钢拳套可连续攻击，避免让脆弱队员独自承受；魔法对付重装、弓对付天马。击败幻影后仍须清除其余敌人才会通关。',
   terrain,enemies,enemyCount:enemies.length,bossId:phantom.id,
+  legacyRecentMaxHp:{dark_nina:43,...Object.fromEntries(regular.map((e,i)=>[e.id,base.legacyRecentMaxHp[sources[i%sources.length]]])),
+   'loop-armor-0':33,'loop-armor-1':33,'loop-armor-2':33,'loop-pegasus-0':29,'loop-pegasus-1':29},
   legacyFinaleMaxHp:Object.fromEntries(enemies.filter(e=>!e.boss).map(e=>[e.id,e.id.includes('armor')?35:e.id.includes('pegasus')?30:[32,36,31,34,30,32,30,32,36][Number(e.id.split('-').pop())]])),
   legacyMaxHp:{subaru:33,...Object.fromEntries(enemies.filter(e=>!e.boss).map(e=>[e.id,e.id.includes('armor')?38:e.id.includes('pegasus')?32:[1,8].includes(Number(e.id.split('-').pop()))?40:34]))},
   spawns:{tomori:{x:12,y:22},anon:{x:14,y:23},rana:{x:15,y:22},soyo:{x:12,y:23},taki:{x:15,y:23},xueyue:{x:11,y:24},nina:{x:13,y:21},nijika:{x:14,y:22}}};
@@ -9907,7 +9913,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       return {
         version: C.SAVE_VERSION,
         ...(this.stage>=4?{fixedEnemyStatsVersion:1}:{}),
-        ...([9,10].includes(this.stage)?{rehearsalBalanceVersion:1,rehearsalBossBalanceVersion:1}:{}),
+        ...([9,10].includes(this.stage)?{rehearsalBalanceVersion:1,rehearsalBossBalanceVersion:1,rehearsalHpVersion:1}:{}),
         stage: this.chapterNumber,
         ...([9,10].includes(this.stage)?{rehearsalChapterVersion:1,rehearsalPart:this.stage===10?2:1,
           rehearsalFirstDefeated:this.stage===10?(this.rehearsalFirstDefeated||0):0}:{}),
@@ -9967,6 +9973,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(snapshot.fixedEnemyStatsVersion!==undefined&&snapshot.fixedEnemyStatsVersion!==1)throw Error('存档固定敌军属性版本无效');
       if(snapshot.rehearsalBalanceVersion!==undefined&&snapshot.rehearsalBalanceVersion!==1)throw Error('存档排练室属性版本无效');
       if(snapshot.rehearsalBossBalanceVersion!==undefined&&snapshot.rehearsalBossBalanceVersion!==1)throw Error('存档排练室Boss属性版本无效');
+      if(snapshot.rehearsalHpVersion!==undefined&&snapshot.rehearsalHpVersion!==1)throw Error('存档排练室生命版本无效');
       if(snapshot.rehearsalFinaleBalanceVersion!==undefined&&snapshot.rehearsalFinaleBalanceVersion!==1)throw Error('存档排练室后半段属性版本无效');
       if(snapshot.inventoryVersion!==undefined&&snapshot.inventoryVersion!==1)throw Error('背包存档版本不兼容');
       if (snapshot.stage === 2 && snapshot.mapRevision !== C.STAGE_TWO.mapRevision) {
@@ -10124,17 +10131,16 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         MyGO.Classes.restore(unit,saved.classState);
         if(!Number.isFinite(Grid.movementCost(this.map,unit,saved.x,saved.y)))throw Error('存档停留在阻挡地形');
         unit.hp = Math.max(0, Math.min(unit.maxHp, Number(saved.hp) || 0));
-        const legacyMaxHp=[9,10].includes(this.stage)?missionForStage(this.stage).legacyMaxHp[saved.id]:undefined;
-        if(snapshot.rehearsalBalanceVersion===undefined&&legacyMaxHp){
-          const oldMax=legacyMaxHp+(saved.id==='subaru'?(saved.growth?.gains?.maxHp||0):0);
-          unit.hp=Math.max(0,Math.min(unit.maxHp,Math.ceil(unit.maxHp*(Number(saved.hp)||0)/oldMax-1e-9)));
-        }
-        const legacyFinaleMaxHp=this.stage===10?C.STAGE_TEN.legacyFinaleMaxHp[saved.id]:undefined;
-        if(snapshot.rehearsalBalanceVersion===1&&snapshot.rehearsalFinaleBalanceVersion===undefined&&legacyFinaleMaxHp){
-          unit.hp=Math.max(0,Math.min(unit.maxHp,Math.ceil(unit.maxHp*(Number(saved.hp)||0)/legacyFinaleMaxHp-1e-9)));
-        }
-        if([9,10].includes(this.stage)&&unit.boss&&snapshot.rehearsalBossBalanceVersion===undefined){
-          unit.hp=Math.max(0,Math.min(unit.maxHp,Math.ceil(unit.maxHp*(Number(saved.hp)||0)/46-1e-9)));
+        if([9,10].includes(this.stage)){
+          const mission=missionForStage(this.stage),legacyMax=mission.legacyMaxHp[saved.id];
+          const legacyFinaleMax=this.stage===10?mission.legacyFinaleMaxHp[saved.id]:undefined;
+          let oldMax;
+          // Select the save's original HP ceiling, then convert exactly once.
+          if(unit.boss&&snapshot.rehearsalBossBalanceVersion===undefined)oldMax=46;
+          else if(snapshot.rehearsalBalanceVersion===undefined&&legacyMax)oldMax=legacyMax+(saved.id==='subaru'?(saved.growth?.gains?.maxHp||0):0);
+          else if(snapshot.rehearsalFinaleBalanceVersion===undefined&&legacyFinaleMax)oldMax=legacyFinaleMax;
+          else if(snapshot.rehearsalHpVersion===undefined)oldMax=mission.legacyRecentMaxHp[saved.id];
+          if(oldMax)unit.hp=Math.max(0,Math.min(unit.maxHp,Math.ceil(unit.maxHp*(Number(saved.hp)||0)/oldMax-1e-9)));
         }
         unit.dead = !!saved.dead || unit.hp <= 0;
         unit.acted = !!saved.acted || unit.dead;
