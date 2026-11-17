@@ -1315,7 +1315,8 @@
       const ctx = bg.getContext('2d');
       ctx.imageSmoothingEnabled = false;
       ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
-      if(this.stage>=9&&MyGO.RehearsalMap)MyGO.RehearsalMap.drawBattleBackground(ctx,W,H);
+      if(this.stage===11&&MyGO.PalaceMap)MyGO.PalaceMap.drawBattleBackground(ctx,W,H);
+      else if(this.stage>=9&&MyGO.RehearsalMap)MyGO.RehearsalMap.drawBattleBackground(ctx,W,H);
       else if(this.stage>=7&&MyGO.LivehouseArt)MyGO.LivehouseArt.drawBattleBackground(ctx,W,H);
       else if(this.stage>=4&&MyGO.ParkMap)MyGO.ParkMap.drawBattleBackground(ctx,W,H,this.lampsLit);
       else this._paintBackground(ctx);

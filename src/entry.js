@@ -158,6 +158,9 @@
         if (action) {
           const name = action.getAttribute('data-entry-action');
           if (name === 'start') this.hideToGame();
+          if(name==='chapter10'){
+            this.ui.chapterPlayed=false;this.ui.newGame(Date.now(),11);this.hasStarted=true;this.hideToGame();
+          }
           if (name === 'chapter2' || name === 'chapter3' || name === 'chapter4' || name === 'chapter5' || name === 'chapter6' || name === 'chapter7' || name === 'chapter8' || name === 'chapter9') {
             this.ui.chapterPlayed = false;
             this.ui.newGame(Date.now(), Number(name.slice(7)));
@@ -322,10 +325,10 @@
       if (info.ok) {
         const loaded = info.loaded;
         const rawSnapshot=loaded.snapshot;
-        const snapshot=rawSnapshot.stage===9&&rawSnapshot.rehearsalPart===2?{...rawSnapshot,stage:10}:rawSnapshot;
+        const snapshot=rawSnapshot.palaceChapterVersion===1?{...rawSnapshot,stage:11}:rawSnapshot.stage===9&&rawSnapshot.rehearsalPart===2?{...rawSnapshot,stage:10}:rawSnapshot;
         // 快照只保存会变化的数据（id/x/y/hp/acted/dead），阵营要从模板反查。
-        const savedMission = snapshot.stage===10?MyGO.CONFIG.STAGE_TEN:snapshot.stage===9?MyGO.CONFIG.STAGE_NINE:snapshot.stage===8?MyGO.CONFIG.STAGE_EIGHT:snapshot.stage===7?MyGO.CONFIG.STAGE_SEVEN:snapshot.stage===6?MyGO.CONFIG.STAGE_SIX:snapshot.stage===5?MyGO.CONFIG.STAGE_FIVE:snapshot.stage===4?MyGO.CONFIG.STAGE_FOUR:snapshot.stage === 3 ? MyGO.CONFIG.STAGE_THREE : snapshot.stage === 2 ? MyGO.CONFIG.STAGE_TWO : MyGO.CONFIG.MISSION;
-        const templates = MyGO.CONFIG.UNITS.concat(snapshot.stage===10?MyGO.CONFIG.STAGE_TEN.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'},{...MyGO.CONFIG.SUBARU,side:snapshot.subaruJoined?'player':'ally'}]):snapshot.stage===9?MyGO.CONFIG.STAGE_NINE.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'}]):snapshot.stage===8?MyGO.CONFIG.STAGE_EIGHT.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'}]):snapshot.stage===7?MyGO.CONFIG.STAGE_SEVEN.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:snapshot.nijikaJoined?'player':'ally'}]):snapshot.stage===6?MyGO.CONFIG.STAGE_SIX.enemies.concat(MyGO.CONFIG.STAGE_SIX.summonTemplates,[MyGO.CONFIG.NINA]):snapshot.stage===5?MyGO.CONFIG.STAGE_FIVE.enemies.concat([MyGO.CONFIG.NINA]):snapshot.stage===4?MyGO.CONFIG.STAGE_FOUR.enemies.concat([MyGO.CONFIG.NINA]):snapshot.stage===3?MyGO.CONFIG.STAGE_THREE.enemies.concat([MyGO.CONFIG.NINA]):[]);
+        const savedMission = snapshot.stage===11?MyGO.CONFIG.STAGE_PALACE:snapshot.stage===10?MyGO.CONFIG.STAGE_TEN:snapshot.stage===9?MyGO.CONFIG.STAGE_NINE:snapshot.stage===8?MyGO.CONFIG.STAGE_EIGHT:snapshot.stage===7?MyGO.CONFIG.STAGE_SEVEN:snapshot.stage===6?MyGO.CONFIG.STAGE_SIX:snapshot.stage===5?MyGO.CONFIG.STAGE_FIVE:snapshot.stage===4?MyGO.CONFIG.STAGE_FOUR:snapshot.stage === 3 ? MyGO.CONFIG.STAGE_THREE : snapshot.stage === 2 ? MyGO.CONFIG.STAGE_TWO : MyGO.CONFIG.MISSION;
+        const templates = MyGO.CONFIG.UNITS.concat(snapshot.stage===11?MyGO.CONFIG.STAGE_PALACE.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'},{...MyGO.CONFIG.SUBARU,side:'player'}]):snapshot.stage===10?MyGO.CONFIG.STAGE_TEN.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'},{...MyGO.CONFIG.SUBARU,side:snapshot.subaruJoined?'player':'ally'}]):snapshot.stage===9?MyGO.CONFIG.STAGE_NINE.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'}]):snapshot.stage===8?MyGO.CONFIG.STAGE_EIGHT.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'}]):snapshot.stage===7?MyGO.CONFIG.STAGE_SEVEN.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:snapshot.nijikaJoined?'player':'ally'}]):snapshot.stage===6?MyGO.CONFIG.STAGE_SIX.enemies.concat(MyGO.CONFIG.STAGE_SIX.summonTemplates,[MyGO.CONFIG.NINA]):snapshot.stage===5?MyGO.CONFIG.STAGE_FIVE.enemies.concat([MyGO.CONFIG.NINA]):snapshot.stage===4?MyGO.CONFIG.STAGE_FOUR.enemies.concat([MyGO.CONFIG.NINA]):snapshot.stage===3?MyGO.CONFIG.STAGE_THREE.enemies.concat([MyGO.CONFIG.NINA]):[]);
         const sideById = new Map(templates.map((unit) => [unit.id, unit.side]));
         if (snapshot.stage >= 2 && (snapshot.recruited || []).includes('xueyue')) sideById.set('xueyue', 'player');
         if (snapshot.stage>=3 && !snapshot.ninaLost && (snapshot.recruited || []).includes('nina')) sideById.set('nina','player');
@@ -336,7 +339,7 @@
           '<div class="entry-save-slot">',
           '  <div class="entry-save-slot-mark">' + esc(savedMission.chapter) + '</div>',
           '  <strong>' + esc(savedMission.title) + '</strong>',
-          '  <span>'+(snapshot.stage>=9?(snapshot.stage===10?'后半段 · ':'前半段 · '):'')+'第 ' + esc(snapshot.turn) + ' 回合 · 我方 ' + mine + ' / 敌方 ' + foes + '</span>',
+          '  <span>'+([9,10].includes(snapshot.stage)?(snapshot.stage===10?'后半段 · ':'前半段 · '):'')+'第 ' + esc(snapshot.turn) + ' 回合 · 我方 ' + mine + ' / 敌方 ' + foes + '</span>',
           '  <small>' + esc(fullTimeText(loaded.savedAt)) + ' · ' + esc(storage) + '</small>',
           '</div>'
         ].join('');

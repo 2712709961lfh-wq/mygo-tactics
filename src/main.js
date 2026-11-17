@@ -13,7 +13,7 @@
     const hashParams = new URLSearchParams(global.location.hash.replace(/^#/, ''));
     const seed = params.get('seed') || hashParams.get('seed');
     const stageParam = Number(params.get('stage') || hashParams.get('stage'));
-    const stage = stageParam===10?9:[2,3,4,5,6,7,8,9].includes(stageParam) ? stageParam : 1;
+    const stage = params.get('chapter')==='10'||hashParams.get('chapter')==='10'||[10,11].includes(stageParam)?11:[2,3,4,5,6,7,8,9].includes(stageParam) ? stageParam : 1;
     const ui = new global.MyGO.UI({ seed: seed ? Number(seed) : undefined, stage: stage });
     global.MYGO_UI = ui;
     global.MyGO.ui = ui;

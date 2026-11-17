@@ -5088,7 +5088,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.14.1</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.15.0</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -5182,6 +5182,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <button class="entry-option" type="button" data-entry-action="chapter9">
               <span class="entry-index">12</span>
               <span class="entry-option-copy"><strong>第九重 · 门后的排练回声</strong><em>CHAPTER 09</em><small>击败裂空天马并开门，与昴会合后击败仁菜幻影和全部敌人</small></span>
+              <span class="entry-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="entry-option" type="button" data-entry-action="chapter10">
+              <span class="entry-index">13</span>
+              <span class="entry-option-copy"><strong>第十重 · 鎏金王座的铁蹄</strong><em>CHAPTER 10</em><small>进入富丽宫殿，突破四类守军，击败精英战马骑士</small></span>
               <span class="entry-arrow" aria-hidden="true">→</span>
             </button>
           </nav>
@@ -7361,6 +7366,48 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   </script>
   <script>
+/* ===== src/chapter-palace.js ===== */
+/* Public chapter ten. Internal encounter 10 remains chapter nine's saved finale. */
+(function(global){
+ 'use strict';const C=global.MyGO.CONFIG,base=C.STAGE_NINE,cols=30,rows=36;
+ const terrain=Array.from({length:rows},(_,y)=>Array.from({length:cols},(_,x)=>x<2||x>=cols-2||y<2||y>=rows-2?'wall':'plaza'));
+ const decor=[],prop=(kind,x,y,w=1,h=1)=>{decor.push({kind,x,y,w,h});for(let yy=y;yy<y+h;yy++)for(let xx=x;xx<x+w;xx++)terrain[yy][xx]='wall';};
+ for(let y=7;y<=28;y+=7)for(const x of [8,21])prop('palace-column',x,y,1,2);
+ for(const y of [11,22])for(const x of [3,25])prop('palace-planter',x,y,2,1);
+ prop('palace-throne',14,3,2,2);
+ for(let y=5;y<=33;y++)for(let x=13;x<=16;x++)terrain[y][x]='road';
+ for(const [x,y] of [[5,17],[24,17]]){terrain[y][x]='fort';decor.push({kind:'palace-font',x,y});}
+ decor.push({kind:'palace-entrance',x:14,y:33,w:2,h:1});
+ for(const y of [6,13,20,27])for(const x of [3,26])decor.push({kind:'palace-lamp',x,y});
+ const specs=[['sword-a',11,28],['axe-a',18,27],['bow-a',5,21],['lance-a',24,21],['mage-a',11,16],['sword-b',18,15],['bow-b',18,9]];
+ const regular=specs.map(([source,x,y],i)=>({...base.enemies.find(u=>u.id==='rehearsal-'+source),id:'palace-soldier-'+i,x,y,level:14,
+  name:'宫廷幻兵·'+['剑','斧','弓','枪','咒','剑','弓'][i],shortName:'宫廷幻兵',
+  maxHp:base.enemies.find(u=>u.id==='rehearsal-'+source).maxHp+3,
+  ...(source==='mage-a'?{mag:15}:{str:base.enemies.find(u=>u.id==='rehearsal-'+source).str+2}),
+  guardGroup:y>=24?'palace-entry':y>=14?'palace-middle':'palace-crown',guardRadius:5,quote:'金色大厅中，盔甲与幻影一同守护着空荡的王座。'}));
+ const special=(type,i,x,y)=>({...base.enemies.find(u=>u.id==='rehearsal-'+type+'-0'),id:'palace-'+type+'-'+i,x,y,level:15,
+  name:type==='armor'?'宫廷重装':'宫廷天马骑士',shortName:type==='armor'?'宫廷重装':'宫廷天马',
+  ...(type==='armor'?{maxHp:35,str:16,def:20,res:4}:{maxHp:31,str:14,dex:14,spd:15,def:9,res:12}),
+  guardGroup:y>=14?'palace-middle':'palace-crown',guardRadius:5,quote:'它们沿着宫廷回廊列阵，等待闯入者。'});
+ const cavalry=(i,x,y)=>({id:'palace-cavalier-'+i,name:'宫廷战马骑士',shortName:'战马骑士',side:'enemy',classId:'cavalier',className:'战马骑士',
+  level:15,maxHp:34,str:15,mag:6,dex:14,spd:13,lck:9,def:12,res:8,hit:0,move:7,tags:['cavalry'],weapon:'steel_lance',art:'palace-cavalier',
+  x,y,boss:false,key:false,dormant:false,drops:[],guardGroup:y>=24?'palace-entry':y>=14?'palace-middle':'palace-crown',guardRadius:6,facing:'down',
+  quote:'沉重的马蹄踏过大理石。留意它能迅速越过的距离。'});
+ const boss={...cavalry('boss',14,6),id:'gilded_cavalier',name:'精英战马骑士·金鬃卫长',shortName:'金鬃卫长',level:17,
+  maxHp:46,str:18,mag:7,dex:16,spd:16,lck:10,def:14,res:12,boss:true,art:'palace-cavalier-elite',
+  drops:['steel_lance'],guardGroup:'palace-crown',guardRadius:7,quote:'王座之前，禁止通行。'};
+ const enemies=regular.concat([special('armor',0,12,21),special('armor',1,17,13),special('armor',2,12,9),
+  special('pegasus',0,5,12),special('pegasus',1,24,12),cavalry(0,7,26),cavalry(1,22,26),cavalry(2,6,16),cavalry(3,23,16),boss]);
+ C.STAGE_PALACE={id:'mission-10-palace',mapRevision:1,cols,rows,chapter:'MISSION 10',chapterJp:'第十话',chapterEn:'CHAPTER 10',
+  title:'鎏金王座的铁蹄',mapName:'鎏金宫殿 · 王座大厅',subtitle:'排练室的回声散去，金色宫门在前方开启。红毯尽头，一名精英战马骑士率领宫廷守军挡住去路。',
+  objective:'击败精英战马骑士',gateHint:'沿中央红毯向北端王座厅推进，也可从立柱两侧的回廊迂回。战马骑士移动7格，先查看敌军威胁范围；重装守备高而魔防低，使用魔法，天马使用弓应对。两侧圣泉提供据点防护与回合开始回复。击败金鬃卫长即可通关。',
+  terrain,decor,enemies,enemyCount:enemies.length,bossId:boss.id,
+  spawns:{tomori:{x:13,y:30},anon:{x:14,y:32},rana:{x:16,y:30},soyo:{x:13,y:32},taki:{x:16,y:32},xueyue:{x:12,y:31},nina:{x:14,y:29},nijika:{x:15,y:31},subaru:{x:17,y:31}}};
+ const previous=C.missionForStage;C.missionForStage=stage=>stage===11?C.STAGE_PALACE:previous(stage);
+})(window);
+
+  </script>
+  <script>
 /* ===== src/map-projection.js ===== */
 /* One invertible ground transform, shared by drawing, picking and camera focus.
  * Default boards keep square ground cells; an optional inclined view is preview-only. */
@@ -8854,7 +8901,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   // Keep core-only consumers independent of optional chapter modules.
   function missionForStage(stage) {
-    return stage===10?C.STAGE_TEN:stage===9?C.STAGE_NINE:stage===8?C.STAGE_EIGHT:stage===7?C.STAGE_SEVEN:stage===6?C.STAGE_SIX:stage===5?C.STAGE_FIVE:stage===4?C.STAGE_FOUR:stage===3?C.STAGE_THREE:stage===2?C.STAGE_TWO:C.MISSION;
+    return stage===11?C.STAGE_PALACE:stage===10?C.STAGE_TEN:stage===9?C.STAGE_NINE:stage===8?C.STAGE_EIGHT:stage===7?C.STAGE_SEVEN:stage===6?C.STAGE_SIX:stage===5?C.STAGE_FIVE:stage===4?C.STAGE_FOUR:stage===3?C.STAGE_THREE:stage===2?C.STAGE_TWO:C.MISSION;
   }
 
   function cloneMap() {
@@ -8882,6 +8929,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const heroes=C.UNITS.filter(u=>u.side==='player'||u.id==='xueyue'&&recruited.includes('xueyue'));
       if(recruited.includes('nina'))heroes.push(C.NINA);
       if(stage>=8)heroes.push(C.NIJIKA);
+      if(stage===11)heroes.push(C.SUBARU);
       return heroes.map(u=>createUnit({...u,...m.spawns[u.id],side:'player',boss:false,dormant:false,
         facing:stage>=6?'up':'right',mapCols:m.cols,mapRows:m.rows})).concat(m.enemies.map(createUnit),stage===10?[createUnit({...C.SUBARU,side:recruited.includes('subaru')?'player':'ally'})]:stage===7?[createUnit({...C.NIJIKA,side:recruited.includes('nijika')?'player':'ally'})]:[]);
     }
@@ -8971,13 +9019,15 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   class Game {
     // 10 remains an internal encounter key for old saves; both encounters are chapter 9.
-    get chapterNumber(){return this.stage===10?9:this.stage;}
+    get chapterNumber(){return this.stage===11?10:this.stage===10?9:this.stage;}
     get rehearsalTransitionPending(){return this.stage===9&&this.gateOpen&&this.stageNineIntroSeen&&!!this.getUnit('rift_pegasus')?.dead&&!this.isOver();}
     constructor(options) {
       const opts = options || {};
-      this.stage = [2,3,4,5,6,7,8,9,10].includes(opts.stage) ? opts.stage : 1;
+      this.stage = [2,3,4,5,6,7,8,9,10,11].includes(opts.stage) ? opts.stage : 1;
       this.recruited = Array.isArray(opts.recruited) ? ['xueyue','nina','nijika','subaru'].filter(id=>opts.recruited.includes(id)) : [];
-      this.recruited=this.recruited.filter(id=>id!=='subaru');
+      this.recruited=this.recruited.filter(id=>this.stage===11||id!=='subaru');
+      if(this.stage===11&&!this.recruited.includes('subaru'))this.recruited.push('subaru');
+      if(this.stage===11&&!opts.loadout&&!this.recruited.includes('xueyue'))this.recruited.push('xueyue');
       if(this.stage<7)this.recruited=this.recruited.filter(id=>id!=='nijika');
       if(this.stage>=8&&!this.recruited.includes('nijika'))this.recruited.push('nijika');
       if (this.stage === 1) this.recruited = [];
@@ -8992,6 +9042,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.stageEightIntroSeen=false;
       this.stageNineIntroSeen=false;
       this.stageTenIntroSeen=false;this.subaruJoined=false;
+      this.palaceIntroSeen=false;
+      if(this.stage===11)this.subaruJoined=true;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       bindCombatMap(this);
       this.units = unitsForStage(this.stage, this.recruited);
@@ -9092,14 +9144,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     restoreEconomy(data){
       if(data===undefined){this.gold=MyGO.Shop.START_GOLD;this.shopPurchases={};this.shopChapter=this.chapterNumber;this.rewardedChapters=[];return;}
       if(!data||data.version!==1||!Number.isSafeInteger(data.gold)||data.gold<0||data.gold>99999999||
-        !Number.isInteger(data.chapter)||data.chapter<1||data.chapter>this.stage||
+        !Number.isInteger(data.chapter)||data.chapter<1||data.chapter>(this.stage===11?10:this.stage)||
         !data.purchases||typeof data.purchases!=='object'||Array.isArray(data.purchases)||
-        !Array.isArray(data.rewarded)||new Set(data.rewarded).size!==data.rewarded.length||data.rewarded.some(c=>!Number.isInteger(c)||c<1||c>this.stage))throw Error('存档商店数据无效');
+        !Array.isArray(data.rewarded)||new Set(data.rewarded).size!==data.rewarded.length||data.rewarded.some(c=>!Number.isInteger(c)||c<1||c>(this.stage===11?10:this.stage)))throw Error('存档商店数据无效');
       for(const [id,n] of Object.entries(data.purchases)){const p=MyGO.Shop.get(id);
         if(!p||p.stage>data.chapter||!Number.isInteger(n)||n<0||p.limit===null||n>p.limit)throw Error('存档限购数据无效');}
       this.gold=data.gold;this.shopChapter=this.chapterNumber;
       this.shopPurchases=[this.stage,this.chapterNumber].includes(data.chapter)?{...data.purchases}:{};
-      this.rewardedChapters=[...new Set(data.rewarded.map(n=>n===10?9:n))];
+      this.rewardedChapters=[...new Set(data.rewarded.map(n=>this.stage!==11&&n===10?9:n))];
     }
 
     shopReason(){return this.phase!=='player'&&this.phase!=='victory'?'请在我方阶段或战后购物':'';}
@@ -9262,7 +9314,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
     /** 切换静态关卡数据（不影响回合/单位状态，由 restore 重新填充）。 */
     _setupStage(stage) {
-      this.stage = [2,3,4,5,6,7,8,9,10].includes(stage) ? stage : 1;
+      this.stage = [2,3,4,5,6,7,8,9,10,11].includes(stage) ? stage : 1;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       bindCombatMap(this);
       this.units = unitsForStage(this.stage, this.recruited);
@@ -9871,7 +9923,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
      */
     checkOutcome() {
       if (this.isOver()) return this.winner;
-      const victory=this.stage===10 ? this.stageTenIntroSeen&&this.subaruJoined&&this.livingCount('enemy')===0 : this.stage===9 ? false : this.stage===8 ? this.stageEightIntroSeen&&this.mission.phantomIds.every(id=>this.getUnit(id)?.dead) : this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
+      const victory=this.stage===11 ? this.palaceIntroSeen&&!!this.getUnit('gilded_cavalier')?.dead : this.stage===10 ? this.stageTenIntroSeen&&this.subaruJoined&&this.livingCount('enemy')===0 : this.stage===9 ? false : this.stage===8 ? this.stageEightIntroSeen&&this.mission.phantomIds.every(id=>this.getUnit(id)?.dead) : this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
         ? this.awakenedBells.length>=this.mission.requiredBells && !!this.getUnit('conductor')?.dead
         : this.livingCount('enemy')===0;
       if (this.livingCount('player') === 0) {
@@ -9956,6 +10008,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         ...(this.stage>=4?{fixedEnemyStatsVersion:1}:{}),
         ...([9,10].includes(this.stage)?{rehearsalBalanceVersion:1,rehearsalBossBalanceVersion:1,rehearsalHpVersion:1}:{}),
         stage: this.chapterNumber,
+        ...(this.stage===11?{palaceChapterVersion:1,palaceIntroSeen:this.palaceIntroSeen,nijikaLevelVersion:1}:{}),
         ...([9,10].includes(this.stage)?{rehearsalChapterVersion:1,rehearsalPart:this.stage===10?2:1,
           rehearsalFirstDefeated:this.stage===10?(this.rehearsalFirstDefeated||0):0}:{}),
         mapRevision: this.stage === 1 ? C.MAP_REVISION : this.mission.mapRevision,
@@ -10005,6 +10058,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         throw new Error('存档版本不兼容');
       }
       if (!Array.isArray(snapshot.units)) throw new Error('存档单位数据缺失');
+      if(snapshot.palaceChapterVersion!==undefined){
+        if(snapshot.palaceChapterVersion!==1||snapshot.stage!==10||snapshot.rehearsalChapterVersion!==undefined||snapshot.rehearsalPart!==undefined)throw Error('第十关宫殿进度无效');
+        snapshot={...snapshot,stage:11};
+      }else if(snapshot.stage===11)throw Error('第十关宫殿进度缺失');
       if(snapshot.rehearsalChapterVersion!==undefined){
         if(snapshot.rehearsalChapterVersion!==1||snapshot.stage!==9||![1,2].includes(snapshot.rehearsalPart)||
           !Number.isInteger(snapshot.rehearsalFirstDefeated)||snapshot.rehearsalFirstDefeated<0||snapshot.rehearsalFirstDefeated>C.STAGE_NINE.enemies.length||
@@ -10022,13 +10079,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       }
       if (snapshot.stage === 3 && snapshot.mapRevision !== C.STAGE_THREE.mapRevision) throw new Error('第三关地图版本不兼容');
       if(snapshot.stage===10&&snapshot.mapRevision!==C.STAGE_TEN.mapRevision)throw Error('第九关后半段地图版本不兼容');
+      if(snapshot.stage===11&&snapshot.mapRevision!==C.STAGE_PALACE.mapRevision)throw Error('第十关宫殿地图版本不兼容');
       if(snapshot.stage===9&&snapshot.mapRevision!==C.STAGE_NINE.mapRevision)throw Error('第九关地图版本不兼容');
       if(snapshot.stage===8&&snapshot.mapRevision!==C.STAGE_EIGHT.mapRevision)throw Error('第八关地图版本不兼容');
       if(snapshot.stage===7&&snapshot.mapRevision!==C.STAGE_SEVEN.mapRevision)throw Error('第七关地图版本不兼容');
       if (snapshot.stage === 6 && snapshot.mapRevision !== C.STAGE_SIX.mapRevision) throw Error('第六关地图版本不兼容');
       if (snapshot.stage === 5 && snapshot.mapRevision !== C.STAGE_FIVE.mapRevision) throw new Error('第五关地图版本不兼容');
       if (snapshot.stage === 4 && snapshot.mapRevision !== C.STAGE_FOUR.mapRevision) throw new Error('第四关地图版本不兼容');
-      if (![2,3,4,5,6,7,8,9,10].includes(snapshot.stage) && snapshot.mapRevision !== C.MAP_REVISION) {
+      if (![2,3,4,5,6,7,8,9,10,11].includes(snapshot.stage) && snapshot.mapRevision !== C.MAP_REVISION) {
         throw new Error('第一关地图已更新，请重开第一关；旧存档仍然保留。');
       }
       const bells=snapshot.stage===2 ? snapshot.awakenedBells || [] : [];
@@ -10036,7 +10094,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         bells.some(id=>!C.STAGE_TWO.bells.some(b=>b.id===id)))throw new Error('存档星铃数据无效');
 
       // 地图是可变的（大门开启后会换成 gateOpen），读档先恢复关卡与静态地图。
-      this.stage = [2,3,4,5,6,7,8,9,10].includes(snapshot.stage) ? snapshot.stage : 1;
+      this.stage = [2,3,4,5,6,7,8,9,10,11].includes(snapshot.stage) ? snapshot.stage : 1;
       if(this.stage===4){
         const lamps=snapshot.litLamps;
         if(!Array.isArray(lamps)||new Set(lamps).size!==lamps.length||lamps.some(id=>!C.STAGE_FOUR.lamps.some(l=>l.id===id)))throw Error('存档路灯数据无效');
@@ -10082,6 +10140,15 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       }else if(this.stage<8)this.recruited=this.recruited.filter(id=>id!=='nijika');
       this.stageTenIntroSeen=this.stage===10&&snapshot.stageTenIntroSeen===true;
       this.subaruJoined=this.stage===10&&snapshot.subaruJoined===true;
+      this.palaceIntroSeen=this.stage===11&&snapshot.palaceIntroSeen===true;
+      if(this.stage===11){
+        if(typeof snapshot.palaceIntroSeen!=='boolean'||!this.recruited.includes('subaru')||!this.recruited.includes('nijika')||snapshot.nijikaLevelVersion!==1||snapshot.fixedEnemyStatsVersion!==1||snapshot.gateOpen!==false)throw Error('第十关宫殿状态无效');
+        if(!this.palaceIntroSeen&&snapshot.phase!=='player')throw Error('第十关宫殿开场尚未完成');
+        const expected=unitsForStage(11,this.recruited);
+        if(snapshot.units.length!==expected.length||snapshot.units.some(u=>!expected.some(t=>t.id===u.id)))throw Error('第十关宫殿单位数据无效');
+        if(snapshot.phase==='victory'&&!snapshot.units.find(u=>u.id==='gilded_cavalier')?.dead)throw Error('第十关精英骑士尚未击败');
+        this.subaruJoined=true;
+      }
       if(this.stage===10){
         if(typeof snapshot.stageTenIntroSeen!=='boolean'||typeof snapshot.subaruJoined!=='boolean'||this.subaruJoined!==this.stageTenIntroSeen||this.subaruJoined!==this.recruited.includes('subaru')||!this.recruited.includes('nijika')||snapshot.nijikaLevelVersion!==1||snapshot.fixedEnemyStatsVersion!==1)throw Error('第九关后半段开场或昴入队状态无效');
         if(!this.stageTenIntroSeen&&snapshot.phase!=='player')throw Error('第九关后半段开场尚未完成');
@@ -13670,7 +13737,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     aura(c,x,y,h,now,state==='summon');c.save();c.translate(x,y);if(facing==='left')c.scale(-1,1);
     c.imageSmoothingEnabled=true;c.drawImage(images.actions,k*256,spec[0]*160,256,160,-64*scale,-143*scale,256*scale,160*scale);c.restore();return true;
   }
-  const alias=id=>M.CONFIG.STAGE_SIX.summonTemplates.find(u=>u.id===id)?.art||M.CONFIG.STAGE_EIGHT?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_NINE?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_TEN?.enemies.find(u=>u.id===id)?.art;
+  const alias=id=>M.CONFIG.STAGE_PALACE?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_SIX.summonTemplates.find(u=>u.id===id)?.art||M.CONFIG.STAGE_EIGHT?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_NINE?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_TEN?.enemies.find(u=>u.id===id)?.art;
   const armored=M.WatercourtArt.isArmored;M.WatercourtArt.isArmored=id=>alias(id)==='park-armor'||armored(id);
   const has=C.has,hasActions=C.hasActions;C.has=id=>id==='masked_stranger'||['park-armor','park-pegasus'].includes(alias(id))||has(id);C.hasActions=id=>id==='masked_stranger'||['park-armor','park-pegasus'].includes(alias(id))||hasActions(id);
   const map=C.drawMap;C.drawMap=function(c,u,x,y,h,now,opts){
@@ -14025,6 +14092,123 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   </script>
   <script>
+/* ===== src/palace-art.js ===== */
+/* Original gold-and-ivory palace and grounded, wingless mounted knights. */
+(function(global){
+ 'use strict';const M=global.MyGO,T=M.CONFIG.TILE,P=M.MapProjection,C=M.Characters;
+ const rect=(c,x,y,w,h,color)=>{c.fillStyle=color;c.fillRect(x,y,w,h);};
+ function line(c,x,y,xx,yy,color,width=1){c.strokeStyle=color;c.lineWidth=width;c.beginPath();c.moveTo(x,y);c.lineTo(xx,yy);c.stroke();}
+ function poly(c,points,color){c.fillStyle=color;c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.fill();}
+ function oval(c,x,y,rx,ry,color){c.fillStyle=color;c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fill();}
+ function diamond(c,x,y,r,color){poly(c,[[x,y-r],[x+r,y],[x,y+r],[x-r,y]],color);}
+ function marble(c,x,y,w,h){const g=c.createLinearGradient(x,y,x+w,y+h);g.addColorStop(0,'#f1e6cf');g.addColorStop(.45,'#dfd3b8');g.addColorStop(1,'#c9bc9f');c.fillStyle=g;c.fillRect(x,y,w,h);
+  line(c,x+5,y+h*.66,x+w*.5,y+h*.3,'rgba(135,117,93,.12)');line(c,x+w*.5,y+h*.3,x+w-2,y+h*.36,'rgba(135,117,93,.12)');}
+ function carpet(c,x,y,w,h){rect(c,x,y,w,h,'#6f1f35');rect(c,x+5,y,w-10,h,'#8d2a40');line(c,x+4,y,x+4,y+h,'#d4ad5d',2);line(c,x+w-4,y,x+w-4,y+h,'#d4ad5d',2);
+  for(let yy=y+16;yy<y+h;yy+=32){diamond(c,x+11,yy,3,'#cb9d55');diamond(c,x+w-11,yy,3,'#cb9d55');}}
+ function arch(c,x,y,w,h){c.save();c.beginPath();c.moveTo(x-w/2,y);c.lineTo(x-w/2,y-h+w/2);c.arc(x,y-h+w/2,w/2,Math.PI,0);c.lineTo(x+w/2,y);c.closePath();
+  const g=c.createLinearGradient(x,y-h,x,y);g.addColorStop(0,'#223954');g.addColorStop(.65,'#57778d');g.addColorStop(1,'#c1b99a');c.fillStyle=g;c.fill();c.strokeStyle='#b69351';c.lineWidth=4;c.stroke();
+  line(c,x,y-h+2,x,y,'#dec693',2);line(c,x-w/2,y-h*.42,x+w/2,y-h*.42,'#dec693',2);c.restore();}
+ function drawGround(c,map){const W=map.cols*T,H=map.rows*T;c.save();rect(c,0,0,W,H,'#302a32');
+  for(let y=2;y<map.rows-2;y++)for(let x=2;x<map.cols-2;x++){
+   marble(c,x*T,y*T,T,T);c.strokeStyle='rgba(105,83,51,.22)';c.lineWidth=.6;c.strokeRect(x*T+.5,y*T+.5,T-1,T-1);
+   if((x+y)%4===0)diamond(c,(x+.5)*T,(y+.5)*T,3,'#b3a17b');
+  }
+  // Two broad arcades and a processional carpet: every accent follows the grid.
+  for(const x of [3,10,19,26]){rect(c,x*T+3,2*T,2,(map.rows-4)*T,'#b89c61');rect(c,x*T+7,2*T,1,(map.rows-4)*T,'#f5e5b7');}
+  carpet(c,13*T,5*T,4*T,29*T);
+  for(const y of [10,21,28]){rect(c,2*T,y*T,(map.cols-4)*T,2,'#b59758');rect(c,2*T,y*T+4,(map.cols-4)*T,1,'#faf0d3');carpet(c,13*T,y*T,4*T,6);}
+  // The raised throne platform remains a broad, accessible plaza, with three shallow steps.
+  marble(c,10*T,2*T,10*T,5*T);c.strokeStyle='#b08c45';c.lineWidth=3;c.strokeRect(10*T+3,2*T+3,10*T-6,5*T-6);
+  carpet(c,13*T,2*T+4,4*T,5*T-5);for(let i=0;i<3;i++)line(c,10*T,7*T+i*5,20*T,7*T+i*5,i===0?'#9b8259':'#eee1be',2);
+  const cx=15*T,cy=25*T;c.strokeStyle='rgba(173,136,68,.55)';c.lineWidth=3;c.beginPath();c.ellipse(cx,cy,2.7*T,2.7*T,0,0,Math.PI*2);c.stroke();
+  c.beginPath();c.ellipse(cx,cy,2.4*T,2.4*T,0,0,Math.PI*2);c.stroke();diamond(c,cx,cy,24,'#d4b36b');diamond(c,cx,cy,15,'#872b40');
+  // Ornate outer walls, tall arched windows and burgundy hangings.
+  for(const x of [0,W-2*T]){marble(c,x,0,2*T,H);rect(c,x+4,0,5,H,'#b39152');rect(c,x+2*T-9,0,5,H,'#b39152');
+   for(let y=5*T;y<H-3*T;y+=7*T){arch(c,x+T,y,36,94);rect(c,x+6,y-94,7,102,'#6c2538');rect(c,x+2*T-13,y-94,7,102,'#6c2538');rect(c,x+3,y-99,2*T-6,5,'#d4af63');}}
+  marble(c,0,0,W,2*T);rect(c,0,5,W,5,'#b79759');rect(c,0,2*T-7,W,5,'#a6864e');
+  for(const x of [4,8,21,25]){rect(c,x*T,13,T,35,'#75283b');poly(c,[[x*T,48],[(x+.5)*T,59],[(x+1)*T,48]],'#75283b');diamond(c,(x+.5)*T,29,7,'#dbb766');}
+  c.fillStyle='#75592d';c.font='bold 12px serif';c.textAlign='center';c.fillText('A U R E L I A   /   R O Y A L   H A L L',15*T,38);
+  marble(c,0,H-2*T,W,2*T);rect(c,0,H-2*T,W,5,'#b09050');c.fillStyle='#765c36';c.font='bold 10px serif';c.fillText('鎏 金 宫 殿',15*T,H-18);c.restore();
+ }
+ function makeObjects(map,v){return map.decor.map(o=>({...o,p:P.project(v,(o.x+(o.w||1)/2)*T,(o.y+(o.h||1))*T-4),depth:(o.y+(o.h||1))*T+v.oy}));}
+ function lamp(c,x,y){rect(c,x-3,y-37,6,36,'#a98542');rect(c,x-11,y-4,22,5,'#b39351');line(c,x-15,y-46,x+15,y-46,'#e3bc6a',3);
+  for(const dx of [-14,0,14]){line(c,x+dx,y-46,x+dx,y-55,'#c49b4d',3);oval(c,x+dx,y-59,3,6,'#ffe8a3');}diamond(c,x,y-39,5,'#d7b467');}
+ function drawObject(c,v,o){const {x,y}=o.p;c.save();
+  if(o.kind==='palace-column'){
+   oval(c,x+9,y+2,28,9,'rgba(37,27,25,.2)');marble(c,x-22,y-12,44,12);rect(c,x-24,y-13,48,4,'#b39351');
+   const g=c.createLinearGradient(x-13,y,x+13,y);g.addColorStop(0,'#b6a383');g.addColorStop(.35,'#f9efd6');g.addColorStop(1,'#b29c78');c.fillStyle=g;c.fillRect(x-14,y-94,28,81);
+   for(const dx of [-8,0,8])line(c,x+dx,y-89,x+dx,y-17,'rgba(150,126,83,.45)');marble(c,x-21,y-106,42,12);rect(c,x-23,y-108,46,4,'#d5b05f');
+   for(const dx of [-18,18]){c.strokeStyle='#b39351';c.lineWidth=3;c.beginPath();c.arc(x+dx,y-98,6,0,Math.PI*1.7);c.stroke();}
+  }
+  if(o.kind==='palace-throne'){
+   oval(c,x,y+3,40,12,'rgba(49,29,27,.24)');rect(c,x-30,y-66,60,66,'#b69149');rect(c,x-24,y-61,48,55,'#7a2437');
+   poly(c,[[x-33,y-66],[x-27,y-92],[x-15,y-80],[x,y-106],[x+15,y-80],[x+27,y-92],[x+33,y-66]],'#d4af5d');diamond(c,x,y-82,8,'#e7d397');
+   rect(c,x-26,y-19,52,15,'#a13748');for(const dx of [-34,26]){rect(c,x+dx,y-28,8,32,'#ca9e50');oval(c,x+dx+4,y-31,7,7,'#ebce85');}
+   for(const dx of [-22,18])rect(c,x+dx,y-3,5,12,'#b88f44');
+  }
+  if(o.kind==='palace-lamp')lamp(c,x,y);
+  if(o.kind==='palace-planter'){
+   rect(c,x-27,y-15,54,16,'#ae9871');rect(c,x-30,y-19,60,6,'#d8c296');for(let i=0;i<7;i++){oval(c,x-23+i*8,y-25-(i%3)*4,9,11,'#46614c');oval(c,x-21+i*8,y-30-(i%3)*4,4,4,i%2?'#e5d6bf':'#b9566a');}
+  }
+  if(o.kind==='palace-font'){
+   oval(c,x,y-1,15,6,'#9a8258');oval(c,x,y-5,17,6,'#e2ce9e');oval(c,x,y-6,12,4,'#78a8b3');diamond(c,x,y-14,5,'#f4e6ad');
+  }
+  if(o.kind==='palace-entrance'){
+   rect(c,x-34,y-32,68,32,'#9d7e46');rect(c,x-28,y-29,56,29,'#3c3240');line(c,x-28,y-29,x-48,y-4,'#d5b16a',4);line(c,x+28,y-29,x+48,y-4,'#d5b16a',4);
+  }c.restore();
+ }
+ function drawLights(c,v,game){c.save();P.apply(c,v);for(const o of game.map.decor.filter(o=>o.kind==='palace-lamp')){
+  const x=(o.x+.5)*T,y=(o.y+1)*T-55,g=c.createRadialGradient(x,y,2,x,y,100);g.addColorStop(0,'rgba(255,225,151,.18)');g.addColorStop(1,'rgba(255,225,151,0)');c.fillStyle=g;c.fillRect(x-100,y-100,200,200);
+ }c.restore();}
+ function drawBattleBackground(c,w,h){c.save();rect(c,0,0,w,h,'#e0cfad');
+  for(let i=0;i<5;i++){const x=w*(.1+i*.2);arch(c,x,h*.53,w*.11,h*.43);rect(c,x-w*.07,h*.12,12,h*.43,'#7b283c');rect(c,x+w*.07-12,h*.12,12,h*.43,'#7b283c');}
+  rect(c,0,h*.56,w,h*.44,'#d8c7a5');
+  for(let y=h*.56;y<h;y+=h*.08)line(c,0,y,w,y,'#bba57e');for(let i=-4;i<13;i++)line(c,w*.5,h*.56,w*i*.13,h,'#bba57e');
+  poly(c,[[w*.42,h*.56],[w*.58,h*.56],[w*.75,h],[w*.25,h]],'#7e293d');
+  line(c,w*.42,h*.56,w*.25,h,'#d4ae61',3);line(c,w*.58,h*.56,w*.75,h,'#d4ae61',3);
+  for(const x of [w*.025,w*.21,w*.77,w*.955]){marble(c,x-12,h*.08,24,h*.49);rect(c,x-22,h*.06,44,14,'#bc9b57');rect(c,x-21,h*.55,42,12,'#c3a263');}
+  rect(c,0,h*.025,w,8,'#bc9953');rect(c,0,h*.09,w,4,'#b08b4b');lamp(c,w*.5,h*.22);c.restore();}
+ const isCavalry=id=>M.CONFIG.STAGE_PALACE?.enemies.some(u=>u.id===id&&String(u.art).startsWith('palace-cavalier'))||false;
+ function drawMounted(c,id,x,y,h,now,state='idle',frame=0,facing='left'){
+  const elite=id==='gilded_cavalier',moving=['walk','run','attack'].includes(state),tick=moving?now/95+frame:0,down=state==='down';
+  c.save();c.translate(x,y);c.scale(h/70,h/70);if(facing==='left')c.scale(-1,1);
+  if(state==='hurt')c.filter='brightness(1.65)';if(down){c.translate(0,-8);c.rotate(facing==='left'?-.9:.9);c.globalAlpha=.65;}
+  const metal=elite?'#dbb967':'#aab6c2',shade=elite?'#96723a':'#596a80',cloth=elite?'#8e293e':'#343c68',horse=elite?'#d7ccb2':'#755e54',dark=elite?'#9f8d76':'#443a3c';
+  oval(c,0,1,25,5,'rgba(30,24,32,.25)');const front=['up','down'].includes(facing);const bob=moving?Math.sin(tick)*1.5:Math.sin(now/550)*.4;c.translate(0,bob);
+  if(elite&&!down){c.strokeStyle='rgba(225,183,87,.55)';c.lineWidth=1.3;c.beginPath();c.ellipse(0,1,29,7,0,0,Math.PI*2);c.stroke();}
+  if(front){
+   for(const dx of [-9,7]){const step=moving?Math.sin(tick+(dx<0?0:Math.PI))*3:0;rect(c,dx,-18,4,17+step,dark);rect(c,dx-1,-3+step,6,4,'#33333a');}
+   oval(c,0,-26,14,20,horse);poly(c,[[-13,-38],[13,-38],[16,-14],[4,-10],[-14,-17]],cloth);line(c,-13,-16,14,-12,metal,2);
+   if(facing==='up'){poly(c,[[-10,-47],[11,-47],[14,-23],[-13,-23]],cloth);}
+   else{oval(c,0,-25,8,12,horse);rect(c,-5,-34,10,3,dark);rect(c,-6,-19,12,3,shade);rect(c,-4,-29,2,3,'#302e35');rect(c,3,-29,2,3,'#302e35');}
+   poly(c,[[-5,-52],[-3,-64],[3,-65],[8,-54]],elite?'#b44250':'#596391');
+   line(c,19,-7,19+(state==='attack'?5:0),-63,shade,3);poly(c,[[16,-64],[19,-73],[22,-64]],metal);
+   oval(c,-14,-36,8,10,shade);diamond(c,-14,-36,5,metal);
+  }else{
+   for(let i=0;i<4;i++){const step=moving?Math.sin(tick+(i%2)*Math.PI)*4:0,xx=[-18,-10,10,17][i];poly(c,[[xx,-23],[xx+4,-22],[xx+3+step,-5],[xx+5+step,-2],[xx-1+step,-2],[xx-2,-10]],i%2?dark:horse);rect(c,xx-1+step,-4,7,4,'#30313a');}
+   poly(c,[[-26,-36],[-35,-29],[-31,-18],[-27,-24],[-24,-27]],dark);oval(c,-1,-29,25,13,horse);poly(c,[[-23,-28],[-15,-20],[7,-19],[22,-28],[17,-17],[-13,-15]],dark);line(c,-17,-36,7,-39,elite?'#f0e4ca':'#a48a76',2);
+   poly(c,[[-20,-38],[10,-40],[16,-18],[-7,-15],[-22,-23]],cloth);line(c,-19,-24,14,-18,metal,2);diamond(c,-5,-26,5,metal);
+   poly(c,[[11,-35],[16,-48],[23,-53],[32,-46],[35,-39],[27,-37],[22,-39],[19,-23]],horse);poly(c,[[15,-44],[17,-54],[23,-50],[25,-57],[27,-49]],dark);
+   rect(c,29,-46,3,2,'#292c32');rect(c,32,-41,2,2,dark);line(c,18,-49,30,-38,shade,2);line(c,31,-39,4,-32,'#bda473',1.2);line(c,22,-47,29,-44,elite?'#f0e4ca':'#a48a76',2);
+   poly(c,[[-13,-52],[1,-51],[4,-33],[-19,-31]],cloth);
+   poly(c,[[-6,-55],[-4,-65],[3,-66],[8,-55]],elite?'#bd4551':'#666fa0');line(c,1,-33,-3,-19,shade,5);rect(c,-6,-20,9,4,'#343842');
+   const thrust=state==='attack'?Math.min(1,frame/4)*14:0;line(c,-1,-40,38+thrust,-48+thrust*.25,shade,3);poly(c,[[37+thrust,-51+thrust*.25],[46+thrust,-49+thrust*.25],[37+thrust,-45+thrust*.25]],metal);
+   oval(c,-6,-39,8,10,shade);diamond(c,-6,-39,5,metal);
+  }
+  // Reuse the same detailed LPC helmet/plate layers as the palace's armored guards.
+  const rider=M.WatercourtArt?.images[elite?'warden':'armor'];
+  if(rider){const row=facing==='up'?0:facing==='down'?2:3;c.imageSmoothingEnabled=false;c.drawImage(rider,76,row*192+76,44,35,-18,-63,35,28);}
+  c.restore();return true;
+ }
+ for(const key of ['has','hasActions']){const base=C[key];C[key]=id=>isCavalry(id)||base(id);}
+ const map=C.drawMap;C.drawMap=function(c,u,x,y,h,now,opts){return isCavalry(u.id)?drawMounted(c,u.id,x,y,h*(u.boss?1.13:1.04),now,u._walking?'walk':'idle',0,u.facing):map(c,u,x,y,h,now,opts);};
+ const battle=C.drawBattlePose;C.drawBattlePose=function(c,u,x,y,h,state,frame,facing,action){return isCavalry(u.id)?drawMounted(c,u.id,x,y,h,global.performance?.now()||0,state,frame,facing):battle(c,u,x,y,h,state,frame,facing,action);};
+ const portrait=C.drawPortrait;C.drawPortrait=function(c,id,x,y,w,h,opts){if(!isCavalry(id))return portrait(c,id,x,y,w,h,opts);c.save();c.beginPath();c.rect(x,y,w,h);c.clip();const size=Math.min(w*1.15,h*.93);drawMounted(c,id,x+w/2,y+h,size,0,'idle',0,'left');c.restore();return true;};
+ M.PalaceArt={isCavalry,drawMounted};M.PalaceMap={drawGround,makeObjects,drawObject,drawLights,drawBattleBackground};
+})(window);
+
+  </script>
+  <script>
 /* ===== src/renderer.js ===== */
 /* ============================================================
  * renderer.js — Canvas 俯视地图渲染
@@ -14126,7 +14310,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const map = this.game.map;
       if(this.game.stage>=4&&MyGO.ParkMap){
         lc.fillStyle='#050c17';lc.fillRect(0,0,this.logicalWidth,this.logicalHeight);
-        lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===10?MyGO.TenthMap:this.game.stage===9?MyGO.RehearsalMap:this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
+        lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===11?MyGO.PalaceMap:this.game.stage===10?MyGO.TenthMap:this.game.stage===9?MyGO.RehearsalMap:this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
         this._depthScene=null;this._parkFogKey=null;this.terrainLayer=layer;return;
       }
       if (this.game.stage >= 2 && MyGO.MoonMap) {
@@ -14883,7 +15067,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     /** Upright pieces and scenery share foot depth above an undistorted square board. */
     _renderDepth(now) {
       const ctx=this.ctx,P=MyGO.MapProjection,v=this.projection;
-      const first=this.game.stage===1,art=this.game.stage===10?MyGO.TenthMap:this.game.stage===9?MyGO.RehearsalMap:this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:this.game.stage===4?MyGO.ParkMap:first?MyGO.GardenMap:MyGO.MoonMap;
+      const first=this.game.stage===1,art=this.game.stage===11?MyGO.PalaceMap:this.game.stage===10?MyGO.TenthMap:this.game.stage===9?MyGO.RehearsalMap:this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:this.game.stage===4?MyGO.ParkMap:first?MyGO.GardenMap:MyGO.MoonMap;
       this.time=now;
       ctx.clearRect(0,0,this.logicalWidth,this.logicalHeight);
       if(!this.terrainLayer)this._buildTerrainLayer();
@@ -14920,7 +15104,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         art.drawObject(ctx,v,item);ctx.restore();
       }
       if(this.game.stage===4)art.drawFog(ctx,v,this.game,this);
-      if(this.game.stage>=9)MyGO.RehearsalMap.drawEffects(ctx,v,this.game,now);
+      if([9,10].includes(this.game.stage))MyGO.RehearsalMap.drawEffects(ctx,v,this.game,now);
       if(this.game.stage===6)MyGO.MaskedCourtArt.drawMapEffects(ctx,v,this.game,now);
       // Status bars stay visible even behind a flowering canopy.
       for(const {u,p,visual} of units){
@@ -16532,7 +16716,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const ctx = bg.getContext('2d');
       ctx.imageSmoothingEnabled = false;
       ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
-      if(this.stage>=9&&MyGO.RehearsalMap)MyGO.RehearsalMap.drawBattleBackground(ctx,W,H);
+      if(this.stage===11&&MyGO.PalaceMap)MyGO.PalaceMap.drawBattleBackground(ctx,W,H);
+      else if(this.stage>=9&&MyGO.RehearsalMap)MyGO.RehearsalMap.drawBattleBackground(ctx,W,H);
       else if(this.stage>=7&&MyGO.LivehouseArt)MyGO.LivehouseArt.drawBattleBackground(ctx,W,H);
       else if(this.stage>=4&&MyGO.ParkMap)MyGO.ParkMap.drawBattleBackground(ctx,W,H,this.lampsLit);
       else this._paintBackground(ctx);
@@ -17020,7 +17205,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     constructor(options) {
       const opts = options || {};
       this.seed = opts.seed;
-      this.initialStage = [2,3,4,5,6].includes(opts.stage) ? opts.stage : 1;
+      this.initialStage = [2,3,4,5,6,7,8,9,10,11].includes(opts.stage) ? opts.stage : 1;
       this.dom = {
         partyList: document.getElementById('party-list'),
         tacticalHint: document.getElementById('tactical-hint'),
@@ -17124,6 +17309,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.dom.missionTitle.textContent = mission.title;
       this.dom.missionSub.textContent = mission.subtitle;
       this.dom.objectiveText.textContent = mission.objective;
+      if(this.game.stage===11)this.dom.objectiveText.textContent='击败精英战马骑士 · '+(this.game.getUnit('gilded_cavalier')?.dead?'已击败':'北端王座厅')+' · 敌军剩余 '+this.game.livingCount('enemy')+' 名';
       if(this.game.stage===10)this.dom.objectiveText.textContent='后半段 · 全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.subaruJoined?' · 昴已入队':' · 与昴会合');
       if(this.game.stage===9)this.dom.objectiveText.textContent=this.game.gateOpen?'正在进入本关后半段':this.game.getUnit('rift_pegasus')?.dead?'前半段 · Boss 已击败 · 到北端门旁使用钥匙':'前半段 · 击败裂空天马 → 取得钥匙 → 开门';
       if(this.game.stage===8)this.dom.objectiveText.textContent='击败幻影 · '+this.game.mission.phantomIds.filter(id=>this.game.getUnit(id)?.dead).length+'/2 · 宝箱 '+this.game.openedChests.length+'/3';
@@ -17148,6 +17334,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.dom.missionTitle.textContent = mission.title;
       this.dom.missionSub.textContent = mission.subtitle;
       this.dom.objectiveText.textContent = mission.objective;
+      if(this.game.stage===11)this.dom.objectiveText.textContent='击败精英战马骑士 · '+(this.game.getUnit('gilded_cavalier')?.dead?'已击败':'北端王座厅')+' · 敌军剩余 '+this.game.livingCount('enemy')+' 名';
       if(this.game.stage===10)this.dom.objectiveText.textContent='后半段 · 全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.subaruJoined?' · 昴已入队':' · 与昴会合');
       if(this.game.stage===9)this.dom.objectiveText.textContent=this.game.gateOpen?'正在进入本关后半段':this.game.getUnit('rift_pegasus')?.dead?'前半段 · Boss 已击败 · 到北端门旁使用钥匙':'前半段 · 击败裂空天马 → 取得钥匙 → 开门';
       if(this.game.stage===8)this.dom.objectiveText.textContent='击败幻影 · '+this.game.mission.phantomIds.filter(id=>this.game.getUnit(id)?.dead).length+'/2 · 宝箱 '+this.game.openedChests.length+'/3';
@@ -17197,6 +17384,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(this.game.stage===4){this.playParkIntro();return;}
       if(this.game.stage===7){this.playLivehouseIntro();return;}
       if(this.game.stage===10){this.playTenthIntro();return;}
+      if(this.game.stage===11){this.playPalaceIntro();return;}
       if(this.game.stage===9){this.playNinthIntro();return;}
       if(this.game.stage===8){this.playEighthIntro();return;}
       root.hidden = false;
@@ -17231,7 +17419,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         const done = this.chapterDone;
         this.chapterDone = null;
         if (done) done();
-        if([6,8,9,10].includes(this.game.stage)){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
+        if([6,8,9,10,11].includes(this.game.stage)){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
         this.scheduleAutoEndTurn();
       }, 720);
     }
@@ -17241,8 +17429,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.closeOverlay();
       this.endShown = false;
       this.busy = false;
-      const requestedStage = [1,2,3,4,5,6,7,8,9,10].includes(stage) ? stage : this.game.chapterNumber || this.game.stage || 1;
-      const nextStage=requestedStage===10?9:requestedStage;
+      const requestedStage = [1,2,3,4,5,6,7,8,9,10,11].includes(stage) ? stage : this.game.stage===11?11:this.game.chapterNumber || this.game.stage || 1;
+      const nextStage=requestedStage===10?11:requestedStage;
       this.game = new MyGO.Game({ seed: seed || Date.now(), stage: nextStage,
         ninaLost:nextStage>=9&&this.game.ninaLost,
         recruited: nextStage >= 2 ? [...new Set(this.game.recruited.filter(id=>nextStage!==7||id!=='nijika').concat(nextStage>=9&&!this.game.ninaLost?['nina']:[]))] : [],
@@ -17261,8 +17449,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
     /** 开始下一章（或直接指定章节）。 */
     startNextStage() {
-      if(this.game.stage >= 9 || this.game.phase !== 'victory') return;
-      const next = this.game.stage + 1;
+      if(this.game.chapterNumber >= 10 || this.game.stage===9 || this.game.phase !== 'victory') return;
+      const next = this.game.stage===10?11:this.game.stage + 1;
       this.chapterPlayed = false;
       this.closeOverlay();
       this.endShown = false;
@@ -17477,6 +17665,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(this.game.stage===4){
         this.dom.objectiveText.textContent=this.parkObjectiveText();
       }
+      if(this.game.stage===11)this.dom.objectiveText.textContent='击败精英战马骑士 · '+(this.game.getUnit('gilded_cavalier')?.dead?'已击败':'北端王座厅')+' · 敌军剩余 '+this.game.livingCount('enemy')+' 名';
       if(this.game.stage===10)this.dom.objectiveText.textContent='后半段 · 全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.subaruJoined?' · 昴已入队':' · 与昴会合');
       if(this.game.stage===9)this.dom.objectiveText.textContent=this.game.gateOpen?'正在进入本关后半段':this.game.getUnit('rift_pegasus')?.dead?'前半段 · Boss 已击败 · 到北端门旁使用钥匙':'前半段 · 击败裂空天马 → 取得钥匙 → 开门';
       if(this.game.stage===8)this.dom.objectiveText.textContent='击败幻影 · '+this.game.mission.phantomIds.filter(id=>this.game.getUnit(id)?.dead).length+'/2 · 宝箱 '+this.game.openedChests.length+'/3';
@@ -17544,13 +17733,13 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const frame = vp.parentElement;
       if (document.getElementById('game-shell')) {
         const aspect = this.renderer.logicalWidth / this.renderer.logicalHeight;
-        const width = [6,8,9,10].includes(this.game.stage)?Math.max(1,frame.clientWidth-2):Math.max(1, Math.min(frame.clientWidth - 2, (frame.clientHeight - 2) * aspect));
+        const width = [6,8,9,10,11].includes(this.game.stage)?Math.max(1,frame.clientWidth-2):Math.max(1, Math.min(frame.clientWidth - 2, (frame.clientHeight - 2) * aspect));
         vp.style.width = width + 'px';
-        vp.style.height = ([6,8,9,10].includes(this.game.stage)?Math.max(1,frame.clientHeight-2):width/aspect) + 'px';
+        vp.style.height = ([6,8,9,10,11].includes(this.game.stage)?Math.max(1,frame.clientHeight-2):width/aspect) + 'px';
       }
       const baseW = vp.offsetWidth;
-      const baseH = [6,8,9,10].includes(this.game.stage)?baseW*this.renderer.logicalHeight/this.renderer.logicalWidth:vp.offsetHeight;
-      const zoomed = this.zoom > 1.001 || [6,8,9,10].includes(this.game.stage);
+      const baseH = [6,8,9,10,11].includes(this.game.stage)?baseW*this.renderer.logicalHeight/this.renderer.logicalWidth:vp.offsetHeight;
+      const zoomed = this.zoom > 1.001 || [6,8,9,10,11].includes(this.game.stage);
       vp.classList.toggle('is-zoomed', zoomed);
       if (zoomed) {
         this.dom.board.style.width = Math.round(baseW * this.zoom) + 'px';
@@ -17590,7 +17779,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     /** 选中/查看远处单位时，把格子滚进视口。仅影响镜头，不影响规则。 */
     revealCell(x, y) {
       const vp = this.dom.boardViewport;
-      if (!vp || this.zoom <= 1.001 && ![6,8,9,10].includes(this.game.stage)) return;
+      if (!vp || this.zoom <= 1.001 && ![6,8,9,10,11].includes(this.game.stage)) return;
       const cellW = this.dom.board.offsetWidth / this.game.map.cols;
       const cellH = this.dom.board.offsetHeight / this.game.map.rows;
       const projected = this.game.stage>=2 && MyGO.MapProjection
@@ -17598,7 +17787,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const left = projected ? projected.x / this.renderer.logicalWidth * this.dom.board.offsetWidth - cellW/2 : x * cellW;
       const top = projected ? projected.y / this.renderer.logicalHeight * this.dom.board.offsetHeight - cellH/2 : y * cellH;
       // 至少留出 1.5 格的观察余量，避免选中单位贴边。
-      const pad = Math.max(24, Math.round(cellW * ([6,8,9,10].includes(this.game.stage)?3:1.5)));
+      const pad = Math.max(24, Math.round(cellW * ([6,8,9,10,11].includes(this.game.stage)?3:1.5)));
       if (left < vp.scrollLeft + pad) vp.scrollLeft = Math.max(0, left - pad);
       else if (left + cellW > vp.scrollLeft + vp.clientWidth - pad) {
         vp.scrollLeft = left + cellW - vp.clientWidth + pad;
@@ -18299,7 +18488,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         '<span class="tag">第 ' + this.game.turn + ' 回合</span>'
       ].join('');
       const open = this.game.gateOpen;
-      const steps = this.game.stage===10?[['与昴会合','开场对话后昴直接入队，可施法攻击并支援队伍。'],['辨认真正的仁菜','紫黑色幻影是拳斗士，钢拳套具有连续攻击。保护脆弱后排，集中火力应对。'],['清除所有敌人','幻影倒下后仍须击败四周幻兵、重装与天马。右上角显示剩余敌人数量。']]:this.game.stage===9?[['向门推进','沿中央地毯北上，利用音箱与乐器架分流敌人。'],['击败裂空天马','苍蓝羽光与双环光晕标记 Boss。弓对飞行有效；击败后获得门的钥匙与钢枪。'],['打开奇怪的门','击败 Boss 后仍可行动。队员走到最北端门旁使用钥匙；运输队与暂存中的门钥匙也可直接使用。开门后继续本关，与昴会合并全歼后半段敌军。']]:this.game.stage===8?[['击败两名幻影','向舞台最深处推进，同时击败术士爽世之影与佣兵灯之影即可获胜。'],['破甲与防空','重装高守备低魔防，使用魔法；携钥天马机动很高，注意弓的飞行特效。'],['三个宝箱','三名携钥天马各掉一把钥匙。西箱中级转职证，东箱1500 G，后台钢剑。击败最后一名幻影前完成搜宝。']]:this.game.stage===7?[['回应求助','开场回应虹夏后，她立即成为可操控同伴。'],['清理演出厅','利用两侧通道绕过设备，逐组击败失真回声。'],['夺回舞台','舞台上的敌人也要全部击败；右上角显示剩余敌人。']]:this.game.stage===6?[
+      const steps = this.game.stage===11?[['突破宫门','沿中央红毯推进，或从立柱两侧回廊迂回。'],['防备骑兵突击','战马骑士移动7格，先查看威胁范围；魔法突破重装，弓应对天马。'],['击败金鬃卫长','王座前的金甲白马为精英Boss，击败即可通关。两侧圣泉可提供据点防护与回复。']]:this.game.stage===10?[['与昴会合','开场对话后昴直接入队，可施法攻击并支援队伍。'],['辨认真正的仁菜','紫黑色幻影是拳斗士，钢拳套具有连续攻击。保护脆弱后排，集中火力应对。'],['清除所有敌人','幻影倒下后仍须击败四周幻兵、重装与天马。右上角显示剩余敌人数量。']]:this.game.stage===9?[['向门推进','沿中央地毯北上，利用音箱与乐器架分流敌人。'],['击败裂空天马','苍蓝羽光与双环光晕标记 Boss。弓对飞行有效；击败后获得门的钥匙与钢枪。'],['打开奇怪的门','击败 Boss 后仍可行动。队员走到最北端门旁使用钥匙；运输队与暂存中的门钥匙也可直接使用。开门后继续本关，与昴会合并全歼后半段敌军。']]:this.game.stage===8?[['击败两名幻影','向舞台最深处推进，同时击败术士爽世之影与佣兵灯之影即可获胜。'],['破甲与防空','重装高守备低魔防，使用魔法；携钥天马机动很高，注意弓的飞行特效。'],['三个宝箱','三名携钥天马各掉一把钥匙。西箱中级转职证，东箱1500 G，后台钢剑。击败最后一名幻影前完成搜宝。']]:this.game.stage===7?[['回应求助','开场回应虹夏后，她立即成为可操控同伴。'],['清理演出厅','利用两侧通道绕过设备，逐组击败失真回声。'],['夺回舞台','舞台上的敌人也要全部击败；右上角显示剩余敌人。']]:this.game.stage===6?[
         ['沿中央林荫道向北','从南部中央出发，穿过池塘、长椅与花圃，到达十八盏宫廷立灯围绕的王座。滚轮或触摸拖动纵向查看地图，点击同伴自动跟随。'],
         ['防备暗幕召唤','推进越过四个区段后，敌方阶段每轮最多召唤一波，混合普通兵、重装和天马。新援军当轮不行动。'],
         ['保持队形并应对兵种','援军会在队伍附近出现。用弓防空、用魔法破甲，保护后排并利用休憩据点恢复。'],
@@ -18382,6 +18571,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const rawTerrain = this.game.getTerrain(x, y);
       const names={plain:['排练室地毯','室内地毯，移动消耗 1。'],road:['中央导向地毯','沿地毯向北推进，最北端是奇怪的门。'],wall:['隔音墙 / 排练设备','吸音墙与固定设备无法通行。'],gate:['奇怪的门','击败裂空天马取得钥匙后，队员站在门旁选择开门。钥匙在运输队或暂存中也可使用。'],gateOpen:['开启的奇怪的门','钥匙已化作光芒，出口开启。']};
       if(this.game.stage===10)names.gateOpen=['回环之门','门后依然是同一间排练室。本关需击败全部敌人，无需再次使用钥匙。'];
+      if(this.game.stage===11)Object.assign(names,{plaza:['宫殿大理石地面','金白色大理石大厅，可通行。'],road:['宫廷红毯','通往北端王座厅的中央大道。'],wall:['宫墙与立柱','不可通行；骑兵与飞行单位也无法穿过。'],fort:['宫廷圣泉','守备＋2、回避＋10；我方回合开始回复20%生命。']});
       const local=this.game.stage>=9?names[rawTerrain.id]:null;
       const terrain=local?{...rawTerrain,name:local[0],desc:local[1]}:rawTerrain;
       const bell=this.game.bellAt(x,y);
@@ -19044,14 +19234,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const at = timeText(loaded.savedAt) || '未知时间';
       if(this.chapterOpen)this.finishChapterIntro();
       this.game.restore(loaded.snapshot);
-      this.chapterPlayed=this.game.stage===10?this.game.stageTenIntroSeen:this.game.stage===9?this.game.stageNineIntroSeen:this.game.stage===8?this.game.stageEightIntroSeen:this.game.stage!==7||this.game.nijikaJoined;
+      this.chapterPlayed=this.game.stage===11?this.game.palaceIntroSeen:this.game.stage===10?this.game.stageTenIntroSeen:this.game.stage===9?this.game.stageNineIntroSeen:this.game.stage===8?this.game.stageEightIntroSeen:this.game.stage!==7||this.game.nijikaJoined;
       this.renderer.setGame(this.game);
       this.endShown = false;
       this.resetSelection({ silent: true });
       this.lastSaveAt = at;
       this.syncMission();
       this.updateAll();
-      if([6,8,9,10].includes(this.game.stage)){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
+      if([6,8,9,10,11].includes(this.game.stage)){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
       if(this.game.stage===6&&this.game.maskRetreatPending){this.playMaskedEscape().then(()=>this.showEndScreen());return false;}
       if (this.game.isOver()) {
         // 正常流程不会写入终局存档；这里防御旧版本或手工构造的存档。
@@ -19059,7 +19249,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         return false;
       }
       this.renderIdleInfo();
-      if(this.game.stage===10&&!this.game.stageTenIntroSeen||this.game.stage===9&&!this.game.stageNineIntroSeen||this.game.stage===8&&!this.game.stageEightIntroSeen||this.game.stage===7&&!this.game.nijikaJoined)setTimeout(()=>{if(!this.chapterPlayed&&!this.chapterOpen)this.playChapterIntro();},0);
+      if(this.game.stage===11&&!this.game.palaceIntroSeen||this.game.stage===10&&!this.game.stageTenIntroSeen||this.game.stage===9&&!this.game.stageNineIntroSeen||this.game.stage===8&&!this.game.stageEightIntroSeen||this.game.stage===7&&!this.game.nijikaJoined)setTimeout(()=>{if(!this.chapterPlayed&&!this.chapterOpen)this.playChapterIntro();},0);
       return true;
     }
 
@@ -19188,14 +19378,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         '    <div class="end-stat"><span>击破</span><b>' + Math.max(0, defeated) + ' / ' + enemyTotal + '</b></div>',
         '  </div>',
         '  <div class="end-copy">' + (win
-          ? (this.game.stage===10?'裂空天马已经倒下，门后的仁菜幻影与敌军也已全部消散。<br>排练室终于安静下来，安和昴已成为同行的伙伴。<br>第九关完成，本章奖励 2000 G。':this.game.stage===8?'两名往日之影已消散，扩张的舞台恢复了寂静。<br>宝箱收集：'+this.game.openedChests.length+'/3；本章奖励 2000 G。':this.game.stage===7?'失真的噪音终于平息，STARRY 的舞台再次亮起。<br>全部敌人已击败，虹夏与大家一同守住了这里。<br>本章奖励 2000 G。':this.game.stage===6?'“留你们一命。”<br>神秘面具人在 1 HP 时打开传送阵离开，王座已空。<br>众人突破暗幕包围，本章奖励 2000 G。':this.game.stage===5?'双桥防线已突破。中级转职证 ×1、钢斧 ×1 已作为 Boss 战利品领取。<br>宝箱收集：'+this.game.openedChests.length+'/2；本章奖励 2000 G。':this.game.stage===4?'“这一次，我会和大家一起向前走。”<br>神秘幻影已击败。'+(this.game.soyoBossBonus?'爽世直面过去，已获得双倍击破经验。':'由爽世亲手击败幻影可获得双倍击破经验。'):this.game.stage===3?(this.game.ninaLost?'仁菜没能走出这场梦。今后的旅途中，她将不会加入同行之人。':'井芹仁菜已获救，加入同行之人。'):'“即使迷路，也要把这首歌传达出去。”')+'<br>' + esc(this.game.mission.chapter) + ' · ' + esc(this.game.mission.title) + ' · CLEAR'
+          ? (this.game.stage===11?'金鬃卫长已被击败，宫廷守军的防线随之瓦解。<br>众人穿过鎏金大厅，继续寻找回到现实的方法。<br>第十关完成，本章奖励 2000 G。':this.game.stage===10?'裂空天马已经倒下，门后的仁菜幻影与敌军也已全部消散。<br>排练室终于安静下来，安和昴已成为同行的伙伴。<br>第九关完成，本章奖励 2000 G。':this.game.stage===8?'两名往日之影已消散，扩张的舞台恢复了寂静。<br>宝箱收集：'+this.game.openedChests.length+'/3；本章奖励 2000 G。':this.game.stage===7?'失真的噪音终于平息，STARRY 的舞台再次亮起。<br>全部敌人已击败，虹夏与大家一同守住了这里。<br>本章奖励 2000 G。':this.game.stage===6?'“留你们一命。”<br>神秘面具人在 1 HP 时打开传送阵离开，王座已空。<br>众人突破暗幕包围，本章奖励 2000 G。':this.game.stage===5?'双桥防线已突破。中级转职证 ×1、钢斧 ×1 已作为 Boss 战利品领取。<br>宝箱收集：'+this.game.openedChests.length+'/2；本章奖励 2000 G。':this.game.stage===4?'“这一次，我会和大家一起向前走。”<br>神秘幻影已击败。'+(this.game.soyoBossBonus?'爽世直面过去，已获得双倍击破经验。':'由爽世亲手击败幻影可获得双倍击破经验。'):this.game.stage===3?(this.game.ninaLost?'仁菜没能走出这场梦。今后的旅途中，她将不会加入同行之人。':'井芹仁菜已获救，加入同行之人。'):'“即使迷路，也要把这首歌传达出去。”')+'<br>' + esc(this.game.mission.chapter) + ' · ' + esc(this.game.mission.title) + ' · CLEAR'
           : '我方全灭。调整站位，利用森林与武器三角，再试一次。') + '</div>',
         '  <div class="modal-actions">',
         win ? '<button class="modal-btn" type="button" data-end-save>保存通关</button>' : '',
         win ? '<button class="modal-btn" type="button" data-end-shop>商店 · 补给</button>' : '',
         '<button class="modal-btn" type="button" data-end-formation>同行之人</button>',
-        win && this.game.stage < 9
-          ? '    <button class="modal-btn gold" type="button" data-end-next>进入第'+(['','二','三','四','五','六','七','八','九','十'][this.game.stage])+'章</button>'
+        win && (this.game.stage < 9||this.game.stage===10)
+          ? '    <button class="modal-btn gold" type="button" data-end-next>进入第'+(['','二','三','四','五','六','七','八','九','十'][this.game.chapterNumber])+'章</button>'
           : '',
         '    <button class="modal-btn primary" type="button" data-end-restart>再次挑战</button>',
         '  </div>',
@@ -19758,6 +19948,35 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   </script>
   <script>
+/* ===== src/palace-intro.js ===== */
+/* Chapter ten opens the palace after the completed two-part rehearsal chapter. */
+(function(global){
+ 'use strict';const M=global.MyGO,T=M.CONFIG.TILE,clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>{x=clamp(x);return x*x*(3-2*x);};
+ M.UI.prototype.playPalaceIntro=function(){
+  const ui=this,g=this.game,r=this.renderer,root=this.dom.chapterIntro;if(g.palaceIntroSeen){this.finishChapterIntro();return;}
+  root.classList.add('livehouse-intro');root.querySelector('.livehouse-opening')?.remove();const scene=document.createElement('div');scene.className='livehouse-opening palace-opening';
+  scene.innerHTML='<div class="live-opening-head"><small>CHAPTER 10 / THE GILDED PALACE</small><h2>鎏金王座的铁蹄</h2><span>大理石回廊 · 金色宫门之后</span></div><canvas class="live-opening-canvas" width="1200" height="660" aria-label="众人进入宫殿，镜头沿红毯穿过列柱，精英战马骑士驻守王座厅"></canvas><div class="live-opening-caption" aria-live="polite"><canvas width="110" height="125"></canvas><div><small></small><p></p></div></div><div class="live-opening-skip">自动播放 · 点击 / Enter / Esc 跳过演出</div>';
+  root.appendChild(scene);root.hidden=false;root.classList.remove('is-leaving');void root.offsetWidth;root.classList.add('is-visible');
+  const c=scene.querySelector('.live-opening-canvas').getContext('2d'),face=scene.querySelector('.live-opening-caption canvas').getContext('2d'),speaker=scene.querySelector('.live-opening-caption small'),caption=scene.querySelector('.live-opening-caption p');
+  const world=document.createElement('canvas');world.width=g.map.cols*T;world.height=g.map.rows*T;const wc=world.getContext('2d');
+  const beats=[['长崎爽世','“排练室的回声消失了……这扇门后，居然是一座宫殿。”','soyo'],['安和昴','“前面有骑士。别被两侧的敌人分开了，大家一起走。”','subaru'],['精英战马骑士 · 金鬃卫长','“王座之前，禁止通行。”','gilded_cavalier'],['任务目标 · 击败精英战马骑士','沿中央红毯或两侧回廊推进，击败王座厅的金鬃卫长。留意骑兵的7格移动范围。','anon']];
+  const bounds=[3000,6200,9800,13000],positions=g.living('player').map(u=>({u,x:u.x,y:u.y})),start=performance.now(),oldView=r.view;let last=start,part=-1,raf=0,stopped=false;
+  const camera={x:6,y:24,w:18,h:12};r.setView({mode:'idle'});
+  const draw=now=>{if(stopped||!ui.chapterOpen||ui.game!==g)return;const elapsed=now-start,step=bounds.findIndex(t=>elapsed<t);if(step<0){ui.finishChapterIntro();return;}
+   scene.dataset.beat=String(step);if(part!==step){part=step;speaker.textContent=beats[step][0];caption.textContent=beats[step][1];face.clearRect(0,0,110,125);M.Characters.drawPortrait(face,beats[step][2],0,0,110,125,{head:true});}
+   const entered=ease(elapsed/2400);for(const p of positions){p.u.y=p.y+(34-p.y)*(1-entered);p.u._walking=entered<1;r.snapUnit(p.u);}
+   r.render(now);const scale=r.scale,p=M.MapProjection.project(r.projection,0,0);wc.clearRect(0,0,world.width,world.height);wc.drawImage(r.canvas,p.x*scale,p.y*scale,world.width*scale,world.height*scale,0,0,world.width,world.height);
+   const target=step===0?{x:6,y:24,w:18,h:12}:step===1?{x:0,y:11,w:30,h:19}:step===2?{x:6,y:0,w:18,h:12}:{x:0,y:0,w:30,h:36};
+   const blend=1-Math.exp(-Math.min(now-last,100)/550);last=now;for(const key of ['x','y','w','h'])camera[key]+=(target[key]-camera[key])*blend;
+   c.fillStyle='#1d1c27';c.fillRect(0,0,1200,660);const fit=Math.min(1200/(camera.w*T),660/(camera.h*T)),w=camera.w*T*fit,h=camera.h*T*fit;c.drawImage(world,camera.x*T,camera.y*T,camera.w*T,camera.h*T,(1200-w)/2,(660-h)/2,w,h);raf=requestAnimationFrame(draw);
+  };
+  this.parkIntroCleanup=()=>{stopped=true;cancelAnimationFrame(raf);for(const p of positions){Object.assign(p.u,{x:p.x,y:p.y,_walking:false});r.snapUnit(p.u);}g.palaceIntroSeen=true;if(ui.game===g){r.setView(oldView);ui.updateAll();ui.renderIdleInfo();}setTimeout(()=>{root.classList.remove('livehouse-intro');scene.remove();},720);};
+  raf=requestAnimationFrame(draw);
+ };
+})(window);
+
+  </script>
+  <script>
 /* ===== src/equipment-ui.js ===== */
 /* Searchable, read-only equipment reference. No inventory or battle-state writes. */
 (function (global) {
@@ -20034,6 +20253,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         if (action) {
           const name = action.getAttribute('data-entry-action');
           if (name === 'start') this.hideToGame();
+          if(name==='chapter10'){
+            this.ui.chapterPlayed=false;this.ui.newGame(Date.now(),11);this.hasStarted=true;this.hideToGame();
+          }
           if (name === 'chapter2' || name === 'chapter3' || name === 'chapter4' || name === 'chapter5' || name === 'chapter6' || name === 'chapter7' || name === 'chapter8' || name === 'chapter9') {
             this.ui.chapterPlayed = false;
             this.ui.newGame(Date.now(), Number(name.slice(7)));
@@ -20198,10 +20420,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if (info.ok) {
         const loaded = info.loaded;
         const rawSnapshot=loaded.snapshot;
-        const snapshot=rawSnapshot.stage===9&&rawSnapshot.rehearsalPart===2?{...rawSnapshot,stage:10}:rawSnapshot;
+        const snapshot=rawSnapshot.palaceChapterVersion===1?{...rawSnapshot,stage:11}:rawSnapshot.stage===9&&rawSnapshot.rehearsalPart===2?{...rawSnapshot,stage:10}:rawSnapshot;
         // 快照只保存会变化的数据（id/x/y/hp/acted/dead），阵营要从模板反查。
-        const savedMission = snapshot.stage===10?MyGO.CONFIG.STAGE_TEN:snapshot.stage===9?MyGO.CONFIG.STAGE_NINE:snapshot.stage===8?MyGO.CONFIG.STAGE_EIGHT:snapshot.stage===7?MyGO.CONFIG.STAGE_SEVEN:snapshot.stage===6?MyGO.CONFIG.STAGE_SIX:snapshot.stage===5?MyGO.CONFIG.STAGE_FIVE:snapshot.stage===4?MyGO.CONFIG.STAGE_FOUR:snapshot.stage === 3 ? MyGO.CONFIG.STAGE_THREE : snapshot.stage === 2 ? MyGO.CONFIG.STAGE_TWO : MyGO.CONFIG.MISSION;
-        const templates = MyGO.CONFIG.UNITS.concat(snapshot.stage===10?MyGO.CONFIG.STAGE_TEN.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'},{...MyGO.CONFIG.SUBARU,side:snapshot.subaruJoined?'player':'ally'}]):snapshot.stage===9?MyGO.CONFIG.STAGE_NINE.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'}]):snapshot.stage===8?MyGO.CONFIG.STAGE_EIGHT.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'}]):snapshot.stage===7?MyGO.CONFIG.STAGE_SEVEN.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:snapshot.nijikaJoined?'player':'ally'}]):snapshot.stage===6?MyGO.CONFIG.STAGE_SIX.enemies.concat(MyGO.CONFIG.STAGE_SIX.summonTemplates,[MyGO.CONFIG.NINA]):snapshot.stage===5?MyGO.CONFIG.STAGE_FIVE.enemies.concat([MyGO.CONFIG.NINA]):snapshot.stage===4?MyGO.CONFIG.STAGE_FOUR.enemies.concat([MyGO.CONFIG.NINA]):snapshot.stage===3?MyGO.CONFIG.STAGE_THREE.enemies.concat([MyGO.CONFIG.NINA]):[]);
+        const savedMission = snapshot.stage===11?MyGO.CONFIG.STAGE_PALACE:snapshot.stage===10?MyGO.CONFIG.STAGE_TEN:snapshot.stage===9?MyGO.CONFIG.STAGE_NINE:snapshot.stage===8?MyGO.CONFIG.STAGE_EIGHT:snapshot.stage===7?MyGO.CONFIG.STAGE_SEVEN:snapshot.stage===6?MyGO.CONFIG.STAGE_SIX:snapshot.stage===5?MyGO.CONFIG.STAGE_FIVE:snapshot.stage===4?MyGO.CONFIG.STAGE_FOUR:snapshot.stage === 3 ? MyGO.CONFIG.STAGE_THREE : snapshot.stage === 2 ? MyGO.CONFIG.STAGE_TWO : MyGO.CONFIG.MISSION;
+        const templates = MyGO.CONFIG.UNITS.concat(snapshot.stage===11?MyGO.CONFIG.STAGE_PALACE.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'},{...MyGO.CONFIG.SUBARU,side:'player'}]):snapshot.stage===10?MyGO.CONFIG.STAGE_TEN.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'},{...MyGO.CONFIG.SUBARU,side:snapshot.subaruJoined?'player':'ally'}]):snapshot.stage===9?MyGO.CONFIG.STAGE_NINE.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'}]):snapshot.stage===8?MyGO.CONFIG.STAGE_EIGHT.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:'player'}]):snapshot.stage===7?MyGO.CONFIG.STAGE_SEVEN.enemies.concat([MyGO.CONFIG.NINA,{...MyGO.CONFIG.NIJIKA,side:snapshot.nijikaJoined?'player':'ally'}]):snapshot.stage===6?MyGO.CONFIG.STAGE_SIX.enemies.concat(MyGO.CONFIG.STAGE_SIX.summonTemplates,[MyGO.CONFIG.NINA]):snapshot.stage===5?MyGO.CONFIG.STAGE_FIVE.enemies.concat([MyGO.CONFIG.NINA]):snapshot.stage===4?MyGO.CONFIG.STAGE_FOUR.enemies.concat([MyGO.CONFIG.NINA]):snapshot.stage===3?MyGO.CONFIG.STAGE_THREE.enemies.concat([MyGO.CONFIG.NINA]):[]);
         const sideById = new Map(templates.map((unit) => [unit.id, unit.side]));
         if (snapshot.stage >= 2 && (snapshot.recruited || []).includes('xueyue')) sideById.set('xueyue', 'player');
         if (snapshot.stage>=3 && !snapshot.ninaLost && (snapshot.recruited || []).includes('nina')) sideById.set('nina','player');
@@ -20212,7 +20434,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           '<div class="entry-save-slot">',
           '  <div class="entry-save-slot-mark">' + esc(savedMission.chapter) + '</div>',
           '  <strong>' + esc(savedMission.title) + '</strong>',
-          '  <span>'+(snapshot.stage>=9?(snapshot.stage===10?'后半段 · ':'前半段 · '):'')+'第 ' + esc(snapshot.turn) + ' 回合 · 我方 ' + mine + ' / 敌方 ' + foes + '</span>',
+          '  <span>'+([9,10].includes(snapshot.stage)?(snapshot.stage===10?'后半段 · ':'前半段 · '):'')+'第 ' + esc(snapshot.turn) + ' 回合 · 我方 ' + mine + ' / 敌方 ' + foes + '</span>',
           '  <small>' + esc(fullTimeText(loaded.savedAt)) + ' · ' + esc(storage) + '</small>',
           '</div>'
         ].join('');
@@ -20850,7 +21072,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     const hashParams = new URLSearchParams(global.location.hash.replace(/^#/, ''));
     const seed = params.get('seed') || hashParams.get('seed');
     const stageParam = Number(params.get('stage') || hashParams.get('stage'));
-    const stage = stageParam===10?9:[2,3,4,5,6,7,8,9].includes(stageParam) ? stageParam : 1;
+    const stage = params.get('chapter')==='10'||hashParams.get('chapter')==='10'||[10,11].includes(stageParam)?11:[2,3,4,5,6,7,8,9].includes(stageParam) ? stageParam : 1;
     const ui = new global.MyGO.UI({ seed: seed ? Number(seed) : undefined, stage: stage });
     global.MYGO_UI = ui;
     global.MyGO.ui = ui;
@@ -20961,6 +21183,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   <dialog id="terrain-credits" aria-labelledby="terrain-credits-title" style="width:min(680px,90vw);max-height:80vh;overflow:auto;background:#202b2c;color:#e1dfce;border:1px solid #8b987e;border-radius:8px;padding:24px;font:14px/1.8 system-ui">
     <form method="dialog" style="float:right"><button aria-label="关闭地图素材署名">关闭 ×</button></form>
     <h2 id="terrain-credits-title">地图素材与署名</h2>
+    <p>宫殿第十关：宫殿场景与马匹为原创绘制；战马骑手的头盔与上身裁自现有 LPC 重装图集，金色版本及组合效果沿用 CC BY-SA 3.0，完整作者及许可见 assets/chapter-five/SOURCES.md。天马与重装继续使用该章既有素材。地图、战斗和离线版使用相同资源。</p>
     <p>第九关后半段：延续同一张原创排练室地图与既有免费素材；安和昴使用用户提供的五张原图，去背、裁切并提取49帧动作、四方向地图与头像。仁菜幻影沿用仁菜原有动作并叠加暗紫光效。原始图片与处理说明见 assets/characters/subaru-source/SOURCES.md。</p>
     <p>第九关：参考《Girls Band Cry》刺团的排练室氛围，吸音墙、镜面、地毯、键盘、设备、奇怪的门与苍蓝羽光为原创绘制；鼓组、电吉他沿用下述第七关 CC0 图标，天马与重装沿用第五关既有素材及许可。官方剧照仅作参考，未作为游戏素材嵌入。完整说明见 docs/CHAPTER-NINE.md。</p>
     <p>第七关：<a href="https://opengameart.org/content/speaker" target="_blank" rel="noopener">Speaker</a> — PhoxSillanpaa，CC0；<a href="https://opengameart.org/content/cc0-music-icons" target="_blank" rel="noopener">CC0 Music Icons</a> — AntumDeluge 整理的 OpenClipart 乐器图标，选用鼓组与电吉他，CC0。场景参照《孤独摇滚》STARRY 的地下 Live House 氛围，地板、幕布、灯架、调音台等为代码绘制的原创场景。虹夏使用用户提供五张图片。完整来源与加工说明见 assets/chapter-seven/SOURCES.md。</p>

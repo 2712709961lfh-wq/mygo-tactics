@@ -2,7 +2,7 @@
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('node:assert/strict');
 const timers=[],w={console,document:{readyState:'loading'},performance:{now:()=>100},addEventListener(){},setTimeout(fn){timers.push(fn);return timers.length;},clearTimeout(){}};
 w.window=w;vm.createContext(w);
-for(const f of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','talents','growth','grid','pathfinding','combat','game','ui','entry','ninth-intro'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
+for(const f of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','chapter-palace','rng','growth-data','talents','growth','grid','pathfinding','combat','game','ui','entry','ninth-intro'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
 const M=w.MyGO,plain=x=>JSON.parse(JSON.stringify(x)),fresh=()=>new M.Game({stage:9,recruited:['xueyue','nina'],seed:1116});
 const reload=s=>{const h=new M.Game();h.restore(plain(s));return h;};
 const hit=(g,id)=>g.applyCombat({attackerId:'tomori',defenderId:id,hit:true,finalDamage:999});
@@ -24,7 +24,7 @@ test('Door triggers automatic in-chapter continuation, no clear screen, reward o
  timers.shift()();assert.equal(g.chapterNumber,9);assert.equal(g.serialize().rehearsalPart,2);assert.equal(ui.intros,1);assert(!ui.ends);assert(!ui.busy);
  assert.equal(g.gold,gold);assert(!g.beginRehearsalFinale());assert.equal(g.mission.chapter,'MISSION 09');
  const index=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
- assert.equal((index.match(/data-entry-action="chapter9"/g)||[]).length,1);assert(!index.includes('data-entry-action="chapter10"'));
+ assert.equal((index.match(/data-entry-action="chapter9"/g)||[]).length,1);assert(!index.includes('第十重 · 回环休息室'));assert.equal((index.match(/data-entry-action="chapter10"/g)||[]).length,1);
 });
 test('Same game and map retain wounds, deaths, status, charges, durability, growth, turns and shop stock',()=>{
  const g=fresh(),actor=ready(g),map=g.map,n=g.getUnit('nina'),s=g.getUnit('soyo'),dead=g.getUnit('anon');
@@ -43,13 +43,13 @@ test('Same game and map retain wounds, deaths, status, charges, durability, grow
  g.completeTenthIntro();assert.equal(g.getUnit('subaru').side,'player');assert(g.getUnit('anon').dead);assert.equal(g.units.filter(u=>u.id==='subaru').length,1);
  const h=reload(g.serialize());assert(h.getUnit('anon').dead);assert.equal(h.getUnit('soyo').spellUses.fire,1);assert.equal(h.shopPurchases.intermediate_seal,1);
 });
-test('Only final full clear pays one chapter-nine reward and offers no chapter-ten advance',()=>{
+test('Only final full clear pays one chapter-nine reward, then offers the new palace chapter',()=>{
  const g=finale(fresh()),gold=g.gold;g.completeTenthIntro();hit(g,'dark_nina');assert.equal(g.phase,'player');assert.equal(g.gold,gold);
  for(const e of g.living('enemy'))hit(g,e.id);assert.equal(g.phase,'victory');assert.equal(g.gold,gold+2000);
  assert.deepEqual(plain(g.rewardedChapters),[9]);g.checkOutcome();assert.equal(g.gold,gold+2000);
  const h=reload(g.serialize());assert.equal(h.gold,g.gold);assert.equal(h.chapterNumber,9);
- const ui=uiFixture(h);M.UI.prototype.showEndScreen.call(ui);assert(!ui.html.includes('data-end-next'));assert(ui.html.includes('MISSION 09'));assert(ui.html.includes('第九关完成'));
- const before=ui.game;ui.startNextStage();assert.equal(ui.game,before);
+ const ui=uiFixture(h);M.UI.prototype.showEndScreen.call(ui);assert(ui.html.includes('data-end-next'));assert(ui.html.includes('MISSION 09'));assert(ui.html.includes('第九关完成'));
+ ui.startNextStage();assert.equal(ui.game.stage,11);assert.equal(ui.game.chapterNumber,10);assert.equal(ui.game.gold,h.gold);assert.equal(ui.game.getUnit('subaru').side,'player');
 });
 test('Both parts serialize as chapter nine; pending door saves resume final intro and stable round trips',()=>{
  const g=fresh();assert.equal(g.serialize().stage,9);assert.equal(g.serialize().rehearsalPart,1);
@@ -87,10 +87,10 @@ test('Old chapter-nine clear saves resume finale without duplicate gold; old cha
   if(!complete)clear(h);assert.equal(h.gold,7654);assert.equal(h.phase,'victory');
  }
 });
-test('Restarting either merged part begins chapter nine; legacy direct-entry route also starts at part one',()=>{
+test('Restarting either merged part begins chapter nine; explicit chapter ten now opens the palace',()=>{
  const g=finale(fresh()),ui=uiFixture(g);timers.length=0;ui.newGame(777);assert.equal(ui.game.stage,9);assert.equal(ui.game.serialize().rehearsalPart,1);
- assert(!ui.game.getUnit('subaru'));ui.newGame(778,10);assert.equal(ui.game.stage,9);
- const main=fs.readFileSync(path.join(__dirname,'../src/main.js'),'utf8');assert(main.includes('stageParam===10?9:'));
+ assert(!ui.game.getUnit('subaru'));ui.newGame(778,10);assert.equal(ui.game.stage,11);assert.equal(ui.game.chapterNumber,10);
+ const main=fs.readFileSync(path.join(__dirname,'../src/main.js'),'utf8');assert(main.includes('[10,11].includes(stageParam)?11:'));
 });
 test('Nina lost stays lost, withdrawn allies remain withdrawn, and premature finale cannot start',()=>{
  const g=new M.Game({stage:9,recruited:['xueyue'],ninaLost:true});assert(!g.beginRehearsalFinale());finale(g);
