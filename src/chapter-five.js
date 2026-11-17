@@ -42,7 +42,20 @@
       shortName:'巡守',guardGroup:group,guardRadius:6,facing:'left',...(source==='conductor'?{weapon:'miasma',spells:['miasma']}:{} )});
   }
   enemies.push(armor('iron_warden',28,11,true));
+  // Chapter-five-only fixed bonuses: total +10, effective +6/+7.
+  // Keep the reusable base templates unchanged for later chapters and old saves.
+  const enemyStatBonuses={
+    armor:{str:2,mag:4,dex:2,lck:1,res:1},
+    flying:{str:2,mag:3,dex:1,spd:1,lck:1,def:1,res:1},
+    sword:{str:2,mag:3,dex:1,spd:2,def:1,lck:1},
+    axe:{str:2,mag:4,dex:2,spd:1,def:1},
+    bow:{str:2,mag:4,dex:2,spd:1,lck:1},
+    lance:{str:2,mag:3,dex:1,spd:1,def:2,res:1},
+    magic:{str:3,mag:2,dex:1,spd:1,lck:1,res:2},
+    boss:{str:2,dex:2,spd:1}
+  };
   C.STAGE_FIVE={id:'mission-05',cols:32,rows:24,mapRevision:1,enemyCount:enemies.length,
+    enemyStatBonuses,
     chapter:'MISSION 05',chapterJp:'第五话',chapterEn:'CHAPTER 05',title:'双桥水庭的铁幕',mapName:'飞鸟山公园·东水庭',
     subtitle:'灯光重新亮起，湖上的双桥却被铁甲封锁。天马掠过水面，银色的钥匙在夜风中作响。',
     objective:'突破双桥，击败重装统领「铁幕守卫长·格雷」',

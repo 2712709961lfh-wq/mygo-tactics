@@ -7,6 +7,31 @@ function test(name,fn){fn();console.log('✓ '+name);count++;}
 function hit(g,a,b,n=999){return g.applyCombat({attackerId:a,defenderId:b,hit:true,finalDamage:n});}
 function reload(g){const h=new M.Game();h.restore(plain(g.serialize()));return h;}
 const quantity=(g,id)=>g.units.filter(u=>u.side==='player').flatMap(u=>u.inventory).concat(g.convoy,g.lootReserve||[]).filter(i=>i.id===id).length;
+
+test('第五关全体非Boss总属性＋10、有效＋6～7，Boss有效＋5且不累加',()=>{
+ const g=fresh(),C=M.CONFIG,keys=['maxHp','str','mag','dex','spd','lck','def','res','move'];
+ for(const u of g.units.filter(u=>u.side==='enemy')){
+  const base=C.STAGE_FIVE.enemies.find(t=>t.id===u.id),magic=u.weapon.damageType==='magic',off=magic?'str':'mag';
+  const delta=keys.reduce((n,k)=>n+u[k]-(base[k]||0),0),effective=delta-(u[off]-(base[off]||0));
+  assert.equal(delta,u.boss?5:10,u.id);assert(u.boss?effective===5:effective===6||effective===7,u.id);
+  assert.equal(u.maxHp,base.maxHp);assert.equal(u.move,base.move);assert.equal(u.level,base.level);
+  if(u.boss)assert.deepEqual([u.str,u.dex,u.spd],[17,12,6]);
+ }
+ const stats=()=>plain(g.units.filter(u=>u.side==='enemy').map(u=>[u.id,...keys.map(k=>u[k])]));
+ const before=stats();g.applyFixedEnemyStats();g.applyFixedEnemyStats();g.beginNextPlayerPhase();assert.deepEqual(stats(),before);
+ const h=reload(g);assert.deepEqual(plain(h.units.filter(u=>u.side==='enemy').map(u=>[u.id,...keys.map(k=>u[k])])),before);
+});
+
+test('第五关旧固定档采用新加点，保留伤势、阵亡、警戒、钥匙与宝箱进度',()=>{
+ const g=fresh(),a=g.getUnit('court-armor-n'),p=g.getUnit('court-pegasus-n');
+ Object.assign(a,{hp:11,acted:true,alerted:true});Object.assign(p,{hp:0,dead:true,acted:true});g.openedChests=['north-cache'];
+ // Fixed-stat snapshots omit static attributes; old and new saves share the same HP ceilings.
+ const s=plain(g.serialize()),h=fresh();h.restore(s);
+ for(const u of g.units){const v=h.getUnit(u.id);assert.equal(v.hp,u.hp);assert.equal(v.dead,u.dead);assert.equal(v.acted,u.acted);assert.equal(v.alerted,u.alerted);assert.equal(v.x,u.x);assert.equal(v.y,u.y);}
+ assert.equal(h.getUnit(a.id).str,13);assert.equal(h.getUnit(a.id).mag,4);
+ assert.deepEqual(plain(h.openedChests),['north-cache']);assert.equal(quantity(h,'chest_key'),quantity(g,'chest_key'));
+ assert.deepEqual(plain(reload(h).serialize()),plain(h.serialize()));
+});
 test('32×24夜间公园、7人出生、两桥贯通、14名敌人、宝箱可达',()=>{
  const g=fresh({recruited:['xueyue','nina']});assert.equal(g.map.cols,32);assert.equal(g.map.rows,24);assert.equal(g.livingCount('enemy'),14);assert.equal(g.mission.enemyCount,14);assert.equal(g.livingCount('player'),7);
  const occupied=new Set();for(const u of g.units){assert(Number.isFinite(M.Grid.movementCost(g.map,u,u.x,u.y)),u.id);const k=u.x+','+u.y;assert(!occupied.has(k));occupied.add(k);}

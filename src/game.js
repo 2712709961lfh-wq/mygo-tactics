@@ -498,6 +498,11 @@
         u.level=base.level;
         for(const key of ['maxHp','str','mag','dex','spd','lck','def','res'])u[key]=base[key]||0;
         u.move=job?job.move:base.move;
+        if(this.stage===5){
+          const weapon=C.WEAPONS[base.weapon];
+          const role=u.boss?'boss':u.tags.includes('armor')?'armor':u.tags.includes('flying')?'flying':weapon.damageType==='magic'?'magic':weapon.type;
+          for(const [key,value] of Object.entries(mission.enemyStatBonuses[role]))u[key]+=value;
+        }
         if(this.stage===7){
           const weapon=C.WEAPONS[base.weapon],bonus=mission.enemyStatBonuses[weapon.damageType==='magic'?'magic':weapon.type];
           for(const [key,value] of Object.entries(bonus))u[key]+=value;
