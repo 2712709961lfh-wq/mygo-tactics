@@ -9,8 +9,8 @@ function setup(){const g=new M.Game({seed:947}),a=g.getUnit('tomori'),b=g.getUni
   g.map={cols:20,rows:20,tiles:Array.from({length:20},()=>Array(20).fill('plain'))};
   g.units.forEach((u,n)=>Object.assign(u,{x:n%20,y:Math.floor(n/20)+12}));Object.assign(a,{x:4,y:4});Object.assign(b,{x:5,y:4});return{g,a,b};}
 function plain(v){return JSON.parse(JSON.stringify(v));}
-test('九人成长率与2026-11-16新版Excel全部72项一致',()=>{
-  const expected={tomori:[45,35,30,50,55,45,25,30],anon:[35,35,20,55,50,35,25,35],rana:[40,35,35,40,60,45,30,35],soyo:[25,15,60,60,50,10,15,40],taki:[55,50,25,45,35,40,35,20],xueyue:[30,45,30,40,50,50,25,20],nina:[45,50,20,50,45,35,30,25],nijika:[45,30,35,35,35,50,35,45],subaru:[40,25,65,45,30,55,25,45]};
+test('九人成长率与2026-11-17新版Excel全部72项一致',()=>{
+  const expected={tomori:[45,35,30,50,55,45,25,30],anon:[35,35,20,55,50,35,25,35],rana:[40,35,35,40,60,45,30,35],soyo:[25,15,60,60,50,10,15,40],taki:[55,50,25,45,30,45,45,20],xueyue:[30,45,30,40,50,50,25,20],nina:[45,50,20,50,45,35,30,25],nijika:[45,30,35,35,35,50,35,45],subaru:[40,25,65,45,30,55,25,45]};
   assert.equal(Object.keys(D.personal).length,9);for(const [id,values] of Object.entries(expected))assert.equal(D.keys.map(k=>D.personal[id].rates[k]).join(','),values.join(','),id);
   const source=JSON.parse(fs.readFileSync(path.join(__dirname,'../docs/research/growth-source.json'),'utf8'));
   assert.equal(source.range,'Sheet1!A1:I10');assert.deepEqual(plain(D.personal),source.personal);

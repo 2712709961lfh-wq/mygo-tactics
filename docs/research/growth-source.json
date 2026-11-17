@@ -1,8 +1,8 @@
 {
   "source": "character assets/角色成长值.xlsx",
   "range": "Sheet1!A1:I10",
-  "updated": "2026-11-16",
-  "sha256": "eb6912f90d36e34d1c513b221bdf55d6e7b52941ba65b9e208b4262de21f2d04",
+  "updated": "2026-11-17",
+  "sha256": "1f8667b0a67a6a3f0e05bd16d3427b6434738c5e1719cf646c01de4a8da522fe",
   "personal": {
     "tomori": {
       "name": "高松灯",
@@ -63,9 +63,9 @@
         "str": 50,
         "mag": 25,
         "dex": 45,
-        "spd": 35,
-        "lck": 40,
-        "def": 35,
+        "spd": 30,
+        "lck": 45,
+        "def": 45,
         "res": 20
       }
     },
