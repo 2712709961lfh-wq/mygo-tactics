@@ -5088,7 +5088,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.15.2</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.15.4</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -7161,7 +7161,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     bow:{str:2,mag:5,dex:2,spd:1,lck:1,def:1},
     lance:{str:2,mag:4,dex:1,spd:1,def:2,lck:1,res:1},
     magic:{str:4,mag:3,dex:1,spd:1,lck:1,def:1,res:1},
-    boss:{mag:2,dex:2,spd:1,def:1,res:1}
+    boss:{mag:3,dex:2,spd:1,def:1,res:5}
   };
   C.STAGE_SIX={id:'mission-06',mapRevision:1,cols,rows,chapter:'MISSION 06',chapterJp:'第六话',chapterEn:'CHAPTER 06',enemyStatBonuses,
     title:'灯庭王座与无名面具',mapName:'飞鸟山公园·北端灯庭',
@@ -8845,9 +8845,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
    * 判定顺序：先命中，命中后才判定暴击。
    */
   function roll(previewData, rng) {
-    const hitRoll = rng.int(1, 100);
+    // Two independent 0–99 rolls; their average must be below displayed Hit.
+    const hitRoll = rng.int(1, 100) - 1;
+    const hitRoll2 = rng.int(1, 100) - 1;
     const critRoll = rng.int(1, 100);
-    const hit = hitRoll <= previewData.hit;
+    const hit = hitRoll + hitRoll2 < 2 * previewData.hit;
     const crit = hit && critRoll <= previewData.crit;
     const damage = hit
       ? (crit ? previewData.critDamage??previewData.damage*C.COMBAT.critMultiplier : previewData.damage)
@@ -8863,6 +8865,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       hit,
       crit,
       hitRoll,
+      hitRoll2,
       critRoll,
       finalDamage: damage,
       hpAfter: Math.max(previewData.hpFloor||0, previewData.defenderHp - damage),
@@ -18922,6 +18925,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         hitChance: preview.hit,
         critChance: preview.crit,
         hitRoll: 17,
+        hitRoll2: 17,
         critRoll: crit ? 3 : 88,
         finalDamage: damage,
         hpAfter: Math.max(0, defender.hp - damage)
@@ -19012,7 +19016,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         '</div>',
         '<div class="result-rows">',
         '  <div class="result-row"><span>命中判定</span><b class="' + (hit ? '' : 'miss-text') + '">' +
-          (hit ? 'D100 ' + result.hitRoll + ' ≤ ' + result.hitChance : 'MISS · D100 ' + result.hitRoll + ' &gt; ' + result.hitChance) + '</b></div>',
+          (hit ? '' : 'MISS · ') + '双随机数平均 ' + ((result.hitRoll + result.hitRoll2) / 2) + (hit ? ' &lt; ' : ' ≥ ') + result.hitChance + '</b></div>',
         '  <div class="result-row"><span>攻击力</span><b>' + result.attack +
           ' <em>' + (result.magic ? '魔力 ' + result.atkStat : '力量 ' + result.atkStat) +
           ' + 威力 ' + result.weaponPower + '</em></b></div>',

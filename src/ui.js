@@ -1756,6 +1756,7 @@
         hitChance: preview.hit,
         critChance: preview.crit,
         hitRoll: 17,
+        hitRoll2: 17,
         critRoll: crit ? 3 : 88,
         finalDamage: damage,
         hpAfter: Math.max(0, defender.hp - damage)
@@ -1846,7 +1847,7 @@
         '</div>',
         '<div class="result-rows">',
         '  <div class="result-row"><span>命中判定</span><b class="' + (hit ? '' : 'miss-text') + '">' +
-          (hit ? 'D100 ' + result.hitRoll + ' ≤ ' + result.hitChance : 'MISS · D100 ' + result.hitRoll + ' &gt; ' + result.hitChance) + '</b></div>',
+          (hit ? '' : 'MISS · ') + '双随机数平均 ' + ((result.hitRoll + result.hitRoll2) / 2) + (hit ? ' &lt; ' : ' ≥ ') + result.hitChance + '</b></div>',
         '  <div class="result-row"><span>攻击力</span><b>' + result.attack +
           ' <em>' + (result.magic ? '魔力 ' + result.atkStat : '力量 ' + result.atkStat) +
           ' + 威力 ' + result.weaponPower + '</em></b></div>',

@@ -12,17 +12,17 @@ function summonAll(g){for(const y of [32,25,18,11]){assert(approach(g,y));g.begi
 const statKeys=['level','maxHp','str','mag','dex','spd','lck','def','res','move'];
 const enemyStats=g=>plain(g.units.filter(u=>u.side==='enemy').map(u=>[u.id,...statKeys.map(k=>u[k])]));
 
-test('初始巡守及四波援军各总属性＋12、有效＋7～8，面具人有效＋7',()=>{
+test('初始巡守及四波援军各总属性＋12、有效＋7～8，面具人累计有效＋12',()=>{
  const g=fresh();summonAll(g);const templates=g.mission.enemies.concat(g.mission.summonTemplates);
  assert.equal(g.units.filter(u=>u.side==='enemy'&&!u.boss).length,18);
  for(const u of g.units.filter(u=>u.side==='enemy')){
   const base=templates.find(t=>t.id===u.id),off=u.weapon.damageType==='magic'?'str':'mag';
   const delta=statKeys.filter(k=>k!=='level').reduce((n,k)=>n+u[k]-(base[k]||0),0),effective=delta-(u[off]-(base[off]||0));
   const seven=u.tags.includes('armor')||['axe','bow'].includes(u.weapon.type);
-  assert.equal(delta,u.boss?7:12,u.id);assert.equal(effective,u.boss?7:seven?7:8,u.id);
+  assert.equal(delta,12,u.id);assert.equal(effective,u.boss?12:seven?7:8,u.id);
   for(const k of ['level','maxHp','move'])assert.equal(u[k],base[k],u.id+' '+k);
  }
- const b=g.getUnit('masked_stranger');assert.deepEqual([b.maxHp,b.str,b.mag,b.dex,b.spd,b.lck,b.def,b.res,b.move],[52,3,15,15,9,5,7,9,0]);
+ const b=g.getUnit('masked_stranger');assert.deepEqual([b.maxHp,b.str,b.mag,b.dex,b.spd,b.lck,b.def,b.res,b.move],[52,3,16,15,9,5,7,13,0]);
  const before=enemyStats(g);g.applyFixedEnemyStats();g.applyFixedEnemyStats();g.beginNextPlayerPhase();assert.deepEqual(enemyStats(g),before);assert.deepEqual(enemyStats(reload(g)),before);
 });
 
@@ -36,7 +36,7 @@ test('旧固定档保留受伤、阵亡、行动、位置与波次，后续召�
  Object.assign(wounded,{hp:7,acted:true,alerted:true});Object.assign(dead,{hp:0,dead:true,acted:true});old.getUnit('masked_stranger').hp=27;
  const h=reload(old);
  for(const u of old.units){const v=h.getUnit(u.id);for(const k of ['hp','dead','acted','alerted','x','y'])assert.equal(v[k],u[k],u.id+' '+k);}
- assert.equal(h.getUnit(wounded.id).str,wounded.str+2);assert.equal(h.getUnit('masked_stranger').mag,15);
+ assert.equal(h.getUnit(wounded.id).str,wounded.str+2);assert.equal(h.getUnit('masked_stranger').mag,16);assert.equal(h.getUnit('masked_stranger').res,13);
  assert.deepEqual(plain(h.summonedWaves),plain(old.summonedWaves));assert.equal(h.lastSummonTurn,old.lastSummonTurn);assert.equal(h.gold,old.gold);
  for(const y of [25,18,11]){h.beginNextPlayerPhase();assert(approach(h,y));}
  const expected=fresh();summonAll(expected);assert.deepEqual(enemyStats(h),enemyStats(expected));

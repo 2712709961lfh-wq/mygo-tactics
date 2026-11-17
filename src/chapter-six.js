@@ -47,7 +47,7 @@
     bow:{str:2,mag:5,dex:2,spd:1,lck:1,def:1},
     lance:{str:2,mag:4,dex:1,spd:1,def:2,lck:1,res:1},
     magic:{str:4,mag:3,dex:1,spd:1,lck:1,def:1,res:1},
-    boss:{mag:2,dex:2,spd:1,def:1,res:1}
+    boss:{mag:3,dex:2,spd:1,def:1,res:5}
   };
   C.STAGE_SIX={id:'mission-06',mapRevision:1,cols,rows,chapter:'MISSION 06',chapterJp:'第六话',chapterEn:'CHAPTER 06',enemyStatBonuses,
     title:'灯庭王座与无名面具',mapName:'飞鸟山公园·北端灯庭',

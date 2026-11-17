@@ -464,6 +464,18 @@ test('命中率被限制在 5~100', () => {
   assert(preview.hit >= 5 && preview.hit <= 100, '命中率应在 5~100 内');
 });
 
+test('双随机数命中遵循平均值边界及真实命中概率', () => {
+  for (const [chance, expected] of [[5,55],[50,5050],[70,8230],[80,9220],[90,9810],[100,10000]]) {
+    let hits = 0;
+    for (let first = 1; first <= 100; first++) for (let second = 1; second <= 100; second++) {
+      const values = [first, second, 100];
+      const result = Combat.roll({hit: chance, crit: 0, damage: 1, defenderHp: 10}, {int: () => values.shift()});
+      if (result.hit) hits++;
+    }
+    equal(hits, expected, '显示命中 ' + chance + ' 的命中组合数');
+  }
+});
+
 test('暴击伤害为 2 倍，命中后才判定暴击', () => {
   const data = { hit: 50, crit: 20, damage: 7, defenderHp: 20 };
   const miss = Combat.roll(data, { int: () => 100 });

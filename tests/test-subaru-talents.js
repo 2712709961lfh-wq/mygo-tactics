@@ -45,15 +45,15 @@ test('爱笑女孩25成功26失败，未觉醒/其他角色/实体物品不抽�
 });
 test('攻击每次独立抽签，锁定不改真实次数，确认不重抽也不重复消耗',()=>{
   const {g,s,e}=fixture(15);s.spd=40;e.spd=0;e.cannotCounter=true;s.spellUses.fire=2;
-  const draws=rolls(g,[1,100,25,1,100,26]),r=g.rollCombat(s,e);
+  const draws=rolls(g,[1,1,100,25,1,1,100,26]),r=g.rollCombat(s,e);
   assert.equal(r.strikes.length,2);assert(r.strikes[0].resourcePreserved);assert(!r.strikes[1].resourcePreserved);
-  assert.equal(s.spellUses.fire,2);assert.equal(draws(),6);g.applyCombat(r);
-  assert.equal(s.spellUses.fire,1);assert.equal(draws(),6);assert.throws(()=>g.applyCombat(r),/已结算/);
+  assert.equal(s.spellUses.fire,2);assert.equal(draws(),8);g.applyCombat(r);
+  assert.equal(s.spellUses.fire,1);assert.equal(draws(),8);assert.throws(()=>g.applyCombat(r),/已结算/);
 });
 test('一发剩余可在触发后追击，未触发则中断，预告无随机副作用且提示条件',()=>{
   for(const proc of [25,26]){
     const {g,s,e}=fixture(15);s.spd=40;e.spd=0;e.cannotCounter=true;s.spellUses.fire=1;
-    const draws=rolls(g,proc===25?[1,100,25,1,100,26]:[1,100,26]);
+    const draws=rolls(g,proc===25?[1,1,100,25,1,1,100,26]:[1,1,100,26]);
     const p=C.forecast(s,e,g.map);assert.equal(draws(),0);assert(p.order[1].resourceConditional);
     const r=g.rollCombat(s,e);assert.equal(r.strikes.length,proc===25?2:1);g.applyCombat(r);assert.equal(s.spellUses.fire,0);
   }
@@ -115,7 +115,7 @@ test('当前击破升25级从下一次击破起发动，存档随机状态恢复
   Object.assign(a,{x:13,y:16});Object.assign(b,{x:13,y:15});a.equippedWeapon='fire';I.sync(a);
   const save=plain(h.serialize()),j=game();j.restore(save);
   const one=C.rollRound(a,b,h.map,h.rng),two=C.rollRound(j.getUnit(a.id),j.getUnit(b.id),j.map,j.rng);
-  assert.deepEqual(plain(one.strikes.map(x=>[x.hitRoll,x.critRoll,x.resourcePreserved])),plain(two.strikes.map(x=>[x.hitRoll,x.critRoll,x.resourcePreserved])));
+  assert.deepEqual(plain(one.strikes.map(x=>[x.hitRoll,x.hitRoll2,x.critRoll,x.resourcePreserved])),plain(two.strikes.map(x=>[x.hitRoll,x.hitRoll2,x.critRoll,x.resourcePreserved])));
   assert.equal(j.getUnit(a.id).weapon.range[1],3);
 });
 console.log(count+' Subaru talent tests passed.');

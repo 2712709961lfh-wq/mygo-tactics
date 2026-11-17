@@ -79,7 +79,7 @@ test('反击可以独立暴击',()=>{
 test('首击击倒时取消反击/追击，不消耗后续随机数',()=>{
   const {game,a,b}=fixture();b.hp=1;a.spd=20;let draws=0;
   game.rng={int:()=>{draws++;return 100;}};
-  const r=game.rollCombat(a,b);assert.equal(r.forecast.order.length,3);assert.equal(r.strikes.length,1);assert.equal(draws,2);
+  const r=game.rollCombat(a,b);assert.equal(r.forecast.order.length,3);assert.equal(r.strikes.length,1);assert.equal(draws,3);
   game.applyCombat(r);assert(b.dead);assert.equal(a.hp,100);
 });
 test('反击击倒主动方，取消其追击且失败判定正确',()=>{

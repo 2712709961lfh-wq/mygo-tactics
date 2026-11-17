@@ -275,9 +275,11 @@
    * 判定顺序：先命中，命中后才判定暴击。
    */
   function roll(previewData, rng) {
-    const hitRoll = rng.int(1, 100);
+    // Two independent 0–99 rolls; their average must be below displayed Hit.
+    const hitRoll = rng.int(1, 100) - 1;
+    const hitRoll2 = rng.int(1, 100) - 1;
     const critRoll = rng.int(1, 100);
-    const hit = hitRoll <= previewData.hit;
+    const hit = hitRoll + hitRoll2 < 2 * previewData.hit;
     const crit = hit && critRoll <= previewData.crit;
     const damage = hit
       ? (crit ? previewData.critDamage??previewData.damage*C.COMBAT.critMultiplier : previewData.damage)
@@ -293,6 +295,7 @@
       hit,
       crit,
       hitRoll,
+      hitRoll2,
       critRoll,
       finalDamage: damage,
       hpAfter: Math.max(previewData.hpFloor||0, previewData.defenderHp - damage),
