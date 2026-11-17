@@ -7,6 +7,41 @@ function test(name,fn){fn();console.log('✓ '+name);count++;}
 function reload(g){const h=fresh();h.restore(plain(g.serialize()));return h;}
 function approach(g,y){g.getUnit('tomori').y=y;g.phase='enemy';return g.summonNearParty();}
 function strike(g,n=999){return g.applyCombat({attackerId:'soyo',defenderId:'masked_stranger',hit:true,finalDamage:n});}
+
+function summonAll(g){for(const y of [32,25,18,11]){assert(approach(g,y));g.beginNextPlayerPhase();}}
+const statKeys=['level','maxHp','str','mag','dex','spd','lck','def','res','move'];
+const enemyStats=g=>plain(g.units.filter(u=>u.side==='enemy').map(u=>[u.id,...statKeys.map(k=>u[k])]));
+
+test('初始巡守及四波援军各总属性＋12、有效＋7～8，面具人有效＋7',()=>{
+ const g=fresh();summonAll(g);const templates=g.mission.enemies.concat(g.mission.summonTemplates);
+ assert.equal(g.units.filter(u=>u.side==='enemy'&&!u.boss).length,18);
+ for(const u of g.units.filter(u=>u.side==='enemy')){
+  const base=templates.find(t=>t.id===u.id),off=u.weapon.damageType==='magic'?'str':'mag';
+  const delta=statKeys.filter(k=>k!=='level').reduce((n,k)=>n+u[k]-(base[k]||0),0),effective=delta-(u[off]-(base[off]||0));
+  const seven=u.tags.includes('armor')||['axe','bow'].includes(u.weapon.type);
+  assert.equal(delta,u.boss?7:12,u.id);assert.equal(effective,u.boss?7:seven?7:8,u.id);
+  for(const k of ['level','maxHp','move'])assert.equal(u[k],base[k],u.id+' '+k);
+ }
+ const b=g.getUnit('masked_stranger');assert.deepEqual([b.maxHp,b.str,b.mag,b.dex,b.spd,b.lck,b.def,b.res,b.move],[52,3,15,15,9,5,7,9,0]);
+ const before=enemyStats(g);g.applyFixedEnemyStats();g.applyFixedEnemyStats();g.beginNextPlayerPhase();assert.deepEqual(enemyStats(g),before);assert.deepEqual(enemyStats(reload(g)),before);
+});
+
+test('旧固定档保留受伤、阵亡、行动、位置与波次，后续召唤采用新属性且不叠加',()=>{
+ const mission=M.CONFIG.STAGE_SIX,bonuses=mission.enemyStatBonuses;let old;
+ try{
+  mission.enemyStatBonuses=Object.fromEntries(Object.keys(bonuses).map(k=>[k,{}]));
+  old=fresh();assert(approach(old,32));
+ }finally{mission.enemyStatBonuses=bonuses;}
+ const wounded=old.getUnit('avenue-sentry-blade'),dead=old.getUnit('mask-summon-1-1');
+ Object.assign(wounded,{hp:7,acted:true,alerted:true});Object.assign(dead,{hp:0,dead:true,acted:true});old.getUnit('masked_stranger').hp=27;
+ const h=reload(old);
+ for(const u of old.units){const v=h.getUnit(u.id);for(const k of ['hp','dead','acted','alerted','x','y'])assert.equal(v[k],u[k],u.id+' '+k);}
+ assert.equal(h.getUnit(wounded.id).str,wounded.str+2);assert.equal(h.getUnit('masked_stranger').mag,15);
+ assert.deepEqual(plain(h.summonedWaves),plain(old.summonedWaves));assert.equal(h.lastSummonTurn,old.lastSummonTurn);assert.equal(h.gold,old.gold);
+ for(const y of [25,18,11]){h.beginNextPlayerPhase();assert(approach(h,y));}
+ const expected=fresh();summonAll(expected);assert.deepEqual(enemyStats(h),enemyStats(expected));
+ assert.equal(h.getUnit(wounded.id).hp,7);assert(h.getUnit(dead.id).dead);h.beginNextPlayerPhase();assert.deepEqual(plain(reload(h).serialize()),plain(h.serialize()));
+});
 test('30×46纵长公园、北端18盏宫廷灯与王座、下方七人、初始两巡守加Boss',()=>{
  const g=fresh();assert.equal(g.map.cols,30);assert.equal(g.map.rows,46);assert.equal(g.livingCount('enemy'),3);assert.equal(g.livingCount('player'),7);
  assert.equal(g.mission.lamps.filter(l=>l.kind==='palaceLamp').length,18);assert(g.mission.decor.some(d=>d.kind==='throne'&&d.x===14&&d.y===4));

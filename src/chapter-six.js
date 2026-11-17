@@ -37,7 +37,19 @@
         ...(source==='conductor'?{weapon:'miasma',spells:['miasma'],maxHp:23,mag:9}:{}),
         x:14+(j%3),y:7+i*2,guardRadius:0,guardGroup:'summoned',facing:'down',quote:'应暗幕之召，阻断前路。'};
     })}));
-  C.STAGE_SIX={id:'mission-06',mapRevision:1,cols,rows,chapter:'MISSION 06',chapterJp:'第六话',chapterEn:'CHAPTER 06',
+  // Fixed chapter-six bonuses, including every summon wave. Keep original
+  // HP ceilings for old-save wounds and the boss's one-HP retreat state.
+  const enemyStatBonuses={
+    armor:{str:2,mag:5,dex:2,lck:1,def:1,res:1},
+    flying:{str:2,mag:4,dex:2,spd:2,lck:1,res:1},
+    sword:{str:2,mag:4,dex:1,spd:2,def:1,lck:1,res:1},
+    axe:{str:2,mag:5,dex:2,spd:1,def:1,lck:1},
+    bow:{str:2,mag:5,dex:2,spd:1,lck:1,def:1},
+    lance:{str:2,mag:4,dex:1,spd:1,def:2,lck:1,res:1},
+    magic:{str:4,mag:3,dex:1,spd:1,lck:1,def:1,res:1},
+    boss:{mag:2,dex:2,spd:1,def:1,res:1}
+  };
+  C.STAGE_SIX={id:'mission-06',mapRevision:1,cols,rows,chapter:'MISSION 06',chapterJp:'第六话',chapterEn:'CHAPTER 06',enemyStatBonuses,
     title:'灯庭王座与无名面具',mapName:'飞鸟山公园·北端灯庭',
     subtitle:'公园的尽头，十八盏宫廷立灯围着一张王座。面具后的目光，正等待众人踏入她的召唤阵。',
     objective:'穿过召唤包围，逼退王座上的神秘面具人',
