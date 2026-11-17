@@ -9,7 +9,7 @@
 - [Fire Emblem Wiki · Counterattack](https://fireemblemwiki.org/wiki/Counterattack)：装备武器的射程须覆盖攻击距离；反击使用正常伤害、命中、暴击计算；预告应显示反击资格。
 - [Fire Emblem Wiki · Attack speed](https://fireemblemwiki.org/wiki/Attack_speed)：攻击双方完成首击后，符合攻速条件的一方追击；Three Houses 的追击阈值为攻速差 ≥4，攻速以速度扣除力量抵消后的武器重量。
 
-实现的是当前游戏具备的普通武器交战。原作技能、战技、计策、纹章、武器耐久、装备切换系统尚未全部接入，不能把本次修改理解为原作所有战斗特性的完整复刻。保留原型的伤害、三角、命中和暴击倍率 ×2；原作暴击 ×3 不在本次改动范围内。
+实现的是普通武器交战，不能理解为原作所有战斗特性的完整复刻。原实现保留了 ×2 暴击倍率，后续版本已调整为 ×3。
 
 ## 当前规则
 

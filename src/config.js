@@ -142,14 +142,14 @@
     effectivenessMultiplier: 1.5
   };
 
-  /** 战斗常数。保留原型暴击 ×2；普通交战支持射程内反击与攻速追击。 */
+  /** 战斗常数。普通交战支持射程内反击与攻速追击。 */
   const COMBAT = {
-    critMultiplier: 2,
+    critMultiplier: 3,
     minHit: 5,
     maxHit: 100,
     minDamage: 1,
     speedAvoidFactor: 1.5,
-    criticalDamage: 2
+    criticalDamage: 3
   };
 
   /** 第一关：三路渡河、分区警戒、据点休憩与封闭内庭。

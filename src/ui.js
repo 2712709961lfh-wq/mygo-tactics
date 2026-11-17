@@ -1749,7 +1749,7 @@
       const crit = mode === 'crit' || (customDemo && mode.includes('crit'));
       const hit = !(customDemo && mode.includes('dodge'));
       const damage = customDemo && mode.includes('down') ? defender.hp
-        : !hit ? 0 : crit ? preview.damage * 2 : preview.damage;
+        : !hit ? 0 : crit ? preview.critDamage : preview.damage;
       const result = Object.assign({}, preview, {
         hit,
         crit,
@@ -1834,7 +1834,7 @@
         ? '<b class="crit-text">暴击 · ' + result.critRoll + ' ≤ ' + result.critChance + '</b>'
         : '<b>' + (hit ? '未暴击' : '—') + '</b>';
       const damageText = hit
-        ? '<b class="dmg-text">' + result.finalDamage + (crit ? '（×2）' : '') + '</b>'
+        ? '<b class="dmg-text">' + result.finalDamage + (crit ? '（×' + MyGO.CONFIG.COMBAT.critMultiplier + '）' : '') + '</b>'
         : '<b class="miss-text">0</b>';
 
       const html = [
@@ -1866,7 +1866,7 @@
         '  <div class="result-hp-track"><div class="result-hp-fill" style="width:' + pct(hpRatio) + '%"></div></div>',
         '</div>',
         '<div class="result-note">' + (crit
-          ? '暴击高光！伤害 ×2。点击确认后才会扣除 HP。'
+          ? '暴击高光！伤害 ×' + MyGO.CONFIG.COMBAT.critMultiplier + '。点击确认后才会扣除 HP。'
           : hit
             ? '点击“确认结算”后才会扣除 HP。'
             : '攻击被闪避，不会造成伤害。') +
@@ -2189,7 +2189,7 @@
           '  <div class="help-card"><h3>伤害公式</h3><p>攻击力 = 力量/魔力 + 武器威力×克制×有效 + 修正；伤害 = 攻击力 − 守备/魔防。目标站在山地时，物理伤害还会受到额外守备减免。</p></div>',
           '  <div class="help-card"><h3>武器三角</h3><p>剑克斧，斧克枪，枪克剑。克制时武器威力 <em>×1.2</em>、命中 <em>+15</em>；被克制时威力 ×0.8、命中 −15。弓与魔法不参与。</p></div>',
           '  <div class="help-card"><h3>地形</h3><p>森林 <em>闪避 +20</em>；山地 <em>守备 +3</em>；草地无加成。加成读取<em>防守方</em>脚下地形，魔法伤害不吃地形守备。</p></div>',
-          '  <div class="help-card"><h3>幸运与暴击</h3><p>基础暴击率＝⌊（技巧＋幸运）÷2⌋＋武器暴击；实战暴击率减去目标幸运，限制在 0–100%。暴击伤害沿用 ×2，<em>确认整场结算后才扣双方 HP</em>。</p></div>',
+          '  <div class="help-card"><h3>幸运与暴击</h3><p>基础暴击率＝⌊（技巧＋幸运）÷2⌋＋武器暴击；实战暴击率减去目标幸运，限制在 0–100%。暴击伤害 ×' + MyGO.CONFIG.COMBAT.critMultiplier + '，<em>确认整场结算后才扣双方 HP</em>。</p></div>',
           '  <div class="help-card"><h3>反击与追击</h3><p>首击 → 存活且武器射程覆盖时反击 → 攻速高出至少 4 的一方追击。已行动仍可反击，反击不消耗行动；首击落空也会触发反击。任一方被击倒立即停止。弓与魔法按各自当前射程判断，贴身无法反击时预告会提示。攻速＝速度－max(0，武器与装备重量－⌊力量÷5⌋)，按图鉴中的真实重量计算。</p></div>',
           '  <div class="help-card"><h3>回声的行动</h3><p>优先接近最近的我方单位；距离相同时，优先攻击 <em>HP 最低</em> 者。无法攻击时会向目标靠近。</p></div>',
           '</div>',

@@ -279,7 +279,7 @@ damage = max(1, attack - defense)
 
 ```text
 crit = attacker.crit + weapon.crit
-finalDamage = crit ? damage * 2 : damage
+finalDamage = crit ? damage * 3 : damage
 ```
 
 命中判定成功后才会判定暴击。

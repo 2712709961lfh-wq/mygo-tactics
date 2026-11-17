@@ -476,7 +476,7 @@ test('双随机数命中遵循平均值边界及真实命中概率', () => {
   }
 });
 
-test('暴击伤害为 2 倍，命中后才判定暴击', () => {
+test('暴击伤害为 3 倍，命中后才判定暴击', () => {
   const data = { hit: 50, crit: 20, damage: 7, defenderHp: 20 };
   const miss = Combat.roll(data, { int: () => 100 });
   assert(!miss.hit, '100 应判为未命中');
@@ -488,8 +488,8 @@ test('暴击伤害为 2 倍，命中后才判定暴击', () => {
   const crit = Combat.roll(data, { int: () => 1 });
   assert(crit.hit, '1 应判为命中');
   assert(crit.crit, '1 应判为暴击');
-  equal(crit.finalDamage, 14);
-  equal(crit.hpAfter, 6);
+  equal(crit.finalDamage, 21);
+  equal(crit.hpAfter, 0);
 });
 
 /* ------------------------------------------------------------
@@ -506,7 +506,7 @@ test('roll 只锁定结果，不扣 HP', () => {
   equal(axe.hp, hpBefore, 'roll 后血量不应变化');
   equal(result.applied, false);
   equal(result.crit, true);
-  equal(result.finalDamage, 20); // v1.1：克制后基础伤害 10，暴击 ×2
+  equal(result.finalDamage, 30); // 克制后基础伤害 10，暴击 ×3
 });
 
 test('applyCombat 才扣血，且只能应用一次', () => {
