@@ -26,7 +26,7 @@ test('雪月在15/20/25级依次觉醒，剑意换装即时生效且不写入永
     const r=G.award(x,G.required(x.level)-x.exp);assert(T.active(x,slot));
     assert.equal(r.levels[0].awakenings.find(t=>t.slot===slot).name,name);
   }
-  const base=x.str;equip(x,'iron_sword');assert.equal(C.strOf(x,g.map),base+3);
+  const base=x.str;equip(x,'iron_sword');assert.equal(C.strOf(x,g.map),base+5);
   for(const weapon of [I.weapons.iron_lance,I.weapons.unarmed,I.weapons.fire]){
     x.weapon=weapon;assert.equal(C.strOf(x,g.map),base);
   }
@@ -36,12 +36,12 @@ test('雪月在15/20/25级依次觉醒，剑意换装即时生效且不写入永
 
 test('剑意的伤害及负重计算与预告、实战一致；疾风不因读档、转职或跨章重复增加',()=>{
   const {g,x,e}=fixture();x.str=12;
-  const before=C.preview(x,e,g.map);assert.equal(before.atkStat,15);
+  const before=C.preview(x,e,g.map);assert.equal(before.atkStat,17);
   assert.equal(C.attackSpeedOf(x,g.map),Math.max(0,C.speedOf(x)-Math.max(0,x.weapon.weight-3)));
-  x.level=14;const locked=C.preview(x,e,g.map);assert.equal(before.damage,locked.damage+3);x.level=25;
-  const r=g.rollCombat(x,e);assert.equal(r.strikes[0].atkStat,15);g.applyCombat(r);
+  x.level=14;const locked=C.preview(x,e,g.map);assert.equal(before.damage,locked.damage+5);x.level=25;
+  const r=g.rollCombat(x,e);assert.equal(r.strikes[0].atkStat,17);g.applyCombat(r);
   const h=game(),u=level(h.getUnit('xueyue'),25),spd=u.spd;
-  assert.equal(spd,u.growthBase.stats.spd+u.growthGains.spd+2);
+  assert.equal(spd,u.growthBase.stats.spd+u.growthGains.spd+5);
   const save=JSON.parse(JSON.stringify(h.serialize())),j=game();
   for(let n=0;n<3;n++){j.restore(save);assert.equal(j.getUnit('xueyue').spd,spd);}
   M.Classes.apply(u,'myrmidon');T.sync(u);assert.equal(u.spd,spd);
@@ -54,7 +54,7 @@ test('冰霜剑气在交战后施加，锁定预演无副作用，本轮反击�
   assert(!e.status.frostSpeedDown);assert.equal(r.strikes.length,forecast.order.length);
   for(const hit of r.strikes.filter(s=>s.attackerId===e.id))assert.equal(hit.targetAvoid,C.preview(e,x,g.map).targetAvoid);
   g.applyCombat(r);assert.equal(e.status.frostSpeedDown,2);assert(!e.status.frostFresh);
-  assert.equal(C.speedOf(e),speed-3);assert(r.strikes.some(s=>s.frostApplied));
+  assert.equal(C.speedOf(e),speed-6);assert(r.strikes.some(s=>s.frostApplied));
   assert.throws(()=>g.applyCombat(r),/已结算/);
 });
 
@@ -77,8 +77,8 @@ test('主动命中持续两个敌方阶段，反击命中不消耗当前半回�
     g.beginEnemyPhase();assert.equal(e.status.frostSpeedDown,2);g.beginNextPlayerPhase();assert.equal(e.status.frostSpeedDown,1);
     g.beginEnemyPhase();assert.equal(e.status.frostSpeedDown,1);g.beginNextPlayerPhase();assert(!e.status.frostSpeedDown);
     const speed=C.speedOf(e);T.afterDamage(x,e,1,true,'player');g.expireStatuses('enemy');assert.equal(e.status.frostSpeedDown,1);
-    T.afterDamage(x,e,1,true,'player');T.afterDamage(x,e,1,true,'player');assert.equal(e.status.frostSpeedDown,2);assert.equal(C.speedOf(e),speed-3);
-    e.status.spdDown=1;assert.equal(C.speedOf(e),speed-5);g.expireStatuses('enemy');assert.equal(C.speedOf(e),speed-3);
+    T.afterDamage(x,e,1,true,'player');T.afterDamage(x,e,1,true,'player');assert.equal(e.status.frostSpeedDown,2);assert.equal(C.speedOf(e),speed-6);
+    e.status.spdDown=1;assert.equal(C.speedOf(e),speed-6);g.expireStatuses('enemy');assert.equal(C.speedOf(e),speed-6);
   }
 });
 
@@ -123,6 +123,6 @@ test('雪月三档资料及装备剑时的力量加成显示完整',()=>{
   M.EntryScreen.prototype.renderFormationDetail.call(ctx);
   for(const text of ['剑意','疾风','冰霜剑气','Lv.15','Lv.20','Lv.25'])assert(ctx.dom.formationDetail.innerHTML.includes(text),text);
   ctx.loadoutTab='stats';ctx.dom.formationDetail.querySelector=()=>null;M.EntryScreen.prototype.renderFormationDetail.call(ctx);
-  assert(ctx.dom.formationDetail.innerHTML.includes('+3 剑意'));assert(ctx.dom.formationDetail.innerHTML.includes('力量 '+(x.str+3)));
+  assert(ctx.dom.formationDetail.innerHTML.includes('+5 剑意'));assert(ctx.dom.formationDetail.innerHTML.includes('力量 '+(x.str+5)));
 });
 console.log(count+' Xueyue talent tests passed.');

@@ -99,7 +99,8 @@
     if(guard)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">天赋守护 · 守备／魔防＋'+guard+'</span>');
     const line=this.dom.infoBody.querySelector('.weapon-line');
     if(line&&!u.weapon.cannotAttack)line.textContent+=' · '+(u.weapon.kind==='unarmed'?'空手 · 无耐久消耗':u.weapon.kind==='spell'?'剩余 '+u.spellUses[u.weaponId]+'/'+u.weapon.uses+' 次':'耐久 '+(u.inventory.find(i=>i.id===u.weaponId&&i.uses>0)?.uses||0)+'/'+u.weapon.uses);
-    const labels={masteryDance:'特殊舞蹈 · 技巧／速度／幸运＋4',masteryTransmute:'魔力转换 · 七项属性＋3',masterySealDef:'防守封锁 · 守备−6',masterySealRes:'魔防封锁 · 魔防−6',defDown:'守备−5',spdDown:'速度−5',moveDown:'移动−5',talentResDown:'魔力打击 · 魔防−2',frostSpeedDown:'冰霜剑气 · 速度−3',silence:'沉默',ward:'魔防支援',poison:'中毒'};
+    if(u.id==='nina'&&M.Talents?.active(u,3))this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">拳拳到肉 · 下次伤害＋'+M.Talents.damageBonus(u)+'</span>');
+    const labels={masteryDance:'特殊舞蹈 · 技巧／速度／幸运＋4',masteryTransmute:'魔力转换 · 七项属性＋3',masterySealDef:'防守封锁 · 守备−6',masterySealRes:'魔防封锁 · 魔防−6',defDown:'守备−5',spdDown:'速度−5',moveDown:'移动−5',talentResDown:'魔力打击 · 魔防／守备−5',frostSpeedDown:'冰霜剑气 · 速度−6',silence:'沉默',ward:'魔防支援',poison:'中毒'};
     for(const [id,n] of Object.entries(u.status))if(n&&id!=='frostFresh'&&!(M.Talents?.immune(u)&&['defDown','spdDown','moveDown','talentResDown','frostSpeedDown','masterySealDef','masterySealRes'].includes(id)))this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(labels[id]||id)+(id==='ward'?'＋'+n:id==='frostSpeedDown'?' · 剩余'+n+'回合':'')+'</span>');
     if(u.equippedAccessory)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(I.item(u.equippedAccessory).name)+'</span>');
   };

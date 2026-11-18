@@ -509,7 +509,7 @@
         { key: 'spd', label: '速度', value: unit.spd, hint: '影响回避' },
         { key: 'def', label: '守备', value: unit.def+((MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)?'<small>+'+(MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)+' 守护</small>':''), hint: '物理减伤' },
         { key: 'res', label: '魔防', value: unit.res+((MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)?'<small>+'+(MyGO.Talents?.guardBonus(unit,this.ui.game.map)||0)+' 守护</small>':''), hint: '魔法减伤' },
-        { key: 'dex', label: '技巧', value: unit.dex + ((MyGO.Talents?.dexBonus(unit)||0)?'<small>+3 天赋</small>':''), hint: '影响命中与暴击率' },
+        { key: 'dex', label: '技巧', value: unit.dex, hint: '影响命中与暴击率' },
         { key: 'lck', label: '幸运', value: unit.lck, hint: '暴击与必杀回避' },
         { key: 'move', label: '移动', value: unit.move, hint: '行动距离' }
       ];

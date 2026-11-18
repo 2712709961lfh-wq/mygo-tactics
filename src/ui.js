@@ -1322,15 +1322,16 @@
         return;
       }
       this.hoveredTargetId = target.id;
+      const damageText=id=>{const values=preview.order.filter(s=>s.attackerId===id).map(s=>s.damage);return new Set(values).size>1?values.join(' → '):values.length?values[0]+(values.length>1?' ×'+values.length:''):'0';};
       this.dom.contextTitle.textContent = '攻击预告 · ' + target.name;
       this.dom.contextText.innerHTML =
         '<div class="forecast-strip"><span>命中 HIT<b>' + preview.hit + '%</b></span>' +
-        '<span>伤害 DMG<b class="damage">' + preview.damage + (preview.attackCount > 1 ? ' ×2' : '') + '</b></span>' +
+        '<span>伤害 DMG<b class="damage">' + damageText(active.id) + '</b></span>' +
         '<span>暴击 CRT<b>' + preview.crit + '%</b></span></div>' +
         '<span class="hint-line">' + esc(preview.damageTypeName) + ' · ' + esc(preview.triangleLabel) +
         ' · 地形回避 +' + preview.terrainAvoid + '</span>' +
         (preview.canCounter ? '<div class="forecast-strip counter-forecast"><span>反击命中<b>' + preview.counter.hit + '%</b></span>' +
-          '<span>反击伤害<b class="damage">' + preview.counter.damage + (preview.counterCount > 1 ? ' ×2' : '') + '</b></span>' +
+          '<span>反击伤害<b class="damage">' + damageText(target.id) + '</b></span>' +
           '<span>反击暴击<b>' + preview.counter.crit + '%</b></span></div>'
           : '<span class="hint-line">无法反击 · ' + esc(preview.counterReason) + '</span>') +
         '<span class="hint-line">攻速 ' + preview.attackSpeed + ' / ' + preview.defenderAttackSpeed +
@@ -1600,10 +1601,10 @@
       await this.showResultModal(result, isEnemy);
       const applied = this.game.applyCombat(result);
       for(const id of new Set(applied.strikes.filter(s=>s.applied&&s.talentResDown).map(s=>s.defenderId))){
-        const u=this.game.getUnit(id);this.renderer.floatText('魔力打击 · 魔防−2',u.x,u.y-0.65,'#cdb4f4',10);
+        const u=this.game.getUnit(id);this.renderer.floatText('魔力打击 · 魔防／守备−5',u.x,u.y-0.65,'#cdb4f4',10);
       }
       for(const id of new Set(applied.strikes.filter(s=>s.applied&&s.frostApplied).map(s=>s.defenderId))){
-        const u=this.game.getUnit(id);this.renderer.floatText('冰霜剑气 · 速度−3',u.x,u.y-0.65,'#a6e8ff',10);
+        const u=this.game.getUnit(id);this.renderer.floatText('冰霜剑气 · 速度−6',u.x,u.y-0.65,'#a6e8ff',10);
       }
 
       for (const strike of applied.strikes.filter(s=>s.applied)) {
@@ -1908,6 +1909,7 @@
         (s.masteryHealing?' · 生命吸收回复 '+s.masteryHealing+' HP':'')+
         (s.healed ? ' · 吸取回复 ' + s.healed : '') +
         (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') +
+        (s.talentDamageBonus ? ' · 拳拳到肉：伤害＋' + s.talentDamageBonus : '') +
         (s.resourcePreserved ? ' · 爱笑女孩：未消耗次数' : '') +
         (s.angel ? ' · 天使：自身−'+s.angel.cost+' HP，'+s.angel.healing.map(c=>esc(this.game.getUnit(c.id)?.name||c.id)+'＋'+c.amount+' HP').join('、') : '') + '</small></div>' +
         '<b class="' + (s.crit ? 'crit-text' : s.hit ? 'dmg-text' : 'miss-text') + '">' +

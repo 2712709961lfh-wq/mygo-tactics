@@ -40,10 +40,10 @@ test('起始已达10级立即生效，敌方/同名幻影不获得天赋',()=>{
 test('所有实体武器和攻击魔法额外命中5，技巧另按原有公式参与命中与暴击',()=>{
   const u=level(game().getUnit('anon'),15);u.dex=11;u.lck=4;
   for(const weapon of Object.values(I.weapons).filter(w=>!w.cannotAttack)){
-    u.weapon=weapon;const extra=weapon.type==='bow'?3:0,skill=11+extra;
+    u.weapon=weapon;const skill=11;
     const expected=weapon.damageType==='magic'?Math.floor((skill+4)/2):skill;
     assert.equal(C.hitOf(u),(weapon.hit||0)+expected+5,weapon.id);
-    assert.equal(C.critRateOf(u),Math.floor((skill+4)/2)+(weapon.crit||0),weapon.id);
+    assert.equal(C.critRateOf(u),Math.floor((skill+4)/2)+(weapon.crit||0)+(weapon.type==='bow'?10:0),weapon.id);
   }
   u.weapon={type:'sword',hit:60};u.hit=20;assert.equal(C.hitOf(u),85);
 });
@@ -77,7 +77,7 @@ test('旧档所有已达等级角色补发技巧一次，原等级经验成长�
   const current=plain(h.serialize()),j=game();j.restore(current);assert.deepEqual(plain(j.serialize()),current);
 });
 test('低等级旧档仍未习得；转职和跨章保留一次奖励并与个人天赋技巧叠加',()=>{
-  const g=game(),a=level(g.getUnit('anon'),25);assert.equal(a._talentBonuses.dex,3);
+  const g=game(),a=level(g.getUnit('anon'),25);assert.equal(a._talentBonuses.dex,6);
   const dex=a.dex;M.Classes.apply(a,'archer');T.sync(a);assert.equal(a.dex,dex);
   const next=new M.Game({stage:10,recruited:g.recruited,loadout:g.exportLoadout(),seed:2});next.completeTenthIntro();assert.equal(next.getUnit(a.id).dex,dex);
   const old=world(true),low=new old.Game({seed:12}),u=low.getUnit('tomori');level(u,9,old);

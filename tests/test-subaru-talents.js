@@ -36,26 +36,26 @@ test('昴15/20/25级依次觉醒，报告、资料、旧档重建和转职保留
   for(const text of ['爱笑女孩','魔力延伸','天使','Lv.15','Lv.20','Lv.25'])assert(ctx.dom.formationDetail.innerHTML.includes(text),text);
   assert.equal(T.get('tomori').name,'行动派');assert(!T.active({...s,side:'enemy'},3));
 });
-test('爱笑女孩25成功26失败，未觉醒/其他角色/实体物品不抽签，零次数仍不可施法',()=>{
-  const {s,t}=fixture(15);let draws=0;const rng={int:()=>{draws++;return 25;}};
+test('爱笑女孩30成功31失败，未觉醒/其他角色/实体物品不抽签，零次数仍不可施法',()=>{
+  const {s,t}=fixture(15);let draws=0;const rng={int:()=>{draws++;return 30;}};
   assert(T.preserveUse(s,'spell',rng));assert(T.preserveUse(s,'consumable',rng));assert.equal(draws,2);
-  assert(!T.preserveUse(s,'spell',{int:()=>26}));
+  assert(!T.preserveUse(s,'spell',{int:()=>31}));
   for(const [u,kind]of [[{...s,level:14},'spell'],[t,'spell'],[s,'weapon'],[s,'seal'],[s,'key']])assert(!T.preserveUse(u,kind,{int(){throw Error('should not roll');}}));
   s.spellUses.fire=0;assert(!I.usable(s));assert.throws(()=>I.consume(s,'fire',true),/次数不足/);
 });
 test('攻击每次独立抽签，锁定不改真实次数，确认不重抽也不重复消耗',()=>{
   const {g,s,e}=fixture(15);s.spd=40;e.spd=0;e.cannotCounter=true;s.spellUses.fire=2;
-  const draws=rolls(g,[1,1,100,25,1,1,100,26]),r=g.rollCombat(s,e);
+  const draws=rolls(g,[1,1,100,30,1,1,100,31]),r=g.rollCombat(s,e);
   assert.equal(r.strikes.length,2);assert(r.strikes[0].resourcePreserved);assert(!r.strikes[1].resourcePreserved);
   assert.equal(s.spellUses.fire,2);assert.equal(draws(),8);g.applyCombat(r);
   assert.equal(s.spellUses.fire,1);assert.equal(draws(),8);assert.throws(()=>g.applyCombat(r),/已结算/);
 });
 test('一发剩余可在触发后追击，未触发则中断，预告无随机副作用且提示条件',()=>{
-  for(const proc of [25,26]){
+  for(const proc of [30,31]){
     const {g,s,e}=fixture(15);s.spd=40;e.spd=0;e.cannotCounter=true;s.spellUses.fire=1;
-    const draws=rolls(g,proc===25?[1,1,100,25,1,1,100,26]:[1,1,100,26]);
+    const draws=rolls(g,proc===30?[1,1,100,30,1,1,100,31]:[1,1,100,31]);
     const p=C.forecast(s,e,g.map);assert.equal(draws(),0);assert(p.order[1].resourceConditional);
-    const r=g.rollCombat(s,e);assert.equal(r.strikes.length,proc===25?2:1);g.applyCombat(r);assert.equal(s.spellUses.fire,0);
+    const r=g.rollCombat(s,e);assert.equal(r.strikes.length,proc===30?2:1);g.applyCombat(r);assert.equal(s.spellUses.fire,0);
   }
 });
 test('落空和反击施法也判定保留，实体武器不判定',()=>{
@@ -66,17 +66,17 @@ test('落空和反击施法也判定保留，实体武器不判定',()=>{
   const p=C.rollRound(f.s,f.e,f.g.map,{int:()=>1});assert(!p.strikes.find(x=>x.attackerId===f.s.id).resourcePreserved);
 });
 test('辅助魔法和各类药品正确保留最后一次，非法目标/满血用药不抽签',()=>{
-  for(const id of ['heal','ward','restore','rescue'])for(const proc of [25,26]){
+  for(const id of ['heal','ward','restore','rescue'])for(const proc of [30,31]){
     const {g,s,t}=fixture(25);Object.assign(t,{x:5,y:5,hp:1,status:{poison:1,spdDown:1}});
     if(!s.learnedSpells.includes(id))s.learnedSpells.push(id);s.spellUses[id]=1;
     if(id!=='rescue')t.y=4;
-    const draws=rolls(g,[proc]),r=g.castSupport(s,id,t);assert.equal(r.resourcePreserved,proc===25);
-    assert.equal(s.spellUses[id],proc===25?1:0);assert.equal(draws(),1);assert(s.acted);
+    const draws=rolls(g,[proc]),r=g.castSupport(s,id,t);assert.equal(r.resourcePreserved,proc===30);
+    assert.equal(s.spellUses[id],proc===30?1:0);assert.equal(draws(),1);assert(s.acted);
   }
-  for(const id of ['vulnerary','antitoxin','pure_water'])for(const proc of [25,26]){
+  for(const id of ['vulnerary','antitoxin','pure_water'])for(const proc of [30,31]){
     const {g,s}=fixture(15);s.inventory=[I.make(id)];s.inventory[0].uses=1;s.hp=1;s.status.poison=1;
-    const draws=rolls(g,[proc]),r=g.useMedicine(s,0);assert.equal(r.resourcePreserved,proc===25);
-    assert.equal(s.inventory.length,proc===25?1:0);if(proc===25)assert.equal(s.inventory[0].uses,1);assert.equal(draws(),1);
+    const draws=rolls(g,[proc]),r=g.useMedicine(s,0);assert.equal(r.resourcePreserved,proc===30);
+    assert.equal(s.inventory.length,proc===30?1:0);if(proc===30)assert.equal(s.inventory[0].uses,1);assert.equal(draws(),1);
   }
   const {g,s,t}=fixture(15);const draws=rolls(g,[]);s.inventory=[I.make('vulnerary')];
   assert.throws(()=>g.useMedicine(s,0),/生命已满/);t.x=22;t.hp=1;assert.throws(()=>g.castSupport(s,'heal',t),/目标无效/);assert.equal(draws(),0);

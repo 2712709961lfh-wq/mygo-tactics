@@ -125,6 +125,7 @@
       _walking: false,
       _spritePhase: (template.x * 7 + template.y * 13) % 8,
       acted: false,
+      talentAttackCount:0,
       dead: false
     };
     MyGO.Inventory.init(unit, template);
@@ -1022,6 +1023,7 @@
       }
       result.talentHealed=attacker?(MyGO.Talents?.onKill(attacker,defender,killed)||0):0;
       result.angel=attacker?(MyGO.Talents?.onAngel(attacker,defender,killed,this.map)||null):null;
+      if(attacker)MyGO.Talents?.onAttack(attacker,defender);
       result.applied = true;
       result.hpBeforeApply = before;
       result.hpAfterApply = defender.hp;
@@ -1130,6 +1132,7 @@
       if (this.isOver()) return false;
       this.expireStatuses('enemy');
       for(const u of this.units)delete u.status.talentResDown;
+      for(const u of this.units)u.talentAttackCount=0;
       this.decayWard('player');
       this.turn += 1;
       if(this.stage===3 && this.turn>=4){
@@ -1199,6 +1202,7 @@
           acted: u.acted,
           talentSwapReady:!!u.talentSwapReady,
           talentAttacked:!!u.talentAttacked,
+          talentAttackCount:u.talentAttackCount||0,
           dead: u.dead,
           alerted: u.alerted,
           growth: MyGO.GrowthData.personal[u.id] ? MyGO.Growth.pack(u) : undefined,
@@ -1410,6 +1414,8 @@
         unit.acted = !!saved.acted || unit.dead;
         if(saved.talentSwapReady!==undefined&&typeof saved.talentSwapReady!=='boolean'||saved.talentAttacked!==undefined&&typeof saved.talentAttacked!=='boolean')throw Error('存档天赋行动状态无效');
         unit.talentAttacked=!!saved.talentAttacked;
+        if(saved.talentAttackCount!==undefined&&(!Number.isSafeInteger(saved.talentAttackCount)||saved.talentAttackCount<0||unit.id!=='nina'&&saved.talentAttackCount!==0))throw Error('存档拳拳到肉计数无效');
+        unit.talentAttackCount=saved.talentAttackCount||0;
         unit.talentSwapReady=unit.id==='anon'&&!!MyGO.Talents?.active(unit,3)&&unit.acted&&!unit.dead&&!unit.talentAttacked&&!!saved.talentSwapReady;
         unit.alerted = !!saved.alerted;
         MyGO.Inventory.restore(unit,saved,false);
