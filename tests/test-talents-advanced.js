@@ -23,7 +23,7 @@ test('八人20/25级分别觉醒一次，升级报告含正确天赋槽位',()=>
   assert(!T.active({id:'tomori',side:'enemy',level:99},2));assert(!T.active({id:'taki',side:'enemy',level:99},3));
 });
 test('固定能力奖励独立于随机成长，旧档、转职与跨章重建均不叠加',()=>{
-  const g=game(),expected={xueyue:{spd:5},tomori:{spd:4},soyo:{mag:2,res:2},taki:{def:4,res:4},anon:{dex:5},rana:{dex:6},nina:{},nijika:{}};
+  const g=game(),expected={xueyue:{spd:5},tomori:{spd:4},soyo:{mag:4,res:5},taki:{def:4,res:4},anon:{dex:5},rana:{dex:6},nina:{},nijika:{}};
   for(const id of Object.keys(T.data).filter(id=>g.getUnit(id))){
     const u=level(g.getUnit(id),25);for(const k of M.GrowthData.keys)assert.equal(u[k],u.growthBase.stats[k]+u.growthGains[k]+(expected[id][k]||0)+(k==='dex'?1:k==='maxHp'?5:0),id+'/'+k);
     for(let n=0;n<3;n++)T.sync(u);

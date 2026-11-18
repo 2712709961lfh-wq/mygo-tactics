@@ -1023,7 +1023,7 @@
       }
       result.talentHealed=attacker?(MyGO.Talents?.onKill(attacker,defender,killed)||0):0;
       result.angel=attacker?(MyGO.Talents?.onAngel(attacker,defender,killed,this.map)||null):null;
-      if(attacker)MyGO.Talents?.onAttack(attacker,defender);
+      if(attacker)MyGO.Talents?.onAttack(attacker,defender,result.weaponType||result.weaponSnapshot?.type||attacker.weapon?.type);
       result.applied = true;
       result.hpBeforeApply = before;
       result.hpAfterApply = defender.hp;

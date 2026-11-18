@@ -1909,7 +1909,7 @@
         (s.masteryHealing?' · 生命吸收回复 '+s.masteryHealing+' HP':'')+
         (s.healed ? ' · 吸取回复 ' + s.healed : '') +
         (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') +
-        (s.talentDamageBonus ? ' · 拳拳到肉：伤害＋' + s.talentDamageBonus : '') +
+        (s.talentDamageBonus ? ' · 拳拳到肉：伤害＋' + s.talentDamageBonus*(s.crit?MyGO.CONFIG.COMBAT.critMultiplier:1) : '') +
         (s.resourcePreserved ? ' · 爱笑女孩：未消耗次数' : '') +
         (s.angel ? ' · 天使：自身−'+s.angel.cost+' HP，'+s.angel.healing.map(c=>esc(this.game.getUnit(c.id)?.name||c.id)+'＋'+c.amount+' HP').join('、') : '') + '</small></div>' +
         '<b class="' + (s.crit ? 'crit-text' : s.hit ? 'dmg-text' : 'miss-text') + '">' +

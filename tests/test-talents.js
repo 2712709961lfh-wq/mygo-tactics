@@ -18,9 +18,9 @@ test('八个指定角色在15级觉醒，敌方幻影不获得我方天赋',()=>
     assert.equal(G.award(u,G.required(15)).levels[0].awakened,null);}
   assert.equal(T.get(g.getUnit('xueyue')).name,'剑意');assert(!T.active({id:'tomori',side:'enemy',level:99}));
 });
-test('灯速度+4、爽世魔力+2，独立于随机成长且同步不叠加',()=>{
+test('灯速度+4、爽世魔力+4，独立于随机成长且同步不叠加',()=>{
   const g=game();for(const [id,key]of [['tomori','spd'],['soyo','mag']]){
-    const amount=id==='tomori'?4:2,u=level(g.getUnit(id),14),before=u[key],r=G.award(u,G.required(14));
+    const amount=4,u=level(g.getUnit(id),14),before=u[key],r=G.award(u,G.required(14));
     assert.equal(u[key],before+r.levels[0].gains[key]+amount);
     const expected=u[key];for(let i=0;i<4;i++)T.sync(u);assert.equal(u[key],expected);
     assert.equal(u[key],u.growthBase.stats[key]+u.growthGains[key]+amount);

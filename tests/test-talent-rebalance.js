@@ -83,14 +83,44 @@ test('拳拳到肉包括落空和反击，跨敌我阶段累积，新回合清�
   g.beginNextPlayerPhase();assert.equal(a.talentAttackCount,0);assert.equal(C.preview(a,e,g.map).talentDamageBonus,0);
 });
 
-test('拳拳到肉首击无加成、额外伤害不乘暴击；所有武器适用，未觉醒或敌方不触发',()=>{
+test('拳拳到肉仅拳套或空手适用，其他攻击不加伤也不计次，换回拳套保留累积',()=>{
   const {g,a,e}=fixture();a.talentAttackCount=3;
-  for(const id of ['iron_sword','iron_gauntlets','iron_bow','fire']){
+  for(const id of ['iron_sword','iron_lance','iron_axe','iron_bow','fire','unarmed','iron_gauntlets','mastery_unarmed']){
     a.weapon=I.weapons[id];const p=C.preview(a,e,g.map);a.talentAttackCount=0;const q=C.preview(a,e,g.map);a.talentAttackCount=3;
-    assert.equal(p.damage,q.damage+3);assert.equal(p.critDamage,q.critDamage+3);
+    const allowed=['iron_gauntlets','mastery_unarmed'].includes(id);
+    assert.equal(p.damage,q.damage+(allowed?3:0),id);assert.equal(p.critDamage,q.critDamage+(allowed?9:0),id);
+    T.onAttack(a,e);assert.equal(a.talentAttackCount,allowed?4:3,id);a.talentAttackCount=3;
   }
   a.level=24;assert.equal(T.damageBonus(a),0);T.onAttack(a,e);assert.equal(a.talentAttackCount,3);
   a.level=25;a.side='enemy';assert.equal(T.damageBonus(a),0);T.onAttack(a,{...e,side:'player'});assert.equal(a.talentAttackCount,3);
+});
+
+test('拳套逐击加伤参与暴击倍率，锁定预演、暴击预告和实际扣血一致',()=>{
+  const {g,a,e}=fixture();a.lck=400;const base=C.preview(a,e,g.map).critDamage,p=C.forecast(a,e,g.map);
+  assert.deepEqual(Array.from(p.order,s=>s.critDamage),[base,base+3,base+6,base+9]);
+  const r=C.rollRound(a,e,g.map,{int:()=>1});assert(r.strikes.every(s=>s.crit));
+  assert.deepEqual(Array.from(r.strikes,s=>s.finalDamage),[base,base+3,base+6,base+9]);
+  const hp=e.hp;g.applyCombat(r);assert.equal(e.hp,hp-(base*4+18));assert.equal(a.talentAttackCount,4);
+});
+
+test('空手格斗正常累积与暴击，不消耗耐久；换用剑后不累积也不享受加伤',()=>{
+  const {g,a,e}=fixture();a.certifiedClasses.push('brawler');a.classXp.brawler=M.Mastery.get('brawler').required;
+  M.Mastery.equip(a,'unarmed_combat');I.select(a,'mastery_unarmed');a.talentAttackCount=2;
+  const bag=JSON.stringify(a.inventory),base=C.preview(a,e,g.map).damage-2,r=C.rollRound(a,e,g.map,noCrit());
+  assert.deepEqual(Array.from(r.strikes,s=>s.finalDamage),[base+2,base+3,base+4,base+5]);
+  g.applyCombat(r);assert.equal(a.talentAttackCount,6);assert.equal(JSON.stringify(a.inventory),bag);
+  a.weaponTypes=['gauntlet','sword'];equip(a,'iron_sword');const sword=C.rollRound(a,e,g.map,noCrit());assert(sword.strikes.every(s=>s.talentDamageBonus===0));
+  g.applyCombat(sword);assert.equal(a.talentAttackCount,6);I.select(a,'mastery_unarmed');assert.equal(T.damageBonus(a),6);
+});
+
+test('按实际出手武器判定，原装备不同或拳套末次耐久自动换装仍正确计次',()=>{
+  for(const selected of ['iron_gauntlets','iron_sword']){
+    const {g,a,e}=fixture();a.weaponTypes=['gauntlet','sword'];a.inventory.push(I.make('iron_sword'));a.equippedWeapon=selected==='iron_gauntlets'?'iron_sword':'iron_gauntlets';I.sync(a);
+    const view=I.withAttackWeapon(a,selected),r=C.rollRound(view,e,g.map,noCrit());g.applyCombat(r);
+    assert.equal(a.talentAttackCount,selected==='iron_gauntlets'?r.strikes.length:0);
+  }
+  const {g,a,e}=fixture();a.weaponTypes=['gauntlet','sword'];a.inventory[0].uses=1;a.inventory.push(I.make('iron_sword'));
+  g.applyCombat(C.rollRound(a,e,g.map,noCrit()));assert.equal(a.weapon.id,'iron_sword');assert.equal(a.talentAttackCount,1);assert.equal(T.damageBonus(a),0);
 });
 
 test('最后耐久、击杀和锁血撤离只计算真正执行的攻击，取消预演不留累积',()=>{

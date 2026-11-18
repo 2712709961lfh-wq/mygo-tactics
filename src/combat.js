@@ -155,8 +155,8 @@
     const attacks={};
     for(const step of executable){
       const u=step.attackerId===attacker.id?attacker:defender,p=step.attackerId===attacker.id?first:counter;
-      const extra=u.id==='nina'&&MyGO.Talents?.active(u,3)?(attacks[u.id]||0):0;
-      step.damage=p.damage+extra;step.critDamage=p.critDamage+extra;
+      const extra=MyGO.Talents?.canStackDamage(u)?(attacks[u.id]||0):0;
+      step.damage=p.damage+extra;step.critDamage=p.critDamage+extra*C.COMBAT.critMultiplier;
       attacks[u.id]=(attacks[u.id]||0)+1;
     }
     return {...first, counter, canCounter:!!counter, counterReason:reason, attackSpeed, defenderAttackSpeed, order:executable,
@@ -188,7 +188,7 @@
       strike.talentHealed=MyGO.Talents?.onKill(a,b,strike.hit&&strike.hpAfter<=0)||0;
       b.hp = strike.hpAfter;
       strike.angel=MyGO.Talents?.onAngel(a,b,strike.hit&&b.hp<=0,battleMap)||null;
-      MyGO.Talents?.onAttack(a,b);
+      MyGO.Talents?.onAttack(a,b,strike.weaponType);
       strike.attackerHpAfterStrike=a.hp;
       const reverse = b.id === defender.id ? plan.counter : plan;
       strike.response = reverse;
@@ -241,7 +241,7 @@
     const baseDamage = Math.max(C.COMBAT.minDamage, attack - defense);
     const talentDamageBonus=MyGO.Talents?.damageBonus(attacker)||0;
     const damage = Math.floor(baseDamage*damageFactor*(art?.factor||1))+talentDamageBonus;
-    const critDamage = Math.floor(baseDamage*C.COMBAT.critMultiplier*damageFactor*(art?.factor||1))+talentDamageBonus;
+    const critDamage = Math.floor(baseDamage*C.COMBAT.critMultiplier*damageFactor*(art?.factor||1))+talentDamageBonus*C.COMBAT.critMultiplier;
 
     const targetAvoid = avoidOf(defender,map,context,attacker);
     const rawHit = hitOf(attacker,context,defender)+(art?.hit||0) + triangle * C.TRIANGLE_BONUS.hit - targetAvoid;
