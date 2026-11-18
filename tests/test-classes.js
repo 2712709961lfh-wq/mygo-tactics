@@ -37,7 +37,7 @@ test('两章六名主角按定位使用初级职业、4移动与独立标签，�
       const u=g.getUnit(id),t=M.CONFIG.UNITS.find(t=>t.id===id);
       assert.equal(u.classId,classId,id); assert.equal(u.className,D.get(classId).name);
       assert.equal(D.get(u.classId).tier,'beginner'); assert.equal(u.move,4); assert.equal(t.move,4);
-      assert.equal(u.tags.length,0); assert.equal(u.weaponId,t.weapon); assert.equal(u.maxHp,t.maxHp);
+      assert.equal(u.tags.length,0); assert.equal(u.weaponId,t.weapon); assert.equal(u.maxHp,t.maxHp+(u.side!=='enemy'?5:0));
       assert.equal(u.level,t.level);
     }
     assert.equal(g.getUnit('soyo').learnedSpells.join(','),'fire,heal');

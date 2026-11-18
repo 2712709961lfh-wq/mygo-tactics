@@ -2283,6 +2283,17 @@
      * 弹窗基础
      * ============================================================ */
 
+    // Legacy preview pages without tactical-ui.js use the standard picker card.
+    openActionPicker(content) {
+      this.openOverlay(content, 'loadout-modal', true);
+      this.actionPickerCard = this.dom.overlayCard;
+      return this.actionPickerCard;
+    }
+
+    closeActionPicker() {
+      this.closeOverlay();
+    }
+
     openOverlay(content, extraClass, dismissible) {
       this.confirmHandler = this.confirmHandler || null;
       this.modalDismissible = !!dismissible;

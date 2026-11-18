@@ -27,8 +27,8 @@ test('满条只解锁一次，自动装备，跨职业保留不同进度',()=>{
   M.Classes.apply(u,'fighter');A.award(u,3);assert.equal(A.progress(u).xp,3);assert.equal(A.progress(u,'myrmidon').xp,60);M.Classes.apply(u,'myrmidon');assert.equal(u.spd,spd+2);assert(A.progress(u).mastered);
 });
 test('五栏限制、同名奖励去重、卸下重新装备不叠加或治疗',()=>{
-  const {u}=setup(),max=u.maxHp;master(u,'commoner');master(u,'noble');assert.equal(A.learned(u).filter(x=>x==='hp5').length,1);assert.equal(u.maxHp,max+5);assert.equal(u.hp,max);
-  A.equip(u,'hp5');assert.equal(u.maxHp,max);A.equip(u,'hp5');assert.equal(u.maxHp,max+5);assert.equal(u.hp,max);
+  const {u}=setup(),max=u.maxHp;master(u,'commoner');master(u,'noble');assert.equal(A.learned(u).filter(x=>x==='hp5').length,1);assert.equal(u.maxHp,max);assert.equal(u.hp,max);
+  A.equip(u,'hp5');assert.equal(u.maxHp,max-5);A.equip(u,'hp5');assert.equal(u.maxHp,max);assert.equal(u.hp,max-5);
   for(const id of ['myrmidon','soldier','fighter','monk','archer'])master(u,id);assert.equal(u.masteryEquipped.length,5);assert(!A.has(u,'hit20'));assert.throws(()=>A.equip(u,'hit20'),/最多装备5/);A.equip(u,'hp5');A.equip(u,'hit20');assert(A.has(u,'hit20'));
 });
 test('未命中和零伤害仍各给交战双方一次职业经验，不能重复结算',()=>{
@@ -107,7 +107,7 @@ test('存档／跨章保留每职业进度与装备，属性不叠加，旧档�
   const g=new M.Game(),u=g.getUnit('tomori');master(u,'myrmidon');M.Classes.apply(u,'fighter');A.award(u,9);u.hp=8;
   const s=g.serialize();let h=new M.Game();h.restore(s);let v=h.getUnit(u.id);assert.equal(v.hp,8);assert.equal(v.spd,u.spd);assert.equal(v.classXp.fighter,9);assert.equal(v.classXp.myrmidon,60);assert.equal(v.masteryEquipped.join(','),u.masteryEquipped.join(','));h.restore(h.serialize());assert.equal(h.getUnit(u.id).spd,u.spd);
   h=new M.Game({stage:2,recruited:['xueyue'],loadout:g.exportLoadout()});v=h.getUnit(u.id);assert.equal(v.classXp.fighter,9);assert.equal(v.spd,u.spd);assert.equal(v.hp,v.maxHp);
-  const old=plain(s);for(const x of old.units)delete x.classMastery;h=new M.Game();h.restore(old);assert.equal(A.progress(h.getUnit(u.id)).xp,0);assert.equal(h.getUnit(u.id).masteryEquipped.length,0);
+  const old=plain(s);for(const x of old.units)delete x.classMastery;h=new M.Game();h.restore(old);assert.equal(A.progress(h.getUnit(u.id)).xp,0);assert.equal(h.getUnit(u.id).masteryEquipped.join(','),'hp5');
 });
 test('HP专精保存上限后再恢复伤血／撤退，重复加载不叠加；撤退可管理技能',()=>{
   const g=new M.Game(),u=g.getUnit('tomori');master(u,'commoner');u.hp=u.maxHp-1;let h=new M.Game();h.restore(g.serialize());assert.equal(h.getUnit(u.id).maxHp,u.maxHp);assert.equal(h.getUnit(u.id).hp,u.hp);h.restore(h.serialize());assert.equal(h.getUnit(u.id).maxHp,u.maxHp);
@@ -117,7 +117,7 @@ test('拒绝伪造专精经验、未知职业、未取得资格及未学技能',
   const g=new M.Game(),u=g.getUnit('tomori');const s=g.serialize();for(const bad of [{version:1,xp:{myrmidon:61},equipped:[]},{version:1,xp:{myrmidon:-1},equipped:[]},{version:1,xp:{myrmidon:1.5},equipped:[]},{version:1,xp:{fake:1},equipped:[]},{version:1,xp:{sniper:150},equipped:[]},{version:1,xp:{myrmidon:0},equipped:['speed2']},{version:1,xp:{myrmidon:60},equipped:['speed2','speed2']}]){const x=plain(s);x.units.find(t=>t.id===u.id).classMastery=bad;assert.throws(()=>new M.Game().restore(x),/存档/);}
 });
 test('角色资料／职业目录／专精页显示真实经验、奖励和五栏；通知支持仅专精',()=>{
-  const {g,u}=setup();A.award(u,5);assert(M.MasteryUI.bar(u).includes('5 / 60 CEXP'));assert(M.MasteryUI.bar(u).includes('role="progressbar"'));assert(M.MasteryUI.rewards(u,'myrmidon').includes('速度＋2'));assert(M.MasteryUI.skills(u,'').includes('已装备 0 / 5'));
+  const {g,u}=setup();A.award(u,5);assert(M.MasteryUI.bar(u).includes('5 / 60 CEXP'));assert(M.MasteryUI.bar(u).includes('role="progressbar"'));assert(M.MasteryUI.rewards(u,'myrmidon').includes('速度＋2'));assert(M.MasteryUI.skills(u,'').includes('已装备 1 / 5'));
   const entry=Object.create(M.EntryScreen.prototype);entry.ui={game:g,busy:false,mode:'idle'};entry.players=()=>g.units.filter(u=>u.side==='player');entry.selectedUnitId=u.id;entry.dom={formationDetail:{innerHTML:''}};entry.renderPoseDock=()=>{};entry.loadoutTab='classes';entry.renderFormationDetail();assert(entry.dom.formationDetail.innerHTML.includes('专精奖励'));entry.loadoutTab='mastery';entry.renderFormationDetail();assert(entry.dom.formationDetail.innerHTML.includes('职业经验＋1'));
   const source=fs.readFileSync(path.join(__dirname,'../src/ui.js'),'utf8');assert(source.includes('r.levels.length||r.mastery?.unlocked?.length'));assert(source.includes('职业专精达成'));
 });
@@ -147,7 +147,46 @@ test('偷取关卡真实钥匙后，读档和后续击破都不会复制钥匙�
 });
 test('九名角色均初始化独立职业经验，未入队角色可在入队后正常练职业',()=>{
   const g=new M.Game({stage:10,recruited:['xueyue','nina']});g.completeTenthIntro();const units=Object.keys(M.GrowthData.personal).map(id=>g.getUnit(id));assert(units.every(Boolean));
-  for(const u of units){assert.equal(A.progress(u).xp,0);assert.equal(u.masteryEquipped.length,0);const report=A.award(u);assert.equal(report.gained,1);assert.equal(A.progress(u).xp,1);}
+  for(const u of units){assert.equal(A.progress(u).xp,0);assert.equal(u.masteryEquipped.join(','),'hp5');const report=A.award(u);assert.equal(report.gained,1);assert.equal(A.progress(u).xp,1);}
   assert.notEqual(units[0].classXp,units[1].classXp);
+});
+test('九名同伴初始自带并装备HP＋5，初始满血且不修改成长／当前职业经验，敌军不获奖励',()=>{
+  const g=new M.Game({stage:10,recruited:['xueyue','nina']});g.completeTenthIntro();
+  for(const id of Object.keys(M.GrowthData.personal)){
+    const u=g.getUnit(id);assert(A.learned(u).includes('hp5'));assert(A.has(u,'hp5'));
+    assert.equal(u.maxHp,u.growthBase.stats.maxHp+5);assert.equal(u.hp,u.maxHp);
+    assert.equal(u.growthGains.maxHp,0);assert.equal(A.progress(u).xp,0);assert.deepEqual(plain(u.classXp),{});
+    assert(M.MasteryUI.skills(u,'').includes('初始习得并装备平民精通技能'));
+    const max=u.maxHp;A.equip(u,'hp5');assert.equal(u.maxHp,max-5);A.equip(u,'hp5');assert.equal(u.maxHp,max);
+  }
+  for(const u of g.living('enemy')){assert(!A.learned(u).includes('hp5'));assert(!A.has(u,'hp5'));assert.equal(u.masteryEquipped.length,0);}
+  const first=new M.Game();assert.equal(first.getUnit('xueyue').side,'enemy');assert(!A.has(first.getUnit('xueyue'),'hp5'));
+});
+test('旧职业专精存档补发HP技能，保留伤势、撤退和其他经验，重复保存读取不累加',()=>{
+  const g=new M.Game({stage:10,recruited:['xueyue','nina']});g.completeTenthIntro();
+  const s=plain(g.serialize()),players=g.living('player');
+  for(const u of players){const save=s.units.find(x=>x.id===u.id);delete save.classMastery.starterVersion;save.classMastery.equipped=[];save.hp=9;}
+  const fallen=s.units.find(x=>x.id==='anon');fallen.hp=0;fallen.dead=true;fallen.acted=true;
+  let h=new M.Game();h.restore(s);
+  for(const u of players){const v=h.getUnit(u.id);assert(A.has(v,'hp5'));assert.equal(v.maxHp,u.maxHp);assert.equal(v.hp,u.id==='anon'?0:9);assert.equal(v.dead,u.id==='anon');assert.deepEqual(plain(G.pack(v)),plain(G.pack(u)));}
+  for(let n=0;n<3;n++){const next=new M.Game();next.restore(plain(h.serialize()));assert.deepEqual(plain(next.serialize()),plain(h.serialize()));h=next;}
+});
+test('旧档五栏全满时只补学不替换，腾出空栏可装备；已经学过又卸下时保留选择',()=>{
+  const g=new M.Game(),u=g.getUnit('tomori');
+  skills(u,['myrmidon','soldier','fighter','monk','archer'],['speed2','defense2','strength2','magic2','hit20']);
+  const s=plain(g.serialize()),saved=s.units.find(x=>x.id===u.id);delete saved.classMastery.starterVersion;
+  const h=new M.Game();h.restore(s);const v=h.getUnit(u.id);
+  assert(A.learned(v).includes('hp5'));assert.equal(v.masteryEquipped.join(','),u.masteryEquipped.join(','));assert.equal(v.maxHp,u.maxHp);
+  assert.throws(()=>h.equipMasterySkill(v,'hp5'),/最多装备5/);h.equipMasterySkill(v,'hit20');h.equipMasterySkill(v,'hp5');assert.equal(v.maxHp,u.maxHp+5);
+  const old=new M.Game(),o=old.getUnit('tomori');master(o,'noble');A.equip(o,'hp5');
+  const save=plain(old.serialize());delete save.units.find(x=>x.id===o.id).classMastery.starterVersion;
+  const restored=new M.Game();restored.restore(save);assert(A.learned(restored.getUnit(o.id)).includes('hp5'));assert(!A.has(restored.getUnit(o.id),'hp5'));
+});
+test('初始HP技能卸下选择随新档和跨章保留，专精同名职业不重复发放，拒绝损坏补发版本',()=>{
+  const g=new M.Game(),u=g.getUnit('tomori');A.equip(u,'hp5');u.hp=7;const max=u.maxHp;
+  const h=new M.Game();h.restore(plain(g.serialize()));assert.equal(h.getUnit(u.id).maxHp,max);assert(!A.has(h.getUnit(u.id),'hp5'));assert.equal(h.getUnit(u.id).hp,7);
+  const next=new M.Game({stage:2,recruited:['xueyue'],loadout:g.exportLoadout()});assert(!A.has(next.getUnit(u.id),'hp5'));assert.equal(next.getUnit(u.id).maxHp,max);
+  for(const id of ['commoner','noble']){master(u,id);assert.equal(u.maxHp,max);assert(!A.has(u,'hp5'));}assert.equal(A.learned(u).filter(id=>id==='hp5').length,1);
+  for(const marker of [0,2,'1',null]){const s=plain(g.serialize());s.units.find(x=>x.id===u.id).classMastery.starterVersion=marker;assert.throws(()=>new M.Game().restore(s),/职业专精/);}
 });
 console.log('Class mastery: '+count+' cases passed.');

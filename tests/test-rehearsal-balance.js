@@ -108,8 +108,8 @@ test('Boss old saves preserve HP ratio, deaths and battle state, and migrate onl
   const s=plain(fresh(stage).serialize());s.rehearsalBossBalanceVersion=value;assert.throws(()=>reload(s),/Boss属性版本/);
  }
 });
-test('Subaru joins at Lv12/113 total including shared talent; earned growth, EXP, equipment and class survive reload',()=>{
- const g=fresh(10);g.completeTenthIntro();const u=g.getUnit('subaru');assert.equal(u.level,12);assert.equal(M.Combat.statTotalOf(u),113);
+test('Subaru joins at Lv12/118 total including starting skill and shared talent; earned growth, EXP, equipment and class survive reload',()=>{
+ const g=fresh(10);g.completeTenthIntro();const u=g.getUnit('subaru');assert.equal(u.level,12);assert.equal(M.Combat.statTotalOf(u),118);
  M.Growth.award(u,M.Growth.required(u.level));u.exp=13;u.hp-=5;
  const save=plain(g.serialize());let h=reload(save);
  for(let i=0;i<3;i++){assert.equal(M.Combat.statTotalOf(h.getUnit('subaru')),M.Combat.statTotalOf(u));assert.deepEqual(plain(h.serialize()),save);h=reload(h.serialize());}

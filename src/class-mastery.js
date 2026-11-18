@@ -61,7 +61,8 @@
   Object.freeze(abilities);Object.freeze(arts);Object.freeze(jobs);
   function get(id){return jobs[id]||null;}
   function progress(u,id=u?.classId){const j=get(id);if(!j)return null;const xp=u.classXp?.[id]||0;return {...j,xp,mastered:xp>=j.required};}
-  function learned(u){return [...new Set(Object.keys(u?.classXp||{}).filter(id=>get(id)&&u.classXp[id]>=get(id).required).flatMap(id=>get(id).rewards.map(r=>r.id)))];}
+  function starter(u){return u?.side!=='enemy'&&!!M.GrowthData?.personal[u?.id];}
+  function learned(u){return [...new Set([...(starter(u)?['hp5']:[]),...Object.keys(u?.classXp||{}).filter(id=>get(id)&&u.classXp[id]>=get(id).required).flatMap(id=>get(id).rewards.map(r=>r.id))])];}
   function has(u,id){return u?.side!=='enemy'&&!!u?.masteryEquipped?.includes(id);}
   function sync(u){
     const before=u._masteryBonuses||{},next={};
@@ -69,15 +70,23 @@
     for(const k of new Set([...Object.keys(before),...Object.keys(next)]))u[k]+=(next[k]||0)-(before[k]||0);
     u._masteryBonuses=next;u.hp=Math.min(u.hp,u.maxHp);
   }
-  function init(u){u.classXp={};u.masteryEquipped=[];u.combatArtId=null;u._masteryBonuses={};}
-  function pack(u){return {version:1,xp:{...u.classXp},equipped:(u.masteryEquipped||[]).slice()};}
+  function init(u){
+    u.classXp={};u.masteryEquipped=starter(u)?['hp5']:[];u.combatArtId=null;u._masteryBonuses={};
+    const full=u.hp===u.maxHp;sync(u);if(full)u.hp=u.maxHp;
+  }
+  function pack(u){return {version:1,starterVersion:1,xp:{...u.classXp},equipped:(u.masteryEquipped||[]).slice()};}
   function restore(u,s,fullHp=false){
-    if(s===undefined){u.classXp={};u.masteryEquipped=[];sync(u);return;}
-    if(!s||s.version!==1||!s.xp||typeof s.xp!=='object'||Array.isArray(s.xp)||!Array.isArray(s.equipped)||s.equipped.length>5||new Set(s.equipped).size!==s.equipped.length)throw Error('存档职业专精数据无效');
+    if(s===undefined){u.classXp={};u.masteryEquipped=starter(u)?['hp5']:[];sync(u);if(fullHp)u.hp=u.maxHp;return;}
+    if(!s||s.version!==1||s.starterVersion!==undefined&&s.starterVersion!==1||!s.xp||typeof s.xp!=='object'||Array.isArray(s.xp)||!Array.isArray(s.equipped)||s.equipped.length>5||new Set(s.equipped).size!==s.equipped.length)throw Error('存档职业专精数据无效');
     for(const [id,xp] of Object.entries(s.xp))if(!get(id)||!(u.certifiedClasses||[]).includes(id)||!Number.isInteger(xp)||xp<0||xp>get(id).required||u.side==='enemy'&&xp)throw Error('存档职业经验无效');
     u.classXp={...s.xp};const known=learned(u);
     if(s.equipped.some(id=>!abilities[id]||!known.includes(id)))throw Error('存档专精技能未习得');
-    u.masteryEquipped=s.equipped.slice();sync(u);if(fullHp)u.hp=u.maxHp;
+    u.masteryEquipped=s.equipped.slice();
+    // Grant the new starting skill once; keep prior deliberate removal when the
+    // old save had already mastered Commoner/Noble, and never evict another skill.
+    const previouslyLearned=['commoner','noble'].some(id=>(s.xp[id]||0)>=get(id).required);
+    if(s.starterVersion===undefined&&starter(u)&&!previouslyLearned&&!u.masteryEquipped.includes('hp5')&&u.masteryEquipped.length<5)u.masteryEquipped.push('hp5');
+    sync(u);if(fullHp)u.hp=u.maxHp;
   }
   function equip(u,id){
     if(!abilities[id]||!learned(u).includes(id))throw Error('尚未习得该职业技能');

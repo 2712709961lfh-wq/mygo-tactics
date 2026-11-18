@@ -5060,6 +5060,97 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 .class-badge {flex:none;font-size:10px;color:#5b6b44;border:1px solid #7c8a5c88;padding:3px 5px}
 
   </style>
+  <style>
+/* Parchment commands stay beside the acting unit; the map remains interactive. */
+.game-shell .unit-commands {position:absolute;z-index:16;width:196px;max-height:calc(100% - 20px);color:#46392f;filter:drop-shadow(0 6px 9px #0008)}
+.unit-commands::before {content:"";position:absolute;top:var(--anchor-y,30px);left:-7px;width:12px;height:12px;background:#eee2c9;border:1px solid #8e7a59;transform:translateY(-50%) rotate(45deg);z-index:-1}
+.unit-commands[data-side=left]::before {left:auto;right:-7px}
+.unit-command-head {display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 10px;color:#eee5d5;background:#43374d;border:1px solid #aa9675;border-bottom:0}
+.unit-command-head strong {font-size:12px;letter-spacing:1px}.unit-command-head span {font-size:10px;color:#d0c1ba}
+.game-shell .unit-commands .action-buttons {display:flex;flex-direction:column;gap:5px;padding:7px;margin:0;background:var(--diary-paper) center/cover;border:1px solid #9a8563;max-height:410px;overflow:auto}
+.game-shell .unit-commands .action-btn {flex:none;min-height:36px;height:auto;width:100%;margin:0;padding:8px 11px;text-align:left;display:block;position:relative;border:1px solid #9e89656e;border-left:3px solid #9a8563;border-radius:0;background:#fff9e57a;color:#453b37;font:16px/1.25 "Microsoft YaHei",sans-serif;letter-spacing:2px;box-shadow:inset 0 0 0 2px #fff9e54d}
+.game-shell .unit-commands .action-btn::before,.game-shell .unit-commands .action-btn::after {display:none}
+.game-shell .unit-commands .action-btn:hover:not(:disabled),.game-shell .unit-commands .action-btn:focus-visible {color:#302a3c;border-color:#8d78b4;border-left-color:#776095;background:#eee8fc;box-shadow:0 0 0 2px #9b80c34d;outline:0;transform:none}
+.game-shell .unit-commands .action-btn:disabled {opacity:.4;cursor:default}
+.game-shell .unit-commands .loadout-action {font-size:14px!important;letter-spacing:1px}
+.command-chevron {float:right;font:20px/1 Georgia,serif;color:#89779d}
+.game-shell .unit-commands.has-picker {width:316px}
+.game-shell .command-picker {max-height:410px;overflow:auto;overscroll-behavior:contain;padding:12px;background:var(--diary-paper) center/cover;border:1px solid #9a8563;color:#46392f;scrollbar-width:thin;scrollbar-color:#a28b69 transparent}
+.command-picker h3 {font:17px/1.4 "SimSun",serif;color:#55435b;letter-spacing:2px;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid #9e896566}
+.command-picker .modal-kicker,.command-picker .modal-sub {display:none}
+.command-picker .modal-title {font:17px/1.4 "SimSun",serif;color:#55435b;letter-spacing:1px;margin:0 0 12px}
+.command-picker .battle-loadout-list {gap:5px}
+.command-picker .battle-loadout-row {gap:8px;padding:8px;background:#fff9e56b;border-color:#a58d6666;color:#46392f;border-radius:0;min-height:58px}
+.command-picker .battle-loadout-row.is-equipped {border-left:3px solid #85709a;background:#e1d7ea77}
+.command-picker .battle-loadout-row:hover:not(:disabled) {background:#eee8fc;border-color:#9b80c3}
+.command-picker .battle-loadout-row strong {font-size:13px}.command-picker .battle-loadout-row small {font-size:10px;letter-spacing:0;line-height:1.5}
+.command-picker .battle-loadout-row>b {font-size:11px;white-space:normal;max-width:60px;text-align:right}
+.command-picker .bag-icon {width:30px;height:32px;flex-basis:30px;border:0;background:#8b76551a}.command-picker .bag-icon img {width:30px;height:30px}
+.command-picker .modal-actions {display:flex;gap:6px;margin:10px 0 0;padding:0}
+.command-picker .command-back,.command-picker .modal-btn {font:12px/1.4 "Microsoft YaHei",sans-serif;cursor:pointer;padding:8px 10px;margin:10px 0 0;background:#6c586c;color:#fff2dc;border:1px solid #8e7a59;width:100%;border-radius:0}
+.game-shell .unit-commands [hidden] {display:none!important}
+/* Selected-unit information stays separate from commands and predictions. */
+.game-shell .info-side .action-buttons {display:grid}
+.game-shell .info-body .class-current {margin:6px 0;padding:0;border:0;background:transparent}
+.game-shell .info-body .class-current p {display:none}
+.game-shell .info-body .class-current strong {font-size:12px;display:inline}.game-shell .info-body .class-current>span {display:none}
+
+/* Status sheet: roster + three balanced columns, with independent overflow. */
+.game-shell .formation-body {grid-template-columns:190px minmax(0,1fr)}
+.game-shell .formation-roster-panel {padding:12px 8px;gap:0}
+.game-shell .formation-roster-head {padding:0 4px 10px}.game-shell .formation-roster-head>span {display:none}
+.game-shell .formation-row {grid-template-columns:12px 36px minmax(0,1fr);gap:5px;padding:6px 4px;min-height:56px}
+.game-shell .formation-avatar {width:34px;height:38px}.game-shell .formation-avatar canvas {width:34px;height:38px}
+.game-shell .formation-row-copy strong {font-size:13px;letter-spacing:0}.game-shell .formation-row-copy small {font-size:9px;letter-spacing:0}
+.game-shell .formation-row-move,.game-shell .formation-status,.game-shell .formation-pose-dock {display:none}
+.game-shell .formation-detail {padding:0 17px 14px}
+.game-shell .formation-detail .loadout-tabs {gap:0;margin:0 0 15px;padding:10px 0 8px;top:0;background:var(--diary-paper) center/cover;box-shadow:none}
+.game-shell .formation-detail .loadout-tabs button {padding:8px 7px;border:0;border-radius:0;background:transparent;box-shadow:none;letter-spacing:1px;font-size:12px;color:#6b5b52;border-bottom:2px solid transparent}
+.game-shell .formation-detail .loadout-tabs button[aria-pressed=true] {background:#594361;color:#fff1db;border-bottom-color:#c0a570}
+.game-shell .is-status-sheet .formation-detail {display:flex;flex-direction:column;overflow:hidden}
+.game-shell .is-status-sheet .loadout-tabs {flex:none}
+.status-sheet {display:grid;grid-template-columns:1.03fr 1fr 1fr;gap:20px;flex:1;min-height:0;color:#4a4036}
+.sheet-column {min-width:0;overflow:auto;scrollbar-width:thin;scrollbar-color:#ae9876 transparent;padding-right:4px}
+.sheet-column+.sheet-column {border-left:1px solid #a68c5c55;padding-left:18px}
+.sheet-column h4 {display:flex;align-items:center;justify-content:space-between;gap:8px;font:15px/1.35 "SimSun",serif;letter-spacing:2px;color:#f7edda;background:linear-gradient(90deg,#65576cbb,#65576c20);padding:5px 9px;margin:0 0 10px}
+.sheet-column h4:not(:first-child) {margin-top:20px}.sheet-column h4 small {font:10px/1.3 "Microsoft YaHei",sans-serif;letter-spacing:0;color:#62524e}
+.sheet-person h4 {margin-bottom:7px;padding-top:4px;padding-bottom:4px}.sheet-person h4:not(:first-child) {margin-top:12px}
+.sheet-identity {display:flex;gap:13px;align-items:center;margin:8px 0 14px}
+.sheet-name {display:flex;justify-content:space-between;align-items:baseline;font:23px/1.4 "SimSun",serif;letter-spacing:2px;margin:0 0 8px}.sheet-name>span {font:12px "Microsoft YaHei",sans-serif;letter-spacing:0;color:#8a7559}
+.sheet-identity dl {flex:1;margin:0;font-size:12px}.sheet-identity dl>div {display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid #a68c5c55}.sheet-identity dt {color:#8a7559}.sheet-identity dd {margin:0}
+.sheet-identity canvas {width:88px;height:100px;object-fit:contain;image-rendering:pixelated;background:radial-gradient(ellipse,#a2937777,transparent 75%);border:1px solid #a68c5c66;border-radius:50%}
+.sheet-identity h3 {font:24px/1.3 "SimSun",serif;margin:0 0 8px;letter-spacing:2px;color:#4c3d3e}.sheet-identity p {font-size:12px;margin:4px 0;color:#7f6954}
+.sheet-facts {margin:0;font-size:13px}.sheet-facts>div,.sheet-derived>div {display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #a68c5c55;gap:8px}
+.sheet-facts dt,.sheet-derived dt {color:#816e59}.sheet-facts dd,.sheet-derived dd {margin:0;font-size:15px;color:#4a4036}.sheet-facts small {font-size:11px}
+.sheet-exp {margin:10px 0;font-size:11px;display:flex;justify-content:space-between;gap:5px;flex-wrap:wrap}.sheet-exp b {font:19px Georgia,serif}
+.sheet-exp i,.sheet-mastery i {display:block;flex-basis:100%;height:5px;background:linear-gradient(90deg,#927ca9 var(--fill),#897a6226 var(--fill));width:100%}
+.sheet-hp {display:flex;justify-content:space-between;padding:6px 8px;background:#5b5549;color:#f7edda;font-size:13px;margin:10px 0}.sheet-hp b {font:21px/1 Georgia,serif}
+.sheet-hp strong {font:21px/1 Georgia,serif}.sheet-hp small {font-size:13px;color:#d7cdb6}.sheet-hp i {display:none}
+.sheet-experience {margin:10px 0 18px}.sheet-experience>div {display:flex;justify-content:space-between;font-size:11px;color:#8a7559}.sheet-experience b {font:14px Georgia,serif;color:#4a4036}.sheet-experience i {display:block;margin-top:5px;width:100%;height:5px;background:linear-gradient(90deg,#927ca9 var(--fill),#897a6226 var(--fill))}
+.sheet-stats {display:grid;grid-template-columns:1fr 1fr;gap:7px 15px}
+.sheet-stat {display:flex;align-items:center;gap:5px;border-bottom:1px solid #a68c5c55;padding:5px 0;font-size:12px}
+.sheet-stat>span {white-space:nowrap}.sheet-stat>i {flex:1;min-width:8px;height:5px;background:linear-gradient(90deg,#a18bb9 var(--fill),#897a6226 var(--fill))}.sheet-stat>b {font:20px Georgia,serif;min-width:22px;text-align:right;white-space:nowrap}.sheet-stat small {font:10px "Microsoft YaHei",sans-serif;color:#86709d}
+.sheet-derived {display:grid;grid-template-columns:1fr 1fr;gap:0 15px;font-size:11px;margin:14px 0 0}.sheet-derived dd {font:17px Georgia,serif}
+.sheet-item {display:flex;align-items:center;gap:7px;border:1px solid #a68c5c77;background:#fff9e84d;min-height:37px;margin-bottom:5px;padding:3px 6px}
+.sheet-item.is-equipped {background:#605b55;color:#fff1d6}.sheet-item strong {font-size:13px;flex:1;font-weight:500}.sheet-item>span:last-child {font:14px Georgia,serif;white-space:nowrap}
+.sheet-item-icon {display:grid;place-items:center;width:26px;height:26px;flex-shrink:0;background:#8d76511a;border:1px solid #a68c5c66}.sheet-item-icon img {width:26px;height:26px;object-fit:contain}.sheet-glyph {font-size:17px}
+.sheet-empty-row {min-height:34px;padding:7px 8px;border-bottom:1px solid #a68c5c55;margin-bottom:5px;box-sizing:border-box;color:#95866c;font-size:12px}
+.sheet-weapon-values {display:grid;grid-template-columns:1fr 1fr;gap:5px 16px;font-size:11px;color:#8a7559;margin:10px 0}.sheet-weapon-values span {display:flex;justify-content:space-between}.sheet-weapon-values b {font:16px Georgia,serif;color:#4b4034}
+.sheet-skill {border-bottom:1px solid #a68c5c66;margin-bottom:5px;background:#fff9e829}
+.sheet-skill summary {display:flex;align-items:center;gap:7px;min-height:36px;padding:3px 4px;cursor:pointer;list-style:none}.sheet-skill summary::-webkit-details-marker {display:none}
+.sheet-skill summary::after {content:'＋';font-size:12px;color:#917a9c}.sheet-skill[open] summary::after {content:'−'}
+.sheet-skill summary strong {font-weight:500;font-size:13px;flex:1}.sheet-skill summary small {font-size:9px;color:#90795d;text-align:right;max-width:88px}
+.sheet-skill summary:hover,.sheet-skill[open] summary {background:#b7a1c528}.skill-seal {display:grid;place-items:center;width:23px;height:25px;background:#75607f;color:#fff2d6;flex-shrink:0;font-size:17px}
+.sheet-skill p {font-size:12px;line-height:1.8;margin:0;padding:8px 9px 10px;color:#725c49;border-top:1px solid #a68c5c33;background:#fff7e047}
+.sheet-skill.is-locked summary {opacity:.55}.sheet-skill summary:focus-visible {outline:2px solid #9b80c3;outline-offset:-2px}
+.sheet-mastery {display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;font-size:12px;padding:5px 0 12px}.sheet-mastery strong {font-weight:500}.sheet-mastery span {color:#8f7658}
+.sheet-person .sheet-identity {margin:5px 0 8px}.sheet-person .sheet-identity canvas {width:74px;height:78px}.sheet-person .sheet-identity dl>div {padding:5px 0}
+.sheet-person .sheet-name {font-size:22px;margin-bottom:5px}.sheet-person .sheet-hp {margin:8px 0}.sheet-person .sheet-experience {margin:8px 0 12px}
+.sheet-person .sheet-stats {gap:2px 14px}.sheet-person .sheet-stat {height:29px;box-sizing:border-box;padding:2px 0}.sheet-person .sheet-stat>b {font-size:19px}
+.sheet-person .sheet-derived {margin:8px 0 0;gap:0 14px}.sheet-person .sheet-derived>div {padding:3px 0}
+.command-picker .medicine-icon {width:30px;height:30px;object-fit:contain}
+
+  </style>
 </head>
 <body class="soul-ui">
   <div class="game-shell" id="game-shell">
@@ -5100,7 +5191,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.18.0</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.19.0</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -5392,6 +5483,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         <div class="board-viewport" id="board-viewport">
           <canvas id="board" width="768" height="512" tabindex="0" aria-label="战棋地图，点击成员移动，数字键1到6选择同行者"></canvas>
         </div>
+        <section class="unit-commands" id="unit-commands" hidden aria-label="当前角色行动">
+          <header class="unit-command-head"><strong id="command-unit-name"></strong><span id="command-step"></span></header>
+          <div id="command-actions"></div>
+          <div class="command-picker" id="command-picker" hidden></div>
+        </section>
         <div class="board-tools" aria-label="地图缩放">
           <button class="board-tool" id="zoom-out" type="button" aria-label="缩小地图">−</button>
           <span class="zoom-level" id="zoom-level">100%</span>
@@ -6170,7 +6266,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   Object.freeze(abilities);Object.freeze(arts);Object.freeze(jobs);
   function get(id){return jobs[id]||null;}
   function progress(u,id=u?.classId){const j=get(id);if(!j)return null;const xp=u.classXp?.[id]||0;return {...j,xp,mastered:xp>=j.required};}
-  function learned(u){return [...new Set(Object.keys(u?.classXp||{}).filter(id=>get(id)&&u.classXp[id]>=get(id).required).flatMap(id=>get(id).rewards.map(r=>r.id)))];}
+  function starter(u){return u?.side!=='enemy'&&!!M.GrowthData?.personal[u?.id];}
+  function learned(u){return [...new Set([...(starter(u)?['hp5']:[]),...Object.keys(u?.classXp||{}).filter(id=>get(id)&&u.classXp[id]>=get(id).required).flatMap(id=>get(id).rewards.map(r=>r.id))])];}
   function has(u,id){return u?.side!=='enemy'&&!!u?.masteryEquipped?.includes(id);}
   function sync(u){
     const before=u._masteryBonuses||{},next={};
@@ -6178,15 +6275,23 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     for(const k of new Set([...Object.keys(before),...Object.keys(next)]))u[k]+=(next[k]||0)-(before[k]||0);
     u._masteryBonuses=next;u.hp=Math.min(u.hp,u.maxHp);
   }
-  function init(u){u.classXp={};u.masteryEquipped=[];u.combatArtId=null;u._masteryBonuses={};}
-  function pack(u){return {version:1,xp:{...u.classXp},equipped:(u.masteryEquipped||[]).slice()};}
+  function init(u){
+    u.classXp={};u.masteryEquipped=starter(u)?['hp5']:[];u.combatArtId=null;u._masteryBonuses={};
+    const full=u.hp===u.maxHp;sync(u);if(full)u.hp=u.maxHp;
+  }
+  function pack(u){return {version:1,starterVersion:1,xp:{...u.classXp},equipped:(u.masteryEquipped||[]).slice()};}
   function restore(u,s,fullHp=false){
-    if(s===undefined){u.classXp={};u.masteryEquipped=[];sync(u);return;}
-    if(!s||s.version!==1||!s.xp||typeof s.xp!=='object'||Array.isArray(s.xp)||!Array.isArray(s.equipped)||s.equipped.length>5||new Set(s.equipped).size!==s.equipped.length)throw Error('存档职业专精数据无效');
+    if(s===undefined){u.classXp={};u.masteryEquipped=starter(u)?['hp5']:[];sync(u);if(fullHp)u.hp=u.maxHp;return;}
+    if(!s||s.version!==1||s.starterVersion!==undefined&&s.starterVersion!==1||!s.xp||typeof s.xp!=='object'||Array.isArray(s.xp)||!Array.isArray(s.equipped)||s.equipped.length>5||new Set(s.equipped).size!==s.equipped.length)throw Error('存档职业专精数据无效');
     for(const [id,xp] of Object.entries(s.xp))if(!get(id)||!(u.certifiedClasses||[]).includes(id)||!Number.isInteger(xp)||xp<0||xp>get(id).required||u.side==='enemy'&&xp)throw Error('存档职业经验无效');
     u.classXp={...s.xp};const known=learned(u);
     if(s.equipped.some(id=>!abilities[id]||!known.includes(id)))throw Error('存档专精技能未习得');
-    u.masteryEquipped=s.equipped.slice();sync(u);if(fullHp)u.hp=u.maxHp;
+    u.masteryEquipped=s.equipped.slice();
+    // Grant the new starting skill once; keep prior deliberate removal when the
+    // old save had already mastered Commoner/Noble, and never evict another skill.
+    const previouslyLearned=['commoner','noble'].some(id=>(s.xp[id]||0)>=get(id).required);
+    if(s.starterVersion===undefined&&starter(u)&&!previouslyLearned&&!u.masteryEquipped.includes('hp5')&&u.masteryEquipped.length<5)u.masteryEquipped.push('hp5');
+    sync(u);if(fullHp)u.hp=u.maxHp;
   }
   function equip(u,id){
     if(!abilities[id]||!learned(u).includes(id))throw Error('尚未习得该职业技能');
@@ -19741,6 +19846,17 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
      * 弹窗基础
      * ============================================================ */
 
+    // Legacy preview pages without tactical-ui.js use the standard picker card.
+    openActionPicker(content) {
+      this.openOverlay(content, 'loadout-modal', true);
+      this.actionPickerCard = this.dom.overlayCard;
+      return this.actionPickerCard;
+    }
+
+    closeActionPicker() {
+      this.closeOverlay();
+    }
+
     openOverlay(content, extraClass, dismissible) {
       this.confirmHandler = this.confirmHandler || null;
       this.modalDismissible = !!dismissible;
@@ -21256,11 +21372,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   };
   UP.chooseSupportTarget=function(caster,id){
     const s=Magic.get(id),targets=this.game.supportTargets(caster,id),amount=Magic.healAmount(s,caster);
-    this.openOverlay('<div class="modal-kicker">FAITH MAGIC</div><h2 class="modal-title" id="overlay-title">'+esc(s.name)+' · 选择目标</h2><p class="modal-sub">'+esc(s.description)+' 剩余 '+caster.spellUses[id]+'/'+s.uses+' 次。</p><div class="battle-loadout-list">'+targets.map(t=>'<button class="battle-loadout-row" data-support-target="'+esc(t.id)+'"><span><strong>'+esc(t.name)+'</strong><small>HP '+t.hp+'/'+t.maxHp+' · 距离 '+M.Grid.manhattan(caster,t)+' 格'+(['heal','fortify'].includes(s.effect)?' · 预计回复 '+Math.min(t.maxHp-t.hp,amount):'')+'</small></span><b>'+(s.effect==='fortify'||s.effect==='restore'?'范围内全体':'选择')+'</b></button>').join('')+'</div><div class="modal-actions"><button class="modal-btn" data-support-back>返回魔法</button></div>','loadout-modal',true);
-    this.dom.overlayCard.querySelector('[data-support-back]').onclick=()=>this.showAttackLoadout(caster);
-    this.dom.overlayCard.querySelectorAll('[data-support-target]').forEach(b=>b.onclick=()=>{
+    this.openActionPicker('<div class="modal-kicker">FAITH MAGIC</div><h2 class="modal-title" id="overlay-title">'+esc(s.name)+' · 选择目标</h2><p class="modal-sub">'+esc(s.description)+' 剩余 '+caster.spellUses[id]+'/'+s.uses+' 次。</p><div class="battle-loadout-list">'+targets.map(t=>'<button class="battle-loadout-row" data-support-target="'+esc(t.id)+'"><span><strong>'+esc(t.name)+'</strong><small>HP '+t.hp+'/'+t.maxHp+' · 距离 '+M.Grid.manhattan(caster,t)+' 格'+(['heal','fortify'].includes(s.effect)?' · 预计回复 '+Math.min(t.maxHp-t.hp,amount):'')+'</small></span><b>'+(s.effect==='fortify'||s.effect==='restore'?'范围内全体':'选择')+'</b></button>').join('')+'</div><div class="modal-actions"><button class="modal-btn" data-support-back>返回魔法</button></div>');
+    this.pickerBack=()=>this.showAttackLoadout(caster);
+    this.actionPickerCard.querySelector('[data-support-back]').onclick=()=>this.showAttackLoadout(caster);
+    this.actionPickerCard.querySelectorAll('[data-support-target]').forEach(b=>b.onclick=()=>{
       const target=this.game.getUnit(b.dataset.supportTarget);
-      if(s.effect==='warp'){this.closeOverlay();this.beginWarpTarget(caster,id,target);}else this.confirmSupport(caster,id,target);
+      if(s.effect==='warp'){this.closeActionPicker();this.beginWarpTarget(caster,id,target);}else this.confirmSupport(caster,id,target);
     });
   };
   UP.confirmSupport=function(caster,id,target,destination){
@@ -21301,7 +21418,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function rewards(u,id){const p=A.progress(u,id);return '<div class="mastery-rewards"><strong>'+(p.mastered?'✓ 已专精':'专精奖励 · '+p.xp+'/'+p.required)+'</strong>'+p.rewards.map(r=>'<p><b>'+esc(r.name)+'</b> <small>'+(r.kind==='art'?'战技'+(r.exclusive?' · 职业限定':''):'可装备技能')+'</small><br>'+esc(r.description)+'</p>').join('')+'</div>';}
   function skills(u,lock){const ids=A.learned(u),passives=ids.filter(id=>A.abilities[id]),arts=ids.filter(id=>A.arts[id]);
     return '<header class="growth-heading"><small>CLASS MASTERY</small><h3>'+esc(u.name)+' · 职业专精</h3><p>已装备 '+u.masteryEquipped.length+' / 5 个专精技能</p></header>'+bar(u)+
-      '<p class="loadout-footnote">参与一场敌我交战（包括未命中、未造成伤害与防守），或成功使用一次辅助魔法／辅助战技，当前职业经验＋1。多段攻击按整场计一次，满条自动习得奖励；已专精职业停止积累。转职保留每种职业的独立进度。</p>'+
+      '<p class="loadout-footnote">所有同伴初始习得并装备平民精通技能「HP上限＋5」，占用1个专精技能栏，可自由卸下。参与一场敌我交战（包括未命中、未造成伤害与防守），或成功使用一次辅助魔法／辅助战技，当前职业经验＋1。多段攻击按整场计一次，满条自动习得奖励；已专精职业停止积累。转职保留每种职业的独立进度。</p>'+
       (lock?'<p class="loadout-notice is-locked">'+esc(lock)+'</p>':'')+
       '<h4>已学技能 · 自动装备至多5个</h4><div class="mastery-skill-list">'+(passives.length?passives.map(id=>{const a=A.abilities[id],on=A.has(u,id);return '<article class="class-card'+(on?' is-current':'')+'"><strong>'+esc(a.name)+(on?' · 装备中':'')+'</strong><p>'+esc(a.description)+'</p><button type="button" data-mastery-equip="'+id+'"'+(lock||!on&&u.masteryEquipped.length>=5?' disabled':'')+'>'+(on?'卸下技能':'装备技能')+'</button></article>';}).join(''):'<p>职业经验满后，会在这里学会专精技能。</p>')+'</div>'+
       '<h4>已学战技</h4><div class="mastery-skill-list">'+(arts.length?arts.map(id=>{const a=A.arts[id];return '<article class="class-card"><strong>'+esc(a.name)+'</strong><p>'+esc(a.description)+'</p><small>'+(a.exclusive?'限 '+a.exclusive.map(c=>esc(M.Classes.get(c).name)).join(' / '):'转职后保留使用')+(a.cost?' · 每次消耗'+a.cost+'武器耐久':' · 消耗一次行动')+'</small></article>';}).join(''):'<p>部分职业满经验后还会习得战技。</p>')+'</div>'+
@@ -21317,19 +21434,20 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   UP.showMasteryActions=function(u){
     if(this.busy||u.acted||!this.game.isPlayerPhase())return;
     const rows=A.availableArts(u).concat(u.classId==='dancer'?[{id:'dance',name:'舞蹈',assist:true,description:'令相邻且已行动的同伴再次行动；无法对舞者使用。'}]:[],A.has(u,'steal')?[{id:'steal',name:'偷窃',assist:true,description:A.abilities.steal.description}]:[]);
-    this.openOverlay('<div class="modal-kicker">CLASS COMBAT ARTS</div><h2 class="modal-title" id="overlay-title">'+esc(u.name)+' · 职业战技</h2><p class="modal-sub">攻击战技选定后，在地图上选择敌人并确认交战。辅助战技选目标后立即使用并结束行动。</p><div class="battle-loadout-list">'+rows.map(a=>{const reason=a.assist?(A.assistTargets(this.game,u,a.id).length?'':'当前没有有效目标'):A.artReason(u,a.id);return '<button class="battle-loadout-row" data-mastery-action="'+a.id+'"'+(reason?' disabled':'')+' title="'+esc(reason)+'"><span><strong>'+esc(a.name)+'</strong><small>'+esc(a.description)+'</small><small>'+esc(reason)+'</small></span><b>'+(a.assist?'选择目标':a.cost+'耐久')+'</b></button>';}).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-normal-attack>改用普通攻击</button><button class="modal-btn" data-overlay-close>返回</button></div>','loadout-modal',true);
-    this.dom.overlayCard.querySelector('[data-normal-attack]').onclick=()=>{u.combatArtId=null;this.closeOverlay();this.enterActionMode();};
-    this.dom.overlayCard.querySelectorAll('[data-mastery-action]').forEach(b=>b.onclick=()=>{const id=b.dataset.masteryAction,a=A.arts[id];if(a&&!a.assist){try{this.game.selectCombatArt(u,id);this.closeOverlay();this.enterActionMode();}catch(e){this.showToast(e.message,'error');}}else this.chooseMasteryTarget(u,id);});
+    this.openActionPicker('<div class="modal-kicker">CLASS COMBAT ARTS</div><h2 class="modal-title" id="overlay-title">'+esc(u.name)+' · 职业战技</h2><p class="modal-sub">攻击战技选定后，在地图上选择敌人并确认交战。辅助战技选目标后立即使用并结束行动。</p><div class="battle-loadout-list">'+rows.map(a=>{const reason=a.assist?(A.assistTargets(this.game,u,a.id).length?'':'当前没有有效目标'):A.artReason(u,a.id);return '<button class="battle-loadout-row" data-mastery-action="'+a.id+'"'+(reason?' disabled':'')+' title="'+esc(reason)+'"><span><strong>'+esc(a.name)+'</strong><small>'+esc(a.description)+'</small><small>'+esc(reason)+'</small></span><b>'+(a.assist?'选择目标':a.cost+'耐久')+'</b></button>';}).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-normal-attack>改用普通攻击</button><button class="modal-btn" data-overlay-close>返回</button></div>');
+    this.actionPickerCard.querySelector('[data-normal-attack]').onclick=()=>{u.combatArtId=null;this.closeActionPicker();this.enterActionMode();};
+    this.actionPickerCard.querySelectorAll('[data-mastery-action]').forEach(b=>b.onclick=()=>{const id=b.dataset.masteryAction,a=A.arts[id];if(a&&!a.assist){try{this.game.selectCombatArt(u,id);this.closeActionPicker();if(this.game.getAttackableEnemies(u).length)this.enterAttackMode();else this.enterActionMode();}catch(e){this.showToast(e.message,'error');}}else this.chooseMasteryTarget(u,id);});
   };
   UP.chooseMasteryTarget=function(u,id){const name=A.arts[id]?.name||(id==='dance'?'舞蹈':'偷窃'),targets=A.assistTargets(this.game,u,id);
-    this.openOverlay('<div class="modal-kicker">ASSIST ART</div><h2 class="modal-title" id="overlay-title">'+esc(name)+' · 选择目标</h2><div class="battle-loadout-list">'+targets.map(t=>{
+    this.openActionPicker('<div class="modal-kicker">ASSIST ART</div><h2 class="modal-title" id="overlay-title">'+esc(name)+' · 选择目标</h2><div class="battle-loadout-list">'+targets.map(t=>{
       const button=(label,index='')=>'<button class="battle-loadout-row" data-mastery-target="'+esc(t.id)+'" data-steal-index="'+index+'"><span><strong>'+esc(t.name)+'</strong><small>'+esc(label)+' · 距离'+M.Grid.manhattan(u,t)+'格</small></span><b>使用并结束行动</b></button>';
       return id==='steal'?t.inventory.map((i,n)=>A.stealable(t).includes(i)?button(M.Inventory.item(i.id).name,n):'').join(''):button('HP '+t.hp+'/'+t.maxHp);
-    }).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-mastery-back>返回战技</button></div>','loadout-modal',true);
-    this.dom.overlayCard.querySelector('[data-mastery-back]').onclick=()=>this.showMasteryActions(u);
-    this.dom.overlayCard.querySelectorAll('[data-mastery-target]').forEach(b=>b.onclick=async()=>{
+    }).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-mastery-back>返回战技</button></div>');
+    this.pickerBack=()=>this.showMasteryActions(u);
+    this.actionPickerCard.querySelector('[data-mastery-back]').onclick=()=>this.showMasteryActions(u);
+    this.actionPickerCard.querySelectorAll('[data-mastery-target]').forEach(b=>b.onclick=async()=>{
       if(this.busy)return;this.setBusy(true);
-      try{const r=this.game.useMasteryAssist(u,this.game.getUnit(b.dataset.masteryTarget),id,+b.dataset.stealIndex);this.closeOverlay();for(const tid of r.affected){const t=this.game.getUnit(tid);this.renderer.snapUnit(t);this.renderer.floatText(name,t.x,t.y,'#d9c58f',11);}await this.showGrowthResults(r.experience);this.resetSelection({silent:true});this.updateAll();this.renderIdleInfo();this.showToast(u.name+'使用了'+name,'success',2400);}catch(e){this.showToast(e.message,'error');}finally{this.setBusy(false);}
+      try{const r=this.game.useMasteryAssist(u,this.game.getUnit(b.dataset.masteryTarget),id,+b.dataset.stealIndex);this.closeActionPicker();for(const tid of r.affected){const t=this.game.getUnit(tid);this.renderer.snapUnit(t);this.renderer.floatText(name,t.x,t.y,'#d9c58f',11);}await this.showGrowthResults(r.experience);this.resetSelection({silent:true});this.updateAll();this.renderIdleInfo();this.showToast(u.name+'使用了'+name,'success',2400);}catch(e){this.showToast(e.message,'error');}finally{this.setBusy(false);}
     });
   };
 })(window);
@@ -21421,14 +21539,181 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   };
   UP.showMedicine=function(u){
     if(this.busy||u.acted||!this.game.isPlayerPhase())return;
-    this.openOverlay('<div class="modal-kicker">MEDICINE</div><h2 class="modal-title" id="overlay-title">'+esc(u.name)+' · 使用药品</h2><p class="modal-sub">HP '+u.hp+' / '+u.maxHp+' · 使用药品后结束行动。</p><div class="battle-loadout-list">'+u.inventory.map((slot,n)=>{
+    this.openActionPicker('<div class="modal-kicker">MEDICINE</div><h2 class="modal-title" id="overlay-title">'+esc(u.name)+' · 使用药品</h2><p class="modal-sub">HP '+u.hp+' / '+u.maxHp+' · 使用药品后结束行动。</p><div class="battle-loadout-list">'+u.inventory.map((slot,n)=>{
       const e=I.item(slot.id);if(e.kind!=='consumable')return '';const reason=this.game.medicineReason(u,n);
       return '<button class="battle-loadout-row" data-battle-medicine="'+n+'"'+(reason?' disabled':'')+'><img class="medicine-icon" src="'+art(e)+'" alt=""><span><strong>'+esc(e.name)+'</strong><small>'+esc(reason||e.effect)+'</small></span><b>'+slot.uses+' / '+e.uses+'</b></button>';
-    }).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-medicine-cancel>返回行动</button></div>','loadout-modal',true);
-    this.dom.overlayCard.querySelector('[data-medicine-cancel]').onclick=()=>{this.closeOverlay();this.enterActionMode();};
-    this.dom.overlayCard.querySelectorAll('[data-battle-medicine]').forEach(b=>b.onclick=()=>{
-      try{const r=this.game.useMedicine(u,+b.dataset.battleMedicine);this.closeOverlay();this.resetSelection({silent:true});this.updateAll();this.renderer.floatText(r.healed?'+'+r.healed:r.item.name,u.x,u.y,'#bcebd7',11);this.showToast(u.name+'使用了'+r.item.name,'success',2200);}catch(e){this.showToast(e.message,'error');}
+    }).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-medicine-cancel>返回行动</button></div>');
+    this.actionPickerCard.querySelector('[data-medicine-cancel]').onclick=()=>{this.closeActionPicker();this.enterActionMode();};
+    this.actionPickerCard.querySelectorAll('[data-battle-medicine]').forEach(b=>b.onclick=()=>{
+      try{const r=this.game.useMedicine(u,+b.dataset.battleMedicine);this.closeActionPicker();this.resetSelection({silent:true});this.updateAll();this.renderer.floatText(r.healed?'+'+r.healed:r.item.name,u.x,u.y,'#bcebd7',11);this.showToast(u.name+'使用了'+r.item.name,'success',2200);}catch(e){this.showToast(e.message,'error');}
     });
+  };
+})(window);
+
+  </script>
+  <script>
+/* ===== src/tactical-ui.js ===== */
+/* Contextual battle commands and a compact, three-column character sheet. */
+(function (global) {
+  'use strict';
+  const M = global.MyGO, UP = M.UI.prototype, EP = M.EntryScreen.prototype;
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+  const tabs = [['stats','状态'],['growth','成长率'],['bag','背包配置'],['magic','已学魔法'],['classes','职业目录'],['mastery','职业专精']];
+  const icon = e => e.kind === 'unarmed' ? '<span class="sheet-glyph">拳</span>' : e.kind === 'key' ? '<span class="sheet-glyph">⚿</span>' :
+    '<img alt="" src="' + (global.MYGO_EQUIPMENT_ICONS?.[e.kind === 'spell' ? 'spell_' + e.id : e.icon] || 'assets/equipment/icons/' + (e.kind === 'spell' ? 'spell_' + e.id : e.icon) + '.png') + '">';
+  const uses = (u, e, slot) => e.kind === 'unarmed' ? '∞' : e.kind === 'spell' ? (u.spellUses[e.id] || 0) + ' / ' + e.uses : e.uses != null ? (slot?.uses ?? 0) + ' / ' + e.uses : '—';
+  const skill = (name, meta, description, active = true) => '<details class="sheet-skill' + (active ? '' : ' is-locked') + '" name="unit-skill"><summary><span class="skill-seal" aria-hidden="true">◇</span><strong>' + esc(name) + '</strong><small>' + esc(meta) + '</small></summary><p>' + esc(description) + '</p></details>';
+
+  UP.ensureCommands = function () {
+    if (this.commandRoot) return this.commandRoot;
+    const root = document.getElementById('unit-commands');
+    if (!root) return null;
+    this.commandRoot = root;
+    document.getElementById('command-actions').appendChild(this.dom.actionButtons);
+    this.actionPickerCard = document.getElementById('command-picker');
+    this.dom.boardViewport.addEventListener('scroll', () => this.positionCommands(), {passive:true});
+    root.addEventListener('contextmenu', e => { e.preventDefault(); this.cancelCurrent(); });
+    new ResizeObserver(() => this.positionCommands()).observe(root);
+    return root;
+  };
+
+  UP.positionCommands = function () {
+    const root = this.ensureCommands();
+    if (!root) return;
+    const u = this.game.getUnit(this.activeId);
+    const selected = u && ['move','action','attack','warp'].includes(this.mode);
+    const host = selected ? document.getElementById('command-actions') : document.getElementById('info-side');
+    if (this.dom.actionButtons.parentElement !== host) host.appendChild(this.dom.actionButtons);
+    root.hidden = !selected || this.busy || !this.game.isPlayerPhase();
+    if (root.hidden) return;
+    root.classList.toggle('has-picker', !this.actionPickerCard.hidden);
+    document.getElementById('command-unit-name').textContent = u.shortName || u.name;
+    document.getElementById('command-step').textContent = this.mode === 'move' ? '选择落点' : this.mode === 'attack' ? '选择目标' : this.mode === 'warp' ? '选择落点' : '选择行动';
+    // Use layout coordinates inside the landscape shell, so rotation and scaling
+    // affect both the board and menu identically. Scrolling only offsets the anchor.
+    const board = this.dom.board, vp = this.dom.boardViewport, frame = vp.parentElement;
+    const p = M.MapProjection.project(this.renderer.projection, (u.x + .5) * M.CONFIG.TILE, (u.y + .5) * M.CONFIG.TILE);
+    const x = vp.offsetLeft + board.offsetLeft + p.x / this.renderer.logicalWidth * board.offsetWidth - vp.scrollLeft;
+    const y = vp.offsetTop + board.offsetTop + p.y / this.renderer.logicalHeight * board.offsetHeight - vp.scrollTop;
+    const width = root.offsetWidth, height = root.offsetHeight, gap = 30;
+    const top = clamp(y - 38, 10, frame.clientHeight - height - 10);
+    const rightFits = x + gap + width <= frame.clientWidth - 10;
+    const leftFits = x - gap - width >= 10;
+    const blocksTargets = left => this.game.getAttackableEnemies(u).filter(target => {
+      const q = M.MapProjection.project(this.renderer.projection,(target.x+.5)*M.CONFIG.TILE,(target.y+.5)*M.CONFIG.TILE);
+      const tx = vp.offsetLeft + board.offsetLeft + q.x / this.renderer.logicalWidth * board.offsetWidth - vp.scrollLeft;
+      const ty = vp.offsetTop + board.offsetTop + q.y / this.renderer.logicalHeight * board.offsetHeight - vp.scrollTop;
+      return tx >= left-18 && tx <= left+width+18 && ty >= top-18 && ty <= top+height+18;
+    }).length;
+    const right = rightFits && (!leftFits || blocksTargets(x+gap) <= blocksTargets(x-gap-width));
+    root.dataset.side = right ? 'right' : 'left';
+    root.style.left = clamp(right ? x + gap : x - gap - width, 10, frame.clientWidth - width - 10) + 'px';
+    root.style.top = top + 'px';
+    root.style.setProperty('--anchor-y', clamp(y - parseFloat(root.style.top), 16, height - 16) + 'px');
+  };
+
+  UP.openActionPicker = function (html, back) {
+    this.ensureCommands();
+    if (!this.dom.overlayRoot.hidden) this.closeOverlay();
+    this.pickerBack = typeof back === 'function' ? back : (() => this.closeActionPicker());
+    this.dom.actionButtons.hidden = true;
+    const card = this.actionPickerCard;
+    card.innerHTML = html;
+    card.hidden = false;
+    card.scrollTop = 0;
+    card.querySelectorAll('[data-overlay-close]').forEach(b => b.onclick = () => this.pickerBack());
+    this.positionCommands();
+    requestAnimationFrame(() => card.querySelector('button:not(:disabled)')?.focus({preventScroll:true}));
+    return card;
+  };
+  UP.closeActionPicker = function () {
+    if (!this.actionPickerCard) return;
+    this.actionPickerCard.hidden = true;
+    this.actionPickerCard.innerHTML = '';
+    this.dom.actionButtons.hidden = false;
+    this.pickerBack = null;
+    this.positionCommands();
+  };
+
+  for (const name of ['setView','updateChrome','layoutBoard']) {
+    const base = UP[name];
+    UP[name] = function (...args) { const result = base.apply(this, args); this.positionCommands(); return result; };
+  }
+  for (const name of ['enterActionMode','enterAttackMode','resetSelection','revertMove','selectUnit']) {
+    const base = UP[name];
+    UP[name] = function (...args) { this.closeActionPicker(); const result = base.apply(this, args); this.positionCommands(); return result; };
+  }
+  const baseCancel = UP.cancelCurrent;
+  UP.cancelCurrent = function () {
+    if (!this.busy && this.dom.overlayRoot.hidden && this.actionPickerCard && !this.actionPickerCard.hidden) { this.pickerBack(); return; }
+    return baseCancel.call(this);
+  };
+  const baseAction = UP.renderActionSide;
+  UP.renderActionSide = function (u) {
+    baseAction.call(this, u);
+    const attack = this.dom.actionButtons.querySelector('.attack');
+    if (attack) {
+      // A different weapon may reach an enemy even when the equipped one cannot.
+      attack.disabled = !M.Inventory.options(u).length;
+      const replacement = attack.cloneNode(true);
+      replacement.innerHTML = '攻击<span class="command-chevron">›</span>';
+      replacement.onclick = () => this.showAttackLoadout(u, true);
+      attack.replaceWith(replacement);
+    }
+    const weapon = [...this.dom.actionButtons.children].find(b => b.textContent.startsWith('武器 / 魔法'));
+    if (weapon) { weapon.textContent = '武器 / 魔法'; weapon.insertAdjacentHTML('beforeend','<span class="command-chevron">›</span>'); }
+    // Keep offensive commands together, then contextual interactions, wait, back.
+    const buttons = [...this.dom.actionButtons.children];
+    buttons.sort((a,b) => rank(a) - rank(b)).forEach(b => this.dom.actionButtons.appendChild(b));
+    function rank(b) { return b.classList.contains('attack') ? 0 : b.textContent.startsWith('职业战技') ? 1 : b.classList.contains('loadout-action') ? 2 : /^(待机|撤回移动|取消)$/.test(b.textContent) ? 4 : 3; }
+    this.positionCommands();
+  };
+
+  // Opening the attack command leads directly from weapon selection to targeting.
+  UP.showAttackLoadout = function (u, targeting = false) {
+    if (this.busy || u.acted || !this.game.isPlayerPhase()) return;
+    const attacks = M.Inventory.options(u), support = u.learnedSpells.filter(id => M.Magic.get(id).support);
+    const card = this.openActionPicker('<h3>' + (targeting ? '攻击 · 选择武器' : '武器 / 魔法') + '</h3><div class="battle-loadout-list">' + attacks.map(id => {
+      const w = M.Inventory.weapons[id], range = w.kind === 'spell' ? M.Magic.rangeOf(w,u) : w.range;
+      return '<button type="button" class="battle-loadout-row' + (id === u.weaponId ? ' is-equipped' : '') + '" data-attack-choice="' + id + '"><span class="bag-icon">' + icon(w) + '</span><span><strong>' + esc(w.name) + '</strong><small>威力 ' + w.might + ' · 命中 ' + w.hit + ' · 射程 ' + range.join('–') + '</small></span><b>' + uses(u,w,u.inventory.find(i => i.id === id && i.uses > 0)) + '</b></button>';
+    }).join('') + '</div>' + (support.length ? '<h3>辅助魔法</h3><div class="battle-loadout-list">' + support.map(id => { const s = M.Magic.get(id), targets = this.game.supportTargets(u,id); return '<button type="button" class="battle-loadout-row" data-support-choice="' + id + '"' + (!targets.length ? ' disabled' : '') + '><span class="bag-icon">' + icon(s) + '</span><span><strong>' + esc(s.name) + '</strong><small>射程 ' + M.Magic.rangeOf(s,u).join('–') + ' · ' + targets.length + ' 个目标</small></span><b>' + uses(u,s) + '</b></button>'; }).join('') + '</div>' : '') + (!attacks.length ? '<p>没有可用的攻击手段。</p>' : '') + '<button type="button" class="command-back" data-overlay-close>‹ 返回行动</button>');
+    card.querySelectorAll('[data-attack-choice]').forEach(b => b.onclick = () => {
+      try { this.game.selectAttack(u,b.dataset.attackChoice); this.closeActionPicker();
+        if (targeting && this.game.getAttackableEnemies(u).length) this.enterAttackMode();
+        else { this.enterActionMode(); if (targeting) this.showToast('此武器射程内没有敌人，可换武器或撤回移动。','info',1800); }
+      } catch (e) { this.showToast(e.message,'error'); }
+    });
+    card.querySelectorAll('[data-support-choice]').forEach(b => b.onclick = () => this.chooseSupportTarget(u,b.dataset.supportChoice));
+  };
+
+  const baseSheet = EP.renderFormationDetail;
+  EP.renderFormationDetail = function () {
+    const active = this.loadoutTab || 'stats';
+    this.dom.formation.classList.toggle('is-status-sheet', active === 'stats');
+    if (active !== 'stats') return baseSheet.call(this);
+    const u = this.players().find(u => u.id === this.selectedUnitId);
+    if (!u) return baseSheet.call(this);
+    const C = M.Combat, map = this.ui.game.map, w = u.weapon;
+    const need = M.Growth.required(u.level), p = M.Mastery.progress(u), arts = M.Mastery.availableArts(u);
+    const total = C.statTotalOf(u), guard = M.Talents?.guardBonus(u,map) || 0;
+    const rows = [['力量',u.str,M.Talents?.strBonus(u,map)||0],['幸运',u.lck,0],['魔力',u.mag,0],['守备',u.def,guard],['技巧',u.dex,M.Talents?.dexBonus(u)||0],['魔防',u.res,guard],['速度',u.spd,0],['移动',u.move,0]];
+    const itemRow = (e,slot,equipped=false) => '<div class="sheet-item' + (equipped ? ' is-equipped' : '') + '"><span class="sheet-item-icon">' + icon(e) + '</span><strong>' + esc(e.name) + '</strong><span>' + uses(u,e,slot) + '</span></div>';
+    const talentRows = M.Talents.list(u).map(t => skill(t.name,(t.slot === 0 ? '通用' : '个人') + ' · ' + (t.active ? '已觉醒' : 'Lv.' + t.level),t.description,t.active)).join('');
+    const equipped = u.masteryEquipped.map(id => { const s = M.Mastery.abilities[id]; return skill(s.name,'已装备',s.description); }).join('');
+    this.dom.formationDetail.innerHTML = '<nav class="loadout-tabs" aria-label="角色资料页">' + tabs.map(([id,name]) => '<button type="button" data-loadout-tab="' + id + '" aria-pressed="' + (id === active) + '">' + name + '</button>').join('') + '</nav>' +
+      '<div class="status-sheet"><section class="sheet-column sheet-person"><h4>个人情报</h4><h3 class="sheet-name">' + esc(u.name) + '<span>' + esc(u.gender || '') + '</span></h3><div class="sheet-identity"><canvas width="192" height="192" data-sheet-portrait></canvas><dl><div><dt>职业</dt><dd>' + esc(u.className) + '</dd></div><div><dt>等级</dt><dd>Lv. ' + u.level + '</dd></div><div><dt>状态</dt><dd>' + (u.dead ? '撤退' : u.acted ? '已行动' : '可行动') + '</dd></div></dl></div>' +
+      '<div class="sheet-hp"><span>HP</span><strong>' + u.hp + '<small> / ' + u.maxHp + '</small></strong><i style="--fill:' + clamp(u.hp / u.maxHp * 100,0,100) + '%"></i></div>' +
+      '<div class="sheet-experience"><div><span>EXP</span><b>' + (need ? u.exp + ' / ' + need : 'MAX') + '</b></div><i style="--fill:' + (need ? clamp(u.exp / need * 100,0,100) : 100) + '%"></i></div>' +
+      '<h4>能力 <small>总和 ' + total + '</small></h4><div class="sheet-stats">' + rows.map(([name,value,bonus]) => '<div class="sheet-stat"><span>' + name + '</span><i style="--fill:' + clamp((value+bonus)/40*100,0,100) + '%"></i><b>' + value + (bonus ? '<small>+' + bonus + '</small>' : '') + '</b></div>').join('') + '</div>' +
+      '<h4>战斗能力</h4><dl class="sheet-derived">' + [['命中',C.hitOf(u)],['必杀',C.critRateOf(u)+'%'],['攻速',C.attackSpeedOf(u,map)],['回避',C.avoidOf(u,map)],['必杀回避',C.critAvoidOf(u)]].map(([n,v]) => '<div><dt>' + n + '</dt><dd>' + v + '</dd></div>').join('') + '</dl></section>' +
+      '<section class="sheet-column"><h4>装备</h4>' + itemRow(w,u.inventory.find(i => i.id === u.weaponId && i.uses > 0),true) + (u.equippedAccessory ? itemRow(M.Inventory.item(u.equippedAccessory)) : '<div class="sheet-empty-row">无辅助装备</div>') +
+      '<div class="sheet-weapon-values"><span>威力 <b>' + (w.might||0) + '</b></span><span>命中 <b>' + (w.hit||0) + '</b></span><span>重量 <b>' + (w.weight||0) + '</b></span><span>射程 <b>' + w.range.join('–') + '</b></span></div>' +
+      '<h4>持有物品 <small>' + u.inventory.length + ' / 5</small></h4><div class="sheet-inventory">' + Array.from({length:5},(_,n) => { const slot=u.inventory[n]; return slot ? itemRow(M.Inventory.item(slot.id),slot) : '<div class="sheet-empty-row">—</div>'; }).join('') + '</div>' +
+      '<h4>战技 <small>' + arts.length + '</small></h4>' + (arts.length ? arts.map(a => skill(a.name,a.cost ? '耐久 −' + a.cost : '辅助',a.description)).join('') : '<div class="sheet-empty-row">尚未习得</div>') + '</section>' +
+      '<section class="sheet-column"><h4>特技 <small>点击查看详情</small></h4><div class="sheet-skill-list">' + talentRows + '</div><h4>装备技能 <small>' + u.masteryEquipped.length + ' / 5</small></h4>' + (equipped || '<div class="sheet-empty-row">暂无装备技能</div>') +
+      '<h4>职业专精</h4><div class="sheet-mastery"><strong>' + esc(u.className) + '</strong><span>' + (p.mastered ? '已专精' : p.xp + ' / ' + p.required) + '</span><i style="--fill:' + clamp(p.xp / p.required * 100,0,100) + '%"></i></div>' + p.rewards.map(r => skill(r.name,'专精奖励 · ' + (r.kind === 'art' ? '战技' : '技能'),r.description,p.mastered)).join('') + '</section></div>';
+    this.drawPortrait(this.dom.formationDetail.querySelector('[data-sheet-portrait]'),u,true);
   };
 })(window);
 

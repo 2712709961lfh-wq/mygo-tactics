@@ -82,13 +82,13 @@
   };
   UP.showMedicine=function(u){
     if(this.busy||u.acted||!this.game.isPlayerPhase())return;
-    this.openOverlay('<div class="modal-kicker">MEDICINE</div><h2 class="modal-title" id="overlay-title">'+esc(u.name)+' · 使用药品</h2><p class="modal-sub">HP '+u.hp+' / '+u.maxHp+' · 使用药品后结束行动。</p><div class="battle-loadout-list">'+u.inventory.map((slot,n)=>{
+    this.openActionPicker('<div class="modal-kicker">MEDICINE</div><h2 class="modal-title" id="overlay-title">'+esc(u.name)+' · 使用药品</h2><p class="modal-sub">HP '+u.hp+' / '+u.maxHp+' · 使用药品后结束行动。</p><div class="battle-loadout-list">'+u.inventory.map((slot,n)=>{
       const e=I.item(slot.id);if(e.kind!=='consumable')return '';const reason=this.game.medicineReason(u,n);
       return '<button class="battle-loadout-row" data-battle-medicine="'+n+'"'+(reason?' disabled':'')+'><img class="medicine-icon" src="'+art(e)+'" alt=""><span><strong>'+esc(e.name)+'</strong><small>'+esc(reason||e.effect)+'</small></span><b>'+slot.uses+' / '+e.uses+'</b></button>';
-    }).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-medicine-cancel>返回行动</button></div>','loadout-modal',true);
-    this.dom.overlayCard.querySelector('[data-medicine-cancel]').onclick=()=>{this.closeOverlay();this.enterActionMode();};
-    this.dom.overlayCard.querySelectorAll('[data-battle-medicine]').forEach(b=>b.onclick=()=>{
-      try{const r=this.game.useMedicine(u,+b.dataset.battleMedicine);this.closeOverlay();this.resetSelection({silent:true});this.updateAll();this.renderer.floatText(r.healed?'+'+r.healed:r.item.name,u.x,u.y,'#bcebd7',11);this.showToast(u.name+'使用了'+r.item.name,'success',2200);}catch(e){this.showToast(e.message,'error');}
+    }).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-medicine-cancel>返回行动</button></div>');
+    this.actionPickerCard.querySelector('[data-medicine-cancel]').onclick=()=>{this.closeActionPicker();this.enterActionMode();};
+    this.actionPickerCard.querySelectorAll('[data-battle-medicine]').forEach(b=>b.onclick=()=>{
+      try{const r=this.game.useMedicine(u,+b.dataset.battleMedicine);this.closeActionPicker();this.resetSelection({silent:true});this.updateAll();this.renderer.floatText(r.healed?'+'+r.healed:r.item.name,u.x,u.y,'#bcebd7',11);this.showToast(u.name+'使用了'+r.item.name,'success',2200);}catch(e){this.showToast(e.message,'error');}
     });
   };
 })(window);

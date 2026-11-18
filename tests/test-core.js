@@ -425,14 +425,14 @@ test('暴击率边界：目标高幸运可完全防暴击，最高 100%', () => 
 
 test('属性总和使用九项基础能力，受伤、等级、武器、命中修正不影响总和', () => {
   const game = newGame();
-  const expected = { tomori: 83, anon: 86, rana: 81, soyo: 77, taki: 79 };
+  const expected = { tomori: 88, anon: 91, rana: 86, soyo: 82, taki: 84 };
   Object.entries(expected).forEach(([id, value]) => equal(Combat.statTotalOf(byId(game, id)), value, id));
   const unit = byId(game, 'tomori');
   unit.hp = 1; unit.level = 99; unit.hit = 999;
   unit.weapon = { ...unit.weapon, might: 50, crit: 90 };
-  equal(Combat.statTotalOf(unit), 83);
+  equal(Combat.statTotalOf(unit), 88);
   unit.lck += 3;
-  equal(Combat.statTotalOf(unit), 86);
+  equal(Combat.statTotalOf(unit), 91);
 });
 
 test('既有存档重建幸运与技巧，同时保留原有进度和 HP', () => {
@@ -445,7 +445,7 @@ test('既有存档重建幸运与技巧，同时保留原有进度和 HP', () =>
   equal(soyo.hp, 7);
   equal(soyo.dex, 10);
   equal(soyo.lck, 8);
-  equal(Combat.statTotalOf(soyo), 77);
+  equal(Combat.statTotalOf(soyo), 82);
 });
 
 test('有效修正：命中目标 tag 时武器威力 ×1.5', () => {
@@ -961,8 +961,8 @@ test('警戒：按可通行地形计算，隔河的曼哈顿近邻不会凭空�
 });
 test('据点：我方阶段开始回复最大 HP 的 20%，向上取整并封顶',()=>{
   const g=newGame(),u=g.getUnit('tomori');g.setUnitPosition(u.id,7,4);u.hp=10;
-  g.beginEnemyPhase();equal(u.hp,10);g.beginNextPlayerPhase();equal(u.hp,16);
-  u.hp=25;g.beginEnemyPhase();g.beginNextPlayerPhase();equal(u.hp,26);
+  g.beginEnemyPhase();equal(u.hp,10);g.beginNextPlayerPhase();equal(u.hp,17);
+  u.hp=u.maxHp-1;g.beginEnemyPhase();g.beginNextPlayerPhase();equal(u.hp,u.maxHp);
   equal(g.lastHealing[0].amount,1);
 });
 test('据点：不治疗敌人、不复活死者，草地不回复',()=>{

@@ -1,0 +1,88 @@
+/* Parchment commands stay beside the acting unit; the map remains interactive. */
+.game-shell .unit-commands {position:absolute;z-index:16;width:196px;max-height:calc(100% - 20px);color:#46392f;filter:drop-shadow(0 6px 9px #0008)}
+.unit-commands::before {content:"";position:absolute;top:var(--anchor-y,30px);left:-7px;width:12px;height:12px;background:#eee2c9;border:1px solid #8e7a59;transform:translateY(-50%) rotate(45deg);z-index:-1}
+.unit-commands[data-side=left]::before {left:auto;right:-7px}
+.unit-command-head {display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 10px;color:#eee5d5;background:#43374d;border:1px solid #aa9675;border-bottom:0}
+.unit-command-head strong {font-size:12px;letter-spacing:1px}.unit-command-head span {font-size:10px;color:#d0c1ba}
+.game-shell .unit-commands .action-buttons {display:flex;flex-direction:column;gap:5px;padding:7px;margin:0;background:var(--diary-paper) center/cover;border:1px solid #9a8563;max-height:410px;overflow:auto}
+.game-shell .unit-commands .action-btn {flex:none;min-height:36px;height:auto;width:100%;margin:0;padding:8px 11px;text-align:left;display:block;position:relative;border:1px solid #9e89656e;border-left:3px solid #9a8563;border-radius:0;background:#fff9e57a;color:#453b37;font:16px/1.25 "Microsoft YaHei",sans-serif;letter-spacing:2px;box-shadow:inset 0 0 0 2px #fff9e54d}
+.game-shell .unit-commands .action-btn::before,.game-shell .unit-commands .action-btn::after {display:none}
+.game-shell .unit-commands .action-btn:hover:not(:disabled),.game-shell .unit-commands .action-btn:focus-visible {color:#302a3c;border-color:#8d78b4;border-left-color:#776095;background:#eee8fc;box-shadow:0 0 0 2px #9b80c34d;outline:0;transform:none}
+.game-shell .unit-commands .action-btn:disabled {opacity:.4;cursor:default}
+.game-shell .unit-commands .loadout-action {font-size:14px!important;letter-spacing:1px}
+.command-chevron {float:right;font:20px/1 Georgia,serif;color:#89779d}
+.game-shell .unit-commands.has-picker {width:316px}
+.game-shell .command-picker {max-height:410px;overflow:auto;overscroll-behavior:contain;padding:12px;background:var(--diary-paper) center/cover;border:1px solid #9a8563;color:#46392f;scrollbar-width:thin;scrollbar-color:#a28b69 transparent}
+.command-picker h3 {font:17px/1.4 "SimSun",serif;color:#55435b;letter-spacing:2px;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid #9e896566}
+.command-picker .modal-kicker,.command-picker .modal-sub {display:none}
+.command-picker .modal-title {font:17px/1.4 "SimSun",serif;color:#55435b;letter-spacing:1px;margin:0 0 12px}
+.command-picker .battle-loadout-list {gap:5px}
+.command-picker .battle-loadout-row {gap:8px;padding:8px;background:#fff9e56b;border-color:#a58d6666;color:#46392f;border-radius:0;min-height:58px}
+.command-picker .battle-loadout-row.is-equipped {border-left:3px solid #85709a;background:#e1d7ea77}
+.command-picker .battle-loadout-row:hover:not(:disabled) {background:#eee8fc;border-color:#9b80c3}
+.command-picker .battle-loadout-row strong {font-size:13px}.command-picker .battle-loadout-row small {font-size:10px;letter-spacing:0;line-height:1.5}
+.command-picker .battle-loadout-row>b {font-size:11px;white-space:normal;max-width:60px;text-align:right}
+.command-picker .bag-icon {width:30px;height:32px;flex-basis:30px;border:0;background:#8b76551a}.command-picker .bag-icon img {width:30px;height:30px}
+.command-picker .modal-actions {display:flex;gap:6px;margin:10px 0 0;padding:0}
+.command-picker .command-back,.command-picker .modal-btn {font:12px/1.4 "Microsoft YaHei",sans-serif;cursor:pointer;padding:8px 10px;margin:10px 0 0;background:#6c586c;color:#fff2dc;border:1px solid #8e7a59;width:100%;border-radius:0}
+.game-shell .unit-commands [hidden] {display:none!important}
+/* Selected-unit information stays separate from commands and predictions. */
+.game-shell .info-side .action-buttons {display:grid}
+.game-shell .info-body .class-current {margin:6px 0;padding:0;border:0;background:transparent}
+.game-shell .info-body .class-current p {display:none}
+.game-shell .info-body .class-current strong {font-size:12px;display:inline}.game-shell .info-body .class-current>span {display:none}
+
+/* Status sheet: roster + three balanced columns, with independent overflow. */
+.game-shell .formation-body {grid-template-columns:190px minmax(0,1fr)}
+.game-shell .formation-roster-panel {padding:12px 8px;gap:0}
+.game-shell .formation-roster-head {padding:0 4px 10px}.game-shell .formation-roster-head>span {display:none}
+.game-shell .formation-row {grid-template-columns:12px 36px minmax(0,1fr);gap:5px;padding:6px 4px;min-height:56px}
+.game-shell .formation-avatar {width:34px;height:38px}.game-shell .formation-avatar canvas {width:34px;height:38px}
+.game-shell .formation-row-copy strong {font-size:13px;letter-spacing:0}.game-shell .formation-row-copy small {font-size:9px;letter-spacing:0}
+.game-shell .formation-row-move,.game-shell .formation-status,.game-shell .formation-pose-dock {display:none}
+.game-shell .formation-detail {padding:0 17px 14px}
+.game-shell .formation-detail .loadout-tabs {gap:0;margin:0 0 15px;padding:10px 0 8px;top:0;background:var(--diary-paper) center/cover;box-shadow:none}
+.game-shell .formation-detail .loadout-tabs button {padding:8px 7px;border:0;border-radius:0;background:transparent;box-shadow:none;letter-spacing:1px;font-size:12px;color:#6b5b52;border-bottom:2px solid transparent}
+.game-shell .formation-detail .loadout-tabs button[aria-pressed=true] {background:#594361;color:#fff1db;border-bottom-color:#c0a570}
+.game-shell .is-status-sheet .formation-detail {display:flex;flex-direction:column;overflow:hidden}
+.game-shell .is-status-sheet .loadout-tabs {flex:none}
+.status-sheet {display:grid;grid-template-columns:1.03fr 1fr 1fr;gap:20px;flex:1;min-height:0;color:#4a4036}
+.sheet-column {min-width:0;overflow:auto;scrollbar-width:thin;scrollbar-color:#ae9876 transparent;padding-right:4px}
+.sheet-column+.sheet-column {border-left:1px solid #a68c5c55;padding-left:18px}
+.sheet-column h4 {display:flex;align-items:center;justify-content:space-between;gap:8px;font:15px/1.35 "SimSun",serif;letter-spacing:2px;color:#f7edda;background:linear-gradient(90deg,#65576cbb,#65576c20);padding:5px 9px;margin:0 0 10px}
+.sheet-column h4:not(:first-child) {margin-top:20px}.sheet-column h4 small {font:10px/1.3 "Microsoft YaHei",sans-serif;letter-spacing:0;color:#62524e}
+.sheet-person h4 {margin-bottom:7px;padding-top:4px;padding-bottom:4px}.sheet-person h4:not(:first-child) {margin-top:12px}
+.sheet-identity {display:flex;gap:13px;align-items:center;margin:8px 0 14px}
+.sheet-name {display:flex;justify-content:space-between;align-items:baseline;font:23px/1.4 "SimSun",serif;letter-spacing:2px;margin:0 0 8px}.sheet-name>span {font:12px "Microsoft YaHei",sans-serif;letter-spacing:0;color:#8a7559}
+.sheet-identity dl {flex:1;margin:0;font-size:12px}.sheet-identity dl>div {display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid #a68c5c55}.sheet-identity dt {color:#8a7559}.sheet-identity dd {margin:0}
+.sheet-identity canvas {width:88px;height:100px;object-fit:contain;image-rendering:pixelated;background:radial-gradient(ellipse,#a2937777,transparent 75%);border:1px solid #a68c5c66;border-radius:50%}
+.sheet-identity h3 {font:24px/1.3 "SimSun",serif;margin:0 0 8px;letter-spacing:2px;color:#4c3d3e}.sheet-identity p {font-size:12px;margin:4px 0;color:#7f6954}
+.sheet-facts {margin:0;font-size:13px}.sheet-facts>div,.sheet-derived>div {display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #a68c5c55;gap:8px}
+.sheet-facts dt,.sheet-derived dt {color:#816e59}.sheet-facts dd,.sheet-derived dd {margin:0;font-size:15px;color:#4a4036}.sheet-facts small {font-size:11px}
+.sheet-exp {margin:10px 0;font-size:11px;display:flex;justify-content:space-between;gap:5px;flex-wrap:wrap}.sheet-exp b {font:19px Georgia,serif}
+.sheet-exp i,.sheet-mastery i {display:block;flex-basis:100%;height:5px;background:linear-gradient(90deg,#927ca9 var(--fill),#897a6226 var(--fill));width:100%}
+.sheet-hp {display:flex;justify-content:space-between;padding:6px 8px;background:#5b5549;color:#f7edda;font-size:13px;margin:10px 0}.sheet-hp b {font:21px/1 Georgia,serif}
+.sheet-hp strong {font:21px/1 Georgia,serif}.sheet-hp small {font-size:13px;color:#d7cdb6}.sheet-hp i {display:none}
+.sheet-experience {margin:10px 0 18px}.sheet-experience>div {display:flex;justify-content:space-between;font-size:11px;color:#8a7559}.sheet-experience b {font:14px Georgia,serif;color:#4a4036}.sheet-experience i {display:block;margin-top:5px;width:100%;height:5px;background:linear-gradient(90deg,#927ca9 var(--fill),#897a6226 var(--fill))}
+.sheet-stats {display:grid;grid-template-columns:1fr 1fr;gap:7px 15px}
+.sheet-stat {display:flex;align-items:center;gap:5px;border-bottom:1px solid #a68c5c55;padding:5px 0;font-size:12px}
+.sheet-stat>span {white-space:nowrap}.sheet-stat>i {flex:1;min-width:8px;height:5px;background:linear-gradient(90deg,#a18bb9 var(--fill),#897a6226 var(--fill))}.sheet-stat>b {font:20px Georgia,serif;min-width:22px;text-align:right;white-space:nowrap}.sheet-stat small {font:10px "Microsoft YaHei",sans-serif;color:#86709d}
+.sheet-derived {display:grid;grid-template-columns:1fr 1fr;gap:0 15px;font-size:11px;margin:14px 0 0}.sheet-derived dd {font:17px Georgia,serif}
+.sheet-item {display:flex;align-items:center;gap:7px;border:1px solid #a68c5c77;background:#fff9e84d;min-height:37px;margin-bottom:5px;padding:3px 6px}
+.sheet-item.is-equipped {background:#605b55;color:#fff1d6}.sheet-item strong {font-size:13px;flex:1;font-weight:500}.sheet-item>span:last-child {font:14px Georgia,serif;white-space:nowrap}
+.sheet-item-icon {display:grid;place-items:center;width:26px;height:26px;flex-shrink:0;background:#8d76511a;border:1px solid #a68c5c66}.sheet-item-icon img {width:26px;height:26px;object-fit:contain}.sheet-glyph {font-size:17px}
+.sheet-empty-row {min-height:34px;padding:7px 8px;border-bottom:1px solid #a68c5c55;margin-bottom:5px;box-sizing:border-box;color:#95866c;font-size:12px}
+.sheet-weapon-values {display:grid;grid-template-columns:1fr 1fr;gap:5px 16px;font-size:11px;color:#8a7559;margin:10px 0}.sheet-weapon-values span {display:flex;justify-content:space-between}.sheet-weapon-values b {font:16px Georgia,serif;color:#4b4034}
+.sheet-skill {border-bottom:1px solid #a68c5c66;margin-bottom:5px;background:#fff9e829}
+.sheet-skill summary {display:flex;align-items:center;gap:7px;min-height:36px;padding:3px 4px;cursor:pointer;list-style:none}.sheet-skill summary::-webkit-details-marker {display:none}
+.sheet-skill summary::after {content:'＋';font-size:12px;color:#917a9c}.sheet-skill[open] summary::after {content:'−'}
+.sheet-skill summary strong {font-weight:500;font-size:13px;flex:1}.sheet-skill summary small {font-size:9px;color:#90795d;text-align:right;max-width:88px}
+.sheet-skill summary:hover,.sheet-skill[open] summary {background:#b7a1c528}.skill-seal {display:grid;place-items:center;width:23px;height:25px;background:#75607f;color:#fff2d6;flex-shrink:0;font-size:17px}
+.sheet-skill p {font-size:12px;line-height:1.8;margin:0;padding:8px 9px 10px;color:#725c49;border-top:1px solid #a68c5c33;background:#fff7e047}
+.sheet-skill.is-locked summary {opacity:.55}.sheet-skill summary:focus-visible {outline:2px solid #9b80c3;outline-offset:-2px}
+.sheet-mastery {display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;font-size:12px;padding:5px 0 12px}.sheet-mastery strong {font-weight:500}.sheet-mastery span {color:#8f7658}
+.sheet-person .sheet-identity {margin:5px 0 8px}.sheet-person .sheet-identity canvas {width:74px;height:78px}.sheet-person .sheet-identity dl>div {padding:5px 0}
+.sheet-person .sheet-name {font-size:22px;margin-bottom:5px}.sheet-person .sheet-hp {margin:8px 0}.sheet-person .sheet-experience {margin:8px 0 12px}
+.sheet-person .sheet-stats {gap:2px 14px}.sheet-person .sheet-stat {height:29px;box-sizing:border-box;padding:2px 0}.sheet-person .sheet-stat>b {font-size:19px}
+.sheet-person .sheet-derived {margin:8px 0 0;gap:0 14px}.sheet-person .sheet-derived>div {padding:3px 0}
+.command-picker .medicine-icon {width:30px;height:30px;object-fit:contain}

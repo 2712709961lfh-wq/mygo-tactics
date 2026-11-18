@@ -146,11 +146,12 @@
   };
   UP.chooseSupportTarget=function(caster,id){
     const s=Magic.get(id),targets=this.game.supportTargets(caster,id),amount=Magic.healAmount(s,caster);
-    this.openOverlay('<div class="modal-kicker">FAITH MAGIC</div><h2 class="modal-title" id="overlay-title">'+esc(s.name)+' · 选择目标</h2><p class="modal-sub">'+esc(s.description)+' 剩余 '+caster.spellUses[id]+'/'+s.uses+' 次。</p><div class="battle-loadout-list">'+targets.map(t=>'<button class="battle-loadout-row" data-support-target="'+esc(t.id)+'"><span><strong>'+esc(t.name)+'</strong><small>HP '+t.hp+'/'+t.maxHp+' · 距离 '+M.Grid.manhattan(caster,t)+' 格'+(['heal','fortify'].includes(s.effect)?' · 预计回复 '+Math.min(t.maxHp-t.hp,amount):'')+'</small></span><b>'+(s.effect==='fortify'||s.effect==='restore'?'范围内全体':'选择')+'</b></button>').join('')+'</div><div class="modal-actions"><button class="modal-btn" data-support-back>返回魔法</button></div>','loadout-modal',true);
-    this.dom.overlayCard.querySelector('[data-support-back]').onclick=()=>this.showAttackLoadout(caster);
-    this.dom.overlayCard.querySelectorAll('[data-support-target]').forEach(b=>b.onclick=()=>{
+    this.openActionPicker('<div class="modal-kicker">FAITH MAGIC</div><h2 class="modal-title" id="overlay-title">'+esc(s.name)+' · 选择目标</h2><p class="modal-sub">'+esc(s.description)+' 剩余 '+caster.spellUses[id]+'/'+s.uses+' 次。</p><div class="battle-loadout-list">'+targets.map(t=>'<button class="battle-loadout-row" data-support-target="'+esc(t.id)+'"><span><strong>'+esc(t.name)+'</strong><small>HP '+t.hp+'/'+t.maxHp+' · 距离 '+M.Grid.manhattan(caster,t)+' 格'+(['heal','fortify'].includes(s.effect)?' · 预计回复 '+Math.min(t.maxHp-t.hp,amount):'')+'</small></span><b>'+(s.effect==='fortify'||s.effect==='restore'?'范围内全体':'选择')+'</b></button>').join('')+'</div><div class="modal-actions"><button class="modal-btn" data-support-back>返回魔法</button></div>');
+    this.pickerBack=()=>this.showAttackLoadout(caster);
+    this.actionPickerCard.querySelector('[data-support-back]').onclick=()=>this.showAttackLoadout(caster);
+    this.actionPickerCard.querySelectorAll('[data-support-target]').forEach(b=>b.onclick=()=>{
       const target=this.game.getUnit(b.dataset.supportTarget);
-      if(s.effect==='warp'){this.closeOverlay();this.beginWarpTarget(caster,id,target);}else this.confirmSupport(caster,id,target);
+      if(s.effect==='warp'){this.closeActionPicker();this.beginWarpTarget(caster,id,target);}else this.confirmSupport(caster,id,target);
     });
   };
   UP.confirmSupport=function(caster,id,target,destination){

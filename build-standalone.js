@@ -35,6 +35,7 @@ const SCRIPTS = [
   'src/inventory.js',
   'src/class-data.js',
   'src/class-mastery.js',
+  'src/tactical-ui.js',
   'src/config.js',
   'src/chapter-three.js',
   'src/chapter-four.js',
@@ -89,7 +90,7 @@ const SCRIPTS = [
   'src/main.js',
 ];
 
-const STYLES = ['styles.css', 'entry.css', 'soul-ui.css', 'diary-ui.css', 'equipment.css'];
+const STYLES = ['styles.css', 'entry.css', 'soul-ui.css', 'diary-ui.css', 'equipment.css', 'tactical-ui.css'];
 const CHARACTER_IDS = ['tomori', 'anon', 'rana', 'soyo', 'taki', 'xueyue', 'nina', 'nijika', 'subaru'];
 const CHARACTER_DIR = 'assets/characters/sprites';
 const WALK_DIR = 'assets/characters/walk';

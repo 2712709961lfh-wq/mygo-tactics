@@ -15,7 +15,7 @@ test('30×28 live house; stage, props and all units reachable without overlap',(
 });
 test('Opening joins Nijika once, immediately actionable with magic and healing',()=>{
  const g=game(),n=g.getUnit('nijika');assert.equal(n.side,'ally');assert(!M.Growth.eligible(n));assert.equal(g.livingCount('player'),5);
- assert.equal(n.level,9);assert.equal(['maxHp','str','mag','dex','spd','lck','def','res','move'].map(k=>n[k]).join(','),'30,7,11,10,11,13,7,9,4');
+ assert.equal(n.level,9);assert.equal(['maxHp','str','mag','dex','spd','lck','def','res','move'].map(k=>n[k]).join(','),'35,7,11,10,11,13,7,9,4');
  assert.equal(g.joinNijika(),n);assert.equal(n.side,'player');assert(!n.acted);assert(M.Growth.eligible(n));assert(n.learnedSpells.includes('heal'));assert(n.learnedSpells.includes('nosferatu'));assert(M.Inventory.usable(n));
  n.acted=true;g.joinNijika();assert(n.acted);assert.equal(g.recruited.filter(id=>id==='nijika').length,1);assert.equal(g.livingCount('player'),6);
  const h=game(['xueyue','nina']);h.joinNijika();assert.equal(h.livingCount('player'),8);
@@ -32,7 +32,7 @@ test('Old Nijika saves gain exactly one level without changing stats, HP, EXP or
   const n=saved.units.find(u=>u.id==='nijika');n.growth.level=level;n.growth.exp=level===99?0:17;n.hp=7;
   n.growth.gains.maxHp=(level-8)*3;n.growth.gains.mag=level-8;
   const rng=n.growth.rngState,h=game();h.restore(saved);const u=h.getUnit('nijika');
-  assert.equal(u.level,Math.min(99,level+1));assert.equal(u.hp,7);assert.equal(u.maxHp,30+(level-8)*3);assert.equal(u.mag,11+level-8);
+  assert.equal(u.level,Math.min(99,level+1));assert.equal(u.hp,7);assert.equal(u.maxHp,35+(level-8)*3);assert.equal(u.mag,11+level-8);
   assert.equal(u.exp,level>=98?0:17);assert.equal(u.growthRngState,rng);assert.equal(h.nijikaJoined,joined);
   const again=game();again.restore(h.serialize());assert.deepEqual(plain(M.Growth.pack(again.getUnit('nijika'))),plain(M.Growth.pack(u)));
  }

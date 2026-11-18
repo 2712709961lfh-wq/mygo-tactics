@@ -101,7 +101,7 @@ test('仁菜阵亡不会失败，永久丢失招募资格，中途/终局读档�
 
 test('玩家全灭但友军仁菜仍活着时任务失败',()=>{
   const g=fresh();for(const u of g.living('player')){u.dead=true;u.hp=0;}g.checkOutcome();
-  assert.equal(g.phase,'defeat');assert.equal(g.getUnit('nina').hp,36);assert(!g.recruited.includes('nina'));
+  assert.equal(g.phase,'defeat');assert.equal(g.getUnit('nina').hp,41);assert(!g.recruited.includes('nina'));
 });
 
 test('仁菜活着时须击败所有敌人才能招募，保留HP/耐久并出现在同行之人',()=>{
