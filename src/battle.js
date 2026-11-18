@@ -430,9 +430,10 @@
       const takiCustom = a.id === 'taki' && MyGO.Characters && MyGO.Characters.hasActions(a.id);
       const swordCustom = ((a.id === 'tomori' || a.id === 'dark_tomori') || a.id === 'xueyue') && MyGO.Characters && MyGO.Characters.hasActions(a.id);
       const armorCustom = !!MyGO.WatercourtArt?.isArmored(a.id);
-      const retreatStart = takiCustom || swordCustom || armorCustom || (a.id === 'nina'||a.id==='dark_nina') ? 0.70 : 0.62;
+      const cavalryCustom = !!MyGO.PalaceArt?.isCavalry(a.id);
+      const retreatStart = takiCustom || swordCustom || armorCustom || cavalryCustom || (a.id === 'nina'||a.id==='dark_nina') ? 0.70 : 0.62;
       const gap = a.id === 'rana' && MyGO.Characters && MyGO.Characters.hasActions(a.id)
-        ? 80 : armorCustom ? (kind==='lance'?72:64) : MELEE_GAP[kind] || 60;
+        ? 80 : cavalryCustom ? 82 : armorCustom ? (kind==='lance'?72:64) : MELEE_GAP[kind] || 60;
       const dashTarget = defHome - gap;
 
       let atkX = atkHome;
@@ -514,11 +515,11 @@
         const after = 1 - Math.abs(t - 0.45) / 0.13;
         if (after > 0) {
           for (let i = 3; i >= 1; i--) {
-            const running = (armorCustom || (a.id === 'tomori' || a.id === 'dark_tomori') || a.id === 'xueyue' || a.id === 'rana' || a.id === 'taki' || (a.id === 'nina'||a.id==='dark_nina')) && MyGO.Characters && MyGO.Characters.hasActions(a.id);
+            const running = (armorCustom || cavalryCustom || (a.id === 'tomori' || a.id === 'dark_tomori') || a.id === 'xueyue' || a.id === 'rana' || a.id === 'taki' || (a.id === 'nina'||a.id==='dark_nina')) && MyGO.Characters && MyGO.Characters.hasActions(a.id);
             this._sprite(ctx, a, atkX - i * 13, atkY, 1, 0, atkLean * 0.4, 0.06 * after,
               swordCustom && r.crit ? 'rush' : running ? 'run' : 'attack',
               swordCustom && r.crit ? Math.min(2, Math.floor(clamp01((t - DASH_START) / .20) * 3))
-                : running ? Math.floor(t * (this.duration || 1800) / 55) % 8 : 1);
+                : running ? Math.floor(t * (this.duration || 1800) / 55) % (cavalryCustom?6:8) : 1);
           }
         }
       }
@@ -538,15 +539,15 @@
         atkFrame=atkState==='attack'?Math.min(a.id==='subaru'&&r.crit?3:7,Math.floor(clamp01((t-.18)/.54)*(a.id==='subaru'&&r.crit?4:8))):Math.floor(t*(this.duration||1800)/160)%(a.id==='subaru'?6:8);
         atkY=feetY;atkLean=0;
       }
-      if(armorCustom){
+      if(armorCustom||cavalryCustom){
         atkState='idle';atkFrame=Math.floor(t*(this.duration||1800)/240)%2;
-        if(t>=DASH_START&&t<DASH_END){atkState='walk';atkFrame=Math.floor(t*(this.duration||1800)/70)%8;}
+        if(t>=DASH_START&&t<DASH_END){atkState=cavalryCustom?'run':'walk';atkFrame=Math.floor(t*(this.duration||1800)/70)%(cavalryCustom?6:8);}
         else if(t>=DASH_END&&t<.70){
           atkState='attack';
           // Thrust extends at frames 4/5; axe sweep lands at frames 3/4.
           atkFrame=kind==='axe'?(t<.52?0:t<.55?1:t<IMPACT_T?2:t<.62?3:t<.66?4:5)
             :(t<.49?0:t<.52?1:t<.54?2:t<.56?3:t<IMPACT_T?4:t<.62?5:t<.66?6:7);
-        }else if(t>=.70&&t<.84){atkState='walk';atkFrame=Math.floor(t*(this.duration||1800)/90)%8;}
+        }else if(t>=.70&&t<.84){atkState='walk';atkFrame=Math.floor(t*(this.duration||1800)/90)%(cavalryCustom?6:8);}
         atkY=feetY;atkLean=0;
       }
       if (customAtk && (a.id === 'nina'||a.id==='dark_nina')) {
@@ -742,7 +743,7 @@
           defY=feetY;defLean=0;defAlpha=1-clamp01((impactAge-620)/520);
         }else if(hit&&impactAge>=0&&impactAge<400){defState='hurt';defFrame=Math.min(2,Math.floor(impactAge/95));}
         else if(!hit&&impactAge>=0&&impactAge<560){defState='jump';defFrame=Math.min(7,Math.floor(impactAge/70));defY=feetY;defLean=0;}
-      } else if (MyGO.WatercourtArt?.isArmored(b.id)) {
+      } else if (MyGO.WatercourtArt?.isArmored(b.id)||MyGO.PalaceArt?.isCavalry(b.id)) {
         defState='idle';defFrame=Math.floor(t*(this.duration||1800)/240)%2;
         if(hit&&(r.killed||r.hpAfter<=0)&&impactAge>=140){
           defState='down';defFrame=Math.min(5,Math.floor((impactAge-140)/85));
@@ -926,7 +927,7 @@
 
     _drawLanceThrust(ctx, t, atkX, atkY, defX, defY) {
       if (MyGO.CombatVfx?.weapon(ctx, 'lance', t, atkX, atkY, defX, defY)) return;
-      if(MyGO.WatercourtArt?.isArmored(this.attacker.id))return;
+      if(MyGO.WatercourtArt?.isArmored(this.attacker.id)||MyGO.PalaceArt?.isCavalry(this.attacker.id))return;
       if (this.attacker.id === 'rana' && MyGO.Characters && MyGO.Characters.hasActions('rana')) {
         // Keep the original spear visible; only add a brief trail at its tip.
         if (t < 0.56 || t > 0.66) return;

@@ -104,6 +104,7 @@
     if (global.MyGO.WatercourtArt) tasks.push(global.MyGO.WatercourtArt.load());
     if (global.MyGO.MaskedCourtArt) tasks.push(global.MyGO.MaskedCourtArt.load());
     if (global.MyGO.LivehouseArt) tasks.push(global.MyGO.LivehouseArt.load());
+    if (global.MyGO.PalaceArt) tasks.push(global.MyGO.PalaceArt.load());
     if (global.MyGO.DarkSoyo) tasks.push(global.MyGO.DarkSoyo.load());
     if (global.MyGO.CombatVfx) tasks.push(global.MyGO.CombatVfx.load());
     if (tasks.length) {

@@ -1,0 +1,97 @@
+{
+  "retrieved": "2026-11-18",
+  "derivativeLicense": "CC-BY-SA-3.0",
+  "horseSource": "https://opengameart.org/content/lpc-horse-extended",
+  "citySource": "https://opengameart.org/content/lpc-city-inside",
+  "riderSource": "assets/chapter-five/knight-source-manifest.json",
+  "files": [
+    {
+      "path": "LPC-Horse-Extended.zip!LPC Horse Extended/Accessories/Blanket Gallop.png",
+      "sha256": "7efe06de61f93213a50cc7af52d667ccdcd74815ca0e6343599a15e6595282d4"
+    },
+    {
+      "path": "LPC-Horse-Extended.zip!LPC Horse Extended/Accessories/Blanket Idle.png",
+      "sha256": "74121ea3604fffb3737307f9a6c2d6c0aa5b7d50ab91bf6e6d199b4f8fe3a5a8"
+    },
+    {
+      "path": "LPC-Horse-Extended.zip!LPC Horse Extended/Accessories/Blanket Walk.png",
+      "sha256": "08a033864f36ece1c49c1d69453bddb555795f3bf8f99266182a8e3f98d2fed9"
+    },
+    {
+      "path": "LPC-Horse-Extended.zip!LPC Horse Extended/Accessories/Saddle Gallop.png",
+      "sha256": "36eefb1d6fbb96cd8d5930f6b7f1384eb365b06bb1e9da31eff5532baf212049"
+    },
+    {
+      "path": "LPC-Horse-Extended.zip!LPC Horse Extended/Accessories/Saddle Idle.png",
+      "sha256": "2268eba469e841419a8203cde46e8f6d594d2691b13afc92de72ef0eeb85b51d"
+    },
+    {
+      "path": "LPC-Horse-Extended.zip!LPC Horse Extended/Accessories/Saddle Walk.png",
+      "sha256": "02062595aa9e9bab37be4fa95932efdc9b335e558f633ec6beb2fc0031fa6c7e"
+    },
+    {
+      "path": "LPC-Horse-Extended.zip!LPC Horse Extended/Horse/Horse Gallop Brown.png",
+      "sha256": "2a0b38e121816d926d0eab7ccda2d115bf65bb4abe68692db01a74bf351180c2"
+    },
+    {
+      "path": "LPC-Horse-Extended.zip!LPC Horse Extended/Horse/Horse Gallop White.png",
+      "sha256": "8d014689aee67bdeb8204ee14d718e26ef7e989f0aab7ec257a16e0f5a02b2dc"
+    },
+    {
+      "path": "LPC-Horse-Extended.zip!LPC Horse Extended/Horse/Horse Idle Brown.png",
+      "sha256": "50d4819370f596763f02d28a9b04902abca2eefae671994cc27cca09fea1f180"
+    },
+    {
+      "path": "LPC-Horse-Extended.zip!LPC Horse Extended/Horse/Horse Idle White.png",
+      "sha256": "fee6399d7990b58494c6fae5912325934a93b6f15259f6d04d429c32bd7c8e35"
+    },
+    {
+      "path": "LPC-Horse-Extended.zip!LPC Horse Extended/Horse/Horse Walk Brown.png",
+      "sha256": "bd50b57fea0c7f19238db6a33ef69173b123851f7dd618752fac91c17a8c8412"
+    },
+    {
+      "path": "LPC-Horse-Extended.zip!LPC Horse Extended/Horse/Horse Walk White.png",
+      "sha256": "7f8c52d512bb4e61953802f59d3942a68745484a562e33677ffa3e246fd62a52"
+    },
+    {
+      "path": "LPC_city_inside.zip!LPC_city_inside/city_inside.png",
+      "sha256": "f46756c037f991a4dabbb1f95ea1429369fcbfe988887f056a4fc5520d0405f8"
+    },
+    {
+      "path": "chapter-five/lpc-source/spritesheets/arms/armour/plate/male/thrust.png",
+      "sha256": "437ddd61dcf5fa7eec8ebb1ee1202fbbfb27ef933136055f029892bf5a98ac63"
+    },
+    {
+      "path": "chapter-five/lpc-source/spritesheets/body/bodies/male/thrust.png",
+      "sha256": "9e08026c201c3dac2f99b6d48e41ba9232828df3e9ebb2b0cb4e6fe9acc220e3"
+    },
+    {
+      "path": "chapter-five/lpc-source/spritesheets/feet/armour/plate/male/thrust.png",
+      "sha256": "3ea572ab07d65a2a9c37db6f17a6bdbfaca3c4eff04d72fdf3114d12e889a4c8"
+    },
+    {
+      "path": "chapter-five/lpc-source/spritesheets/hat/helmet/armet/adult/thrust.png",
+      "sha256": "3a422aef9ae64e2bfc033c5754918dd73f7fcef4444d53d0301690de05f30671"
+    },
+    {
+      "path": "chapter-five/lpc-source/spritesheets/head/heads/human/male/thrust.png",
+      "sha256": "de941b85fea3b1ac1f49f36c929d86e1f2c17d68509dfc7b252e3981a5ac114c"
+    },
+    {
+      "path": "chapter-five/lpc-source/spritesheets/legs/armour/plate/male/thrust.png",
+      "sha256": "d77735cd827a29f36960c66ca9408768aaf322735a81ba3a8511fd7349a2162b"
+    },
+    {
+      "path": "chapter-five/lpc-source/spritesheets/torso/armour/plate/male/thrust.png",
+      "sha256": "327fe6dc9bdeccfc17fc158e72446414f5fcb6f9e4b78df42e09bf9bb7f77fbf"
+    },
+    {
+      "path": "chapter-five/lpc-source/spritesheets/weapon/polearm/spear/thrust/background.png",
+      "sha256": "937daacec07cf1db37ebc6f9945163b7d48d198d57f0764a902424fb133fffe0"
+    },
+    {
+      "path": "chapter-five/lpc-source/spritesheets/weapon/polearm/spear/thrust/foreground.png",
+      "sha256": "2603545177295f4b06901811b67bebb454211a3bb3c0867e7bf12d32ac518f1c"
+    }
+  ]
+}

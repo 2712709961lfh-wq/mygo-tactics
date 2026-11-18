@@ -93,6 +93,9 @@ const CHARACTER_DIR = 'assets/characters/sprites';
 const WALK_DIR = 'assets/characters/walk';
 const IDLE_DIR = 'assets/characters/idle';
 const MAP_IMAGES = {
+  palacecavalier: 'assets/chapter-ten/cavalier-actions.png',
+  palaceelite: 'assets/chapter-ten/elite-actions.png',
+  palacescenery: 'assets/chapter-ten/palace-scenery.png',
   combatVfx: 'assets/effects/combat/combat-atlas.png',
   livespeaker: 'assets/chapter-seven/source/speaker.png',
   livedrums: 'assets/chapter-seven/source/music-icons/32x32/drums.png',

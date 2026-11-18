@@ -5,11 +5,15 @@
  const decor=[],prop=(kind,x,y,w=1,h=1)=>{decor.push({kind,x,y,w,h});for(let yy=y;yy<y+h;yy++)for(let xx=x;xx<x+w;xx++)terrain[yy][xx]='wall';};
  for(let y=7;y<=28;y+=7)for(const x of [8,21])prop('palace-column',x,y,1,2);
  for(const y of [11,22])for(const x of [3,25])prop('palace-planter',x,y,2,1);
+ // Sculptures use the existing blocked flower-platform footprints; the
+ // walkable layout and old save positions remain valid.
+ for(const o of decor)if(o.kind==='palace-planter'&&o.y===11)o.kind='palace-statue';
  prop('palace-throne',14,3,2,2);
  for(let y=5;y<=33;y++)for(let x=13;x<=16;x++)terrain[y][x]='road';
  for(const [x,y] of [[5,17],[24,17]]){terrain[y][x]='fort';decor.push({kind:'palace-font',x,y});}
  decor.push({kind:'palace-entrance',x:14,y:33,w:2,h:1});
  for(const y of [6,13,20,27])for(const x of [3,26])decor.push({kind:'palace-lamp',x,y});
+ for(const y of [9,16,23,30])for(const x of [0,29])decor.push({kind:'palace-banner',x,y});
  const specs=[['sword-a',11,28],['axe-a',18,27],['bow-a',5,21],['lance-a',24,21],['mage-a',11,16],['sword-b',18,15],['bow-b',18,9]];
  const regular=specs.map(([source,x,y],i)=>({...base.enemies.find(u=>u.id==='rehearsal-'+source),id:'palace-soldier-'+i,x,y,level:14,
   name:'宫廷幻兵·'+['剑','斧','弓','枪','咒','剑','弓'][i],shortName:'宫廷幻兵',
