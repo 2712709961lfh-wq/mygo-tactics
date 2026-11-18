@@ -60,9 +60,16 @@ def horse_frame(kind,state,index,direction):
     im=horsepart('Horse/Horse '+gait+' '+color+'.png')
     get=lambda image:cell(image,direction if gait=='Idle' else frame,0 if gait=='Idle' else direction,128)
     horse=get(im)
+    bare_horse=horse.copy()
     horse.alpha_composite(cloth(get(horsepart('Accessories/Blanket '+gait+'.png')),kind=='elite'))
-    horse.alpha_composite(get(horsepart('Accessories/Saddle '+gait+'.png')))
-    return horse
+    saddle=get(horsepart('Accessories/Saddle '+gait+'.png'))
+    horse.alpha_composite(saddle)
+    # Locate the seat from this exact saddle frame, including gallop suspension.
+    x0,y0,x1,y1=saddle.getbbox()
+    seat=((x0+x1)//2,y0+(9 if direction==0 else 7 if direction==2 else 3))
+    # The front-facing head must occlude the inner thighs, never the saddle.
+    front=bare_horse.crop((seat[0]-10,y0+6,seat[0]+11,y0+34))
+    return horse,seat,front
 
 PARTS=['body/bodies/male','feet/armour/plate/male','legs/armour/plate/male',
        'torso/armour/plate/male','arms/armour/plate/male','head/heads/human/male',
@@ -70,19 +77,13 @@ PARTS=['body/bodies/male','feet/armour/plate/male','legs/armour/plate/male',
 
 def composite(kind,state,index,direction):
     elite=kind=='elite'
-    horse=horse_frame(kind,state,index,direction)
-    # Anchors are fixed by view, rather than normalized per frame: hooves really
-    # rise and fall during a gallop, without the body sliding vertically.
+    horse,seat,front=horse_frame(kind,state,index,direction)
+    # Fixed hoof-space origin preserves the source gait's suspension.
     foot=108 if direction==0 else 94
     hx,hy=32,AY-foot
-    if state in ['run','attack','jump']:
-        bob=[0,1,2,1,-1,-1][index%6]
-    elif state=='walk':bob=[0,0,1,0,0,1][index%6]
-    else:bob=index%2
-    # The rider is seated on the source saddle. Preserve upper-body anatomy and
-    # source-authored arm/spear poses; articulate the plate-clad legs at the knee.
-    rx=64+(-1 if direction==1 else 1 if direction==3 else 0)
-    ry=hy+(14 if direction in [1,3] else 20 if direction==0 else 10)+bob
+    sx,sy=hx+seat[0],hy+seat[1]
+    # The human pelvis is at (32,47), not the bottom of a standing sprite.
+    rx,ry=sx-32,sy-47
     action='thrust'
     ri=index if state=='attack' else 3 if direction in [0,2] else 0
     rider=Image.new('RGBA',(64,64))
@@ -103,31 +104,77 @@ def composite(kind,state,index,direction):
         if direction in [1,3]:
             weapon=weapon.resize((112,64),Image.Resampling.NEAREST);pos=(rx-24,ry)
         else:
-            weapon=weapon.resize((64,96),Image.Resampling.NEAREST);pos=(rx,ry-16)
+            # Frontal foreshortening keeps the source hand/shaft occlusions;
+            # stretching their transparent gaps makes the spear float.
+            pos=(rx,ry)
         target.alpha_composite(weapon,pos)
-    out=Image.new('RGBA',(CW,CW));out.alpha_composite(horse,(hx,hy))
-    # Reins follow the source horse head and a fixed grip at the saddle.
+    out=Image.new('RGBA',(CW,CW))
+    col='#7f263c' if elite else '#303f73'
+    edge='#342e34';dark='#70552f' if elite else '#4c4c5b'
+    metal='#bc9851' if elite else '#8d8d9d'
+    light='#f4daa0' if elite else '#d1d0cb'
+
+    def mounted_leg(target,hip,knee,ankle,side,far=False):
+        # Each thigh and greave articulates separately. A standing pair of legs
+        # cannot be rotated into a seated silhouette.
+        d=ImageDraw.Draw(target)
+        for start,end,width in [(hip,knee,8),(knee,ankle,6)]:
+            d.line([start,end],fill=edge,width=width)
+            d.line([start,end],fill=dark if far else metal,width=width-2)
+            if not far:d.line([(start[0]-1,start[1]),(end[0]-1,end[1])],fill=light,width=1)
+        kx,ky=knee
+        d.ellipse((kx-3,ky-3,kx+3,ky+3),fill=edge)
+        d.ellipse((kx-2,ky-2,kx+2,ky+1),fill=dark if far else light)
+        # Keep the authored plate boot's toe and outline, using one foot only.
+        box={0:(22 if side<0 else 33,55,31 if side<0 else 42,62),
+             1:(21,55,31,63),2:(20 if side<0 else 34,55,30 if side<0 else 44,64),
+             3:(33,55,43,63)}[direction]
+        boot=cell(layer('feet/armour/plate/male','thrust'),ri,direction).crop(box)
+        if elite:boot=gold(boot)
+        ax,ay=ankle
+        target.alpha_composite(boot,(ax-boot.width//2,ay-2))
+        # Leather descends from the saddle to a metal stirrup beneath the boot.
+        d=ImageDraw.Draw(target)
+        d.line([(hip[0],hip[1]+2),(ax+2,ay+2)],fill='#64452d',width=1)
+        d.line([(ax-4,ay+2),(ax-4,ay+4),(ax+4,ay+4),(ax+4,ay+2)],fill=dark if far else light,width=1)
+
+    if direction in [1,3]:
+        facing=-1 if direction==1 else 1
+        # Far thigh passes behind the barrel; near thigh goes over the blanket.
+        mounted_leg(out,(sx+3,sy),(sx+3+facing*10,sy+9),(sx+3+facing*6,sy+21),facing,True)
+    out.alpha_composite(horse,(hx,hy))
+    add_spear(out,'background')
+    d=ImageDraw.Draw(out)
+    # Small skirt over the hips; the complete breastplate ends at the seat.
+    d.polygon([(sx-8,sy-5),(sx+8,sy-5),(sx+10,sy+3),(sx,sy+5),(sx-10,sy+3)],fill=col)
+    if direction in [1,3]:
+        mounted_leg(out,(sx,sy),(sx+facing*10,sy+9),(sx+facing*6,sy+21),facing)
+    else:
+        for side in [-1,1]:
+            mounted_leg(out,(sx+side*6,sy),(sx+side*15,sy+9),(sx+side*14,sy+22),side)
+    # Preserve the whole torso down to its pelvis. Breathing changes the chest,
+    # while the pelvis and both articulated legs remain fixed to the saddle.
+    upper=rider.copy();upper.paste((0,0,0,0),(0,49,64,64))
+    breath=-1 if state=='idle' and index==1 else 0
+    out.alpha_composite(upper,(rx,ry+breath))
+    if direction==2:
+        # From the front the horse's neck/head stands in front of the rider's
+        # waist and inner thighs, while the knees remain outside its shoulders.
+        out.alpha_composite(front,(sx-10,sy-1))
+    # Reins connect the saddle-side hand to the actual moving horse head.
     d=ImageDraw.Draw(out)
     if direction in [1,3]:
-        headx=hx+(34 if direction==1 else 94)
-        d.line([(headx,hy+49),(hx+64,hy+57+bob),(hx+65,hy+43+bob)],fill='#8d653c',width=1)
-    # A short fitted tabard behind the rider; no duplicate procedural weapon.
-    col='#7f263c' if elite else '#303f73';trim='#dbb567' if elite else '#a9bacb'
-    d.polygon([(rx+22,ry+28),(rx+42,ry+28),(rx+45,ry+44),(rx+31,ry+48),(rx+19,ry+43)],fill=col)
-    d.line([(rx+19,ry+43),(rx+31,ry+48),(rx+45,ry+44)],fill=trim,width=1)
-    # Upper body retains the complete torso, head, arms and gauntlets.
-    upper=rider.copy();upper.paste((0,0,0,0),(0,43,64,64))
-    add_spear(out,'background')
-    out.alpha_composite(upper,(rx,ry))
-    if direction in [1,3]:
-        # Lift the far leg behind the saddle; the near greave bends forward.
-        leg=rider.crop((24,42,40,62))
-        leg=leg.rotate(28 if direction==1 else -28,resample=Image.Resampling.NEAREST,expand=True)
-        out.alpha_composite(leg,(rx+22,ry+36))
-    else:
-        for box,dx,rot in [((19,42,31,62),17,-19),((33,42,45,62),34,19)]:
-            leg=rider.crop(box).rotate(rot,expand=True,resample=Image.Resampling.NEAREST)
-            out.alpha_composite(leg,(rx+dx,ry+37))
+        # The brow's frame-dependent bounds follow the galloping head, rather
+        # than an unrelated sinusoidal rider bob.
+        head=horse.crop((0 if direction==1 else 80,20,48 if direction==1 else 128,54)).getbbox()
+        headx=hx+(head[0]+5 if direction==1 else 80+head[2]-5)
+        heady=hy+20+head[3]-4
+        hand=(rx+(37 if direction==1 else 26),ry+41+breath)
+        d.line([(headx,heady),(sx+facing*10,sy-1),hand],fill='#302b29',width=2)
+        d.line([(headx,heady),(sx+facing*10,sy-1),hand],fill='#b08a56',width=1)
+    elif direction==2:
+        d.line([(sx-9,sy-7),(sx-10,sy-12),(sx-7,sy-14)],fill='#8d653c',width=1)
+        d.line([(sx+9,sy-7),(sx+10,sy-12),(sx+7,sy-14)],fill='#8d653c',width=1)
     add_spear(out,'foreground')
     # Horse brow armour uses the helmet metal palette; the boss gets a crest.
     if elite:
