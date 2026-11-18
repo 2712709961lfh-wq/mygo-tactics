@@ -1,4 +1,4 @@
-/* Three personal talent slots, derived from level rather than saved unlock flags. */
+/* A shared level-10 talent and three personal slots, derived from level. */
 (function(global){
   'use strict';
   const M=global.MyGO=global.MyGO||{};
@@ -14,7 +14,8 @@
     nina:{name:'战斗爽',description:'每击败一个敌人回复5 HP，不超过生命上限；反击击破同样生效。'},
     nijika:{name:'同心',description:'施放治疗魔法时，自身回复目标实际恢复的HP；群体治疗按实际回复总量计算，不超过自身生命上限。'}
   };
-  const levels=[0,15,20,25];
+  const common=Object.freeze({name:'掌握战斗',description:'命中＋5、技巧＋1。技巧计入基础属性，命中加成适用于所有攻击、反击与追击。',stats:Object.freeze({dex:1})});
+  const levels=[10,15,20,25];
   const data2={
     subaru:{name:'魔力延伸',description:'伤害型魔法最大射程＋1，最小射程不变；不影响辅助魔法或魔法武器。'},
     xueyue:{name:'疾风',description:'速度＋2。',stats:{spd:2}},
@@ -42,9 +43,12 @@
     for(const t of Object.values(catalogue)){if(t.stats)Object.freeze(t.stats);Object.freeze(t);}
     Object.freeze(catalogue);
   }
-  function get(u,slot=1){return catalogues[slot]?.[typeof u==='string'?u:u?.id]||null;}
+  function get(u,slot=1){
+    const id=typeof u==='string'?u:u?.id;
+    return slot===0?(M.GrowthData?.personal[id]||data[id]?common:null):catalogues[slot]?.[id]||null;
+  }
   function active(u,slot=1){return !!get(u,slot)&&u.side!=='enemy'&&u.level>=levels[slot];}
-  function list(u){return [1,2,3].filter(slot=>get(u,slot)).map(slot=>({slot,level:levels[slot],...get(u,slot),active:active(u,slot)}));}
+  function list(u){return [0,1,2,3].filter(slot=>get(u,slot)).map(slot=>({slot,level:levels[slot],...get(u,slot),active:active(u,slot)}));}
   // Permanent stat bonuses are separate from random growth. Reconstructing a
   // save from base + gains derives the bonus once, never accumulating on reload.
   function sync(u){
@@ -53,7 +57,7 @@
     for(const k of new Set([...Object.keys(before),...Object.keys(next)]))u[k]+=(next[k]||0)-(before[k]||0);
     u._talentBonuses=next;u._talent1Bonus=active(u)&&first?.stat?first.amount:0;
     // Cleanse legacy stat penalties as soon as Haqi awakens or a save is read.
-    if(immune(u)&&u.status)for(const k of ['defDown','spdDown','moveDown','talentResDown','frostSpeedDown','frostFresh'])delete u.status[k];
+    if(immune(u)&&u.status)for(const k of ['defDown','spdDown','moveDown','talentResDown','frostSpeedDown','frostFresh','masterySealDef','masterySealRes'])delete u.status[k];
   }
   function immune(u){return active(u,2)&&u.id==='rana';}
   function penalty(u,key,amount){return immune(u)?0:(u.status?.[key]?amount:0);}
@@ -68,6 +72,7 @@
   function preserveUse(u,kind,rng){return canPreserve(u,kind)&&rng.int(1,100)<=25;}
   function healingAmount(u,s,amount){return active(u,3)&&u.id==='nijika'&&healingSpell(s)?Math.ceil(amount*6/5):amount;}
   function dexBonus(u){return active(u)&&u.id==='anon'&&u.weapon?.type==='bow'?3:0;}
+  function hitBonus(u){return active(u,0)?5:0;}
   function avoidBonus(u){return active(u)&&u.id==='rana'?5:0;}
   function guardBonus(u,map){
     if(!u||u.dead||u.hp<=0||u.escaped)return 0;
@@ -114,6 +119,6 @@
     return active(u)&&u.id==='nijika'&&['heal','fortify'].includes(spell.effect)?
       heal(u,changes.reduce((sum,c)=>sum+Math.max(0,c.amount||0),0)):0;
   }
-  M.Talents=Object.freeze({LEVEL,data,data2,data3,levels:Object.freeze(levels),get,active,list,sync,immune,penalty,experience,
-    healingSpell,rangeBonus,canPreserve,preserveUse,healingAmount,dexBonus,avoidBonus,guardBonus,bond,strBonus,counterFactor,afterMagic,afterDamage,expireFrost,onKill,onAngel,onSupport});
+  M.Talents=Object.freeze({LEVEL,common,data,data2,data3,levels:Object.freeze(levels),get,active,list,sync,immune,penalty,experience,
+    healingSpell,rangeBonus,canPreserve,preserveUse,healingAmount,dexBonus,hitBonus,avoidBonus,guardBonus,bond,strBonus,counterFactor,afterMagic,afterDamage,expireFrost,onKill,onAngel,onSupport});
 })(window);

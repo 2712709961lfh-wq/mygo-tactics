@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const world={console,setTimeout:fn=>{fn();return 0;},clearTimeout:()=>{},document:{readyState:'loading'},addEventListener:()=>{}};
 world.window=world;vm.createContext(world);
-for(const name of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','map-projection','rng','growth-data','growth','grid','pathfinding','combat','game','ai','ui','entry','loadout-ui'])
+for(const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','map-projection','rng','growth-data','growth','grid','pathfinding','combat','game','ai','ui','entry','loadout-ui'])
   vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),world,{filename:name+'.js'});
 const M=world.MyGO;let count=0;
 function test(name,fn){fn();count++;console.log('✓ '+name);}

@@ -2,7 +2,7 @@
 'use strict';
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('node:assert/strict');
 const w={console};w.window=w;vm.createContext(w);
-for(const f of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
+for(const f of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
 const M=w.MyGO,plain=x=>JSON.parse(JSON.stringify(x)),keys=['level','maxHp','str','mag','dex','spd','lck','def','res','move'];
 const fresh=(stage,opts={})=>new M.Game({stage,recruited:['xueyue','nina'],seed:1115,...opts});
 const enemies=g=>g.units.filter(u=>u.side==='enemy');

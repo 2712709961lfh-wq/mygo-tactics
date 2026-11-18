@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const sandbox={console};sandbox.window=sandbox;vm.createContext(sandbox);
-for(const name of ['equipment-data','magic-data','inventory','class-data','config','rng','growth-data','growth','grid','pathfinding','combat','game'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),sandbox);
+for(const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','rng','growth-data','growth','grid','pathfinding','combat','game'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),sandbox);
 const M=sandbox.MyGO,I=M.Inventory,S=M.Magic,C=M.Combat;let count=0;
 function test(n,f){f();console.log('✓ '+n);count++;}
 // Explicit fixture spells exercise catalogue mechanics without granting them in play.

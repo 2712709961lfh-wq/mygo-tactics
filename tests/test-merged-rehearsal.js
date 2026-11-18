@@ -2,7 +2,7 @@
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('node:assert/strict');
 const timers=[],w={console,document:{readyState:'loading'},performance:{now:()=>100},addEventListener(){},setTimeout(fn){timers.push(fn);return timers.length;},clearTimeout(){}};
 w.window=w;vm.createContext(w);
-for(const f of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','chapter-palace','rng','growth-data','talents','growth','grid','pathfinding','combat','game','ui','entry','ninth-intro'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
+for(const f of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','chapter-palace','rng','growth-data','talents','growth','grid','pathfinding','combat','game','ui','entry','ninth-intro'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
 const M=w.MyGO,plain=x=>JSON.parse(JSON.stringify(x)),fresh=()=>new M.Game({stage:9,recruited:['xueyue','nina'],seed:1116});
 const reload=s=>{const h=new M.Game();h.restore(plain(s));return h;};
 const hit=(g,id)=>g.applyCombat({attackerId:'tomori',defenderId:id,hit:true,finalDamage:999});

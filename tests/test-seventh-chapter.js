@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('node:assert/strict');
 const w={console};w.window=w;vm.createContext(w);
-for(const f of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','rng','growth-data','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
+for(const f of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','rng','growth-data','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
 const M=w.MyGO,C=M.CONFIG;let cases=0;function test(name,f){f();cases++;console.log('✓ '+name);}const plain=x=>JSON.parse(JSON.stringify(x));
 function game(recruited=[]){return new M.Game({stage:7,recruited,seed:7711});}
 const statKeys=['maxHp','str','mag','dex','spd','lck','def','res','move'];

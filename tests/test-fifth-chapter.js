@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('fs'),path=require('path'),vm=require('vm');
 const w={console,setTimeout,clearTimeout,document:{readyState:'loading'}};w.window=w;vm.createContext(w);
-for(const n of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','rng','growth-data','growth','grid','pathfinding','combat','game','ai','ui'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',n+'.js'),'utf8'),w,{filename:n});
+for(const n of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','rng','growth-data','growth','grid','pathfinding','combat','game','ai','ui'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',n+'.js'),'utf8'),w,{filename:n});
 const M=w.MyGO,I=M.Inventory,plain=x=>JSON.parse(JSON.stringify(x)),fresh=o=>new M.Game({stage:5,seed:57,...o});let count=0;
 function test(name,fn){fn();console.log('✓ '+name);count++;}
 function hit(g,a,b,n=999){return g.applyCombat({attackerId:a,defenderId:b,hit:true,finalDamage:n});}

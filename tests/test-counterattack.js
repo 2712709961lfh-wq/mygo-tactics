@@ -6,7 +6,7 @@ const vm = require('node:vm');
 const sandbox = {console, setTimeout, clearTimeout};
 sandbox.window = sandbox;
 vm.createContext(sandbox);
-for (const file of ['equipment-data','magic-data','inventory','class-data','config','rng','growth-data','growth','grid','pathfinding','combat','game','ui']) {
+for (const file of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','rng','growth-data','growth','grid','pathfinding','combat','game','ui']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',file+'.js'),'utf8'),sandbox,{filename:file+'.js'});
 }
 const M = sandbox.MyGO, C = M.Combat;

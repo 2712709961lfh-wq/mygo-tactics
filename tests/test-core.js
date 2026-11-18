@@ -54,7 +54,7 @@ function load(file) {
 }
 
 [
-  'src/equipment-data.js','src/magic-data.js','src/inventory.js','src/class-data.js','src/config.js',
+  'src/equipment-data.js','src/magic-data.js','src/inventory.js','src/class-data.js','src/class-mastery.js','src/config.js',
   'src/rng.js','src/growth-data.js','src/growth.js',
   'src/grid.js',
   'src/pathfinding.js',

@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const world={console,document:{readyState:'loading'},addEventListener:()=>{}};world.window=world;vm.createContext(world);
-for(const name of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','growth','grid','pathfinding','combat','game','ui','entry','loadout-ui'])
+for(const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','growth','grid','pathfinding','combat','game','ui','entry','loadout-ui'])
   vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),world,{filename:name+'.js'});
 const M=world.MyGO,G=M.Growth,D=M.GrowthData;let count=0;
 function test(name,fn){fn();count++;console.log('✓ '+name);}
@@ -62,7 +62,7 @@ test('最后一名敌人倒下仍先结算升级，战报HP包含HP成长',()=>{
   assert.equal(r.attackerHpAfterApply,a.hp);assert.equal(a.hp-hp,a.maxHp-max);
   const h=new M.Game();h.restore(g.serialize());assert.equal(h.getUnit(a.id).level,6);assert.equal(h.getUnit(a.id).hp,a.hp);
 });
-test('本场战斗死亡的角色不获得先前攻击的经验',()=>{const {g,a,b}=setup();const r={attackerId:a.id,defenderId:b.id,strikes:[{attackerId:a.id,defenderId:b.id,hit:true,finalDamage:1},{attackerId:b.id,defenderId:a.id,hit:true,finalDamage:999}]};g.applyCombat(r);assert(a.dead);assert.equal(a.exp,0);assert.equal(r.experience.length,0);});
+test('本场战斗死亡的角色不获得先前攻击的经验',()=>{const {g,a,b}=setup();const r={attackerId:a.id,defenderId:b.id,strikes:[{attackerId:a.id,defenderId:b.id,hit:true,finalDamage:1},{attackerId:b.id,defenderId:a.id,hit:true,finalDamage:999}]};g.applyCombat(r);assert(a.dead);assert.equal(a.exp,0);assert.equal(r.experience.filter(r=>r.gained>0).length,0);assert.equal(r.experience[0].mastery.gained,1);});
 test('击杀只算一次，倒地目标不会再次发经验',()=>{const {g,a,b}=setup(),r={attackerId:a.id,defenderId:b.id,hit:true,finalDamage:999};g.applyCombat(r);const exp=a.exp;assert.equal(r.experience.length,1);g.applyCombat({...r,applied:false});assert.equal(a.exp,exp);});
 test('满血目标、取消施法、待机和机关不提供辅助经验',()=>{const {g,a}=setup(),s=g.getUnit('soyo');Object.assign(s,{x:3,y:4});const exp=s.exp;a.hp=a.maxHp;assert.throws(()=>g.castSupport(s,'heal',a));assert.equal(s.exp,exp);g.markActed(a);assert.equal(a.exp,0);});
 test('真实圣疗结算增加经验，不能重复施放已行动角色',()=>{const {g,a}=setup(),s=g.getUnit('soyo');Object.assign(s,{x:3,y:4});a.hp=1;const r=g.castSupport(s,'heal',a);assert.equal(s.exp,14);assert.equal(r.experience[0].gained,14);assert.throws(()=>g.castSupport(s,'heal',a));assert.equal(s.exp,14);});

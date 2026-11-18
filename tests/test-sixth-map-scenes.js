@@ -6,7 +6,7 @@ const w={console,performance:{now:()=>now},document:{
  removeEventListener(type,fn,capture){assert.equal(type,'keydown');assert.equal(capture,true);listeners.delete(fn);}},
  requestAnimationFrame(fn){const id=++seq;frames.set(id,fn);return id;},cancelAnimationFrame:id=>frames.delete(id)};
 w.window=w;vm.createContext(w);
-for(const name of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six',
+for(const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','chapter-six',
  'rng','growth-data','growth','grid','pathfinding','combat','game','ui','masked-court-ui'])
  vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),w,{filename:name});
 const M=w.MyGO;let count=0;

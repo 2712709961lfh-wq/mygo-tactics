@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path'), vm = require('node:vm');
 const root = path.join(__dirname, '..'), world = {console,addEventListener:()=>{},document:{readyState:'loading'}};
 world.window = world; vm.createContext(world);
-for (const name of ['equipment-data','magic-data','inventory','class-data','config','rng','growth-data','growth','grid','pathfinding','combat','game','ui','entry','loadout-ui'])
+for (const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','rng','growth-data','growth','grid','pathfinding','combat','game','ui','entry','loadout-ui'])
   vm.runInContext(fs.readFileSync(path.join(root,'src',name+'.js'),'utf8'),world,{filename:name+'.js'});
 const M = world.MyGO, D = M.Classes;
 const expected = {tomori:'myrmidon',anon:'fighter',rana:'soldier',soyo:'monk',taki:'fighter',xueyue:'myrmidon'};

@@ -145,7 +145,7 @@
     if(!MyGO.Inventory.usable(unit))return [];
     const ox = origin ? origin.x : unit.x;
     const oy = origin ? origin.y : unit.y;
-    const [minRange, maxRange] = unit.weapon.range;
+    const [minRange, maxRange] = MyGO.Mastery?.rangeOf(unit)||unit.weapon.range;
     const tiles = [];
     for (let y = 0; y < map.rows; y++) {
       for (let x = 0; x < map.cols; x++) {
@@ -163,7 +163,7 @@
   function canAttackFrom(attacker, x, y, target) {
     if (!MyGO.Inventory.usable(attacker) || attacker.escaped || !target || target.dead || target.escaped || !Grid.hostile(target, attacker)) return false;
     const d = Math.abs(target.x - x) + Math.abs(target.y - y);
-    const [minRange, maxRange] = attacker.weapon.range;
+    const [minRange, maxRange] = MyGO.Mastery?.rangeOf(attacker)||attacker.weapon.range;
     return d >= minRange && d <= maxRange;
   }
 

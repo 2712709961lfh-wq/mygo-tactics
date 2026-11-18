@@ -131,6 +131,7 @@
     for(const id of template.carriedItems||[])unit.inventory.push(MyGO.Inventory.make(id));
     MyGO.Growth.init(unit);
     unit.certifiedClasses=[unit.classId].filter(Boolean);
+    MyGO.Mastery?.init(unit);
     return unit;
   }
 
@@ -253,7 +254,7 @@
       if(data.convoy)this.convoy=MyGO.Inventory.validateBag(data.convoy,500);
       this.collectReservedLoot();
       this.restoreEconomy(data.economy);
-      for(const saved of data.units||[]){const u=this.getUnit(saved.id);if(u&&u.side==='player'){MyGO.Growth.restore(u,saved.growth,true);MyGO.Classes.restore(u,saved.classState);MyGO.Inventory.restore(u,saved,true);}}
+      for(const saved of data.units||[]){const u=this.getUnit(saved.id);if(u&&u.side==='player'){MyGO.Growth.restore(u,saved.growth,true);MyGO.Classes.restore(u,saved.classState);MyGO.Mastery?.restore(u,saved.classMastery,true);MyGO.Inventory.restore(u,saved,true);}}
     }
 
     packEconomy(){return {version:1,gold:this.gold,chapter:this.shopChapter,purchases:{...this.shopPurchases},rewarded:this.rewardedChapters.slice()};}
@@ -302,6 +303,20 @@
       if(!unit.dead&&unit.acted&&this.phase!=='victory')return '该角色已行动，请在下回合转职';
       return '';
     }
+
+    equipMasterySkill(unit,id){
+      const reason=this.reclassLockReason(unit);if(reason)throw Error(reason);
+      MyGO.Mastery.equip(unit,id);
+    }
+
+    selectCombatArt(unit,id){
+      if(this.phase!=='player'||!unit||unit.side!=='player'||unit.dead||unit.acted||unit.escaped||this.isOver())throw Error('该角色现在无法选择战技');
+      const reason=MyGO.Mastery.artReason(unit,id);if(reason)throw Error(reason);
+      if(MyGO.Mastery.arts[id].assist)throw Error('辅助战技需选择同伴目标');
+      unit.combatArtId=id;
+    }
+
+    useMasteryAssist(unit,target,id,index){return MyGO.Mastery.useAssist(this,unit,target,id,index);}
 
     reclassReason(unit,id){
       const reason=this.reclassLockReason(unit),job=MyGO.Classes.get(id);if(reason)return reason;
@@ -378,7 +393,7 @@
       const r=MyGO.Magic.rangeOf(s,caster),d=u=>Grid.manhattan(caster,u);
       if(s.effect==='silence')return this.units.filter(u=>!u.dead&&Grid.hostile(u,caster)&&(caster.side!=='player'||this.isUnitVisible(u))&&u.learnedSpells.length&&d(u)>=r[0]&&d(u)<=r[1]&&!u.status.silence);
       return this.living().filter(u=>!Grid.hostile(u,caster)&&u.id!==caster.id&&d(u)>0&&d(u)<=(s.effect==='warp'?1:r[1])&&
-        (['heal','fortify'].includes(s.effect)?u.hp<u.maxHp:s.effect==='restore'?['defDown','spdDown','moveDown','silence','talentResDown','frostSpeedDown'].some(k=>u.status[k]):
+        (['heal','fortify'].includes(s.effect)?u.hp<u.maxHp:s.effect==='restore'?['defDown','spdDown','moveDown','silence','talentResDown','frostSpeedDown','masterySealDef','masterySealRes'].some(k=>u.status[k]):
         s.effect==='rescue'?this.supportDestinations(caster,spellId,u).length>0:s.effect==='ward'?!(u.status.ward>=7):true));
     }
 
@@ -406,7 +421,7 @@
       const changes=[];
       for(const u of affected){
         if(['heal','fortify'].includes(s.effect)){const amount=Math.min(u.maxHp-u.hp,MyGO.Magic.healAmount(s,caster));u.hp+=amount;changes.push({id:u.id,amount});}
-        if(s.effect==='restore')for(const k of ['defDown','spdDown','moveDown','silence','talentResDown','frostSpeedDown','frostFresh'])delete u.status[k];
+        if(s.effect==='restore')for(const k of ['defDown','spdDown','moveDown','silence','talentResDown','frostSpeedDown','frostFresh','masterySealDef','masterySealRes'])delete u.status[k];
         if(s.effect==='ward')u.status.ward=7;
         if(s.effect==='silence'){u.status.silence=1;this.alertGroup(u);}
         if(['warp','rescue'].includes(s.effect))this.setUnitPosition(u.id,destination.x,destination.y);
@@ -415,13 +430,15 @@
       const talentHealing=MyGO.Talents?.onSupport(caster,s,changes)||0;
       if(talentHealing)changes.push({id:caster.id,amount:talentHealing,talent:'同心'});
       this.markActed(caster);MyGO.Inventory.sync(caster);
-      const growth=MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
+      let growth=MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
+      if(MyGO.Mastery)growth=MyGO.Mastery.attachReport(caster,growth,MyGO.Mastery.award(caster));
       return {spell:s,changes,talentHealing,resourcePreserved,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
     }
 
     expireStatuses(side) {
       for(const u of this.living(side)){
         for(const k of ['defDown','spdDown','moveDown','silence'])delete u.status[k];
+        MyGO.Mastery?.endTurn(u);
         MyGO.Talents?.expireFrost(u);
         MyGO.Inventory.sync(u);
       }
@@ -654,7 +671,7 @@
       if(this.maskRetreatPending||unit.escaped)return [];
       const x = fromX == null ? unit.x : fromX;
       const y = fromY == null ? unit.y : fromY;
-      return Pathfinding.getTargetsInRange(unit, this.units, x, y).filter(u=>unit.side!=='player'||this.isUnitVisible(u));
+      return Pathfinding.getTargetsInRange(unit, this.units, x, y).filter(u=>(unit.side!=='player'||this.isUnitVisible(u))&&!MyGO.Mastery?.targetReason(unit,u,this.map));
     }
 
     /** 攻击范围格子（用于高亮）。 */
@@ -691,6 +708,7 @@
         !target.dead && !target.escaped && !attacker.escaped && !this.maskRetreatPending &&
         (attacker.side!=='player'||this.isUnitVisible(target)) &&
         Grid.hostile(attacker, target) &&
+        !(MyGO.Mastery?.targetReason(attacker,target,this.map)) &&
         Pathfinding.canAttackFrom(attacker, attacker.x, attacker.y, target)
       );
     }
@@ -711,7 +729,7 @@
 
     markActed(unit,attacked=false) {
       if(!unit)return;
-      unit.talentAttacked=!!unit.talentAttacked||attacked;
+      unit.combatArtId=null;unit.talentAttacked=!!unit.talentAttacked||attacked;
       if(!unit.acted)unit.talentSwapReady=unit.id==='anon'&&!!MyGO.Talents?.active(unit,3)&&!unit.talentAttacked;
       unit.acted=true;
     }
@@ -960,6 +978,8 @@
         result.hpBeforeApply = result.defenderHp;
         result.killed = result.strikes.some(s=>s.applied && s.killed && s.defenderId===result.defenderId);
         result.attackerKilled = result.strikes.some(s=>s.applied && s.killed && s.defenderId===result.attackerId);
+        MyGO.Mastery?.applyEffects(this,result.masteryEffects);
+        if(initiator)initiator.combatArtId=null;
         result.experience=this.awardCombatExperience(result.strikes,participants);
         result.hpAfterApply = this.getUnit(result.defenderId)?.hp;
         result.attackerHpAfterApply = this.getUnit(result.attackerId)?.hp;
@@ -976,9 +996,10 @@
       }
       const participants=[attacker,defender].filter(Boolean).map(u=>({...u}));
       if(result.resourceId && attacker) {
-        MyGO.Inventory.consume(attacker,result.resourceId,result.resourcePreserved);
+        MyGO.Inventory.consume(attacker,result.resourceId,result.resourcePreserved,result.resourceCost||1);
         MyGO.Inventory.useEffects(attacker,defender,MyGO.Magic.get(result.resourceId),result.finalDamage,result.hit);
       }
+      if(attacker&&result.masteryHealing)attacker.hp=Math.min(attacker.maxHp,attacker.hp+result.masteryHealing);
       const before = defender.hp;
       this.alertGroup(defender);
       defender.hp = Math.max(defender.hpFloor||0, before - result.finalDamage);
@@ -1026,13 +1047,14 @@
       const reports=[];
       for(const before of participants){
         const u=this.getUnit(before.id),enemy=participants.find(p=>Grid.hostile(p,before));
-        if(!MyGO.Growth.eligible(u)||!enemy)continue;
+        if(!u||!enemy||u.side!=='player'||before.dead||!strikes.some(s=>s.applied))continue;
         const outgoing=strikes.filter(s=>s.applied&&s.attackerId===u.id&&s.defenderId===enemy.id);
         const damage=outgoing.reduce((n,s)=>n+Math.max(0,s.hpBeforeApply-s.hpAfterApply),0);
         const killed=outgoing.some(s=>s.killed);
         const amount=MyGO.Growth.combatExp(before,enemy,damage,killed);
         const bonus=this.stage===4&&u.id==='soyo'&&enemy.id==='dark_soyo'&&killed;
-        const report=MyGO.Growth.award(u,amount,bonus?2:1);
+        let report=MyGO.Growth.award(u,amount,bonus?2:1);
+        if(MyGO.Mastery)report=MyGO.Mastery.attachReport(u,report,MyGO.Mastery.award(u));
         if(bonus)this.soyoBossBonus=true;
         if(report){if(bonus)report.bonus='直面过去 · 击破经验 ×2';reports.push(report);}
       }
@@ -1075,6 +1097,7 @@
       this.phase = 'enemy';
       this.refreshAlerts();
       this.resetActed('enemy');
+      for(const u of this.living('enemy'))MyGO.Mastery?.startTurn(u);
       return true;
     }
 
@@ -1106,6 +1129,7 @@
       this.phase = 'player';
       this.resetActed('player');
       this.lastHealing=[];
+      for(const u of this.living('player')){const amount=MyGO.Mastery?.startTurn(u)||0;if(amount)this.lastHealing.push({id:u.id,amount});}
       for(const unit of this.living('player')) {
         if(this.getTerrain(unit.x,unit.y).id!=='fort') continue;
         const amount=Math.min(unit.maxHp-unit.hp, Math.ceil(unit.maxHp*.2));
@@ -1359,6 +1383,7 @@
           }else if(unit.level<C.NIJIKA.level)throw Error('虹夏存档等级无效');
         }else MyGO.Growth.restore(unit,saved.growth);
         MyGO.Classes.restore(unit,saved.classState);
+        MyGO.Mastery?.restore(unit,saved.classMastery);
         if(!Number.isFinite(Grid.movementCost(this.map,unit,saved.x,saved.y)))throw Error('存档停留在阻挡地形');
         unit.hp = Math.max(0, Math.min(unit.maxHp, Number(saved.hp) || 0));
         if([9,10].includes(this.stage)){

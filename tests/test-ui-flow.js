@@ -31,7 +31,7 @@ console.log('UI flow: 7 selection, movement, phase and busy-state assertions pas
 
 // Exercise the real action-menu callback against the actual chapter 2 rules.
 const rules={console};rules.window=rules;vm.createContext(rules);
-for(const name of ['equipment-data','magic-data','inventory','class-data','config','rng','growth-data','growth','grid','pathfinding','combat','game'])
+for(const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','rng','growth-data','growth','grid','pathfinding','combat','game'])
   vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),rules);
 const game=new rules.MyGO.Game({stage:2}),visitor=game.getUnit('tomori');
 let actions,endScreens=0,resets=0;

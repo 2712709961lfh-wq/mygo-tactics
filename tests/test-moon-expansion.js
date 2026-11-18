@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),assert=require('node:assert/strict');
 const w={console};w.window=w;vm.createContext(w);
-for(const f of ['equipment-data','magic-data','inventory','class-data','config','map-projection','rng','growth-data','growth','grid','pathfinding','combat','game','ai','viewport'])
+for(const f of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','map-projection','rng','growth-data','growth','grid','pathfinding','combat','game','ai','viewport'])
   vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w);
 const M=w.MyGO,C=M.CONFIG,plain=v=>JSON.parse(JSON.stringify(v));
 const g=new M.Game({stage:2,recruited:['xueyue'],seed:22});

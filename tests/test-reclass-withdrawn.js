@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
 const root=path.join(__dirname,'..'),w={console,addEventListener(){},document:{readyState:'loading'}};
 w.window=w;vm.createContext(w);
-for(const name of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','rng','growth-data','growth','grid','pathfinding','combat','game','ui','entry','loadout-ui'])
+for(const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','rng','growth-data','growth','grid','pathfinding','combat','game','ui','entry','loadout-ui'])
  vm.runInContext(fs.readFileSync(path.join(root,'src',name+'.js'),'utf8'),w,{filename:name});
 const M=w.MyGO,I=M.Inventory,plain=v=>JSON.parse(JSON.stringify(v));let count=0;
 function test(name,fn){fn();count++;console.log('✓ '+name);}

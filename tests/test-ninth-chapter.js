@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('node:assert/strict');
 const w={console};w.window=w;vm.createContext(w);
-for(const f of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','talents','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
+for(const f of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','talents','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
 const M=w.MyGO,I=M.Inventory,plain=x=>JSON.parse(JSON.stringify(x)),fresh=opts=>new M.Game({stage:9,seed:9911,...opts}),reload=g=>{const h=new M.Game();h.restore(plain(g.serialize()));return h;};
 const hit=g=>g.applyCombat({attackerId:'tomori',defenderId:'rift_pegasus',hit:true,finalDamage:999});
 const qty=(g,id)=>g.living('player').flatMap(u=>u.inventory).concat(g.convoy,g.lootReserve).filter(i=>i.id===id).length;

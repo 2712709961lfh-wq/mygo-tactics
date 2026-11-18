@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('node:assert/strict');
 const w={console};w.window=w;vm.createContext(w);
-for(const f of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','talents','growth','grid','pathfinding','combat','game'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
+for(const f of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','talents','growth','grid','pathfinding','combat','game'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
 const M=w.MyGO,plain=x=>JSON.parse(JSON.stringify(x)),fresh=stage=>new M.Game({stage,recruited:['xueyue','nina'],seed:1116});
 const reload=s=>{const g=fresh(1);g.restore(plain(s));return g;};
 let count=0;function test(name,fn){fn();count++;console.log('✓ '+name);}
@@ -108,8 +108,8 @@ test('Boss old saves preserve HP ratio, deaths and battle state, and migrate onl
   const s=plain(fresh(stage).serialize());s.rehearsalBossBalanceVersion=value;assert.throws(()=>reload(s),/Boss属性版本/);
  }
 });
-test('Subaru joins at Lv12/112 total; earned growth, EXP, equipment and class survive reload',()=>{
- const g=fresh(10);g.completeTenthIntro();const u=g.getUnit('subaru');assert.equal(u.level,12);assert.equal(M.Combat.statTotalOf(u),112);
+test('Subaru joins at Lv12/113 total including shared talent; earned growth, EXP, equipment and class survive reload',()=>{
+ const g=fresh(10);g.completeTenthIntro();const u=g.getUnit('subaru');assert.equal(u.level,12);assert.equal(M.Combat.statTotalOf(u),113);
  M.Growth.award(u,M.Growth.required(u.level));u.exp=13;u.hp-=5;
  const save=plain(g.serialize());let h=reload(save);
  for(let i=0;i<3;i++){assert.equal(M.Combat.statTotalOf(h.getUnit('subaru')),M.Combat.statTotalOf(u));assert.deepEqual(plain(h.serialize()),save);h=reload(h.serialize());}

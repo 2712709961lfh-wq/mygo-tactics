@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
 const world={console};world.window=world;vm.createContext(world);
-for(const name of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','rng','growth-data','growth','grid','pathfinding','combat','game'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),world,{filename:name+'.js'});
+for(const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','rng','growth-data','growth','grid','pathfinding','combat','game'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),world,{filename:name+'.js'});
 const M=world.MyGO,I=M.Inventory,G=M.Growth,plain=x=>JSON.parse(JSON.stringify(x));let count=0;
 function test(name,fn){fn();count++;console.log('✓ '+name);}
 function level(u,target){while(u.level<target)G.award(u,G.required(u.level));}

@@ -5,7 +5,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 const root=path.resolve(__dirname,'..');
 const window={};
-for(const name of ['equipment-data','magic-data','inventory','class-data','config'])vm.runInNewContext(fs.readFileSync(path.join(root,'src',name+'.js'),'utf8'),{window});
+for(const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config'])vm.runInNewContext(fs.readFileSync(path.join(root,'src',name+'.js'),'utf8'),{window});
 const E=window.MyGO.Equipment;
 let passed=0;
 function test(name,fn){fn();passed++;console.log('  ✓ '+name);}

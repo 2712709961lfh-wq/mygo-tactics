@@ -3,11 +3,11 @@
   'use strict';
   const M=global.MyGO,I=M.Inventory,Magic=M.Magic;
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function icon(e){if(e.kind==='key')return '<span class="key-item-icon" aria-hidden="true">⚿</span>';const id=e.kind==='spell'?'spell_'+e.id:e.icon;
+  function icon(e){if(e.kind==='unarmed')return '<span aria-hidden="true">拳</span>';if(e.kind==='key')return '<span class="key-item-icon" aria-hidden="true">⚿</span>';const id=e.kind==='spell'?'spell_'+e.id:e.icon;
     return '<img alt="" src="'+(global.MYGO_EQUIPMENT_ICONS?.[id]||'assets/equipment/icons/'+id+'.png')+'">';}
-  function stats(e,u){return e.kind==='weapon'?'威力 '+e.might+' · 命中 '+e.hit+' · 重量 '+e.weight+' · 射程 '+e.range:
+  function stats(e,u){return e.kind==='unarmed'?'空手格斗 · 威力0 · 命中80 · 无耐久消耗':e.kind==='weapon'?'威力 '+e.might+' · 命中 '+e.hit+' · 重量 '+e.weight+' · 射程 '+e.range:
     e.kind==='spell'?'威力 '+e.might+' · 命中 '+e.hit+' · 重量 '+e.weight+' · 射程 '+(u?Magic.rangeOf(e,u).join('–'):e.rangeText.replace('mag/','魔力/')) :e.effect;}
-  function tabs(active){return '<nav class="loadout-tabs" aria-label="角色资料页">'+[['stats','能力资料'],['growth','成长率'],['bag','背包配置'],['magic','已学魔法'],['classes','职业目录']].map(([id,n])=>'<button type="button" data-loadout-tab="'+id+'" aria-pressed="'+(active===id)+'">'+n+'</button>').join('')+'</nav>';}
+  function tabs(active){return '<nav class="loadout-tabs" aria-label="角色资料页">'+[['stats','能力资料'],['growth','成长率'],['bag','背包配置'],['magic','已学魔法'],['classes','职业目录'],['mastery','职业专精']].map(([id,n])=>'<button type="button" data-loadout-tab="'+id+'" aria-pressed="'+(active===id)+'">'+n+'</button>').join('')+'</nav>';}
   function experienceSummary(u){const need=M.Growth.required(u.level),pct=need?Math.floor(u.exp/need*100):100;
     return '<div class="growth-exp"><div><strong>Lv.'+u.level+'</strong><span>'+(need?'EXP '+u.exp+' / '+need+' · 距下一级 '+(need-u.exp):'EXP MAX · 已达最高等级')+'</span></div><div class="growth-exp-track" role="progressbar" aria-label="升级经验" aria-valuemin="0" aria-valuemax="'+(need||1)+'" aria-valuenow="'+(need?u.exp:1)+'"><i style="width:'+pct+'%"></i></div></div>';}
   function growthCatalogue(u){const D=M.GrowthData,personal=M.Growth.personalRates(u),job=D.classes[u.classId]||{},total=M.Growth.rates(u);
@@ -17,32 +17,33 @@
   }
   function classSummary(u){
     const job=M.Classes.get(u.classId);if(!job)return '';
-    return '<aside class="class-current"><span>当前职业 · '+esc(job.tierName)+'</span><strong>'+esc(job.name)+' <small>'+esc(job.en)+'</small></strong><p>擅长 '+esc(job.specialties)+' · '+esc(job.movement)+' · 移动 '+u.move+' 格</p><p class="class-path">培养方向：'+esc(M.Classes.paths[u.id]||'按擅长技能选择后续职业')+'</p></aside>';
+    return (M.MasteryUI?.bar(u)||'')+'<aside class="class-current"><span>当前职业 · '+esc(job.tierName)+'</span><strong>'+esc(job.name)+' <small>'+esc(job.en)+'</small></strong><p>擅长 '+esc(job.specialties)+' · '+esc(job.movement)+' · 移动 '+u.move+' 格</p><p class="class-path">培养方向：'+esc(M.Classes.paths[u.id]||'按擅长技能选择后续职业')+'</p></aside>';
   }
   function classCatalogue(u,tier,game,lock){
     return classSummary(u)+'<div class="loadout-section-title"><strong>风花雪月 · '+M.Classes.items.length+' 种职业</strong><select aria-label="职业阶段筛选" data-class-tier><option value="all"'+(tier==='all'?' selected':'')+'>全部阶段</option>'+M.Classes.tiers.map(t=>'<option value="'+t.id+'"'+(tier===t.id?' selected':'')+'>'+esc(t.name)+'</option>').join('')+'</select></div>'+
       '<p class="loadout-footnote">初级 Lv.5 → 中级 Lv.10 → 高级 Lv.20 → 最上级 Lv.30。普通职业达到等级并使用对应转职证即可取得资格，无需技能等级考试。拳斗士不限性别，其他职业保留原有性别、专用证件及前置职业限制。首次转职消耗证件；已取得资格可免费切换。战斗中转职结束本次行动；撤退同伴也可转职，仍保持撤退与原有 HP。</p>'+
       M.Classes.tiers.filter(t=>tier==='all'||t.id===tier).map(t=>'<section class="class-tier"><h4>'+esc(t.name)+' <small>'+M.Classes.query(t.id).length+' 种 · Lv.'+t.level+' 起</small></h4><div class="class-grid">'+M.Classes.query(t.id).map(job=>{
         const reason=lock||game.reclassReason(u,job.id),certified=(u.certifiedClasses||[]).includes(job.id);
-        return '<article class="class-card'+(job.id===u.classId?' is-current':'')+'"><div><strong>'+esc(job.name)+'</strong>'+(job.id===u.classId?'<span class="class-badge">当前职业</span>':'')+'</div><small>'+esc(job.en)+'</small><p>擅长 '+esc(job.specialties)+'</p><p>'+esc(job.requirements)+'</p><footer>移动 '+job.move+' · '+(job.magic?'可使用魔法':'不可使用魔法')+(job.gender?' · '+job.gender+'性限定':'')+(job.dlc?' · DLC':'')+'</footer><button type="button" data-reclass="'+job.id+'"'+(reason?' disabled':'')+' title="'+esc(reason||'战斗中转职会结束行动')+'">'+esc(reason||(certified?'切换职业 · 已取得资格':'使用转职证'))+'</button></article>';
+        return '<article class="class-card'+(job.id===u.classId?' is-current':'')+'"><div><strong>'+esc(job.name)+'</strong>'+(job.id===u.classId?'<span class="class-badge">当前职业</span>':'')+'</div><small>'+esc(job.en)+'</small><p>擅长 '+esc(job.specialties)+'</p><p>'+esc(job.requirements)+'</p><footer>移动 '+job.move+' · '+(job.magic?'可使用魔法':'不可使用魔法')+(job.gender?' · '+job.gender+'性限定':'')+(job.dlc?' · DLC':'')+'</footer>'+(M.MasteryUI?.rewards(u,job.id)||'')+'<button type="button" data-reclass="'+job.id+'"'+(reason?' disabled':'')+' title="'+esc(reason||'战斗中转职会结束行动')+'">'+esc(reason||(certified?'切换职业 · 已取得资格':'使用转职证'))+'</button></article>';
       }).join('')+'</div></section>').join('')+
-      '<p class="loadout-footnote">转职后移动、移动类型、武器类别、魔法使用与职业成长率立即生效，已学魔法记录保留。职业技能与精通奖励尚未实现。</p>';
+      '<p class="loadout-footnote">转职后移动、移动类型、武器类别、魔法使用与职业成长率立即生效，已学魔法记录保留。专精经验与奖励在职业目录和「职业专精」页查看；满条自动习得，转职保留进度。</p>';
   }
   const EP=M.EntryScreen.prototype,baseRender=EP.renderFormationDetail,baseBind=EP.bind;
   function talentSummary(u){
-    const t=M.Talents?.get(u);if(!t||u.side==='enemy')return '';
-    return M.Talents.list(u).map(t=>'<aside class="class-current"><span>个人天赋'+t.slot+' · Lv.'+t.level+'觉醒 · '+(t.active?'已觉醒':'未觉醒')+'</span><strong>'+esc(t.name)+'</strong><p>'+esc(t.description)+'</p></aside>').join('');
+    if(!M.Talents||u.side==='enemy')return '';
+    return M.Talents.list(u).map(t=>'<aside class="class-current"><span>'+(t.slot===0?'通用天赋':'个人天赋'+t.slot)+' · Lv.'+t.level+'觉醒 · '+(t.active?'已觉醒':'未觉醒')+'</span><strong>'+esc(t.name)+'</strong><p>'+esc(t.description)+'</p></aside>').join('');
   }
   EP.bind=function(){baseBind.call(this);this.dom.formationDetail.addEventListener('click',e=>{
     const t=e.target.closest('button');if(!t)return;
     if(t.dataset.loadoutTab){this.loadoutTab=t.dataset.loadoutTab;this.renderFormationDetail();this.dom.formationDetail.scrollTop=0;return;}
     const u=this.players().find(u=>u.id===this.selectedUnitId);if(!u)return;
     try{
-      const reason=t.hasAttribute('data-reclass')?this.reclassLock(u):this.loadoutLock(u);if(reason)throw Error(reason);
+      const reason=(t.hasAttribute('data-reclass')||t.hasAttribute('data-mastery-equip'))?this.reclassLock(u):this.loadoutLock(u);if(reason)throw Error(reason);
       if(t.hasAttribute('data-bag-equip'))this.ui.game.equipItem(u,+t.dataset.bagEquip);
       else if(t.hasAttribute('data-bag-store'))this.ui.game.transferItem(u,+t.dataset.bagStore,true);
       else if(t.hasAttribute('data-bag-take'))this.ui.game.transferItem(u,+t.dataset.bagTake,false);
       else if(t.hasAttribute('data-spell-equip'))this.ui.game.selectAttack(u,t.dataset.spellEquip);
+      else if(t.hasAttribute('data-mastery-equip'))this.ui.game.equipMasterySkill(u,t.dataset.masteryEquip);
       else if(t.hasAttribute('data-reclass')){this.ui.game.reclassUnit(u,t.dataset.reclass);this.ui.showToast(u.name+'转职为'+u.className,'success',2500);}
       else if(t.hasAttribute('data-medicine-use')){const r=this.ui.game.useMedicine(u,+t.dataset.medicineUse);this.ui.showToast(u.name+'使用'+r.item.name+(r.healed?'，回复 '+r.healed+' HP':'')+(r.resourcePreserved?' · 爱笑女孩：未消耗次数':''),'success',2500);}
       else return;
@@ -55,7 +56,8 @@
     const active=this.loadoutTab||'stats';
     if(active==='stats'){baseRender.call(this);const unit=this.players().find(u=>u.id===this.selectedUnitId);this.dom.formationDetail.insertAdjacentHTML('afterbegin',tabs(active)+(unit?classSummary(unit)+experienceSummary(unit)+talentSummary(unit):''));return;}
     const u=this.players().find(u=>u.id===this.selectedUnitId);if(!u)return;
-    if(active==='growth'){this.dom.formationDetail.innerHTML=tabs(active)+talentSummary(u)+growthCatalogue(u);this.renderPoseDock(u);return;}
+    if(active==='growth'){this.dom.formationDetail.innerHTML=tabs(active)+talentSummary(u)+(M.MasteryUI?.bar(u)||'')+growthCatalogue(u);this.renderPoseDock(u);return;}
+    if(active==='mastery'&&M.MasteryUI){this.dom.formationDetail.innerHTML=tabs(active)+M.MasteryUI.skills(u,this.reclassLock(u));this.renderPoseDock(u);return;}
     if(active==='classes'){
       this.dom.formationDetail.innerHTML=tabs(active)+classCatalogue(u,this.classTier||'all',this.ui.game,this.reclassLock(u));
       this.renderPoseDock(u);return;
@@ -92,13 +94,13 @@
   const UP=M.UI.prototype,baseAction=UP.renderActionSide;
   const baseUnitInfo=UP.renderUnitInfo;
   UP.renderUnitInfo=function(u){baseUnitInfo.call(this,u);if(!u)return;
-    if(M.Talents?.get(u)&&u.side!=='enemy')this.dom.infoBody.insertAdjacentHTML('beforeend',talentSummary(u));
+    if(M.Talents&&u.side!=='enemy')this.dom.infoBody.insertAdjacentHTML('beforeend',talentSummary(u));
     const guard=M.Talents?.guardBonus(u,this.game.map)||0;
     if(guard)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">天赋守护 · 守备／魔防＋'+guard+'</span>');
     const line=this.dom.infoBody.querySelector('.weapon-line');
-    if(line&&!u.weapon.cannotAttack)line.textContent+=' · '+(u.weapon.kind==='spell'?'剩余 '+u.spellUses[u.weaponId]+'/'+u.weapon.uses+' 次':'耐久 '+(u.inventory.find(i=>i.id===u.weaponId&&i.uses>0)?.uses||0)+'/'+u.weapon.uses);
-    const labels={defDown:'守备−5',spdDown:'速度−5',moveDown:'移动−5',talentResDown:'魔力打击 · 魔防−2',frostSpeedDown:'冰霜剑气 · 速度−3',silence:'沉默',ward:'魔防支援',poison:'中毒'};
-    for(const [id,n] of Object.entries(u.status))if(n&&id!=='frostFresh'&&!(M.Talents?.immune(u)&&['defDown','spdDown','moveDown','talentResDown','frostSpeedDown'].includes(id)))this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(labels[id]||id)+(id==='ward'?'＋'+n:id==='frostSpeedDown'?' · 剩余'+n+'回合':'')+'</span>');
+    if(line&&!u.weapon.cannotAttack)line.textContent+=' · '+(u.weapon.kind==='unarmed'?'空手 · 无耐久消耗':u.weapon.kind==='spell'?'剩余 '+u.spellUses[u.weaponId]+'/'+u.weapon.uses+' 次':'耐久 '+(u.inventory.find(i=>i.id===u.weaponId&&i.uses>0)?.uses||0)+'/'+u.weapon.uses);
+    const labels={masteryDance:'特殊舞蹈 · 技巧／速度／幸运＋4',masteryTransmute:'魔力转换 · 七项属性＋3',masterySealDef:'防守封锁 · 守备−6',masterySealRes:'魔防封锁 · 魔防−6',defDown:'守备−5',spdDown:'速度−5',moveDown:'移动−5',talentResDown:'魔力打击 · 魔防−2',frostSpeedDown:'冰霜剑气 · 速度−3',silence:'沉默',ward:'魔防支援',poison:'中毒'};
+    for(const [id,n] of Object.entries(u.status))if(n&&id!=='frostFresh'&&!(M.Talents?.immune(u)&&['defDown','spdDown','moveDown','talentResDown','frostSpeedDown','masterySealDef','masterySealRes'].includes(id)))this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(labels[id]||id)+(id==='ward'?'＋'+n:id==='frostSpeedDown'?' · 剩余'+n+'回合':'')+'</span>');
     if(u.equippedAccessory)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(I.item(u.equippedAccessory).name)+'</span>');
   };
   UP.renderActionSide=function(u){baseAction.call(this,u);
@@ -136,7 +138,7 @@
     if(this.busy||u.acted||!this.game.isPlayerPhase())return;
     const attacks=I.options(u),support=u.learnedSpells.filter(id=>Magic.get(id).support);
     this.openOverlay('<div class="modal-kicker">EQUIPMENT & MAGIC</div><h2 class="modal-title" id="overlay-title">'+esc(u.name)+' · 攻击与魔法</h2><p class="modal-sub">切换攻击不消耗行动；辅助魔法使用后结束行动。当前攻击将用于反击。</p><div class="battle-loadout-list">'+attacks.map(id=>{
-      const w=I.weapons[id],uses=w.kind==='spell'?u.spellUses[id]+' / '+w.uses+' 次':u.inventory.find(i=>i.id===id&&i.uses>0).uses+' 耐久';
+      const w=I.weapons[id],uses=w.kind==='unarmed'?'不限次数':w.kind==='spell'?u.spellUses[id]+' / '+w.uses+' 次':u.inventory.find(i=>i.id===id&&i.uses>0).uses+' 耐久';
       return '<button type="button" class="battle-loadout-row" data-attack-choice="'+id+'"><span class="bag-icon">'+icon(w)+'</span><span><strong>'+esc(w.name)+(id===u.weaponId?' · 当前攻击':'')+'</strong><small>'+esc(stats(w))+'</small></span><b>'+uses+'</b></button>';
     }).join('')+(attacks.length?'':'<p>没有可用的攻击手段。</p>')+'</div>'+(support.length?'<h3>辅助魔法</h3><div class="battle-loadout-list">'+support.map(id=>{const s=Magic.get(id),ts=this.game.supportTargets(u,id);return '<button type="button" class="battle-loadout-row" data-support-choice="'+id+'"'+(!ts.length?' disabled':'')+'><span class="bag-icon">'+icon(s)+'</span><span><strong>'+esc(s.name)+'</strong><small>'+esc(s.description)+'</small></span><b>'+u.spellUses[id]+'/'+s.uses+'</b></button>';}).join('')+'</div><p class="loadout-footnote">辅助按钮在有合适目标且有剩余次数时可用。</p>':'')+'<div class="modal-actions"><button class="modal-btn" data-overlay-close>返回行动</button></div>','loadout-modal',true);
     this.dom.overlayCard.querySelectorAll('[data-attack-choice]').forEach(b=>b.addEventListener('click',()=>{try{this.game.selectAttack(u,b.dataset.attackChoice);this.closeOverlay();this.enterActionMode();}catch(e){this.showToast(e.message,'error');}}));

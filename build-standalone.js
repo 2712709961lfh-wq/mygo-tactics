@@ -34,6 +34,7 @@ const SCRIPTS = [
   'src/codex-data.js',
   'src/inventory.js',
   'src/class-data.js',
+  'src/class-mastery.js',
   'src/config.js',
   'src/chapter-three.js',
   'src/chapter-four.js',
@@ -83,6 +84,7 @@ const SCRIPTS = [
   'src/equipment-ui.js',
   'src/entry.js',
   'src/loadout-ui.js',
+  'src/mastery-ui.js',
   'src/shop-ui.js',
   'src/main.js',
 ];

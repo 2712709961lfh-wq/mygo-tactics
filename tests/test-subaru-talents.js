@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('fs'),path=require('path'),vm=require('vm');
 const w={console,document:{readyState:'loading'},addEventListener(){}};w.window=w;vm.createContext(w);
-for(const name of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four',
+for(const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four',
   'chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','chapter-ten','rng','growth-data','talents',
   'growth','grid','pathfinding','combat','game','ui','entry','loadout-ui'])
   vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),w,{filename:name});

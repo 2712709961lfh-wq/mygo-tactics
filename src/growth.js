@@ -33,6 +33,7 @@
     u.growthGains=Object.fromEntries(keys.map(k=>[k,s.gains[k]]));
     for(const k of keys)u[k]=base.stats[k]+s.gains[k];
     u._talent1Bonus=0;u._talentBonuses={};M.Talents?.sync(u);
+    u._masteryBonuses={};M.Mastery?.sync(u);
     if(fullHp)u.hp=u.maxHp;
   }
   function rollLevel(u,rng){

@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('fs'),path=require('path'),vm=require('vm');
 const w={console,document:{readyState:'loading'},addEventListener(){}};w.window=w;vm.createContext(w);
-for(const name of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four',
+for(const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four',
   'chapter-five','chapter-six','chapter-seven','chapter-eight','rng','growth-data','talents','growth','grid','pathfinding',
   'combat','game','ui','entry','loadout-ui'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),w,{filename:name});
 const M=w.MyGO,T=M.Talents,C=M.Combat,G=M.Growth;let count=0;
@@ -63,8 +63,8 @@ test('队友守护仅作用于紧邻队友，移动、倒下、撤离即时失�
 });
 test('爆头只在弓箭出手时提供技巧+3，改变命中与暴击且不写入基础属性',()=>{
   const g=fixture(),u=level(g.getUnit('anon'),14);u.dex=10;u.lck=0;u.level=15;u.weapon=M.Inventory.weapons.iron_bow;
-  assert.equal(C.dexOf(u),13);assert.equal(C.hitOf(u),u.weapon.hit+13);assert.equal(C.critRateOf(u),6+u.weapon.crit);assert.equal(u.dex,10);
-  u.weapon=M.Inventory.weapons.iron_sword;assert.equal(C.dexOf(u),10);assert.equal(C.hitOf(u),u.weapon.hit+10);
+  assert.equal(C.dexOf(u),13);assert.equal(C.hitOf(u),u.weapon.hit+13+5);assert.equal(C.critRateOf(u),6+u.weapon.crit);assert.equal(u.dex,10);
+  u.weapon=M.Inventory.weapons.iron_sword;assert.equal(C.dexOf(u),10);assert.equal(C.hitOf(u),u.weapon.hit+10+5);
   u.weapon=M.Inventory.weapons.fire;assert.equal(C.dexOf(u),10);u.level=14;u.weapon=M.Inventory.weapons.iron_bow;assert.equal(C.dexOf(u),10);
 });
 function killFixture(reverse=false){

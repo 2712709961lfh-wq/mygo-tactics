@@ -100,7 +100,7 @@
   });
   function apply(u,id){
     const job=byId.get(id);if(!job)throw Error('未知职业');
-    u.classId=id;u.className=job.name;u.move=job.move;
+    u.combatArtId=null;u.classId=id;u.className=job.name;u.move=job.move;
     u.tags=u.tags.filter(t=>!['armor','flying','cavalry'].includes(t)).concat(job.tags);
     const names={sword:'剑',lance:'枪',axe:'斧',bow:'弓',gauntlet:'格斗'};
     u.weaponTypes=Object.keys(names).filter(k=>job.specialties.split('、').includes(names[k]));

@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('fs'),path=require('path'),vm=require('vm');
 const w={console,document:{readyState:'loading'},addEventListener(){}};w.window=w;vm.createContext(w);
-for(const name of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four',
+for(const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four',
   'chapter-five','chapter-six','chapter-seven','chapter-eight','rng','growth-data','talents','growth','grid','pathfinding',
   'combat','game','ui','entry','loadout-ui'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),w,{filename:name});
 const M=w.MyGO,T=M.Talents,C=M.Combat,G=M.Growth;let count=0;
@@ -25,7 +25,7 @@ test('八人20/25级分别觉醒一次，升级报告含正确天赋槽位',()=>
 test('固定能力奖励独立于随机成长，旧档、转职与跨章重建均不叠加',()=>{
   const g=game(),expected={xueyue:{spd:2},tomori:{spd:2},soyo:{mag:2,res:2},taki:{def:1,res:1},anon:{dex:2},rana:{dex:2},nina:{dex:2},nijika:{}};
   for(const id of Object.keys(T.data).filter(id=>g.getUnit(id))){
-    const u=level(g.getUnit(id),25);for(const k of M.GrowthData.keys)assert.equal(u[k],u.growthBase.stats[k]+u.growthGains[k]+(expected[id][k]||0),id+'/'+k);
+    const u=level(g.getUnit(id),25);for(const k of M.GrowthData.keys)assert.equal(u[k],u.growthBase.stats[k]+u.growthGains[k]+(expected[id][k]||0)+(k==='dex'?1:0),id+'/'+k);
     for(let n=0;n<3;n++)T.sync(u);
   }
   const save=JSON.parse(JSON.stringify(g.serialize())),h=game();
@@ -130,7 +130,7 @@ test('三档天赋全部显示等级与锁定状态，未指定角色和敌人�
   const g=game(),u=level(g.getUnit('tomori'),20),ctx={loadoutTab:'growth',players:()=>[u],selectedUnitId:u.id,dom:{formationDetail:{innerHTML:''}},renderPoseDock(){}};
   M.EntryScreen.prototype.renderFormationDetail.call(ctx);const html=ctx.dom.formationDetail.innerHTML;
   for(const s of ['个人天赋1','个人天赋2','个人天赋3','Lv.20觉醒','Lv.25觉醒','有在努力','勇气赞歌','未觉醒','已觉醒'])assert(html.includes(s),s);
-  assert.equal(T.list(g.getUnit('xueyue')).length,3);
+  assert.equal(T.list(g.getUnit('xueyue')).length,4);
   assert(T.list({id:'xueyue',side:'enemy',level:99}).every(t=>!t.active));
 });
 console.log(count+' advanced talent tests passed.');

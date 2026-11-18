@@ -5045,6 +5045,18 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 .class-card>small {display:block;margin:4px 0 10px;font:11px Georgia,serif;color:#928060}
 .class-card p {margin:5px 0;font-size:12px;line-height:1.75;overflow-wrap:anywhere}
 .class-card footer {border-top:1px solid #a48a5835;margin-top:10px;padding-top:8px;font-size:11px;line-height:1.7;color:#847253}
+.mastery-exp {margin:12px 0;padding:12px 14px;border-color:#9a784d88;background:#b69a5d12}
+.mastery-exp strong {font:15px SimSun,serif;letter-spacing:1px}
+.mastery-exp>div:first-child {flex-wrap:wrap;gap:6px}
+.mastery-track i {background:linear-gradient(90deg,#8d7449,#bc9e59);transition:width .25s ease}
+.mastery-rewards {display:block!important;margin-top:10px;padding-top:9px;border-top:1px solid #a48a5845}
+.mastery-rewards>strong {font-size:12px;color:#68744e}
+.mastery-rewards p {font-size:11px;line-height:1.8}
+.mastery-rewards small {color:#8a795a}
+.mastery-skill-list {display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:12px 0 20px}
+.mastery-unlock {padding:12px 16px;margin:12px 0;border:1px solid #ae8c48;background:#bfa25b1a;color:#614b2d}
+.mastery-unlock h4 {margin:0 0 10px;color:#68744e}
+.mastery-unlock p {line-height:1.9;font-size:13px}
 .class-badge {flex:none;font-size:10px;color:#5b6b44;border:1px solid #7c8a5c88;padding:3px 5px}
 
   </style>
@@ -5088,7 +5100,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.16.1</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.18.0</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -5838,16 +5850,17 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   }
   function usable(u,w=u.weapon){
     if(!w||w.cannotAttack||w.support)return false;
+    if(w.id==='mastery_unarmed')return !!M.Mastery?.canUnarmed(u);
     if(w.kind==='spell')return magicAllowed(u)&&!(u.status?.silence)&&u.learnedSpells.includes(w.id)&&(u.spellUses[w.id]||0)>0;
     if(!u.inventory)return true; // Pure combat fixtures may supply standalone weapons.
     return u.inventory.some(i=>i.id===w.id&&i.uses>0);
   }
   function options(u){return [...new Set([...u.inventory.filter(i=>i.uses>0&&canEquip(u,weapons[i.id])).map(i=>i.id),
-    ...u.learnedSpells.filter(id=>magicAllowed(u)&&!Magic.get(id).support&&u.spellUses[id]>0&&!u.status?.silence)])];}
+    ...(M.Mastery?.canUnarmed(u)?['mastery_unarmed']:[]),...u.learnedSpells.filter(id=>magicAllowed(u)&&!Magic.get(id).support&&u.spellUses[id]>0&&!u.status?.silence)])];}
   function sync(u){
     let id=u.equippedWeapon;
     if(!options(u).includes(id))id=options(u)[0]||'unarmed';
-    u.equippedWeapon=id;u.weaponId=id;u.weapon=weapons[id]||unarmed;
+    u.equippedWeapon=id;u.weaponId=id;u.weapon=(id==='mastery_unarmed'?M.Mastery?.unarmed:weapons[id])||unarmed;
     if(u.weapon.kind==='spell'){
       const range=Magic.rangeOf(u.weapon,u);
       if(range.some((n,i)=>n!==u.weapon.range[i]))u.weapon={...u.weapon,range};
@@ -5866,12 +5879,20 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     u.spellUses=Object.fromEntries(u.learnedSpells.map(id=>[id,Magic.get(id).uses]));
     u.status={};u.equippedWeapon=w.id;u.equippedAccessory=null;learn(u);sync(u);
   }
-  function consume(u,id,preserved=false){
+  function consume(u,id,preserved=false,count=1){
+    if(id==='mastery_unarmed')return;
+    if(!Number.isInteger(count)||count<1)throw Error('耐久消耗无效');
+    if(count>1){
+      const slots=u.inventory.filter(i=>i.id===id&&i.uses>0);
+      if(slots.reduce((n,i)=>n+i.uses,0)<count)throw Error('武器耐久不足');
+      if(!preserved)for(const slot of slots){const n=Math.min(count,slot.uses);slot.uses-=n;count-=n;}return;
+    }
     if(Magic.get(id)){if(!(u.spellUses[id]>0))throw Error('魔法次数不足');if(!preserved)u.spellUses[id]--;}
     else {const i=u.inventory.find(i=>i.id===id&&i.uses>0);if(!i)throw Error('武器耐久不足');if(!preserved)i.uses--;}
   }
   function copy(u){return {...u,inventory:u.inventory?.map(i=>({...i})),learnedSpells:u.learnedSpells?.slice(),spellUses:{...u.spellUses},status:{...u.status},gear:{...u.gear}};}
   function pack(u){return{inventory:u.inventory.map(i=>({...i})),equippedWeapon:u.equippedWeapon,equippedAccessory:u.equippedAccessory,
+    classMastery:M.Mastery?.pack(u),stolenDrops:(u.stolenDrops||[]).slice(),
     classState:{version:1,id:u.classId,certified:(u.certifiedClasses||[u.classId]).filter(Boolean)},mageTrained:!!u.mageTrained,
     learnedSpells:u.learnedSpells.slice(),spellUses:{...u.spellUses},status:{...u.status}};}
   function validateBag(bag,max=5){
@@ -5882,6 +5903,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function restore(u,s,refresh){
     if(!s||!Array.isArray(s.inventory))return;
     u.inventory=validateBag(s.inventory);
+    const stolen=s.stolenDrops??[],authoredDrops=[...new Set([...(u.drops||[]),...(u.stolenDrops||[])])];
+    if(!Array.isArray(stolen)||stolen.some(id=>!authoredDrops.includes(id))||new Set(stolen).size!==stolen.length)throw Error('存档偷窃记录无效');
+    u.stolenDrops=stolen.slice();u.drops=authoredDrops.filter(id=>!stolen.includes(id));
     if(s.mageTrained!==undefined&&typeof s.mageTrained!=='boolean')throw Error('存档魔法训练无效');
     u.mageTrained=!!s.mageTrained||u.id==='soyo'||!!M.Classes?.get(u.classId)?.magic;
     learn(u);
@@ -5890,7 +5914,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     if(s.learnedSpells.some(id=>!u.learnedSpells.includes(id)&&!(u.id==='soyo'&&retiredSoyoSpells.has(id))))throw Error('角色尚未学会该魔法');
     for(const id of u.learnedSpells){const n=s.spellUses?.[id];if(n!==undefined&&(!Number.isInteger(n)||n<0||n>Magic.get(id).uses))throw Error('存档魔法次数无效');u.spellUses[id]=refresh?Magic.get(id).uses:(n??Magic.get(id).uses);}
     u.equippedWeapon=s.equippedWeapon;u.equippedAccessory=s.equippedAccessory;
-    u.status={};if(!refresh)for(const k of ['defDown','spdDown','moveDown','silence','ward','poison','talentResDown']){const n=s.status?.[k];if(Number.isInteger(n)&&n>0&&n<=7)u.status[k]=n;}
+    u.status={};if(!refresh)for(const k of ['defDown','spdDown','moveDown','silence','ward','poison','talentResDown','masteryDance','masteryTransmute','masterySealDef','masterySealRes']){const n=s.status?.[k];if(Number.isInteger(n)&&n>0&&n<=7)u.status[k]=n;}
     if(!refresh){
       const turns=s.status?.frostSpeedDown,fresh=s.status?.frostFresh;
       if((turns!==undefined&&![1,2].includes(turns))||(fresh!==undefined&&(fresh!==1||turns===undefined)))throw Error('存档冰霜剑气状态无效');
@@ -5901,7 +5925,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     sync(u);
   }
   function stock(){return [...Array.from({length:25},()=>make('vulnerary')),...['iron_sword','iron_lance','iron_axe','iron_bow','iron_gauntlets'].map(make)];}
-  function equip(u,index){const i=u.inventory[index],e=i&&item(i.id);if(!e)throw Error('背包物品不存在');
+  function equip(u,index){u.combatArtId=null;const i=u.inventory[index],e=i&&item(i.id);if(!e)throw Error('背包物品不存在');
     if(e.kind==='key')throw Error('钥匙需在对应门旁使用');
     if(e.kind==='consumable'||e.kind==='seal')throw Error('该物品需要使用，不能装备');
     if(e.kind==='weapon'){if(!canEquip(u,e))throw Error('当前职业不能装备此类武器');if(i.uses<=0)throw Error('该武器已损坏');u.equippedWeapon=i.id;
@@ -5909,7 +5933,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const first=u.inventory.findIndex(a=>a.id===i.id);[u.inventory[first],u.inventory[index]]=[u.inventory[index],u.inventory[first]];
     }else u.equippedAccessory=u.equippedAccessory===i.id?null:i.id;sync(u);
   }
-  function select(u,id){if(!options(u).includes(id))throw Error('攻击手段不可用');u.equippedWeapon=id;sync(u);}
+  function select(u,id){u.combatArtId=null;if(!options(u).includes(id))throw Error('攻击手段不可用');u.equippedWeapon=id;sync(u);}
   function useEffects(a,b,s,damage,hit){
     if(!hit||!s)return 0;
     if(['defDown','spdDown','moveDown','silence'].includes(s.effect)&&!(s.effect!=='silence'&&M.Talents?.immune(b)))b.status[s.effect]=1;
@@ -6046,7 +6070,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   });
   function apply(u,id){
     const job=byId.get(id);if(!job)throw Error('未知职业');
-    u.classId=id;u.className=job.name;u.move=job.move;
+    u.combatArtId=null;u.classId=id;u.className=job.name;u.move=job.move;
     u.tags=u.tags.filter(t=>!['armor','flying','cavalry'].includes(t)).concat(job.tags);
     const names={sword:'剑',lance:'枪',axe:'斧',bow:'弓',gauntlet:'格斗'};
     u.weaponTypes=Object.keys(names).filter(k=>job.specialties.split('、').includes(names[k]));
@@ -6078,6 +6102,197 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     get:id => byId.get(id) || null,
     query:tier => items.filter(item => !tier || item.tier === tier)
   });
+})(window);
+
+  </script>
+  <script>
+/* ===== src/class-mastery.js ===== */
+/* Class mastery facts and executable rewards. Sources and adaptations: docs/CLASS-MASTERY.md. */
+(function(global){
+  'use strict';
+  const M=global.MyGO;
+  const abilities={},arts={},jobs={};
+  function ability(id,name,description,stats){abilities[id]=Object.freeze({id,name,description,stats:stats?Object.freeze(stats):null,kind:'ability'});}
+  function art(id,name,description,options){arts[id]=Object.freeze({id,name,description,kind:'art',...options});}
+  ability('hp5','HP上限＋5','生命上限＋5；平民与贵族的同名奖励只计算一次。',{maxHp:5});
+  for(const [id,name,key] of [['speed2','速度＋2','spd'],['defense2','防守＋2','def'],['strength2','力量＋2','str'],['magic2','魔力＋2','mag']])ability(id,name,name+'。',{[key]:2});
+  ability('special_dance','特殊舞蹈','使用舞蹈后，目标技巧、速度、幸运＋4，持续至当前我方阶段结束。');
+  ability('vantage','埋伏','HP低于50%，受敌攻击且能反击时，抢先反击。');
+  ability('steal','偷窃','可偷取相邻、速度低于自己的敌人的非武器、非魔法物品；占用一次行动。');
+  ability('armored_blow','金刚一击','主动发起交战时守备＋6。');
+  ability('unarmed_combat','空手格斗','可选择不消耗耐久的空手格斗；骑乘与飞行职业不能使用。');
+  ability('desperation','强攻','HP低于50%，主动交战且可以追击时，追击提前至敌人反击之前。');
+  ability('death_blow','鬼神一击','主动发起交战时力量＋6。');
+  ability('hit20','命中＋20','所有攻击命中＋20。');
+  ability('fiendish_blow','魔神一击','主动发起交战时魔力＋6。');
+  ability('poison_strike','蛇毒','主动交战命中存活敌人后，使其损失20%生命上限的HP；不会致死。');
+  ability('miracle','祈祷','HP至少2时，受到致命伤害以幸运％概率保留1 HP。');
+  ability('darting_blow','飞燕一击','主动发起交战时攻速＋6。');
+  for(const [id,name,key,label] of [['defiant_str','力量觉醒','str','力量'],['defiant_def','防守觉醒','def','守备'],['defiant_spd','速度觉醒','spd','速度'],['defiant_mag','魔力觉醒','mag','魔力'],['defiant_res','魔防觉醒','res','魔防']])ability(id,name,'HP低于25%时'+label+'＋8。');
+  ability('lethality','灭杀','命中后，以技巧×0.25％概率直接击倒普通敌人；首领、魔物与剧情保护单位免疫。');
+  ability('pavise','大盾','受剑、枪、斧或格斗攻击时，以技巧％概率将本次伤害减半。');
+  ability('aegis','圣盾','受弓或魔法攻击时，以技巧％概率将本次伤害减半。');
+  ability('seal_defense','防守封锁','交战造成伤害后，目标守备−6，持续至目标下一次所属阶段结束。');
+  ability('wrath','愤怒','HP低于50%且受敌攻击时，必杀＋50。');
+  ability('tomebreaker','破魔者','使用格斗对抗魔法时，命中与回避＋20。');
+  ability('bowbreaker','破弓者','使用魔法对抗弓时，命中与回避＋20。');
+  ability('lifetaker','生命吸收','击破敌人后，回复本次实际伤害50%的HP。');
+  ability('renewal','回复','我方阶段开始时回复20%生命上限的HP。');
+  ability('defiant_avoid','回避觉醒','HP低于25%时回避＋30。');
+  ability('defiant_crit','必杀觉醒','HP低于25%时必杀＋50。');
+  ability('warding_blow','明镜一击','主动发起交战时魔防＋6。');
+  ability('quick_riposte','回击','HP高于50%且受敌攻击时，自身必定追击，并阻止敌人的普通追击。');
+  ability('seal_resistance','魔防封锁','交战造成伤害后，目标魔防−6，持续至目标下一次所属阶段结束。');
+  ability('duelists_blow','清流一击','主动发起交战时回避＋20。');
+  ability('brawl_avoid','格斗回避＋20','使用格斗武器或空手格斗时回避＋20。');
+  ability('transmute','魔力转换','敌方阶段受到命中的魔法攻击后，力量、魔力、技巧、速度、幸运、守备、魔防＋3，持续至下一次我方阶段结束。');
+  ability('uncanny_blow','慧眼一击','主动发起交战时命中＋30。');
+  art('reposition','带回','将相邻同伴移到自身另一侧的相邻格。',{assist:true,range:1});
+  art('shove','冲撞','将相邻同伴向远离自己的方向推1格。',{assist:true,range:1});
+  art('draw_back','拉近','自己后退1格，并将相邻同伴拉到原来所在格。',{assist:true,range:1});
+  art('smite','重击','将相邻同伴向远离自己的方向推2格；全程须可通行。',{assist:true,range:1});
+  art('triangle_attack','三角攻阵','目标周围有包含自己在内的3名我方飞行单位时可用；威力＋8、命中＋30、必杀＋40。',{type:'lance',cost:3,might:8,hit:30,crit:40,range:[1,1]});
+  art('astra','流星','剑连续攻击5次，每击伤害为通常伤害的30%；不能普通追击。',{type:'sword',cost:9,hits:5,factor:.3,exclusive:['swordmaster'],range:[1,1]});
+  art('assassinate','暗杀','剑战技，命中＋15；命中后以技巧％概率击倒普通敌人，首领免疫。',{type:'sword',cost:4,hit:15,exclusive:['assassin'],range:[1,1]});
+  art('hunters_volley','猎箭齐发','弓连续攻击2次；威力＋1、命中＋15、必杀＋10，射程2–3。',{type:'bow',cost:5,hits:2,might:1,hit:15,crit:10,exclusive:['sniper'],range:[2,3]});
+  art('fierce_iron_fist','猛烈铁拳','格斗连续攻击3次；威力＋1、必杀＋10。',{type:'gauntlet',cost:5,hits:3,might:1,crit:10,exclusive:['grappler'],range:[1,1]});
+  art('war_masters_strike','战鬼一击','斧战技，威力＋3、命中＋30，对所有敌人具有武器威力特效。',{type:'axe',cost:5,might:3,hit:30,effective:true,exclusive:['war_master'],range:[1,1]});
+  art('foul_play','移形换位','与1–5格内的一名同伴交换位置，双方落点须可通行。',{assist:true,range:5,exclusive:['trickster']});
+  art('pneuma_gale','猛烈气旋','格斗魔法攻击，威力＋7、命中＋10，射程1–2。',{type:'gauntlet',cost:3,might:7,hit:10,magic:true,exclusive:['war_monk','war_cleric'],range:[1,2]});
+  const rows={
+    commoner:['hp5'],noble:['hp5'],myrmidon:['speed2'],soldier:['defense2','reposition'],fighter:['strength2','shove'],monk:['magic2','draw_back'],
+    dancer:['special_dance'],mercenary:['vantage'],thief:['steal'],armored_knight:['armored_blow','smite'],cavalier:['desperation'],brigand:['death_blow'],archer:['hit20'],brawler:['unarmed_combat'],mage:['fiendish_blow'],dark_mage:['poison_strike'],priest:['miracle'],pegasus_knight:['darting_blow','triangle_attack'],
+    hero:['defiant_str'],swordmaster:['astra'],assassin:['lethality','assassinate'],fortress_knight:['pavise'],paladin:['aegis'],wyvern_rider:['seal_defense'],warrior:['wrath'],sniper:['hunters_volley'],grappler:['tomebreaker','fierce_iron_fist'],warlock:['bowbreaker'],dark_bishop:['lifetaker'],bishop:['renewal'],
+    falcon_knight:['defiant_avoid'],wyvern_lord:['defiant_crit'],mortal_savant:['warding_blow'],great_knight:['defiant_def'],bow_knight:['defiant_spd'],dark_knight:['seal_resistance'],holy_knight:['defiant_res'],gremory:['defiant_mag'],war_master:['quick_riposte','war_masters_strike'],trickster:['duelists_blow','foul_play'],war_monk:['brawl_avoid','pneuma_gale'],war_cleric:['brawl_avoid','pneuma_gale'],dark_flier:['transmute'],valkyrie:['uncanny_blow']
+  };
+  for(const job of M.Classes.items){const required=job.id==='dancer'||job.dlc?150:({base:20,beginner:60,intermediate:100,advanced:150,master:200})[job.tier];
+    jobs[job.id]=Object.freeze({id:job.id,required,rewards:Object.freeze(rows[job.id].map(id=>abilities[id]||arts[id]))});}
+  Object.freeze(abilities);Object.freeze(arts);Object.freeze(jobs);
+  function get(id){return jobs[id]||null;}
+  function progress(u,id=u?.classId){const j=get(id);if(!j)return null;const xp=u.classXp?.[id]||0;return {...j,xp,mastered:xp>=j.required};}
+  function learned(u){return [...new Set(Object.keys(u?.classXp||{}).filter(id=>get(id)&&u.classXp[id]>=get(id).required).flatMap(id=>get(id).rewards.map(r=>r.id)))];}
+  function has(u,id){return u?.side!=='enemy'&&!!u?.masteryEquipped?.includes(id);}
+  function sync(u){
+    const before=u._masteryBonuses||{},next={};
+    for(const id of u.masteryEquipped||[])for(const [k,n] of Object.entries(abilities[id]?.stats||{}))next[k]=(next[k]||0)+n;
+    for(const k of new Set([...Object.keys(before),...Object.keys(next)]))u[k]+=(next[k]||0)-(before[k]||0);
+    u._masteryBonuses=next;u.hp=Math.min(u.hp,u.maxHp);
+  }
+  function init(u){u.classXp={};u.masteryEquipped=[];u.combatArtId=null;u._masteryBonuses={};}
+  function pack(u){return {version:1,xp:{...u.classXp},equipped:(u.masteryEquipped||[]).slice()};}
+  function restore(u,s,fullHp=false){
+    if(s===undefined){u.classXp={};u.masteryEquipped=[];sync(u);return;}
+    if(!s||s.version!==1||!s.xp||typeof s.xp!=='object'||Array.isArray(s.xp)||!Array.isArray(s.equipped)||s.equipped.length>5||new Set(s.equipped).size!==s.equipped.length)throw Error('存档职业专精数据无效');
+    for(const [id,xp] of Object.entries(s.xp))if(!get(id)||!(u.certifiedClasses||[]).includes(id)||!Number.isInteger(xp)||xp<0||xp>get(id).required||u.side==='enemy'&&xp)throw Error('存档职业经验无效');
+    u.classXp={...s.xp};const known=learned(u);
+    if(s.equipped.some(id=>!abilities[id]||!known.includes(id)))throw Error('存档专精技能未习得');
+    u.masteryEquipped=s.equipped.slice();sync(u);if(fullHp)u.hp=u.maxHp;
+  }
+  function equip(u,id){
+    if(!abilities[id]||!learned(u).includes(id))throw Error('尚未习得该职业技能');
+    if(has(u,id))u.masteryEquipped=u.masteryEquipped.filter(x=>x!==id);
+    else{if(u.masteryEquipped.length>=5)throw Error('最多装备5个职业专精技能，请先卸下一个');u.masteryEquipped.push(id);}
+    u.combatArtId=null;sync(u);M.Inventory.sync(u);
+  }
+  function award(u,amount=1){
+    const p=progress(u);if(!p||p.mastered||u.side!=='player'||!Number.isInteger(amount)||amount<=0)return null;
+    const known=learned(u),xp=Math.min(p.required,p.xp+amount);u.classXp[u.classId]=xp;
+    const unlocked=learned(u).filter(id=>!known.includes(id));
+    for(const id of unlocked)if(abilities[id]&&u.masteryEquipped.length<5)u.masteryEquipped.push(id);
+    sync(u);M.Inventory.sync(u);
+    return {classId:u.classId,className:u.className,before:p.xp,xp,required:p.required,gained:xp-p.xp,mastered:xp===p.required,unlocked,autoEquipped:unlocked.filter(id=>has(u,id))};
+  }
+  function attachReport(u,report,mastery){
+    if(!mastery)return report;
+    return {...(report||{unitId:u.id,name:u.name,gained:0,before:{level:u.level,exp:u.exp,required:M.Growth.required(u.level)},after:{level:u.level,exp:u.exp,required:M.Growth.required(u.level)},levels:[]}),mastery};
+  }
+  function bonus(u,key,context={},foe){
+    const initiates=context.initiatorId===u.id;let n=0;
+    if(u.hp<u.maxHp/4){if(['str','mag','spd','def','res'].includes(key)&&has(u,'defiant_'+key))n+=8;if(key==='avoid'&&has(u,'defiant_avoid'))n+=30;if(key==='crit'&&has(u,'defiant_crit'))n+=50;}
+    if(initiates){if(key==='str'&&has(u,'death_blow'))n+=6;if(key==='mag'&&has(u,'fiendish_blow'))n+=6;if(key==='def'&&has(u,'armored_blow'))n+=6;if(key==='res'&&has(u,'warding_blow'))n+=6;if(key==='as'&&has(u,'darting_blow'))n+=6;if(key==='avoid'&&has(u,'duelists_blow'))n+=20;if(key==='hit'&&has(u,'uncanny_blow'))n+=30;}
+    if(key==='hit'&&has(u,'hit20'))n+=20;
+    if(key==='avoid'&&has(u,'brawl_avoid')&&u.weapon?.type==='gauntlet')n+=20;
+    if(key==='crit'&&!initiates&&context.initiatorId&&u.hp<u.maxHp/2&&has(u,'wrath'))n+=50;
+    const breaks=foe&&((has(u,'tomebreaker')&&u.weapon?.type==='gauntlet'&&M.Combat.damageTypeOf(foe.weapon)==='magic')||(has(u,'bowbreaker')&&M.Combat.damageTypeOf(u.weapon)==='magic'&&foe.weapon?.type==='bow'));
+    if(breaks&&['hit','avoid'].includes(key))n+=20;
+    if(u.status?.masteryDance&&['dex','spd','lck'].includes(key))n+=4;
+    if(u.status?.masteryTransmute&&['str','mag','dex','spd','lck','def','res'].includes(key))n+=3;
+    return n;
+  }
+  function canUnarmed(u){return has(u,'unarmed_combat')&&!u.tags?.some(t=>['cavalry','flying'].includes(t));}
+  const unarmed=Object.freeze({id:'mastery_unarmed',name:'空手格斗',kind:'unarmed',type:'gauntlet',range:[1,1],might:0,hit:80,crit:0,weight:0,damageType:'physical',absoluteHit:true,uses:null,color:'#c8b8a4'});
+  M.Inventory.weapons.mastery_unarmed=unarmed;
+  function availableArts(u){return learned(u).filter(id=>arts[id]&&(!arts[id].exclusive||arts[id].exclusive.includes(u.classId))).map(id=>arts[id]);}
+  function selectedArt(u){const a=arts[u?.combatArtId];return a&&!a.assist&&availableArts(u).some(r=>r.id===a.id)&&u.weapon?.type===a.type&&u.weapon?.kind!=='unarmed'?a:null;}
+  function artReason(u,id){const a=arts[id];if(!a||!availableArts(u).some(r=>r.id===id))return '未习得或当前职业不能使用此战技';if(a.assist)return '';
+    if(u.weapon?.type!==a.type||u.weapon.kind==='unarmed'||u.weapon.kind==='spell')return '需要装备对应类别的实体武器';
+    if((u.inventory||[]).filter(i=>i.id===u.weapon.id).reduce((n,i)=>n+i.uses,0)<a.cost)return '武器耐久不足（需要'+a.cost+'）';return '';
+  }
+  function rangeOf(u){return selectedArt(u)?.range||u.weapon.range;}
+  function targetReason(u,t,map){const a=selectedArt(u);if(!a)return '';if(artReason(u,a.id))return artReason(u,a.id);
+    if(a.id==='triangle_attack'&&(map.units||[]).filter(f=>f.side===u.side&&!f.dead&&f.hp>0&&!f.escaped&&f.tags?.includes('flying')&&M.Grid.manhattan(f,t)===1).length<3)return '三角攻阵需要3名我方飞行单位相邻目标';return '';
+  }
+  function immuneKill(u){return u.boss||u.hpFloor>0||u.key||u.tags?.includes('monster');}
+  function strikeEffects(a,b,strike,rng,art){
+    strike.masteryProcs=[];
+    if(!strike.hit)return;
+    const dex=M.Combat.dexOf(a),luck=(b.lck||0)+bonus(b,'lck');
+    let instant=false;
+    if(!immuneKill(b)){
+      if(has(a,'lethality')&&rng.int(1,400)<=dex){instant=true;strike.masteryProcs.push('灭杀');}
+      else if(art?.id==='assassinate'&&rng.int(1,100)<=dex){instant=true;strike.masteryProcs.push('暗杀');}
+      if(instant)strike.finalDamage=b.hp;
+    }
+    if(!instant&&(has(b,'pavise')&&['sword','lance','axe','gauntlet'].includes(strike.weaponType)&&!strike.magic||has(b,'aegis')&&(strike.weaponType==='bow'||strike.magic))&&rng.int(1,100)<=M.Combat.dexOf(b)){
+      strike.finalDamage=Math.floor(strike.finalDamage/2);strike.masteryProcs.push(strike.magic||strike.weaponType==='bow'?'圣盾':'大盾');}
+    if(has(b,'miracle')&&b.hp>=2&&strike.finalDamage>=b.hp&&rng.int(1,100)<=luck){strike.finalDamage=b.hp-1;strike.masteryProcs.push('祈祷');}
+    strike.hpAfter=Math.max(b.hpFloor||0,b.hp-strike.finalDamage);
+    strike.masteryHealing=has(a,'lifetaker')&&strike.hpAfter===0?Math.min(a.maxHp-a.hp,Math.floor(Math.min(b.hp,strike.finalDamage)/2)):0;
+    a.hp+=strike.masteryHealing;
+  }
+  function afterBattle(units,strikes,initiatorId){
+    const effects=[];
+    for(const a of units){const outgoing=strikes.filter(s=>s.attackerId===a.id&&s.hit),targets=[...new Set(outgoing.map(s=>s.defenderId))];
+      for(const id of targets){const b=units.find(u=>u.id===id);if(!b||b.hp<=0||b.hpFloor&&b.hp===b.hpFloor)continue;
+        const status={};const damaged=outgoing.some(s=>s.defenderId===id&&s.finalDamage>0);
+        if(damaged&&!M.Talents?.immune(b)){if(has(a,'seal_defense'))status.masterySealDef=1;if(has(a,'seal_resistance'))status.masterySealRes=1;}
+        if(has(b,'transmute')&&units.find(u=>u.id===initiatorId)?.side==='enemy'&&outgoing.some(s=>s.defenderId===id&&s.magic))status.masteryTransmute=1;
+        const damage=a.id===initiatorId&&has(a,'poison_strike')?Math.min(Math.max(0,b.hp-Math.max(1,b.hpFloor||0)),Math.floor(b.maxHp*.2)):0;
+        if(damage||Object.keys(status).length){b.hp-=damage;Object.assign(b.status,status);effects.push({id:b.id,damage,status});}
+      }
+    }return effects;
+  }
+  function applyEffects(game,effects){for(const e of effects||[]){const u=game.getUnit(e.id);if(!u||u.dead)continue;u.hp=Math.max(u.hpFloor||1,u.hp-e.damage);Object.assign(u.status,e.status);}}
+  function startTurn(u){let healed=0;if(has(u,'renewal')){healed=Math.min(u.maxHp-u.hp,Math.floor(u.maxHp*.2));u.hp+=healed;}u.combatArtId=null;return healed;}
+  function endTurn(u){for(const k of ['masteryDance','masteryTransmute','masterySealDef','masterySealRes'])delete u.status[k];u.combatArtId=null;}
+  // Assist arts validate all traversed and destination cells before any mutation.
+  function assistMoves(game,u,t,id){
+    const dx=t.x-u.x,dy=t.y-u.y,empty=(unit,x,y,ignore=[])=>M.Grid.inBounds(game.map,x,y)&&game.isVisible(x,y)&&Number.isFinite(M.Grid.movementCost(game.map,unit,x,y))&&(!game.unitAt(x,y)||ignore.includes(game.unitAt(x,y).id));
+    if(id==='foul_play')return empty(u,t.x,t.y,[t.id])&&empty(t,u.x,u.y,[u.id])?[{id:u.id,x:t.x,y:t.y},{id:t.id,x:u.x,y:u.y}]:null;
+    if(id==='draw_back')return empty(u,u.x-dx,u.y-dy)&&empty(t,u.x,u.y,[u.id])?[{id:u.id,x:u.x-dx,y:u.y-dy},{id:t.id,x:u.x,y:u.y}]:null;
+    if(id==='reposition')return empty(t,u.x-dx,u.y-dy)?[{id:t.id,x:u.x-dx,y:u.y-dy}]:null;
+    const length=id==='smite'?2:1;for(let n=1;n<=length;n++)if(!empty(t,t.x+dx*n,t.y+dy*n))return null;
+    return [{id:t.id,x:t.x+dx*length,y:t.y+dy*length}];
+  }
+  function actionReady(game,u){return !!u&&u.side==='player'&&!u.dead&&u.hp>0&&!u.escaped&&!u.acted&&game.phase==='player'&&!game.isOver()&&!game.maskRetreatPending;}
+  function assistTargets(game,u,id){
+    if(!actionReady(game,u))return [];
+    if(id==='dance'){if(u.classId!=='dancer')return [];return game.living('player').filter(t=>t.id!==u.id&&!t.escaped&&t.classId!=='dancer'&&t.acted&&M.Grid.manhattan(u,t)===1);}
+    if(id==='steal'){if(!has(u,'steal')||u.inventory.length>=5)return [];return game.living('enemy').filter(t=>game.isUnitVisible(t)&&M.Grid.manhattan(u,t)===1&&M.Combat.speedOf(u)>M.Combat.speedOf(t)&&stealable(t).length);}
+    const a=arts[id];if(!a?.assist||artReason(u,id))return [];
+    return game.living('player').filter(t=>t.id!==u.id&&!t.escaped&&M.Grid.manhattan(u,t)>=1&&M.Grid.manhattan(u,t)<=a.range&&assistMoves(game,u,t,id));
+  }
+  function stealable(u){return u.inventory.filter(i=>!['weapon'].includes(M.Inventory.item(i.id)?.kind));}
+  function useAssist(game,u,t,id,itemIndex){
+    if(!assistTargets(game,u,id).some(x=>x.id===t?.id))throw Error('战技目标无效或无法行动');
+    let moves=[];
+    if(id==='dance'){t.acted=false;t.talentSwapReady=false;if(has(u,'special_dance'))t.status.masteryDance=1;}
+    else if(id==='steal'){const i=t.inventory[itemIndex];if(!i||!stealable(t).includes(i))throw Error('该物品不可偷取');u.inventory.push(t.inventory.splice(itemIndex,1)[0]);if(t.drops?.includes(i.id)){t.drops=t.drops.filter(id=>id!==i.id);t.stolenDrops=[...(t.stolenDrops||[]),i.id];}M.Inventory.sync(t);}
+    else {moves=assistMoves(game,u,t,id);for(const p of moves){const unit=game.getUnit(p.id);unit.x=p.x;unit.y=p.y;}game.refreshParkDiscovery();}
+    game.markActed(u);u.combatArtId=null;M.Inventory.sync(u);
+    const report=attachReport(u,null,award(u));return {affected:[u.id,t.id],moves,experience:report?[report]:[]};
+  }
+  M.Mastery=Object.freeze({abilities,arts,jobs,get,progress,learned,has,sync,init,pack,restore,equip,award,attachReport,bonus,canUnarmed,unarmed,availableArts,selectedArt,artReason,rangeOf,targetReason,strikeEffects,afterBattle,applyEffects,startTurn,endTurn,assistTargets,useAssist,stealable});
 })(window);
 
   </script>
@@ -8100,7 +8315,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   </script>
   <script>
 /* ===== src/talents.js ===== */
-/* Three personal talent slots, derived from level rather than saved unlock flags. */
+/* A shared level-10 talent and three personal slots, derived from level. */
 (function(global){
   'use strict';
   const M=global.MyGO=global.MyGO||{};
@@ -8116,7 +8331,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     nina:{name:'战斗爽',description:'每击败一个敌人回复5 HP，不超过生命上限；反击击破同样生效。'},
     nijika:{name:'同心',description:'施放治疗魔法时，自身回复目标实际恢复的HP；群体治疗按实际回复总量计算，不超过自身生命上限。'}
   };
-  const levels=[0,15,20,25];
+  const common=Object.freeze({name:'掌握战斗',description:'命中＋5、技巧＋1。技巧计入基础属性，命中加成适用于所有攻击、反击与追击。',stats:Object.freeze({dex:1})});
+  const levels=[10,15,20,25];
   const data2={
     subaru:{name:'魔力延伸',description:'伤害型魔法最大射程＋1，最小射程不变；不影响辅助魔法或魔法武器。'},
     xueyue:{name:'疾风',description:'速度＋2。',stats:{spd:2}},
@@ -8144,9 +8360,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     for(const t of Object.values(catalogue)){if(t.stats)Object.freeze(t.stats);Object.freeze(t);}
     Object.freeze(catalogue);
   }
-  function get(u,slot=1){return catalogues[slot]?.[typeof u==='string'?u:u?.id]||null;}
+  function get(u,slot=1){
+    const id=typeof u==='string'?u:u?.id;
+    return slot===0?(M.GrowthData?.personal[id]||data[id]?common:null):catalogues[slot]?.[id]||null;
+  }
   function active(u,slot=1){return !!get(u,slot)&&u.side!=='enemy'&&u.level>=levels[slot];}
-  function list(u){return [1,2,3].filter(slot=>get(u,slot)).map(slot=>({slot,level:levels[slot],...get(u,slot),active:active(u,slot)}));}
+  function list(u){return [0,1,2,3].filter(slot=>get(u,slot)).map(slot=>({slot,level:levels[slot],...get(u,slot),active:active(u,slot)}));}
   // Permanent stat bonuses are separate from random growth. Reconstructing a
   // save from base + gains derives the bonus once, never accumulating on reload.
   function sync(u){
@@ -8155,7 +8374,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     for(const k of new Set([...Object.keys(before),...Object.keys(next)]))u[k]+=(next[k]||0)-(before[k]||0);
     u._talentBonuses=next;u._talent1Bonus=active(u)&&first?.stat?first.amount:0;
     // Cleanse legacy stat penalties as soon as Haqi awakens or a save is read.
-    if(immune(u)&&u.status)for(const k of ['defDown','spdDown','moveDown','talentResDown','frostSpeedDown','frostFresh'])delete u.status[k];
+    if(immune(u)&&u.status)for(const k of ['defDown','spdDown','moveDown','talentResDown','frostSpeedDown','frostFresh','masterySealDef','masterySealRes'])delete u.status[k];
   }
   function immune(u){return active(u,2)&&u.id==='rana';}
   function penalty(u,key,amount){return immune(u)?0:(u.status?.[key]?amount:0);}
@@ -8170,6 +8389,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function preserveUse(u,kind,rng){return canPreserve(u,kind)&&rng.int(1,100)<=25;}
   function healingAmount(u,s,amount){return active(u,3)&&u.id==='nijika'&&healingSpell(s)?Math.ceil(amount*6/5):amount;}
   function dexBonus(u){return active(u)&&u.id==='anon'&&u.weapon?.type==='bow'?3:0;}
+  function hitBonus(u){return active(u,0)?5:0;}
   function avoidBonus(u){return active(u)&&u.id==='rana'?5:0;}
   function guardBonus(u,map){
     if(!u||u.dead||u.hp<=0||u.escaped)return 0;
@@ -8216,8 +8436,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     return active(u)&&u.id==='nijika'&&['heal','fortify'].includes(spell.effect)?
       heal(u,changes.reduce((sum,c)=>sum+Math.max(0,c.amount||0),0)):0;
   }
-  M.Talents=Object.freeze({LEVEL,data,data2,data3,levels:Object.freeze(levels),get,active,list,sync,immune,penalty,experience,
-    healingSpell,rangeBonus,canPreserve,preserveUse,healingAmount,dexBonus,avoidBonus,guardBonus,bond,strBonus,counterFactor,afterMagic,afterDamage,expireFrost,onKill,onAngel,onSupport});
+  M.Talents=Object.freeze({LEVEL,common,data,data2,data3,levels:Object.freeze(levels),get,active,list,sync,immune,penalty,experience,
+    healingSpell,rangeBonus,canPreserve,preserveUse,healingAmount,dexBonus,hitBonus,avoidBonus,guardBonus,bond,strBonus,counterFactor,afterMagic,afterDamage,expireFrost,onKill,onAngel,onSupport});
 })(window);
 
   </script>
@@ -8258,6 +8478,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     u.growthGains=Object.fromEntries(keys.map(k=>[k,s.gains[k]]));
     for(const k of keys)u[k]=base.stats[k]+s.gains[k];
     u._talent1Bonus=0;u._talentBonuses={};M.Talents?.sync(u);
+    u._masteryBonuses={};M.Mastery?.sync(u);
     if(fullHp)u.hp=u.maxHp;
   }
   function rollLevel(u,rng){
@@ -8528,7 +8749,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     if(!MyGO.Inventory.usable(unit))return [];
     const ox = origin ? origin.x : unit.x;
     const oy = origin ? origin.y : unit.y;
-    const [minRange, maxRange] = unit.weapon.range;
+    const [minRange, maxRange] = MyGO.Mastery?.rangeOf(unit)||unit.weapon.range;
     const tiles = [];
     for (let y = 0; y < map.rows; y++) {
       for (let x = 0; x < map.cols; x++) {
@@ -8546,7 +8767,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function canAttackFrom(attacker, x, y, target) {
     if (!MyGO.Inventory.usable(attacker) || attacker.escaped || !target || target.dead || target.escaped || !Grid.hostile(target, attacker)) return false;
     const d = Math.abs(target.x - x) + Math.abs(target.y - y);
-    const [minRange, maxRange] = attacker.weapon.range;
+    const [minRange, maxRange] = MyGO.Mastery?.rangeOf(attacker)||attacker.weapon.range;
     return d >= minRange && d <= maxRange;
   }
 
@@ -8655,18 +8876,18 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   }
 
   /** 展示用闪避值（地形闪避 + 速度回避）。 */
-  function avoidOf(unit, map) {
+  function avoidOf(unit, map,context={},foe) {
     const terrain = terrainOf(unit, map);
-    return Math.floor(speedOf(unit) * C.COMBAT.speedAvoidFactor) + terrain.avoid + (unit.gear?.avoid||0) + (MyGO.Talents?.avoidBonus(unit)||0);
+    return Math.floor(speedOf(unit,context) * C.COMBAT.speedAvoidFactor) + terrain.avoid + (unit.gear?.avoid||0) + (MyGO.Talents?.avoidBonus(unit)||0)+(MyGO.Mastery?.bonus(unit,'avoid',context,foe)||0);
   }
 
   /** 风花雪月：技巧和幸运共同产生暴击，防守方幸运抵消暴击。 */
-  function critRateOf(unit) {
-    return Math.floor((dexOf(unit) + (unit.lck || 0)) / 2) + (unit.weapon.crit || 0) + (unit.gear?.crit||0);
+  function critRateOf(unit,context={}) {
+    return Math.floor((dexOf(unit) + ((unit.lck || 0)+(MyGO.Mastery?.bonus(unit,'lck',context)||0))) / 2) + (unit.weapon.crit || 0) + (unit.gear?.crit||0)+(MyGO.Mastery?.bonus(unit,'crit',context)||0);
   }
 
   function critAvoidOf(unit) {
-    return unit.lck || 0;
+    return (unit.lck || 0)+(MyGO.Mastery?.bonus(unit,'lck')||0);
   }
 
   /** 九项基础属性之和：HP 用上限，排除等级、派生概率及武器/地形加成。 */
@@ -8678,14 +8899,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   /** 风花雪月攻速：武器重量与辅助装备重量共同参与计算。 */
   function attackSpeedOf(unit,map,context) {
     const weight = (unit.weapon.weight || 0) + (unit.equipmentWeight || 0);
-    return Math.max(0, speedOf(unit) - Math.max(0, weight - Math.floor(strOf(unit,map,context) / 5)));
+    return Math.max(0, speedOf(unit,context)+(MyGO.Mastery?.bonus(unit,'as',context)||0) - Math.max(0, weight - Math.floor(strOf(unit,map,context) / 5)));
   }
 
   function penalty(u,key,amount){return MyGO.Talents?.penalty(u,key,amount)??(u.status?.[key]?amount:0);}
-  function speedOf(u){return Math.max(0,u.spd+(u.gear?.spd||0)-Math.max(penalty(u,'spdDown',5),penalty(u,'frostSpeedDown',3)));}
-  function strOf(u,map,context){return (u.str||0)+(MyGO.Talents?.strBonus(u,map,context)||0);}
-  function dexOf(u){return (u.dex||0)+(MyGO.Talents?.dexBonus(u)||0);}
-  function hitOf(u){return (u.weapon.absoluteHit?(u.weapon.damageType==='magic'?Math.floor((dexOf(u)+(u.lck||0))/2):dexOf(u)):(u.hit||0)+(MyGO.Talents?.dexBonus(u)||0))+(u.weapon.hit||0)+(u.gear?.hit||0);}
+  function speedOf(u,context={}){return Math.max(0,u.spd+(u.gear?.spd||0)+(MyGO.Mastery?.bonus(u,'spd',context)||0)-Math.max(penalty(u,'spdDown',5),penalty(u,'frostSpeedDown',3)));}
+  function strOf(u,map,context){return (u.str||0)+(MyGO.Talents?.strBonus(u,map,context)||0)+(MyGO.Mastery?.bonus(u,'str',context)||0);}
+  function dexOf(u){return (u.dex||0)+(MyGO.Talents?.dexBonus(u)||0)+(MyGO.Mastery?.bonus(u,'dex')||0);}
+  function hitOf(u,context={},foe){return (u.weapon.absoluteHit?(u.weapon.damageType==='magic'?Math.floor((dexOf(u)+(u.lck||0)+(MyGO.Mastery?.bonus(u,'lck')||0))/2):dexOf(u)):(u.hit||0)+(MyGO.Talents?.dexBonus(u)||0))+(u.weapon.hit||0)+(u.gear?.hit||0)+(MyGO.Talents?.hitBonus(u)||0)+(MyGO.Mastery?.bonus(u,'hit',context,foe)||0);}
 
   function counterReason(attacker, defender) {
     if (!defender || defender.dead || defender.hp <= 0) return '单位已被击倒';
@@ -8704,18 +8925,24 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     const reason = counterReason(attacker, defender);
     const counter = reason ? null : preview(defender, attacker, map,context);
     const attackSpeed = attackSpeedOf(attacker,map,context), defenderAttackSpeed = attackSpeedOf(defender,map,context);
+    const art=MyGO.Mastery?.selectedArt(attacker);
     const order = [{attackerId:attacker.id, defenderId:defender.id, kind:'attack'}];
-    if (attacker.weapon.brave || attacker.weapon.type === 'gauntlet') order.push({attackerId:attacker.id, defenderId:defender.id, kind:'combo'});
-    if (counter) order.push({attackerId:defender.id, defenderId:attacker.id, kind:'counter'});
-    if (!attacker.weapon.noFollowup && attackSpeed - defenderAttackSpeed >= 4) {
-      order.push({attackerId:attacker.id, defenderId:defender.id, kind:'followup'});
-      if (attacker.weapon.brave || attacker.weapon.type === 'gauntlet') order.push({attackerId:attacker.id, defenderId:defender.id, kind:'combo'});
-    }
-    else if (counter && !defender.weapon.noFollowup && defenderAttackSpeed - attackSpeed >= 4) order.push({attackerId:defender.id, defenderId:attacker.id, kind:'followup'});
-    const remaining=u=>u.weapon.kind==='spell'?(u.spellUses?.[u.weapon.id]||0):u.inventory?u.inventory.filter(i=>i.id===u.weapon.id).reduce((n,i)=>n+i.uses,0):99;
+    const quick=MyGO.Mastery?.has(defender,'quick_riposte')&&defender.hp>defender.maxHp/2;
+    const vantage=counter&&MyGO.Mastery?.has(defender,'vantage')&&defender.hp<defender.maxHp/2;
+    const attackerFollow=!art&&!quick&&!attacker.weapon.noFollowup&&attackSpeed-defenderAttackSpeed>=4;
+    const defenderFollow=counter&&!defender.weapon.noFollowup&&(quick||defenderAttackSpeed-attackSpeed>=4);
+    if(art){for(let n=1;n<(art.hits||1);n++)order.push({attackerId:attacker.id,defenderId:defender.id,kind:'combat-art'});}
+    else if(attacker.weapon.brave||attacker.weapon.type==='gauntlet')order.push({attackerId:attacker.id,defenderId:defender.id,kind:'combo'});
+    const follow=[];
+    if(attackerFollow){follow.push({attackerId:attacker.id,defenderId:defender.id,kind:'followup'});if(attacker.weapon.brave||attacker.weapon.type==='gauntlet')follow.push({attackerId:attacker.id,defenderId:defender.id,kind:'combo'});}
+    if(counter){const response={attackerId:defender.id,defenderId:attacker.id,kind:'counter'};if(vantage)order.unshift(response);else if(MyGO.Mastery?.has(attacker,'desperation')&&attacker.hp<attacker.maxHp/2&&attackerFollow){order.push(...follow);follow.length=0;order.push(response);}else order.push(response);}
+    order.push(...follow);
+    if(defenderFollow)order.push({attackerId:defender.id,defenderId:attacker.id,kind:'followup'});
+    const remaining=u=>u.weapon.kind==='unarmed'?99:u.weapon.kind==='spell'?(u.spellUses?.[u.weapon.id]||0):u.inventory?u.inventory.filter(i=>i.id===u.weapon.id).reduce((n,i)=>n+i.uses,0):99;
     const counts={};
     const executable=order.filter(step=>{
       const u=step.attackerId===attacker.id?attacker:defender;counts[u.id]=(counts[u.id]||0)+1;
+      if(art&&u.id===attacker.id)return !MyGO.Mastery.artReason(u,art.id);
       if(counts[u.id]<=remaining(u))return true;
       if(remaining(u)>0&&MyGO.Talents?.canPreserve(u,u.weapon.kind)){step.resourceConditional=true;return true;}
       return false;
@@ -8727,18 +8954,24 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   /** 锁定整场结果，在虚拟 HP 上逐击掷骰，确认前不修改任何真实单位。 */
   function rollRound(attacker, defender, map, rng) {
-    const plan = forecast(attacker, defender, map);
+    const plan = forecast(attacker, defender, map),art=MyGO.Mastery?.selectedArt(attacker);
+    if(MyGO.Mastery?.targetReason(attacker,defender,map))throw Error(MyGO.Mastery.targetReason(attacker,defender,map));
     const units = new Map([...(map.units||[]),attacker,defender].map(u=>[u.id,MyGO.Inventory.copy(u)]));
     const battleMap={...map,units:[...units.values()]};
-    const strikes = [];
+    const strikes = [];let artPaid=false;
+    if(units.get(defender.id))units.get(defender.id).combatArtId=null;
     for (const step of plan.order) {
       const a = units.get(step.attackerId), b = units.get(step.defenderId);
       if (a.hp <= 0 || b.hp <= 0) break;
-      if(!MyGO.Inventory.usable(a))continue;
+      if(!(art&&a.id===attacker.id&&artPaid)&&!MyGO.Inventory.usable(a))continue;
       const strike = {...roll(preview(a,b,battleMap,{initiatorId:attacker.id}),rng), kind:step.kind,
         attackerHp:a.hp, attackerMaxHp:a.maxHp,resourceId:a.inventory?a.weapon.id:null,weaponSnapshot:a.weapon};
+      const usingArt=art&&a.id===attacker.id;
+      if(usingArt){strike.combatArtId=art.id;strike.resourceCost=artPaid?0:art.cost;if(artPaid)strike.resourceId=null;}
+      MyGO.Mastery?.strikeEffects(a,b,strike,rng,usingArt?art:null);
       strike.resourcePreserved=!!(a.inventory&&MyGO.Talents?.preserveUse(a,a.weapon.kind,rng));
-      if(a.inventory)MyGO.Inventory.consume(a,a.weapon.id,strike.resourcePreserved);
+      if(a.inventory&&strike.resourceId)MyGO.Inventory.consume(a,a.weapon.id,strike.resourcePreserved,strike.resourceCost||1);
+      if(usingArt)artPaid=true;
       strike.healed=MyGO.Inventory.useEffects(a,b,MyGO.Magic.get(a.weapon.id),strike.finalDamage,strike.hit);
       strike.talentHealed=MyGO.Talents?.onKill(a,b,strike.hit&&strike.hpAfter<=0)||0;
       b.hp = strike.hpAfter;
@@ -8750,8 +8983,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       strikes.push(strike);
       if(b.hpFloor&&b.hp===b.hpFloor&&strike.finalDamage>0){strike.retreatTriggered=true;break;}
     }
+    const masteryEffects=MyGO.Mastery?.afterBattle([units.get(attacker.id),units.get(defender.id)],strikes,attacker.id)||[];
     const outgoing = strikes.filter(s=>s.attackerId===attacker.id);
-    return {...strikes[0], strikes, forecast:plan, applied:false,
+    return {...strikes[0], attackerId:attacker.id,defenderId:defender.id,attackerName:attacker.name,defenderName:defender.name,attackerSide:attacker.side,defenderSide:defender.side,defenderHp:defender.hp,defenderMaxHp:defender.maxHp,strikes,masteryEffects,forecast:plan, applied:false,
       finalDamage:outgoing.reduce((n,s)=>n+s.finalDamage,0),
       counterDamage:strikes.filter(s=>s.attackerId===defender.id).reduce((n,s)=>n+s.finalDamage,0),
       hit:outgoing.some(s=>s.hit), crit:outgoing.some(s=>s.crit),
@@ -8772,32 +9006,33 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     const dw = defender.weapon;
     const triangle = triangleAgainst(aw, dw);
     const terrain = terrainOf(defender, map);
-    const damageType = damageTypeOf(aw);
+    const art=context.initiatorId===attacker.id?MyGO.Mastery?.selectedArt(attacker):null;
+    const damageType = art?.magic?'magic':damageTypeOf(aw);
     const magic = damageType === 'magic';
 
     // ① 武器威力：威力 × 三角克制 × 有效特攻，四舍五入为整数。
     const triMultiplier = triangleMultiplier(triangle);
-    const effectiveness = effectivenessAgainst(aw, defender);
-    const weaponPower = Math.round(aw.might * triMultiplier * effectiveness);
+    const effectiveness = art?.effective?3:effectivenessAgainst(aw, defender);
+    const weaponPower = Math.round((aw.might+(art?.might||0)) * triMultiplier * effectiveness);
 
     // ② 攻击力：对应属性 + 武器威力 + 技能/骑士团等固定修正。
     //    当前角色 atkMod 均为 0，后续加技能时直接写入该字段即可。
-    const atkStat = magic ? (attacker.mag || 0) : strOf(attacker,map,context);
+    const atkStat = magic ? (attacker.mag || 0)+(MyGO.Mastery?.bonus(attacker,'mag',context)||0) : strOf(attacker,map,context);
     const attackMod = (attacker.atkMod || 0) + (aw.atkMod || 0) + (magic ? attacker.gear?.magic||0 : 0);
     const attack = atkStat + weaponPower + attackMod;
 
     // ③ 防守：物理吃守备和山地，魔法只吃魔防。
     const terrainDef = magic ? 0 : terrain.def;
-    const defense = magic&&aw.ignoreRes?0:defenseOf(defender,map,magic);
+    const defense = magic&&aw.ignoreRes?0:defenseOf(defender,map,magic,context);
     const damageFactor=MyGO.Talents?.counterFactor(attacker,defender,context)||1;
     const baseDamage = Math.max(C.COMBAT.minDamage, attack - defense);
-    const damage = Math.floor(baseDamage*(damageFactor===0.8?4:5)/5);
-    const critDamage = Math.floor(baseDamage*C.COMBAT.critMultiplier*(damageFactor===0.8?4:5)/5);
+    const damage = Math.floor(baseDamage*(damageFactor===0.8?4:5)/5*(art?.factor||1));
+    const critDamage = Math.floor(baseDamage*C.COMBAT.critMultiplier*(damageFactor===0.8?4:5)/5*(art?.factor||1));
 
-    const targetAvoid = avoidOf(defender,map);
-    const rawHit = hitOf(attacker) + triangle * C.TRIANGLE_BONUS.hit - targetAvoid;
+    const targetAvoid = avoidOf(defender,map,context,attacker);
+    const rawHit = hitOf(attacker,context,defender)+(art?.hit||0) + triangle * C.TRIANGLE_BONUS.hit - targetAvoid;
     const hit = clamp(rawHit, C.COMBAT.minHit, C.COMBAT.maxHit);
-    const baseCrit = critRateOf(attacker);
+    const baseCrit = critRateOf(attacker,context)+(art?.crit||0);
     const targetCritAvoid = critAvoidOf(defender);
     const crit = clamp(baseCrit - targetCritAvoid, 0, 100);
 
@@ -8808,7 +9043,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       defenderName: defender.name,
       attackerSide: attacker.side,
       defenderSide: defender.side,
-      weaponName: aw.name,
+      weaponName: aw.name+(art?' · '+art.name:''),
+      combatArtId:art?.id||null,
       weaponType: aw.type,
       weaponTypeName: C.TRIANGLE[aw.type] ? C.TRIANGLE[aw.type].name : (magic ? '魔' : '弓'),
       triangle,
@@ -8878,10 +9114,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   }
 
   /** 返回某单位站上当前地形后的防御值，供信息面板展示。 */
-  function defenseOf(unit, map, magic) {
+  function defenseOf(unit, map, magic,context={}) {
     const terrain = terrainOf(unit, map);
     const guard=MyGO.Talents?.guardBonus(unit,map)||0;
-    return magic ? Math.max(0,unit.res+(unit.gear?.res||0)+(unit.status?.ward||0)+guard-penalty(unit,'talentResDown',2)) : Math.max(0,unit.def+(unit.gear?.def||0)+guard-penalty(unit,'defDown',5)) + terrain.def;
+    return magic ? Math.max(0,unit.res+(unit.gear?.res||0)+(unit.status?.ward||0)+guard+(MyGO.Mastery?.bonus(unit,'res',context)||0)-Math.max(penalty(unit,'talentResDown',2),penalty(unit,'masterySealRes',6))) : Math.max(0,unit.def+(unit.gear?.def||0)+guard+(MyGO.Mastery?.bonus(unit,'def',context)||0)-Math.max(penalty(unit,'defDown',5),penalty(unit,'masterySealDef',6))) + terrain.def;
   }
 
   MyGO.Combat = {
@@ -9046,6 +9282,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     for(const id of template.carriedItems||[])unit.inventory.push(MyGO.Inventory.make(id));
     MyGO.Growth.init(unit);
     unit.certifiedClasses=[unit.classId].filter(Boolean);
+    MyGO.Mastery?.init(unit);
     return unit;
   }
 
@@ -9168,7 +9405,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(data.convoy)this.convoy=MyGO.Inventory.validateBag(data.convoy,500);
       this.collectReservedLoot();
       this.restoreEconomy(data.economy);
-      for(const saved of data.units||[]){const u=this.getUnit(saved.id);if(u&&u.side==='player'){MyGO.Growth.restore(u,saved.growth,true);MyGO.Classes.restore(u,saved.classState);MyGO.Inventory.restore(u,saved,true);}}
+      for(const saved of data.units||[]){const u=this.getUnit(saved.id);if(u&&u.side==='player'){MyGO.Growth.restore(u,saved.growth,true);MyGO.Classes.restore(u,saved.classState);MyGO.Mastery?.restore(u,saved.classMastery,true);MyGO.Inventory.restore(u,saved,true);}}
     }
 
     packEconomy(){return {version:1,gold:this.gold,chapter:this.shopChapter,purchases:{...this.shopPurchases},rewarded:this.rewardedChapters.slice()};}
@@ -9217,6 +9454,20 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(!unit.dead&&unit.acted&&this.phase!=='victory')return '该角色已行动，请在下回合转职';
       return '';
     }
+
+    equipMasterySkill(unit,id){
+      const reason=this.reclassLockReason(unit);if(reason)throw Error(reason);
+      MyGO.Mastery.equip(unit,id);
+    }
+
+    selectCombatArt(unit,id){
+      if(this.phase!=='player'||!unit||unit.side!=='player'||unit.dead||unit.acted||unit.escaped||this.isOver())throw Error('该角色现在无法选择战技');
+      const reason=MyGO.Mastery.artReason(unit,id);if(reason)throw Error(reason);
+      if(MyGO.Mastery.arts[id].assist)throw Error('辅助战技需选择同伴目标');
+      unit.combatArtId=id;
+    }
+
+    useMasteryAssist(unit,target,id,index){return MyGO.Mastery.useAssist(this,unit,target,id,index);}
 
     reclassReason(unit,id){
       const reason=this.reclassLockReason(unit),job=MyGO.Classes.get(id);if(reason)return reason;
@@ -9293,7 +9544,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const r=MyGO.Magic.rangeOf(s,caster),d=u=>Grid.manhattan(caster,u);
       if(s.effect==='silence')return this.units.filter(u=>!u.dead&&Grid.hostile(u,caster)&&(caster.side!=='player'||this.isUnitVisible(u))&&u.learnedSpells.length&&d(u)>=r[0]&&d(u)<=r[1]&&!u.status.silence);
       return this.living().filter(u=>!Grid.hostile(u,caster)&&u.id!==caster.id&&d(u)>0&&d(u)<=(s.effect==='warp'?1:r[1])&&
-        (['heal','fortify'].includes(s.effect)?u.hp<u.maxHp:s.effect==='restore'?['defDown','spdDown','moveDown','silence','talentResDown','frostSpeedDown'].some(k=>u.status[k]):
+        (['heal','fortify'].includes(s.effect)?u.hp<u.maxHp:s.effect==='restore'?['defDown','spdDown','moveDown','silence','talentResDown','frostSpeedDown','masterySealDef','masterySealRes'].some(k=>u.status[k]):
         s.effect==='rescue'?this.supportDestinations(caster,spellId,u).length>0:s.effect==='ward'?!(u.status.ward>=7):true));
     }
 
@@ -9321,7 +9572,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const changes=[];
       for(const u of affected){
         if(['heal','fortify'].includes(s.effect)){const amount=Math.min(u.maxHp-u.hp,MyGO.Magic.healAmount(s,caster));u.hp+=amount;changes.push({id:u.id,amount});}
-        if(s.effect==='restore')for(const k of ['defDown','spdDown','moveDown','silence','talentResDown','frostSpeedDown','frostFresh'])delete u.status[k];
+        if(s.effect==='restore')for(const k of ['defDown','spdDown','moveDown','silence','talentResDown','frostSpeedDown','frostFresh','masterySealDef','masterySealRes'])delete u.status[k];
         if(s.effect==='ward')u.status.ward=7;
         if(s.effect==='silence'){u.status.silence=1;this.alertGroup(u);}
         if(['warp','rescue'].includes(s.effect))this.setUnitPosition(u.id,destination.x,destination.y);
@@ -9330,13 +9581,15 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const talentHealing=MyGO.Talents?.onSupport(caster,s,changes)||0;
       if(talentHealing)changes.push({id:caster.id,amount:talentHealing,talent:'同心'});
       this.markActed(caster);MyGO.Inventory.sync(caster);
-      const growth=MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
+      let growth=MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
+      if(MyGO.Mastery)growth=MyGO.Mastery.attachReport(caster,growth,MyGO.Mastery.award(caster));
       return {spell:s,changes,talentHealing,resourcePreserved,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
     }
 
     expireStatuses(side) {
       for(const u of this.living(side)){
         for(const k of ['defDown','spdDown','moveDown','silence'])delete u.status[k];
+        MyGO.Mastery?.endTurn(u);
         MyGO.Talents?.expireFrost(u);
         MyGO.Inventory.sync(u);
       }
@@ -9569,7 +9822,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(this.maskRetreatPending||unit.escaped)return [];
       const x = fromX == null ? unit.x : fromX;
       const y = fromY == null ? unit.y : fromY;
-      return Pathfinding.getTargetsInRange(unit, this.units, x, y).filter(u=>unit.side!=='player'||this.isUnitVisible(u));
+      return Pathfinding.getTargetsInRange(unit, this.units, x, y).filter(u=>(unit.side!=='player'||this.isUnitVisible(u))&&!MyGO.Mastery?.targetReason(unit,u,this.map));
     }
 
     /** 攻击范围格子（用于高亮）。 */
@@ -9606,6 +9859,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         !target.dead && !target.escaped && !attacker.escaped && !this.maskRetreatPending &&
         (attacker.side!=='player'||this.isUnitVisible(target)) &&
         Grid.hostile(attacker, target) &&
+        !(MyGO.Mastery?.targetReason(attacker,target,this.map)) &&
         Pathfinding.canAttackFrom(attacker, attacker.x, attacker.y, target)
       );
     }
@@ -9626,7 +9880,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
     markActed(unit,attacked=false) {
       if(!unit)return;
-      unit.talentAttacked=!!unit.talentAttacked||attacked;
+      unit.combatArtId=null;unit.talentAttacked=!!unit.talentAttacked||attacked;
       if(!unit.acted)unit.talentSwapReady=unit.id==='anon'&&!!MyGO.Talents?.active(unit,3)&&!unit.talentAttacked;
       unit.acted=true;
     }
@@ -9875,6 +10129,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         result.hpBeforeApply = result.defenderHp;
         result.killed = result.strikes.some(s=>s.applied && s.killed && s.defenderId===result.defenderId);
         result.attackerKilled = result.strikes.some(s=>s.applied && s.killed && s.defenderId===result.attackerId);
+        MyGO.Mastery?.applyEffects(this,result.masteryEffects);
+        if(initiator)initiator.combatArtId=null;
         result.experience=this.awardCombatExperience(result.strikes,participants);
         result.hpAfterApply = this.getUnit(result.defenderId)?.hp;
         result.attackerHpAfterApply = this.getUnit(result.attackerId)?.hp;
@@ -9891,9 +10147,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       }
       const participants=[attacker,defender].filter(Boolean).map(u=>({...u}));
       if(result.resourceId && attacker) {
-        MyGO.Inventory.consume(attacker,result.resourceId,result.resourcePreserved);
+        MyGO.Inventory.consume(attacker,result.resourceId,result.resourcePreserved,result.resourceCost||1);
         MyGO.Inventory.useEffects(attacker,defender,MyGO.Magic.get(result.resourceId),result.finalDamage,result.hit);
       }
+      if(attacker&&result.masteryHealing)attacker.hp=Math.min(attacker.maxHp,attacker.hp+result.masteryHealing);
       const before = defender.hp;
       this.alertGroup(defender);
       defender.hp = Math.max(defender.hpFloor||0, before - result.finalDamage);
@@ -9941,13 +10198,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const reports=[];
       for(const before of participants){
         const u=this.getUnit(before.id),enemy=participants.find(p=>Grid.hostile(p,before));
-        if(!MyGO.Growth.eligible(u)||!enemy)continue;
+        if(!u||!enemy||u.side!=='player'||before.dead||!strikes.some(s=>s.applied))continue;
         const outgoing=strikes.filter(s=>s.applied&&s.attackerId===u.id&&s.defenderId===enemy.id);
         const damage=outgoing.reduce((n,s)=>n+Math.max(0,s.hpBeforeApply-s.hpAfterApply),0);
         const killed=outgoing.some(s=>s.killed);
         const amount=MyGO.Growth.combatExp(before,enemy,damage,killed);
         const bonus=this.stage===4&&u.id==='soyo'&&enemy.id==='dark_soyo'&&killed;
-        const report=MyGO.Growth.award(u,amount,bonus?2:1);
+        let report=MyGO.Growth.award(u,amount,bonus?2:1);
+        if(MyGO.Mastery)report=MyGO.Mastery.attachReport(u,report,MyGO.Mastery.award(u));
         if(bonus)this.soyoBossBonus=true;
         if(report){if(bonus)report.bonus='直面过去 · 击破经验 ×2';reports.push(report);}
       }
@@ -9990,6 +10248,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.phase = 'enemy';
       this.refreshAlerts();
       this.resetActed('enemy');
+      for(const u of this.living('enemy'))MyGO.Mastery?.startTurn(u);
       return true;
     }
 
@@ -10021,6 +10280,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.phase = 'player';
       this.resetActed('player');
       this.lastHealing=[];
+      for(const u of this.living('player')){const amount=MyGO.Mastery?.startTurn(u)||0;if(amount)this.lastHealing.push({id:u.id,amount});}
       for(const unit of this.living('player')) {
         if(this.getTerrain(unit.x,unit.y).id!=='fort') continue;
         const amount=Math.min(unit.maxHp-unit.hp, Math.ceil(unit.maxHp*.2));
@@ -10274,6 +10534,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           }else if(unit.level<C.NIJIKA.level)throw Error('虹夏存档等级无效');
         }else MyGO.Growth.restore(unit,saved.growth);
         MyGO.Classes.restore(unit,saved.classState);
+        MyGO.Mastery?.restore(unit,saved.classMastery);
         if(!Number.isFinite(Grid.movementCost(this.map,unit,saved.x,saved.y)))throw Error('存档停留在阻挡地形');
         unit.hp = Math.max(0, Math.min(unit.maxHp, Number(saved.hp) || 0));
         if([9,10].includes(this.stage)){
@@ -18798,6 +19059,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
       for (const strike of applied.strikes.filter(s=>s.applied)) {
         const target = this.game.getUnit(strike.defenderId);
+        if(strike.masteryProcs?.length)this.renderer.floatText(strike.masteryProcs.join(' · '),target.x,target.y-0.8,'#dfc992',11);
+        if(strike.masteryHealing){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('生命吸收 +'+strike.masteryHealing,actor.x,actor.y-0.5,'#bcebd7',11);}
         if(strike.talentHealed){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('战斗爽 +'+strike.talentHealed,actor.x,actor.y-0.5,'#bcebd7',11);}
         if(strike.resourcePreserved){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('爱笑女孩 · 未消耗次数',actor.x,actor.y-0.8,'#f5d7eb',10);}
         if(strike.angel){
@@ -18836,15 +19099,16 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(!reports?.length)return;
       for(const report of reports){const u=this.game.getUnit(report.unitId);
         if(report.bonus)this.showToast(report.bonus+' · EXP +'+report.gained,'success',5000);
-        this.renderer.floatText('EXP +'+report.gained,u.x,u.y-0.6,'#d5e6aa',10);}
-      const leveled=reports.filter(r=>r.levels.length);
+        if(report.gained)this.renderer.floatText('EXP +'+report.gained,u.x,u.y-0.6,'#d5e6aa',10);
+        if(report.mastery)this.renderer.floatText('职业经验 +'+report.mastery.gained,u.x,u.y-0.9,'#dfc992',10);}
+      const leveled=reports.filter(r=>r.levels.length||r.mastery?.unlocked?.length);
       if(!leveled.length)return;
       this.updateAll();
       await new Promise(resolve=>{
         this.openOverlay('<div class="modal-kicker">LEVEL UP / GROWTH</div><h2 class="modal-title" id="overlay-title">成长的足迹</h2>'+
-          leveled.map(r=>'<section class="growth-level"><h3>'+esc(r.name)+' <span>Lv.'+r.before.level+' → Lv.'+r.after.level+'</span></h3><p>经验 +'+r.gained+' · '+(r.after.level>=99?'已达最高等级':r.after.exp+' / '+r.after.required+' EXP')+'</p>'+
-            r.levels.map(l=>'<div class="growth-level-grid">'+MyGO.GrowthData.keys.map(k=>'<div class="'+(l.after[k]>l.before[k]?'is-up':'')+'"><span>'+MyGO.GrowthData.labels[k]+'</span><strong>'+l.before[k]+' → '+l.after[k]+'</strong><b>'+(l.after[k]!==l.before[k]?'+'+(l.after[k]-l.before[k]):'—')+'</b></div>').join('')+'</div>'+(l.awakened?'<p class="learned-spells-notice">个人天赋'+(l.awakened.slot||1)+'觉醒：'+esc(l.awakened.name)+' · '+esc(l.awakened.description)+'</p>':'')+(l.learned?.length?'<p class="learned-spells-notice">新习得：'+l.learned.map(id=>esc(MyGO.Magic.get(id).name)).join('、')+'</p>':'')).join('')+'</section>').join('')+
-          '<p class="modal-sub">属性提升已生效，成长结果会随存档与跨章保留。</p><div class="modal-actions"><button class="modal-btn primary" data-confirm>继续前行</button></div>','growth-modal',false);
+          leveled.map(r=>'<section class="growth-level"><h3>'+esc(r.name)+' <span>'+(r.levels.length?'Lv.'+r.before.level+' → Lv.'+r.after.level:'职业专精达成')+'</span></h3><p>经验 +'+r.gained+' · '+(r.after.level>=99?'已达最高等级':r.after.exp+' / '+r.after.required+' EXP')+'</p>'+(r.mastery?.unlocked?.length?'<div class="mastery-unlock"><h4>'+esc(r.mastery.className)+' · 职业经验 '+r.mastery.xp+'/'+r.mastery.required+'</h4>'+r.mastery.unlocked.map(id=>{const skill=MyGO.Mastery.abilities[id]||MyGO.Mastery.arts[id];return '<p><strong>习得 '+esc(skill.name)+'</strong> · '+(skill.kind==='art'?'战技'+(skill.exclusive?' · 职业限定':''):(r.mastery.autoEquipped.includes(id)?'已自动装备':'技能栏已满，请到职业专精页装备'))+'<br>'+esc(skill.description)+'</p>';}).join('')+'</div>':'')+
+            r.levels.map(l=>'<div class="growth-level-grid">'+MyGO.GrowthData.keys.map(k=>'<div class="'+(l.after[k]>l.before[k]?'is-up':'')+'"><span>'+MyGO.GrowthData.labels[k]+'</span><strong>'+l.before[k]+' → '+l.after[k]+'</strong><b>'+(l.after[k]!==l.before[k]?'+'+(l.after[k]-l.before[k]):'—')+'</b></div>').join('')+'</div>'+(l.awakened?'<p class="learned-spells-notice">'+(l.awakened.slot===0?'通用天赋':'个人天赋'+(l.awakened.slot||1))+'觉醒：'+esc(l.awakened.name)+' · '+esc(l.awakened.description)+'</p>':'')+(l.learned?.length?'<p class="learned-spells-notice">新习得：'+l.learned.map(id=>esc(MyGO.Magic.get(id).name)).join('、')+'</p>':'')).join('')+'</section>').join('')+
+          '<p class="modal-sub">成长与职业专精奖励已记录，会随存档与跨章保留。</p><div class="modal-actions"><button class="modal-btn primary" data-confirm>继续前行</button></div>','growth-modal',false);
         this.confirmHandler=resolve;
       });
     }
@@ -19087,10 +19351,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
     showRoundResultModal(result, isEnemy) {
       const plan = result.forecast;
-      const label = {attack:'首击',counter:'反击',followup:'追击',combo:'连击'};
+      const label = {attack:'首击',counter:'反击',followup:'追击',combo:'连击','combat-art':'战技连击'};
       const rows = result.strikes.map((s,i) => '<div class="exchange-strike ' + (s.attackerSide !== 'enemy' ? 'is-player' : 'is-enemy') + '">' +
         '<span class="exchange-order">' + (i+1) + '</span><div><strong>' + label[s.kind] + ' · ' + esc(s.attackerName) +
         '</strong><small>→ ' + esc(s.defenderName) + ' · ' + esc(s.weaponName) + ' · 命中 ' + s.hitChance + '% · 暴击 ' + s.critChance + '%' +
+        (s.masteryProcs?.length?' · '+esc(s.masteryProcs.join(' / ')):'')+
+        (s.masteryHealing?' · 生命吸收回复 '+s.masteryHealing+' HP':'')+
         (s.healed ? ' · 吸取回复 ' + s.healed : '') +
         (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') +
         (s.resourcePreserved ? ' · 爱笑女孩：未消耗次数' : '') +
@@ -19107,8 +19373,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         (plan.canCounter ? '射程内可反击' : '无法反击 · ' + esc(plan.counterReason)) + '</span></div><div class="exchange-list">' + rows + '</div>' +
         hp(result.attackerName,result.attackerHp,result.attackerHpAfter,result.attackerMaxHp) +
         hp(result.defenderName,result.defenderHp,result.defenderHpAfter,result.defenderMaxHp) +
+        (result.masteryEffects?.length?'<div class="mastery-unlock">'+result.masteryEffects.map(e=>'<p>'+esc(this.game.getUnit(e.id)?.name||e.id)+(e.damage?' · 蛇毒 −'+e.damage+' HP':'')+Object.keys(e.status).map(k=>' · '+esc({masterySealDef:'防守封锁：守备−6',masterySealRes:'魔防封锁：魔防−6',masteryTransmute:'魔力转换：七项属性＋3'}[k]||k)).join('')+'</p>').join('')+'</div>':'')+
         '<div class="result-note">' + (result.strikes.length < plan.order.length ? '因单位倒下、撤离或次数耗尽，后续攻击取消。' : '首击、反击与追击依次结算。') +
-        ' 拳套主动攻击时两连击，反击时不会额外连击。反击不消耗行动。每次出手消耗 1 耐久或魔法次数，爱笑女孩触发时保留次数。点击确认后统一结算 HP、耐久和魔法次数。</div>' +
+        ' 拳套主动攻击时两连击，反击时不会额外连击。反击不消耗行动。普通攻击每次出手消耗1耐久或魔法次数；战技按整次行动收取标示耐久，空手格斗不耗耐久。爱笑女孩触发时保留次数。点击确认后统一结算HP、耐久和魔法次数。</div>' +
         '<div class="modal-actions"><button class="modal-btn primary" type="button" data-confirm>确认结算</button></div>';
       return new Promise(resolve => {
         this.confirmHandler = () => resolve(result);
@@ -20846,11 +21113,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   'use strict';
   const M=global.MyGO,I=M.Inventory,Magic=M.Magic;
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function icon(e){if(e.kind==='key')return '<span class="key-item-icon" aria-hidden="true">⚿</span>';const id=e.kind==='spell'?'spell_'+e.id:e.icon;
+  function icon(e){if(e.kind==='unarmed')return '<span aria-hidden="true">拳</span>';if(e.kind==='key')return '<span class="key-item-icon" aria-hidden="true">⚿</span>';const id=e.kind==='spell'?'spell_'+e.id:e.icon;
     return '<img alt="" src="'+(global.MYGO_EQUIPMENT_ICONS?.[id]||'assets/equipment/icons/'+id+'.png')+'">';}
-  function stats(e,u){return e.kind==='weapon'?'威力 '+e.might+' · 命中 '+e.hit+' · 重量 '+e.weight+' · 射程 '+e.range:
+  function stats(e,u){return e.kind==='unarmed'?'空手格斗 · 威力0 · 命中80 · 无耐久消耗':e.kind==='weapon'?'威力 '+e.might+' · 命中 '+e.hit+' · 重量 '+e.weight+' · 射程 '+e.range:
     e.kind==='spell'?'威力 '+e.might+' · 命中 '+e.hit+' · 重量 '+e.weight+' · 射程 '+(u?Magic.rangeOf(e,u).join('–'):e.rangeText.replace('mag/','魔力/')) :e.effect;}
-  function tabs(active){return '<nav class="loadout-tabs" aria-label="角色资料页">'+[['stats','能力资料'],['growth','成长率'],['bag','背包配置'],['magic','已学魔法'],['classes','职业目录']].map(([id,n])=>'<button type="button" data-loadout-tab="'+id+'" aria-pressed="'+(active===id)+'">'+n+'</button>').join('')+'</nav>';}
+  function tabs(active){return '<nav class="loadout-tabs" aria-label="角色资料页">'+[['stats','能力资料'],['growth','成长率'],['bag','背包配置'],['magic','已学魔法'],['classes','职业目录'],['mastery','职业专精']].map(([id,n])=>'<button type="button" data-loadout-tab="'+id+'" aria-pressed="'+(active===id)+'">'+n+'</button>').join('')+'</nav>';}
   function experienceSummary(u){const need=M.Growth.required(u.level),pct=need?Math.floor(u.exp/need*100):100;
     return '<div class="growth-exp"><div><strong>Lv.'+u.level+'</strong><span>'+(need?'EXP '+u.exp+' / '+need+' · 距下一级 '+(need-u.exp):'EXP MAX · 已达最高等级')+'</span></div><div class="growth-exp-track" role="progressbar" aria-label="升级经验" aria-valuemin="0" aria-valuemax="'+(need||1)+'" aria-valuenow="'+(need?u.exp:1)+'"><i style="width:'+pct+'%"></i></div></div>';}
   function growthCatalogue(u){const D=M.GrowthData,personal=M.Growth.personalRates(u),job=D.classes[u.classId]||{},total=M.Growth.rates(u);
@@ -20860,32 +21127,33 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   }
   function classSummary(u){
     const job=M.Classes.get(u.classId);if(!job)return '';
-    return '<aside class="class-current"><span>当前职业 · '+esc(job.tierName)+'</span><strong>'+esc(job.name)+' <small>'+esc(job.en)+'</small></strong><p>擅长 '+esc(job.specialties)+' · '+esc(job.movement)+' · 移动 '+u.move+' 格</p><p class="class-path">培养方向：'+esc(M.Classes.paths[u.id]||'按擅长技能选择后续职业')+'</p></aside>';
+    return (M.MasteryUI?.bar(u)||'')+'<aside class="class-current"><span>当前职业 · '+esc(job.tierName)+'</span><strong>'+esc(job.name)+' <small>'+esc(job.en)+'</small></strong><p>擅长 '+esc(job.specialties)+' · '+esc(job.movement)+' · 移动 '+u.move+' 格</p><p class="class-path">培养方向：'+esc(M.Classes.paths[u.id]||'按擅长技能选择后续职业')+'</p></aside>';
   }
   function classCatalogue(u,tier,game,lock){
     return classSummary(u)+'<div class="loadout-section-title"><strong>风花雪月 · '+M.Classes.items.length+' 种职业</strong><select aria-label="职业阶段筛选" data-class-tier><option value="all"'+(tier==='all'?' selected':'')+'>全部阶段</option>'+M.Classes.tiers.map(t=>'<option value="'+t.id+'"'+(tier===t.id?' selected':'')+'>'+esc(t.name)+'</option>').join('')+'</select></div>'+
       '<p class="loadout-footnote">初级 Lv.5 → 中级 Lv.10 → 高级 Lv.20 → 最上级 Lv.30。普通职业达到等级并使用对应转职证即可取得资格，无需技能等级考试。拳斗士不限性别，其他职业保留原有性别、专用证件及前置职业限制。首次转职消耗证件；已取得资格可免费切换。战斗中转职结束本次行动；撤退同伴也可转职，仍保持撤退与原有 HP。</p>'+
       M.Classes.tiers.filter(t=>tier==='all'||t.id===tier).map(t=>'<section class="class-tier"><h4>'+esc(t.name)+' <small>'+M.Classes.query(t.id).length+' 种 · Lv.'+t.level+' 起</small></h4><div class="class-grid">'+M.Classes.query(t.id).map(job=>{
         const reason=lock||game.reclassReason(u,job.id),certified=(u.certifiedClasses||[]).includes(job.id);
-        return '<article class="class-card'+(job.id===u.classId?' is-current':'')+'"><div><strong>'+esc(job.name)+'</strong>'+(job.id===u.classId?'<span class="class-badge">当前职业</span>':'')+'</div><small>'+esc(job.en)+'</small><p>擅长 '+esc(job.specialties)+'</p><p>'+esc(job.requirements)+'</p><footer>移动 '+job.move+' · '+(job.magic?'可使用魔法':'不可使用魔法')+(job.gender?' · '+job.gender+'性限定':'')+(job.dlc?' · DLC':'')+'</footer><button type="button" data-reclass="'+job.id+'"'+(reason?' disabled':'')+' title="'+esc(reason||'战斗中转职会结束行动')+'">'+esc(reason||(certified?'切换职业 · 已取得资格':'使用转职证'))+'</button></article>';
+        return '<article class="class-card'+(job.id===u.classId?' is-current':'')+'"><div><strong>'+esc(job.name)+'</strong>'+(job.id===u.classId?'<span class="class-badge">当前职业</span>':'')+'</div><small>'+esc(job.en)+'</small><p>擅长 '+esc(job.specialties)+'</p><p>'+esc(job.requirements)+'</p><footer>移动 '+job.move+' · '+(job.magic?'可使用魔法':'不可使用魔法')+(job.gender?' · '+job.gender+'性限定':'')+(job.dlc?' · DLC':'')+'</footer>'+(M.MasteryUI?.rewards(u,job.id)||'')+'<button type="button" data-reclass="'+job.id+'"'+(reason?' disabled':'')+' title="'+esc(reason||'战斗中转职会结束行动')+'">'+esc(reason||(certified?'切换职业 · 已取得资格':'使用转职证'))+'</button></article>';
       }).join('')+'</div></section>').join('')+
-      '<p class="loadout-footnote">转职后移动、移动类型、武器类别、魔法使用与职业成长率立即生效，已学魔法记录保留。职业技能与精通奖励尚未实现。</p>';
+      '<p class="loadout-footnote">转职后移动、移动类型、武器类别、魔法使用与职业成长率立即生效，已学魔法记录保留。专精经验与奖励在职业目录和「职业专精」页查看；满条自动习得，转职保留进度。</p>';
   }
   const EP=M.EntryScreen.prototype,baseRender=EP.renderFormationDetail,baseBind=EP.bind;
   function talentSummary(u){
-    const t=M.Talents?.get(u);if(!t||u.side==='enemy')return '';
-    return M.Talents.list(u).map(t=>'<aside class="class-current"><span>个人天赋'+t.slot+' · Lv.'+t.level+'觉醒 · '+(t.active?'已觉醒':'未觉醒')+'</span><strong>'+esc(t.name)+'</strong><p>'+esc(t.description)+'</p></aside>').join('');
+    if(!M.Talents||u.side==='enemy')return '';
+    return M.Talents.list(u).map(t=>'<aside class="class-current"><span>'+(t.slot===0?'通用天赋':'个人天赋'+t.slot)+' · Lv.'+t.level+'觉醒 · '+(t.active?'已觉醒':'未觉醒')+'</span><strong>'+esc(t.name)+'</strong><p>'+esc(t.description)+'</p></aside>').join('');
   }
   EP.bind=function(){baseBind.call(this);this.dom.formationDetail.addEventListener('click',e=>{
     const t=e.target.closest('button');if(!t)return;
     if(t.dataset.loadoutTab){this.loadoutTab=t.dataset.loadoutTab;this.renderFormationDetail();this.dom.formationDetail.scrollTop=0;return;}
     const u=this.players().find(u=>u.id===this.selectedUnitId);if(!u)return;
     try{
-      const reason=t.hasAttribute('data-reclass')?this.reclassLock(u):this.loadoutLock(u);if(reason)throw Error(reason);
+      const reason=(t.hasAttribute('data-reclass')||t.hasAttribute('data-mastery-equip'))?this.reclassLock(u):this.loadoutLock(u);if(reason)throw Error(reason);
       if(t.hasAttribute('data-bag-equip'))this.ui.game.equipItem(u,+t.dataset.bagEquip);
       else if(t.hasAttribute('data-bag-store'))this.ui.game.transferItem(u,+t.dataset.bagStore,true);
       else if(t.hasAttribute('data-bag-take'))this.ui.game.transferItem(u,+t.dataset.bagTake,false);
       else if(t.hasAttribute('data-spell-equip'))this.ui.game.selectAttack(u,t.dataset.spellEquip);
+      else if(t.hasAttribute('data-mastery-equip'))this.ui.game.equipMasterySkill(u,t.dataset.masteryEquip);
       else if(t.hasAttribute('data-reclass')){this.ui.game.reclassUnit(u,t.dataset.reclass);this.ui.showToast(u.name+'转职为'+u.className,'success',2500);}
       else if(t.hasAttribute('data-medicine-use')){const r=this.ui.game.useMedicine(u,+t.dataset.medicineUse);this.ui.showToast(u.name+'使用'+r.item.name+(r.healed?'，回复 '+r.healed+' HP':'')+(r.resourcePreserved?' · 爱笑女孩：未消耗次数':''),'success',2500);}
       else return;
@@ -20898,7 +21166,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     const active=this.loadoutTab||'stats';
     if(active==='stats'){baseRender.call(this);const unit=this.players().find(u=>u.id===this.selectedUnitId);this.dom.formationDetail.insertAdjacentHTML('afterbegin',tabs(active)+(unit?classSummary(unit)+experienceSummary(unit)+talentSummary(unit):''));return;}
     const u=this.players().find(u=>u.id===this.selectedUnitId);if(!u)return;
-    if(active==='growth'){this.dom.formationDetail.innerHTML=tabs(active)+talentSummary(u)+growthCatalogue(u);this.renderPoseDock(u);return;}
+    if(active==='growth'){this.dom.formationDetail.innerHTML=tabs(active)+talentSummary(u)+(M.MasteryUI?.bar(u)||'')+growthCatalogue(u);this.renderPoseDock(u);return;}
+    if(active==='mastery'&&M.MasteryUI){this.dom.formationDetail.innerHTML=tabs(active)+M.MasteryUI.skills(u,this.reclassLock(u));this.renderPoseDock(u);return;}
     if(active==='classes'){
       this.dom.formationDetail.innerHTML=tabs(active)+classCatalogue(u,this.classTier||'all',this.ui.game,this.reclassLock(u));
       this.renderPoseDock(u);return;
@@ -20935,13 +21204,13 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const UP=M.UI.prototype,baseAction=UP.renderActionSide;
   const baseUnitInfo=UP.renderUnitInfo;
   UP.renderUnitInfo=function(u){baseUnitInfo.call(this,u);if(!u)return;
-    if(M.Talents?.get(u)&&u.side!=='enemy')this.dom.infoBody.insertAdjacentHTML('beforeend',talentSummary(u));
+    if(M.Talents&&u.side!=='enemy')this.dom.infoBody.insertAdjacentHTML('beforeend',talentSummary(u));
     const guard=M.Talents?.guardBonus(u,this.game.map)||0;
     if(guard)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">天赋守护 · 守备／魔防＋'+guard+'</span>');
     const line=this.dom.infoBody.querySelector('.weapon-line');
-    if(line&&!u.weapon.cannotAttack)line.textContent+=' · '+(u.weapon.kind==='spell'?'剩余 '+u.spellUses[u.weaponId]+'/'+u.weapon.uses+' 次':'耐久 '+(u.inventory.find(i=>i.id===u.weaponId&&i.uses>0)?.uses||0)+'/'+u.weapon.uses);
-    const labels={defDown:'守备−5',spdDown:'速度−5',moveDown:'移动−5',talentResDown:'魔力打击 · 魔防−2',frostSpeedDown:'冰霜剑气 · 速度−3',silence:'沉默',ward:'魔防支援',poison:'中毒'};
-    for(const [id,n] of Object.entries(u.status))if(n&&id!=='frostFresh'&&!(M.Talents?.immune(u)&&['defDown','spdDown','moveDown','talentResDown','frostSpeedDown'].includes(id)))this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(labels[id]||id)+(id==='ward'?'＋'+n:id==='frostSpeedDown'?' · 剩余'+n+'回合':'')+'</span>');
+    if(line&&!u.weapon.cannotAttack)line.textContent+=' · '+(u.weapon.kind==='unarmed'?'空手 · 无耐久消耗':u.weapon.kind==='spell'?'剩余 '+u.spellUses[u.weaponId]+'/'+u.weapon.uses+' 次':'耐久 '+(u.inventory.find(i=>i.id===u.weaponId&&i.uses>0)?.uses||0)+'/'+u.weapon.uses);
+    const labels={masteryDance:'特殊舞蹈 · 技巧／速度／幸运＋4',masteryTransmute:'魔力转换 · 七项属性＋3',masterySealDef:'防守封锁 · 守备−6',masterySealRes:'魔防封锁 · 魔防−6',defDown:'守备−5',spdDown:'速度−5',moveDown:'移动−5',talentResDown:'魔力打击 · 魔防−2',frostSpeedDown:'冰霜剑气 · 速度−3',silence:'沉默',ward:'魔防支援',poison:'中毒'};
+    for(const [id,n] of Object.entries(u.status))if(n&&id!=='frostFresh'&&!(M.Talents?.immune(u)&&['defDown','spdDown','moveDown','talentResDown','frostSpeedDown','masterySealDef','masterySealRes'].includes(id)))this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(labels[id]||id)+(id==='ward'?'＋'+n:id==='frostSpeedDown'?' · 剩余'+n+'回合':'')+'</span>');
     if(u.equippedAccessory)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(I.item(u.equippedAccessory).name)+'</span>');
   };
   UP.renderActionSide=function(u){baseAction.call(this,u);
@@ -20979,7 +21248,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     if(this.busy||u.acted||!this.game.isPlayerPhase())return;
     const attacks=I.options(u),support=u.learnedSpells.filter(id=>Magic.get(id).support);
     this.openOverlay('<div class="modal-kicker">EQUIPMENT & MAGIC</div><h2 class="modal-title" id="overlay-title">'+esc(u.name)+' · 攻击与魔法</h2><p class="modal-sub">切换攻击不消耗行动；辅助魔法使用后结束行动。当前攻击将用于反击。</p><div class="battle-loadout-list">'+attacks.map(id=>{
-      const w=I.weapons[id],uses=w.kind==='spell'?u.spellUses[id]+' / '+w.uses+' 次':u.inventory.find(i=>i.id===id&&i.uses>0).uses+' 耐久';
+      const w=I.weapons[id],uses=w.kind==='unarmed'?'不限次数':w.kind==='spell'?u.spellUses[id]+' / '+w.uses+' 次':u.inventory.find(i=>i.id===id&&i.uses>0).uses+' 耐久';
       return '<button type="button" class="battle-loadout-row" data-attack-choice="'+id+'"><span class="bag-icon">'+icon(w)+'</span><span><strong>'+esc(w.name)+(id===u.weaponId?' · 当前攻击':'')+'</strong><small>'+esc(stats(w))+'</small></span><b>'+uses+'</b></button>';
     }).join('')+(attacks.length?'':'<p>没有可用的攻击手段。</p>')+'</div>'+(support.length?'<h3>辅助魔法</h3><div class="battle-loadout-list">'+support.map(id=>{const s=Magic.get(id),ts=this.game.supportTargets(u,id);return '<button type="button" class="battle-loadout-row" data-support-choice="'+id+'"'+(!ts.length?' disabled':'')+'><span class="bag-icon">'+icon(s)+'</span><span><strong>'+esc(s.name)+'</strong><small>'+esc(s.description)+'</small></span><b>'+u.spellUses[id]+'/'+s.uses+'</b></button>';}).join('')+'</div><p class="loadout-footnote">辅助按钮在有合适目标且有剩余次数时可用。</p>':'')+'<div class="modal-actions"><button class="modal-btn" data-overlay-close>返回行动</button></div>','loadout-modal',true);
     this.dom.overlayCard.querySelectorAll('[data-attack-choice]').forEach(b=>b.addEventListener('click',()=>{try{this.game.selectAttack(u,b.dataset.attackChoice);this.closeOverlay();this.enterActionMode();}catch(e){this.showToast(e.message,'error');}}));
@@ -21016,6 +21285,53 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const boardClick=UP.onBoardClick,cancel=UP.cancelCurrent;
   UP.onBoardClick=function(event){if(this.mode==='warp'&&this.pendingWarp){const c=this.eventToCell(event),p=this.pendingWarp;if(c&&p.cells.some(t=>t.x===c.x&&t.y===c.y))this.confirmSupport(p.caster,p.id,p.target,c);return;}return boardClick.call(this,event);};
   UP.cancelCurrent=function(){if(this.mode==='warp'){this.pendingWarp=null;this.enterActionMode();return;}return cancel.call(this);};
+})(window);
+
+  </script>
+  <script>
+/* ===== src/mastery-ui.js ===== */
+/* Diary pages and battle commands for class mastery. */
+(function(global){
+  'use strict';
+  const M=global.MyGO,A=M.Mastery;
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function bar(u,id=u.classId){const p=A.progress(u,id);if(!p||u.side==='enemy')return '';
+    return '<div class="growth-exp mastery-exp"><div><strong>'+esc(M.Classes.get(id).name)+' · '+(p.mastered?'已专精':'职业经验')+'</strong><span>'+p.xp+' / '+p.required+' CEXP</span></div><div class="growth-exp-track mastery-track" role="progressbar" aria-label="'+esc(M.Classes.get(id).name)+'职业经验" aria-valuemin="0" aria-valuemax="'+p.required+'" aria-valuenow="'+p.xp+'"><i style="width:'+Math.floor(p.xp/p.required*100)+'%"></i></div></div>';
+  }
+  function rewards(u,id){const p=A.progress(u,id);return '<div class="mastery-rewards"><strong>'+(p.mastered?'✓ 已专精':'专精奖励 · '+p.xp+'/'+p.required)+'</strong>'+p.rewards.map(r=>'<p><b>'+esc(r.name)+'</b> <small>'+(r.kind==='art'?'战技'+(r.exclusive?' · 职业限定':''):'可装备技能')+'</small><br>'+esc(r.description)+'</p>').join('')+'</div>';}
+  function skills(u,lock){const ids=A.learned(u),passives=ids.filter(id=>A.abilities[id]),arts=ids.filter(id=>A.arts[id]);
+    return '<header class="growth-heading"><small>CLASS MASTERY</small><h3>'+esc(u.name)+' · 职业专精</h3><p>已装备 '+u.masteryEquipped.length+' / 5 个专精技能</p></header>'+bar(u)+
+      '<p class="loadout-footnote">参与一场敌我交战（包括未命中、未造成伤害与防守），或成功使用一次辅助魔法／辅助战技，当前职业经验＋1。多段攻击按整场计一次，满条自动习得奖励；已专精职业停止积累。转职保留每种职业的独立进度。</p>'+
+      (lock?'<p class="loadout-notice is-locked">'+esc(lock)+'</p>':'')+
+      '<h4>已学技能 · 自动装备至多5个</h4><div class="mastery-skill-list">'+(passives.length?passives.map(id=>{const a=A.abilities[id],on=A.has(u,id);return '<article class="class-card'+(on?' is-current':'')+'"><strong>'+esc(a.name)+(on?' · 装备中':'')+'</strong><p>'+esc(a.description)+'</p><button type="button" data-mastery-equip="'+id+'"'+(lock||!on&&u.masteryEquipped.length>=5?' disabled':'')+'>'+(on?'卸下技能':'装备技能')+'</button></article>';}).join(''):'<p>职业经验满后，会在这里学会专精技能。</p>')+'</div>'+
+      '<h4>已学战技</h4><div class="mastery-skill-list">'+(arts.length?arts.map(id=>{const a=A.arts[id];return '<article class="class-card"><strong>'+esc(a.name)+'</strong><p>'+esc(a.description)+'</p><small>'+(a.exclusive?'限 '+a.exclusive.map(c=>esc(M.Classes.get(c).name)).join(' / '):'转职后保留使用')+(a.cost?' · 每次消耗'+a.cost+'武器耐久':' · 消耗一次行动')+'</small></article>';}).join(''):'<p>部分职业满经验后还会习得战技。</p>')+'</div>'+
+      '<p class="loadout-footnote">战技不占5个技能栏。战斗行动中点击「职业战技」使用；切换武器或待机会取消本次选择。技能与各职业经验会随存档及跨章继承，旧存档从0职业经验开始。</p>';
+  }
+  M.MasteryUI=Object.freeze({bar,rewards,skills});
+  const UP=M.UI.prototype,baseInfo=UP.renderUnitInfo,baseAction=UP.renderActionSide;
+  UP.renderUnitInfo=function(u){baseInfo.call(this,u);if(u&&u.side!=='enemy')this.dom.infoBody.insertAdjacentHTML('beforeend',bar(u));};
+  UP.renderActionSide=function(u){baseAction.call(this,u);
+    const available=A.availableArts(u);if(!available.length&&!A.has(u,'steal')&&u.classId!=='dancer')return;
+    const b=document.createElement('button');b.type='button';b.className='action-btn loadout-action';b.textContent='职业战技'+(A.selectedArt(u)?' · '+A.selectedArt(u).name:'');b.onclick=()=>this.showMasteryActions(u);this.dom.actionButtons.appendChild(b);
+  };
+  UP.showMasteryActions=function(u){
+    if(this.busy||u.acted||!this.game.isPlayerPhase())return;
+    const rows=A.availableArts(u).concat(u.classId==='dancer'?[{id:'dance',name:'舞蹈',assist:true,description:'令相邻且已行动的同伴再次行动；无法对舞者使用。'}]:[],A.has(u,'steal')?[{id:'steal',name:'偷窃',assist:true,description:A.abilities.steal.description}]:[]);
+    this.openOverlay('<div class="modal-kicker">CLASS COMBAT ARTS</div><h2 class="modal-title" id="overlay-title">'+esc(u.name)+' · 职业战技</h2><p class="modal-sub">攻击战技选定后，在地图上选择敌人并确认交战。辅助战技选目标后立即使用并结束行动。</p><div class="battle-loadout-list">'+rows.map(a=>{const reason=a.assist?(A.assistTargets(this.game,u,a.id).length?'':'当前没有有效目标'):A.artReason(u,a.id);return '<button class="battle-loadout-row" data-mastery-action="'+a.id+'"'+(reason?' disabled':'')+' title="'+esc(reason)+'"><span><strong>'+esc(a.name)+'</strong><small>'+esc(a.description)+'</small><small>'+esc(reason)+'</small></span><b>'+(a.assist?'选择目标':a.cost+'耐久')+'</b></button>';}).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-normal-attack>改用普通攻击</button><button class="modal-btn" data-overlay-close>返回</button></div>','loadout-modal',true);
+    this.dom.overlayCard.querySelector('[data-normal-attack]').onclick=()=>{u.combatArtId=null;this.closeOverlay();this.enterActionMode();};
+    this.dom.overlayCard.querySelectorAll('[data-mastery-action]').forEach(b=>b.onclick=()=>{const id=b.dataset.masteryAction,a=A.arts[id];if(a&&!a.assist){try{this.game.selectCombatArt(u,id);this.closeOverlay();this.enterActionMode();}catch(e){this.showToast(e.message,'error');}}else this.chooseMasteryTarget(u,id);});
+  };
+  UP.chooseMasteryTarget=function(u,id){const name=A.arts[id]?.name||(id==='dance'?'舞蹈':'偷窃'),targets=A.assistTargets(this.game,u,id);
+    this.openOverlay('<div class="modal-kicker">ASSIST ART</div><h2 class="modal-title" id="overlay-title">'+esc(name)+' · 选择目标</h2><div class="battle-loadout-list">'+targets.map(t=>{
+      const button=(label,index='')=>'<button class="battle-loadout-row" data-mastery-target="'+esc(t.id)+'" data-steal-index="'+index+'"><span><strong>'+esc(t.name)+'</strong><small>'+esc(label)+' · 距离'+M.Grid.manhattan(u,t)+'格</small></span><b>使用并结束行动</b></button>';
+      return id==='steal'?t.inventory.map((i,n)=>A.stealable(t).includes(i)?button(M.Inventory.item(i.id).name,n):'').join(''):button('HP '+t.hp+'/'+t.maxHp);
+    }).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-mastery-back>返回战技</button></div>','loadout-modal',true);
+    this.dom.overlayCard.querySelector('[data-mastery-back]').onclick=()=>this.showMasteryActions(u);
+    this.dom.overlayCard.querySelectorAll('[data-mastery-target]').forEach(b=>b.onclick=async()=>{
+      if(this.busy)return;this.setBusy(true);
+      try{const r=this.game.useMasteryAssist(u,this.game.getUnit(b.dataset.masteryTarget),id,+b.dataset.stealIndex);this.closeOverlay();for(const tid of r.affected){const t=this.game.getUnit(tid);this.renderer.snapUnit(t);this.renderer.floatText(name,t.x,t.y,'#d9c58f',11);}await this.showGrowthResults(r.experience);this.resetSelection({silent:true});this.updateAll();this.renderIdleInfo();this.showToast(u.name+'使用了'+name,'success',2400);}catch(e){this.showToast(e.message,'error');}finally{this.setBusy(false);}
+    });
+  };
 })(window);
 
   </script>
@@ -21146,7 +21462,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     const inventoryDemo = params.get('inventory-demo') === '1';
     const growthDemo = params.get('growth-demo');
     const talentDemo = params.get('talent-demo');
-    if (recruitDemo || mapDemo || counterDemo || inventoryDemo || growthDemo || talentDemo) {
+    const masteryDemo = params.get('mastery-demo');
+    if (recruitDemo || mapDemo || counterDemo || inventoryDemo || growthDemo || talentDemo || masteryDemo) {
       let saved = null;
       ui.saveManager = {
         save(game) { saved = { ok: true, snapshot: game.serialize(), savedAt: new Date().toISOString() };
@@ -21171,7 +21488,17 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         const entry = new global.MyGO.EntryScreen(ui);
         global.MYGO_ENTRY = entry;
         global.MyGO.entry = entry;
-        if (inventoryDemo || growthDemo || talentDemo) {
+        if (masteryDemo && global.MyGO.Mastery) {
+          // Disposable mastery fixture; the memory save manager isolates real progress.
+          ui.chapterPlayed=true;
+          const member=ui.game.getUnit('soyo'),target=ui.game.getUnit('tomori'),M=global.MyGO;
+          while(member.level<30)M.Growth.award(member,M.Growth.required(member.level));
+          for(const id of ['commoner','myrmidon','soldier','archer']){M.Classes.apply(member,id);M.Mastery.award(member,M.Mastery.get(id).required);}
+          M.Classes.apply(member,'monk');M.Mastery.award(member,masteryDemo==='unlock'?59:60);
+          Object.assign(member,{x:7,y:13,acted:false});Object.assign(target,{x:8,y:13,hp:10});
+          for(const unit of ui.game.units)ui.renderer.snapUnit(unit);
+          ui.updateAll();entry.open({force:true});entry.openFormation();entry.selectedUnitId=member.id;entry.loadoutTab='mastery';entry.renderFormationList();entry.renderFormationDetail();
+        } else if (inventoryDemo || growthDemo || talentDemo) {
           // Isolated, deterministic fixture for checking inventory and support UI.
           ui.chapterPlayed=true;
           const soyo=ui.game.getUnit('soyo'),tomori=ui.game.getUnit('tomori');

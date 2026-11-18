@@ -44,16 +44,17 @@
   }
   function usable(u,w=u.weapon){
     if(!w||w.cannotAttack||w.support)return false;
+    if(w.id==='mastery_unarmed')return !!M.Mastery?.canUnarmed(u);
     if(w.kind==='spell')return magicAllowed(u)&&!(u.status?.silence)&&u.learnedSpells.includes(w.id)&&(u.spellUses[w.id]||0)>0;
     if(!u.inventory)return true; // Pure combat fixtures may supply standalone weapons.
     return u.inventory.some(i=>i.id===w.id&&i.uses>0);
   }
   function options(u){return [...new Set([...u.inventory.filter(i=>i.uses>0&&canEquip(u,weapons[i.id])).map(i=>i.id),
-    ...u.learnedSpells.filter(id=>magicAllowed(u)&&!Magic.get(id).support&&u.spellUses[id]>0&&!u.status?.silence)])];}
+    ...(M.Mastery?.canUnarmed(u)?['mastery_unarmed']:[]),...u.learnedSpells.filter(id=>magicAllowed(u)&&!Magic.get(id).support&&u.spellUses[id]>0&&!u.status?.silence)])];}
   function sync(u){
     let id=u.equippedWeapon;
     if(!options(u).includes(id))id=options(u)[0]||'unarmed';
-    u.equippedWeapon=id;u.weaponId=id;u.weapon=weapons[id]||unarmed;
+    u.equippedWeapon=id;u.weaponId=id;u.weapon=(id==='mastery_unarmed'?M.Mastery?.unarmed:weapons[id])||unarmed;
     if(u.weapon.kind==='spell'){
       const range=Magic.rangeOf(u.weapon,u);
       if(range.some((n,i)=>n!==u.weapon.range[i]))u.weapon={...u.weapon,range};
@@ -72,12 +73,20 @@
     u.spellUses=Object.fromEntries(u.learnedSpells.map(id=>[id,Magic.get(id).uses]));
     u.status={};u.equippedWeapon=w.id;u.equippedAccessory=null;learn(u);sync(u);
   }
-  function consume(u,id,preserved=false){
+  function consume(u,id,preserved=false,count=1){
+    if(id==='mastery_unarmed')return;
+    if(!Number.isInteger(count)||count<1)throw Error('耐久消耗无效');
+    if(count>1){
+      const slots=u.inventory.filter(i=>i.id===id&&i.uses>0);
+      if(slots.reduce((n,i)=>n+i.uses,0)<count)throw Error('武器耐久不足');
+      if(!preserved)for(const slot of slots){const n=Math.min(count,slot.uses);slot.uses-=n;count-=n;}return;
+    }
     if(Magic.get(id)){if(!(u.spellUses[id]>0))throw Error('魔法次数不足');if(!preserved)u.spellUses[id]--;}
     else {const i=u.inventory.find(i=>i.id===id&&i.uses>0);if(!i)throw Error('武器耐久不足');if(!preserved)i.uses--;}
   }
   function copy(u){return {...u,inventory:u.inventory?.map(i=>({...i})),learnedSpells:u.learnedSpells?.slice(),spellUses:{...u.spellUses},status:{...u.status},gear:{...u.gear}};}
   function pack(u){return{inventory:u.inventory.map(i=>({...i})),equippedWeapon:u.equippedWeapon,equippedAccessory:u.equippedAccessory,
+    classMastery:M.Mastery?.pack(u),stolenDrops:(u.stolenDrops||[]).slice(),
     classState:{version:1,id:u.classId,certified:(u.certifiedClasses||[u.classId]).filter(Boolean)},mageTrained:!!u.mageTrained,
     learnedSpells:u.learnedSpells.slice(),spellUses:{...u.spellUses},status:{...u.status}};}
   function validateBag(bag,max=5){
@@ -88,6 +97,9 @@
   function restore(u,s,refresh){
     if(!s||!Array.isArray(s.inventory))return;
     u.inventory=validateBag(s.inventory);
+    const stolen=s.stolenDrops??[],authoredDrops=[...new Set([...(u.drops||[]),...(u.stolenDrops||[])])];
+    if(!Array.isArray(stolen)||stolen.some(id=>!authoredDrops.includes(id))||new Set(stolen).size!==stolen.length)throw Error('存档偷窃记录无效');
+    u.stolenDrops=stolen.slice();u.drops=authoredDrops.filter(id=>!stolen.includes(id));
     if(s.mageTrained!==undefined&&typeof s.mageTrained!=='boolean')throw Error('存档魔法训练无效');
     u.mageTrained=!!s.mageTrained||u.id==='soyo'||!!M.Classes?.get(u.classId)?.magic;
     learn(u);
@@ -96,7 +108,7 @@
     if(s.learnedSpells.some(id=>!u.learnedSpells.includes(id)&&!(u.id==='soyo'&&retiredSoyoSpells.has(id))))throw Error('角色尚未学会该魔法');
     for(const id of u.learnedSpells){const n=s.spellUses?.[id];if(n!==undefined&&(!Number.isInteger(n)||n<0||n>Magic.get(id).uses))throw Error('存档魔法次数无效');u.spellUses[id]=refresh?Magic.get(id).uses:(n??Magic.get(id).uses);}
     u.equippedWeapon=s.equippedWeapon;u.equippedAccessory=s.equippedAccessory;
-    u.status={};if(!refresh)for(const k of ['defDown','spdDown','moveDown','silence','ward','poison','talentResDown']){const n=s.status?.[k];if(Number.isInteger(n)&&n>0&&n<=7)u.status[k]=n;}
+    u.status={};if(!refresh)for(const k of ['defDown','spdDown','moveDown','silence','ward','poison','talentResDown','masteryDance','masteryTransmute','masterySealDef','masterySealRes']){const n=s.status?.[k];if(Number.isInteger(n)&&n>0&&n<=7)u.status[k]=n;}
     if(!refresh){
       const turns=s.status?.frostSpeedDown,fresh=s.status?.frostFresh;
       if((turns!==undefined&&![1,2].includes(turns))||(fresh!==undefined&&(fresh!==1||turns===undefined)))throw Error('存档冰霜剑气状态无效');
@@ -107,7 +119,7 @@
     sync(u);
   }
   function stock(){return [...Array.from({length:25},()=>make('vulnerary')),...['iron_sword','iron_lance','iron_axe','iron_bow','iron_gauntlets'].map(make)];}
-  function equip(u,index){const i=u.inventory[index],e=i&&item(i.id);if(!e)throw Error('背包物品不存在');
+  function equip(u,index){u.combatArtId=null;const i=u.inventory[index],e=i&&item(i.id);if(!e)throw Error('背包物品不存在');
     if(e.kind==='key')throw Error('钥匙需在对应门旁使用');
     if(e.kind==='consumable'||e.kind==='seal')throw Error('该物品需要使用，不能装备');
     if(e.kind==='weapon'){if(!canEquip(u,e))throw Error('当前职业不能装备此类武器');if(i.uses<=0)throw Error('该武器已损坏');u.equippedWeapon=i.id;
@@ -115,7 +127,7 @@
       const first=u.inventory.findIndex(a=>a.id===i.id);[u.inventory[first],u.inventory[index]]=[u.inventory[index],u.inventory[first]];
     }else u.equippedAccessory=u.equippedAccessory===i.id?null:i.id;sync(u);
   }
-  function select(u,id){if(!options(u).includes(id))throw Error('攻击手段不可用');u.equippedWeapon=id;sync(u);}
+  function select(u,id){u.combatArtId=null;if(!options(u).includes(id))throw Error('攻击手段不可用');u.equippedWeapon=id;sync(u);}
   function useEffects(a,b,s,damage,hit){
     if(!hit||!s)return 0;
     if(['defDown','spdDown','moveDown','silence'].includes(s.effect)&&!(s.effect!=='silence'&&M.Talents?.immune(b)))b.status[s.effect]=1;

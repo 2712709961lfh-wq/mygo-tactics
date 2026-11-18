@@ -25,7 +25,8 @@
     const inventoryDemo = params.get('inventory-demo') === '1';
     const growthDemo = params.get('growth-demo');
     const talentDemo = params.get('talent-demo');
-    if (recruitDemo || mapDemo || counterDemo || inventoryDemo || growthDemo || talentDemo) {
+    const masteryDemo = params.get('mastery-demo');
+    if (recruitDemo || mapDemo || counterDemo || inventoryDemo || growthDemo || talentDemo || masteryDemo) {
       let saved = null;
       ui.saveManager = {
         save(game) { saved = { ok: true, snapshot: game.serialize(), savedAt: new Date().toISOString() };
@@ -50,7 +51,17 @@
         const entry = new global.MyGO.EntryScreen(ui);
         global.MYGO_ENTRY = entry;
         global.MyGO.entry = entry;
-        if (inventoryDemo || growthDemo || talentDemo) {
+        if (masteryDemo && global.MyGO.Mastery) {
+          // Disposable mastery fixture; the memory save manager isolates real progress.
+          ui.chapterPlayed=true;
+          const member=ui.game.getUnit('soyo'),target=ui.game.getUnit('tomori'),M=global.MyGO;
+          while(member.level<30)M.Growth.award(member,M.Growth.required(member.level));
+          for(const id of ['commoner','myrmidon','soldier','archer']){M.Classes.apply(member,id);M.Mastery.award(member,M.Mastery.get(id).required);}
+          M.Classes.apply(member,'monk');M.Mastery.award(member,masteryDemo==='unlock'?59:60);
+          Object.assign(member,{x:7,y:13,acted:false});Object.assign(target,{x:8,y:13,hp:10});
+          for(const unit of ui.game.units)ui.renderer.snapUnit(unit);
+          ui.updateAll();entry.open({force:true});entry.openFormation();entry.selectedUnitId=member.id;entry.loadoutTab='mastery';entry.renderFormationList();entry.renderFormationDetail();
+        } else if (inventoryDemo || growthDemo || talentDemo) {
           // Isolated, deterministic fixture for checking inventory and support UI.
           ui.chapterPlayed=true;
           const soyo=ui.game.getUnit('soyo'),tomori=ui.game.getUnit('tomori');

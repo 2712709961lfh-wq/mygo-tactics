@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('fs'),path=require('path'),vm=require('vm');
 const w={console,setTimeout,clearTimeout,document:{readyState:'loading'}};w.window=w;vm.createContext(w);
-for(const n of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five','chapter-six','rng','growth-data','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',n+'.js'),'utf8'),w,{filename:n});
+for(const n of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','chapter-six','rng','growth-data','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',n+'.js'),'utf8'),w,{filename:n});
 const M=w.MyGO,plain=x=>JSON.parse(JSON.stringify(x)),fresh=()=>new M.Game({stage:6,recruited:['xueyue','nina'],seed:66});let count=0;
 function test(name,fn){fn();console.log('✓ '+name);count++;}
 function reload(g){const h=fresh();h.restore(plain(g.serialize()));return h;}

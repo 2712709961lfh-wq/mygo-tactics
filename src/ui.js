@@ -1601,6 +1601,8 @@
 
       for (const strike of applied.strikes.filter(s=>s.applied)) {
         const target = this.game.getUnit(strike.defenderId);
+        if(strike.masteryProcs?.length)this.renderer.floatText(strike.masteryProcs.join(' · '),target.x,target.y-0.8,'#dfc992',11);
+        if(strike.masteryHealing){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('生命吸收 +'+strike.masteryHealing,actor.x,actor.y-0.5,'#bcebd7',11);}
         if(strike.talentHealed){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('战斗爽 +'+strike.talentHealed,actor.x,actor.y-0.5,'#bcebd7',11);}
         if(strike.resourcePreserved){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('爱笑女孩 · 未消耗次数',actor.x,actor.y-0.8,'#f5d7eb',10);}
         if(strike.angel){
@@ -1639,15 +1641,16 @@
       if(!reports?.length)return;
       for(const report of reports){const u=this.game.getUnit(report.unitId);
         if(report.bonus)this.showToast(report.bonus+' · EXP +'+report.gained,'success',5000);
-        this.renderer.floatText('EXP +'+report.gained,u.x,u.y-0.6,'#d5e6aa',10);}
-      const leveled=reports.filter(r=>r.levels.length);
+        if(report.gained)this.renderer.floatText('EXP +'+report.gained,u.x,u.y-0.6,'#d5e6aa',10);
+        if(report.mastery)this.renderer.floatText('职业经验 +'+report.mastery.gained,u.x,u.y-0.9,'#dfc992',10);}
+      const leveled=reports.filter(r=>r.levels.length||r.mastery?.unlocked?.length);
       if(!leveled.length)return;
       this.updateAll();
       await new Promise(resolve=>{
         this.openOverlay('<div class="modal-kicker">LEVEL UP / GROWTH</div><h2 class="modal-title" id="overlay-title">成长的足迹</h2>'+
-          leveled.map(r=>'<section class="growth-level"><h3>'+esc(r.name)+' <span>Lv.'+r.before.level+' → Lv.'+r.after.level+'</span></h3><p>经验 +'+r.gained+' · '+(r.after.level>=99?'已达最高等级':r.after.exp+' / '+r.after.required+' EXP')+'</p>'+
-            r.levels.map(l=>'<div class="growth-level-grid">'+MyGO.GrowthData.keys.map(k=>'<div class="'+(l.after[k]>l.before[k]?'is-up':'')+'"><span>'+MyGO.GrowthData.labels[k]+'</span><strong>'+l.before[k]+' → '+l.after[k]+'</strong><b>'+(l.after[k]!==l.before[k]?'+'+(l.after[k]-l.before[k]):'—')+'</b></div>').join('')+'</div>'+(l.awakened?'<p class="learned-spells-notice">个人天赋'+(l.awakened.slot||1)+'觉醒：'+esc(l.awakened.name)+' · '+esc(l.awakened.description)+'</p>':'')+(l.learned?.length?'<p class="learned-spells-notice">新习得：'+l.learned.map(id=>esc(MyGO.Magic.get(id).name)).join('、')+'</p>':'')).join('')+'</section>').join('')+
-          '<p class="modal-sub">属性提升已生效，成长结果会随存档与跨章保留。</p><div class="modal-actions"><button class="modal-btn primary" data-confirm>继续前行</button></div>','growth-modal',false);
+          leveled.map(r=>'<section class="growth-level"><h3>'+esc(r.name)+' <span>'+(r.levels.length?'Lv.'+r.before.level+' → Lv.'+r.after.level:'职业专精达成')+'</span></h3><p>经验 +'+r.gained+' · '+(r.after.level>=99?'已达最高等级':r.after.exp+' / '+r.after.required+' EXP')+'</p>'+(r.mastery?.unlocked?.length?'<div class="mastery-unlock"><h4>'+esc(r.mastery.className)+' · 职业经验 '+r.mastery.xp+'/'+r.mastery.required+'</h4>'+r.mastery.unlocked.map(id=>{const skill=MyGO.Mastery.abilities[id]||MyGO.Mastery.arts[id];return '<p><strong>习得 '+esc(skill.name)+'</strong> · '+(skill.kind==='art'?'战技'+(skill.exclusive?' · 职业限定':''):(r.mastery.autoEquipped.includes(id)?'已自动装备':'技能栏已满，请到职业专精页装备'))+'<br>'+esc(skill.description)+'</p>';}).join('')+'</div>':'')+
+            r.levels.map(l=>'<div class="growth-level-grid">'+MyGO.GrowthData.keys.map(k=>'<div class="'+(l.after[k]>l.before[k]?'is-up':'')+'"><span>'+MyGO.GrowthData.labels[k]+'</span><strong>'+l.before[k]+' → '+l.after[k]+'</strong><b>'+(l.after[k]!==l.before[k]?'+'+(l.after[k]-l.before[k]):'—')+'</b></div>').join('')+'</div>'+(l.awakened?'<p class="learned-spells-notice">'+(l.awakened.slot===0?'通用天赋':'个人天赋'+(l.awakened.slot||1))+'觉醒：'+esc(l.awakened.name)+' · '+esc(l.awakened.description)+'</p>':'')+(l.learned?.length?'<p class="learned-spells-notice">新习得：'+l.learned.map(id=>esc(MyGO.Magic.get(id).name)).join('、')+'</p>':'')).join('')+'</section>').join('')+
+          '<p class="modal-sub">成长与职业专精奖励已记录，会随存档与跨章保留。</p><div class="modal-actions"><button class="modal-btn primary" data-confirm>继续前行</button></div>','growth-modal',false);
         this.confirmHandler=resolve;
       });
     }
@@ -1890,10 +1893,12 @@
 
     showRoundResultModal(result, isEnemy) {
       const plan = result.forecast;
-      const label = {attack:'首击',counter:'反击',followup:'追击',combo:'连击'};
+      const label = {attack:'首击',counter:'反击',followup:'追击',combo:'连击','combat-art':'战技连击'};
       const rows = result.strikes.map((s,i) => '<div class="exchange-strike ' + (s.attackerSide !== 'enemy' ? 'is-player' : 'is-enemy') + '">' +
         '<span class="exchange-order">' + (i+1) + '</span><div><strong>' + label[s.kind] + ' · ' + esc(s.attackerName) +
         '</strong><small>→ ' + esc(s.defenderName) + ' · ' + esc(s.weaponName) + ' · 命中 ' + s.hitChance + '% · 暴击 ' + s.critChance + '%' +
+        (s.masteryProcs?.length?' · '+esc(s.masteryProcs.join(' / ')):'')+
+        (s.masteryHealing?' · 生命吸收回复 '+s.masteryHealing+' HP':'')+
         (s.healed ? ' · 吸取回复 ' + s.healed : '') +
         (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') +
         (s.resourcePreserved ? ' · 爱笑女孩：未消耗次数' : '') +
@@ -1910,8 +1915,9 @@
         (plan.canCounter ? '射程内可反击' : '无法反击 · ' + esc(plan.counterReason)) + '</span></div><div class="exchange-list">' + rows + '</div>' +
         hp(result.attackerName,result.attackerHp,result.attackerHpAfter,result.attackerMaxHp) +
         hp(result.defenderName,result.defenderHp,result.defenderHpAfter,result.defenderMaxHp) +
+        (result.masteryEffects?.length?'<div class="mastery-unlock">'+result.masteryEffects.map(e=>'<p>'+esc(this.game.getUnit(e.id)?.name||e.id)+(e.damage?' · 蛇毒 −'+e.damage+' HP':'')+Object.keys(e.status).map(k=>' · '+esc({masterySealDef:'防守封锁：守备−6',masterySealRes:'魔防封锁：魔防−6',masteryTransmute:'魔力转换：七项属性＋3'}[k]||k)).join('')+'</p>').join('')+'</div>':'')+
         '<div class="result-note">' + (result.strikes.length < plan.order.length ? '因单位倒下、撤离或次数耗尽，后续攻击取消。' : '首击、反击与追击依次结算。') +
-        ' 拳套主动攻击时两连击，反击时不会额外连击。反击不消耗行动。每次出手消耗 1 耐久或魔法次数，爱笑女孩触发时保留次数。点击确认后统一结算 HP、耐久和魔法次数。</div>' +
+        ' 拳套主动攻击时两连击，反击时不会额外连击。反击不消耗行动。普通攻击每次出手消耗1耐久或魔法次数；战技按整次行动收取标示耐久，空手格斗不耗耐久。爱笑女孩触发时保留次数。点击确认后统一结算HP、耐久和魔法次数。</div>' +
         '<div class="modal-actions"><button class="modal-btn primary" type="button" data-confirm>确认结算</button></div>';
       return new Promise(resolve => {
         this.confirmHandler = () => resolve(result);

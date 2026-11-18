@@ -6,7 +6,7 @@ const node=()=>({hidden:true,classList:classes,querySelector(){return node();},q
 const world={console,document:{readyState:'loading',body:{classList:classes},createElement:node},addEventListener(){},
  setTimeout(fn,ms=0){const id=++nextId;timers.set(id,{fn,at:clock+ms});return id;},clearTimeout:id=>timers.delete(id)};
 world.window=world;vm.createContext(world);
-for(const name of ['equipment-data','magic-data','inventory','class-data','config','chapter-three','chapter-four','chapter-five',
+for(const name of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five',
  'rng','growth-data','growth','grid','pathfinding','combat','game','ai','ui','entry','loadout-ui','shop-ui'])
  vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8'),world,{filename:name});
 const M=world.MyGO;
