@@ -51,14 +51,20 @@
   }
   function options(u){return [...new Set([...u.inventory.filter(i=>i.uses>0&&canEquip(u,weapons[i.id])).map(i=>i.id),
     ...(M.Mastery?.canUnarmed(u)?['mastery_unarmed']:[]),...u.learnedSpells.filter(id=>magicAllowed(u)&&!Magic.get(id).support&&u.spellUses[id]>0&&!u.status?.silence)])];}
+  function weaponFor(u,id){
+    const weapon=weapons[id]||unarmed;
+    if(weapon.kind!=='spell')return weapon;
+    const range=Magic.rangeOf(weapon,u);
+    return range.some((n,i)=>n!==weapon.range[i])?{...weapon,range}:weapon;
+  }
+  function withAttackWeapon(u,id){
+    return {...u,weaponId:id,weapon:weaponFor(u,id),combatArtId:null};
+  }
   function sync(u){
+    const available=options(u);
     let id=u.equippedWeapon;
-    if(!options(u).includes(id))id=options(u)[0]||'unarmed';
-    u.equippedWeapon=id;u.weaponId=id;u.weapon=(id==='mastery_unarmed'?M.Mastery?.unarmed:weapons[id])||unarmed;
-    if(u.weapon.kind==='spell'){
-      const range=Magic.rangeOf(u.weapon,u);
-      if(range.some((n,i)=>n!==u.weapon.range[i]))u.weapon={...u.weapon,range};
-    }
+    if(!available.includes(id))id=available[0]||'unarmed';
+    u.equippedWeapon=id;u.weaponId=id;u.weapon=weaponFor(u,id);
     const candidate=u.inventory.find(i=>i.id===u.equippedAccessory)&&item(u.equippedAccessory);
     const e=candidate?.kind==='equipment'?candidate:null;
     u.equippedAccessory=e?e.id:null;u.equipmentWeight=e?e.weight:0;
@@ -134,7 +140,7 @@
     const heal=s.effect==='drain'?Math.min(a.maxHp-a.hp,Math.floor(Math.min(b.hp,damage)/2)):0;
     a.hp+=heal;return heal;
   }
-  M.Inventory={MAX_SLOTS:5,weaponIds,accessoryIds,supplyIds,weapons,item,make,usable,options,sync,init,consume,copy,pack,restore,validateBag,stock,equip,select,useEffects,learn,magicAllowed,canEquip};
+  M.Inventory={MAX_SLOTS:5,weaponIds,accessoryIds,supplyIds,weapons,item,make,usable,options,withAttackWeapon,sync,init,consume,copy,pack,restore,validateBag,stock,equip,select,useEffects,learn,magicAllowed,canEquip};
 
   // Four authored chapters compress the original campaign's staged shop upgrades.
   const products=[];

@@ -28,6 +28,13 @@
 .game-shell .unit-commands [hidden] {display:none!important}
 /* Selected-unit information stays separate from commands and predictions. */
 .game-shell .info-side .action-buttons {display:grid}
+.game-shell .board-head-right {align-items:center;gap:10px}
+.game-shell .board-head-right .board-tools {position:static;flex:none}
+.game-status:has(.status-message:not([hidden])) #tactical-hint {display:none}
+.game-status .status-message {flex:1;min-width:0;line-height:1.35;color:#e7e5d7}
+.game-status .status-message[data-type=error] {color:#ffc5cc}
+.game-status .status-message[data-type=success] {color:#c2ffd9}
+.game-status .status-keys {flex:none}
 .game-shell .info-body .class-current {margin:6px 0;padding:0;border:0;background:transparent}
 .game-shell .info-body .class-current p {display:none}
 .game-shell .info-body .class-current strong {font-size:12px;display:inline}.game-shell .info-body .class-current>span {display:none}

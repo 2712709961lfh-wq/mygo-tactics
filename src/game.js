@@ -674,6 +674,12 @@
       return Pathfinding.getTargetsInRange(unit, this.units, x, y).filter(u=>(unit.side!=='player'||this.isUnitVisible(u))&&!MyGO.Mastery?.targetReason(unit,u,this.map));
     }
 
+    getAttackOptions(unit) {
+      return MyGO.Inventory.options(unit).map(id => ({
+        id, targets: this.getAttackableEnemies(MyGO.Inventory.withAttackWeapon(unit, id))
+      })).filter(option => option.targets.length);
+    }
+
     /** 攻击范围格子（用于高亮）。 */
     getAttackTiles(unit, fromX, fromY) {
       return Pathfinding.getAttackTiles(
@@ -997,6 +1003,9 @@
       const participants=[attacker,defender].filter(Boolean).map(u=>({...u}));
       if(result.resourceId && attacker) {
         MyGO.Inventory.consume(attacker,result.resourceId,result.resourcePreserved,result.resourceCost||1);
+        if (result.kind === 'attack' && attacker.side === 'player' && this.phase === 'player') {
+          attacker.equippedWeapon = result.resourceId;
+        }
         MyGO.Inventory.useEffects(attacker,defender,MyGO.Magic.get(result.resourceId),result.finalDamage,result.hit);
       }
       if(attacker&&result.masteryHealing)attacker.hp=Math.min(attacker.maxHp,attacker.hp+result.masteryHealing);

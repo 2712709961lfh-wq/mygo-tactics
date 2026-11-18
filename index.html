@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111e29" />
   <title>迷途回声 · MYGO!!!!!</title>
-  <link rel="stylesheet" href="styles.css?v=5.19.0" />
-  <link rel="stylesheet" href="entry.css?v=5.19.0" />
-  <link rel="stylesheet" href="soul-ui.css?v=5.19.0" />
-  <link rel="stylesheet" href="diary-ui.css?v=5.19.0" />
-  <link rel="stylesheet" href="equipment.css?v=5.19.0" />
-  <link rel="stylesheet" href="tactical-ui.css?v=5.19.0" />
+  <link rel="stylesheet" href="styles.css?v=5.19.3" />
+  <link rel="stylesheet" href="entry.css?v=5.19.3" />
+  <link rel="stylesheet" href="soul-ui.css?v=5.19.3" />
+  <link rel="stylesheet" href="diary-ui.css?v=5.19.3" />
+  <link rel="stylesheet" href="equipment.css?v=5.19.3" />
+  <link rel="stylesheet" href="tactical-ui.css?v=5.19.3" />
 </head>
 <body class="soul-ui">
   <div class="game-shell" id="game-shell">
@@ -51,7 +51,7 @@
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.19.0</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.19.3</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -335,7 +335,12 @@
 
         <div class="board-head-right">
           <span class="autosave-note" id="save-note"></span>
-
+          <div class="board-tools" aria-label="地图缩放">
+            <button class="board-tool" id="zoom-out" type="button" aria-label="缩小地图">−</button>
+            <span class="zoom-level" id="zoom-level">100%</span>
+            <button class="board-tool" id="zoom-in" type="button" aria-label="放大地图">+</button>
+            <button class="board-tool board-tool-reset" id="zoom-reset" type="button" aria-label="重置缩放">1:1</button>
+          </div>
         </div>
       </div>
 
@@ -344,22 +349,15 @@
           <canvas id="board" width="768" height="512" tabindex="0" aria-label="战棋地图，点击成员移动，数字键1到6选择同行者"></canvas>
         </div>
         <section class="unit-commands" id="unit-commands" hidden aria-label="当前角色行动">
-          <header class="unit-command-head"><strong id="command-unit-name"></strong><span id="command-step"></span></header>
+          <header class="unit-command-head"><strong id="command-unit-name"></strong><span>选择行动</span></header>
           <div id="command-actions"></div>
           <div class="command-picker" id="command-picker" hidden></div>
         </section>
-        <div class="board-tools" aria-label="地图缩放">
-          <button class="board-tool" id="zoom-out" type="button" aria-label="缩小地图">−</button>
-          <span class="zoom-level" id="zoom-level">100%</span>
-          <button class="board-tool" id="zoom-in" type="button" aria-label="放大地图">+</button>
-          <button class="board-tool board-tool-reset" id="zoom-reset" type="button" aria-label="重置缩放">1:1</button>
-        </div>
         <div class="turn-banner" id="turn-banner" hidden>
           <div class="banner-rule"></div>
           <strong id="banner-title">第 1 回合</strong>
           <span id="banner-sub">我方行动</span>
         </div>
-        <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
         <div class="board-corner board-corner-tl" aria-hidden="true"></div>
         <div class="board-corner board-corner-br" aria-hidden="true"></div>
       </div>
@@ -409,6 +407,7 @@
   </div>
   <footer class="game-status">
     <div class="status-emblem">◇</div><span id="tactical-hint">选择同行者，迈出下一步。</span>
+    <span class="status-message" id="toast" role="status" aria-live="polite" hidden></span>
     <span class="status-keys"><kbd>1–9</kbd> 选择 <kbd>Esc</kbd> 返回 <kbd>E</kbd> 回合</span>
     <button id="grid-btn" type="button" aria-pressed="true">网格 <kbd>G</kbd></button>
     <button id="fullscreen-btn" type="button">全屏 <kbd>F</kbd></button>
@@ -496,65 +495,65 @@
 
   </div><!-- /game-shell -->
 
-  <script src="src/equipment-data.js?v=5.19.0"></script>
-  <script src="src/magic-data.js?v=5.19.0"></script>
-  <script src="src/codex-data.js?v=5.19.0"></script>
-  <script src="src/inventory.js?v=5.19.0"></script>
-  <script src="src/class-data.js?v=5.19.0"></script>
-  <script src="src/class-mastery.js?v=5.19.0"></script>
-  <script src="src/config.js?v=5.19.0"></script>
-  <script src="src/chapter-three.js?v=5.19.0"></script>
-  <script src="src/chapter-four.js?v=5.19.0"></script>
-  <script src="src/chapter-five.js?v=5.19.0"></script>
-  <script src="src/chapter-six.js?v=5.19.0"></script>
-  <script src="src/chapter-seven.js?v=5.19.0"></script>
-  <script src="src/chapter-eight.js?v=5.19.0"></script>
-  <script src="src/chapter-nine.js?v=5.19.0"></script>
-  <script src="src/chapter-ten.js?v=5.19.0"></script>
-  <script src="src/chapter-palace.js?v=5.19.0"></script>
-  <script src="src/map-projection.js?v=5.19.0"></script>
-  <script src="src/rng.js?v=5.19.0"></script>
-  <script src="src/growth-data.js?v=5.19.0"></script>
-  <script src="src/talents.js?v=5.19.0"></script>
-  <script src="src/growth.js?v=5.19.0"></script>
-  <script src="src/grid.js?v=5.19.0"></script>
-  <script src="src/pathfinding.js?v=5.19.0"></script>
-  <script src="src/combat.js?v=5.19.0"></script>
-  <script src="src/game.js?v=5.19.0"></script>
-  <script src="src/ai.js?v=5.19.0"></script>
-  <script src="src/save.js?v=5.19.0"></script>
-  <script src="src/assets.js?v=5.19.0"></script>
-  <script src="src/garden-map.js?v=5.19.0"></script>
-  <script src="src/moon-map.js?v=5.19.0"></script>
-  <script src="src/park-map.js?v=5.19.0"></script>
-  <script src="src/characters.js?v=5.19.0"></script>
-  <script src="src/dark-soyo.js?v=5.19.0"></script>
-  <script src="src/watercourt-art.js?v=5.19.0"></script>
-  <script src="src/masked-court-art.js?v=5.19.0"></script>
-  <script src="src/livehouse-art.js?v=5.19.0"></script>
-  <script src="src/eighth-art.js?v=5.19.0"></script>
-  <script src="src/rehearsal-art.js?v=5.19.0"></script>
-  <script src="src/tenth-art.js?v=5.19.0"></script>
-  <script src="src/palace-art.js?v=5.19.0"></script>
-  <script src="src/renderer.js?v=5.19.0"></script>
-  <script src="src/combat-vfx.js?v=5.19.0"></script>
-  <script src="src/battle.js?v=5.19.0"></script>
-  <script src="src/viewport.js?v=5.19.0"></script>
-  <script src="src/ui.js?v=5.19.0"></script>
-  <script src="src/park-intro.js?v=5.19.0"></script>
-  <script src="src/masked-court-ui.js?v=5.19.0"></script>
-  <script src="src/livehouse-intro.js?v=5.19.0"></script>
-  <script src="src/eighth-intro.js?v=5.19.0"></script>
-  <script src="src/ninth-intro.js?v=5.19.0"></script>
-  <script src="src/tenth-intro.js?v=5.19.0"></script>
-  <script src="src/palace-intro.js?v=5.19.0"></script>
-  <script src="src/equipment-ui.js?v=5.19.0"></script>
-  <script src="src/entry.js?v=5.19.0"></script>
-  <script src="src/loadout-ui.js?v=5.19.0"></script>
-  <script src="src/mastery-ui.js?v=5.19.0"></script>
-  <script src="src/shop-ui.js?v=5.19.0"></script>
-  <script src="src/tactical-ui.js?v=5.19.0"></script>
-  <script src="src/main.js?v=5.19.0"></script>
+  <script src="src/equipment-data.js?v=5.19.3"></script>
+  <script src="src/magic-data.js?v=5.19.3"></script>
+  <script src="src/codex-data.js?v=5.19.3"></script>
+  <script src="src/inventory.js?v=5.19.3"></script>
+  <script src="src/class-data.js?v=5.19.3"></script>
+  <script src="src/class-mastery.js?v=5.19.3"></script>
+  <script src="src/config.js?v=5.19.3"></script>
+  <script src="src/chapter-three.js?v=5.19.3"></script>
+  <script src="src/chapter-four.js?v=5.19.3"></script>
+  <script src="src/chapter-five.js?v=5.19.3"></script>
+  <script src="src/chapter-six.js?v=5.19.3"></script>
+  <script src="src/chapter-seven.js?v=5.19.3"></script>
+  <script src="src/chapter-eight.js?v=5.19.3"></script>
+  <script src="src/chapter-nine.js?v=5.19.3"></script>
+  <script src="src/chapter-ten.js?v=5.19.3"></script>
+  <script src="src/chapter-palace.js?v=5.19.3"></script>
+  <script src="src/map-projection.js?v=5.19.3"></script>
+  <script src="src/rng.js?v=5.19.3"></script>
+  <script src="src/growth-data.js?v=5.19.3"></script>
+  <script src="src/talents.js?v=5.19.3"></script>
+  <script src="src/growth.js?v=5.19.3"></script>
+  <script src="src/grid.js?v=5.19.3"></script>
+  <script src="src/pathfinding.js?v=5.19.3"></script>
+  <script src="src/combat.js?v=5.19.3"></script>
+  <script src="src/game.js?v=5.19.3"></script>
+  <script src="src/ai.js?v=5.19.3"></script>
+  <script src="src/save.js?v=5.19.3"></script>
+  <script src="src/assets.js?v=5.19.3"></script>
+  <script src="src/garden-map.js?v=5.19.3"></script>
+  <script src="src/moon-map.js?v=5.19.3"></script>
+  <script src="src/park-map.js?v=5.19.3"></script>
+  <script src="src/characters.js?v=5.19.3"></script>
+  <script src="src/dark-soyo.js?v=5.19.3"></script>
+  <script src="src/watercourt-art.js?v=5.19.3"></script>
+  <script src="src/masked-court-art.js?v=5.19.3"></script>
+  <script src="src/livehouse-art.js?v=5.19.3"></script>
+  <script src="src/eighth-art.js?v=5.19.3"></script>
+  <script src="src/rehearsal-art.js?v=5.19.3"></script>
+  <script src="src/tenth-art.js?v=5.19.3"></script>
+  <script src="src/palace-art.js?v=5.19.3"></script>
+  <script src="src/renderer.js?v=5.19.3"></script>
+  <script src="src/combat-vfx.js?v=5.19.3"></script>
+  <script src="src/battle.js?v=5.19.3"></script>
+  <script src="src/viewport.js?v=5.19.3"></script>
+  <script src="src/ui.js?v=5.19.3"></script>
+  <script src="src/park-intro.js?v=5.19.3"></script>
+  <script src="src/masked-court-ui.js?v=5.19.3"></script>
+  <script src="src/livehouse-intro.js?v=5.19.3"></script>
+  <script src="src/eighth-intro.js?v=5.19.3"></script>
+  <script src="src/ninth-intro.js?v=5.19.3"></script>
+  <script src="src/tenth-intro.js?v=5.19.3"></script>
+  <script src="src/palace-intro.js?v=5.19.3"></script>
+  <script src="src/equipment-ui.js?v=5.19.3"></script>
+  <script src="src/entry.js?v=5.19.3"></script>
+  <script src="src/loadout-ui.js?v=5.19.3"></script>
+  <script src="src/mastery-ui.js?v=5.19.3"></script>
+  <script src="src/shop-ui.js?v=5.19.3"></script>
+  <script src="src/tactical-ui.js?v=5.19.3"></script>
+  <script src="src/main.js?v=5.19.3"></script>
   <dialog id="terrain-credits" aria-labelledby="terrain-credits-title" style="width:min(680px,90vw);max-height:80vh;overflow:auto;background:#202b2c;color:#e1dfce;border:1px solid #8b987e;border-radius:8px;padding:24px;font:14px/1.8 system-ui">
     <form method="dialog" style="float:right"><button aria-label="关闭地图素材署名">关闭 ×</button></form>
     <h2 id="terrain-credits-title">地图素材与署名</h2>

@@ -19,23 +19,24 @@
   const UP=M.UI.prototype,baseInfo=UP.renderUnitInfo,baseAction=UP.renderActionSide;
   UP.renderUnitInfo=function(u){baseInfo.call(this,u);if(u&&u.side!=='enemy')this.dom.infoBody.insertAdjacentHTML('beforeend',bar(u));};
   UP.renderActionSide=function(u){baseAction.call(this,u);
-    const available=A.availableArts(u);if(!available.length&&!A.has(u,'steal')&&u.classId!=='dancer')return;
+    const available=A.availableArts(u);if(!available.length&&!A.has(u,'steal'))return;
     const b=document.createElement('button');b.type='button';b.className='action-btn loadout-action';b.textContent='职业战技'+(A.selectedArt(u)?' · '+A.selectedArt(u).name:'');b.onclick=()=>this.showMasteryActions(u);this.dom.actionButtons.appendChild(b);
   };
   UP.showMasteryActions=function(u){
     if(this.busy||u.acted||!this.game.isPlayerPhase())return;
-    const rows=A.availableArts(u).concat(u.classId==='dancer'?[{id:'dance',name:'舞蹈',assist:true,description:'令相邻且已行动的同伴再次行动；无法对舞者使用。'}]:[],A.has(u,'steal')?[{id:'steal',name:'偷窃',assist:true,description:A.abilities.steal.description}]:[]);
+    const rows=A.availableArts(u).concat(A.has(u,'steal')?[{id:'steal',name:'偷窃',assist:true,description:A.abilities.steal.description}]:[]);
     this.openActionPicker('<div class="modal-kicker">CLASS COMBAT ARTS</div><h2 class="modal-title" id="overlay-title">'+esc(u.name)+' · 职业战技</h2><p class="modal-sub">攻击战技选定后，在地图上选择敌人并确认交战。辅助战技选目标后立即使用并结束行动。</p><div class="battle-loadout-list">'+rows.map(a=>{const reason=a.assist?(A.assistTargets(this.game,u,a.id).length?'':'当前没有有效目标'):A.artReason(u,a.id);return '<button class="battle-loadout-row" data-mastery-action="'+a.id+'"'+(reason?' disabled':'')+' title="'+esc(reason)+'"><span><strong>'+esc(a.name)+'</strong><small>'+esc(a.description)+'</small><small>'+esc(reason)+'</small></span><b>'+(a.assist?'选择目标':a.cost+'耐久')+'</b></button>';}).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-normal-attack>改用普通攻击</button><button class="modal-btn" data-overlay-close>返回</button></div>');
     this.actionPickerCard.querySelector('[data-normal-attack]').onclick=()=>{u.combatArtId=null;this.closeActionPicker();this.enterActionMode();};
     this.actionPickerCard.querySelectorAll('[data-mastery-action]').forEach(b=>b.onclick=()=>{const id=b.dataset.masteryAction,a=A.arts[id];if(a&&!a.assist){try{this.game.selectCombatArt(u,id);this.closeActionPicker();if(this.game.getAttackableEnemies(u).length)this.enterAttackMode();else this.enterActionMode();}catch(e){this.showToast(e.message,'error');}}else this.chooseMasteryTarget(u,id);});
   };
-  UP.chooseMasteryTarget=function(u,id){const name=A.arts[id]?.name||(id==='dance'?'舞蹈':'偷窃'),targets=A.assistTargets(this.game,u,id);
+  UP.chooseMasteryTarget=function(u,id){const dance=id==='dance',name=A.arts[id]?.name||(dance?'跳舞':'偷窃'),targets=A.assistTargets(this.game,u,id);
+    const back=dance?()=>this.closeActionPicker():()=>this.showMasteryActions(u);
     this.openActionPicker('<div class="modal-kicker">ASSIST ART</div><h2 class="modal-title" id="overlay-title">'+esc(name)+' · 选择目标</h2><div class="battle-loadout-list">'+targets.map(t=>{
       const button=(label,index='')=>'<button class="battle-loadout-row" data-mastery-target="'+esc(t.id)+'" data-steal-index="'+index+'"><span><strong>'+esc(t.name)+'</strong><small>'+esc(label)+' · 距离'+M.Grid.manhattan(u,t)+'格</small></span><b>使用并结束行动</b></button>';
       return id==='steal'?t.inventory.map((i,n)=>A.stealable(t).includes(i)?button(M.Inventory.item(i.id).name,n):'').join(''):button('HP '+t.hp+'/'+t.maxHp);
-    }).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-mastery-back>返回战技</button></div>');
-    this.pickerBack=()=>this.showMasteryActions(u);
-    this.actionPickerCard.querySelector('[data-mastery-back]').onclick=()=>this.showMasteryActions(u);
+    }).join('')+'</div><div class="modal-actions"><button class="modal-btn" data-mastery-back>'+(dance?'返回行动':'返回战技')+'</button></div>');
+    this.pickerBack=back;
+    this.actionPickerCard.querySelector('[data-mastery-back]').onclick=back;
     this.actionPickerCard.querySelectorAll('[data-mastery-target]').forEach(b=>b.onclick=async()=>{
       if(this.busy)return;this.setBusy(true);
       try{const r=this.game.useMasteryAssist(u,this.game.getUnit(b.dataset.masteryTarget),id,+b.dataset.stealIndex);this.closeActionPicker();for(const tid of r.affected){const t=this.game.getUnit(tid);this.renderer.snapUnit(t);this.renderer.floatText(name,t.x,t.y,'#d9c58f',11);}await this.showGrowthResults(r.experience);this.resetSelection({silent:true});this.updateAll();this.renderIdleInfo();this.showToast(u.name+'使用了'+name,'success',2400);}catch(e){this.showToast(e.message,'error');}finally{this.setBusy(false);}

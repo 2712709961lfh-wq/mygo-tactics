@@ -104,7 +104,6 @@
     if(u.equippedAccessory)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(I.item(u.equippedAccessory).name)+'</span>');
   };
   UP.renderActionSide=function(u){baseAction.call(this,u);
-    const button=document.createElement('button');button.type='button';button.className='action-btn loadout-action';button.textContent='武器 / 魔法 · '+u.weapon.name;button.addEventListener('click',()=>this.showAttackLoadout(u));this.dom.actionButtons.appendChild(button);this.dom.actionButtons.classList.add("has-extra-action");
     if(u.id==='anon'&&M.Talents?.active(u,3)){
       const swap=document.createElement('button');swap.type='button';swap.className='action-btn';swap.textContent='待机后交换 · 幸福者退让';
       swap.onclick=()=>{this.game.markActed(u);this.resetSelection({silent:true});this.updateAll();this.showTalentSwap(u);};this.dom.actionButtons.appendChild(swap);
@@ -134,21 +133,30 @@
   const baseUpdate=UP.updateAll,baseBusy=UP.setBusy;
   UP.updateAll=function(){baseUpdate.call(this);this.offerTalentSwap();};
   UP.setBusy=function(value){baseBusy.call(this,value);if(!value)this.offerTalentSwap();};
-  UP.showAttackLoadout=function(u){
+  UP.supportSpells=function(u,healing){
+    if(!I.magicAllowed(u))return [];
+    return u.learnedSpells.filter(id=>{
+      const spell=Magic.get(id);
+      return spell.support&&spell.effect!=='torch'&&M.Talents.healingSpell(spell)===healing;
+    });
+  };
+  UP.showSupportSpells=function(u,healing){
     if(this.busy||u.acted||!this.game.isPlayerPhase())return;
-    const attacks=I.options(u),support=u.learnedSpells.filter(id=>Magic.get(id).support);
-    this.openOverlay('<div class="modal-kicker">EQUIPMENT & MAGIC</div><h2 class="modal-title" id="overlay-title">'+esc(u.name)+' · 攻击与魔法</h2><p class="modal-sub">切换攻击不消耗行动；辅助魔法使用后结束行动。当前攻击将用于反击。</p><div class="battle-loadout-list">'+attacks.map(id=>{
-      const w=I.weapons[id],uses=w.kind==='unarmed'?'不限次数':w.kind==='spell'?u.spellUses[id]+' / '+w.uses+' 次':u.inventory.find(i=>i.id===id&&i.uses>0).uses+' 耐久';
-      return '<button type="button" class="battle-loadout-row" data-attack-choice="'+id+'"><span class="bag-icon">'+icon(w)+'</span><span><strong>'+esc(w.name)+(id===u.weaponId?' · 当前攻击':'')+'</strong><small>'+esc(stats(w))+'</small></span><b>'+uses+'</b></button>';
-    }).join('')+(attacks.length?'':'<p>没有可用的攻击手段。</p>')+'</div>'+(support.length?'<h3>辅助魔法</h3><div class="battle-loadout-list">'+support.map(id=>{const s=Magic.get(id),ts=this.game.supportTargets(u,id);return '<button type="button" class="battle-loadout-row" data-support-choice="'+id+'"'+(!ts.length?' disabled':'')+'><span class="bag-icon">'+icon(s)+'</span><span><strong>'+esc(s.name)+'</strong><small>'+esc(s.description)+'</small></span><b>'+u.spellUses[id]+'/'+s.uses+'</b></button>';}).join('')+'</div><p class="loadout-footnote">辅助按钮在有合适目标且有剩余次数时可用。</p>':'')+'<div class="modal-actions"><button class="modal-btn" data-overlay-close>返回行动</button></div>','loadout-modal',true);
-    this.dom.overlayCard.querySelectorAll('[data-attack-choice]').forEach(b=>b.addEventListener('click',()=>{try{this.game.selectAttack(u,b.dataset.attackChoice);this.closeOverlay();this.enterActionMode();}catch(e){this.showToast(e.message,'error');}}));
-    this.dom.overlayCard.querySelectorAll('[data-support-choice]').forEach(b=>b.addEventListener('click',()=>this.chooseSupportTarget(u,b.dataset.supportChoice)));
+    const rows=this.supportSpells(u,healing).map(id=>{
+      const spell=Magic.get(id), count=this.game.supportTargets(u,id).length;
+      return '<button type="button" class="battle-loadout-row" data-support-choice="'+esc(id)+'"'+(count?'':' disabled')+'>'+
+        '<span class="bag-icon">'+icon(spell)+'</span><span><strong>'+esc(spell.name)+'</strong><small>射程 '+Magic.rangeOf(spell,u).join('–')+' · '+count+' 个目标</small></span><b>'+u.spellUses[id]+' / '+spell.uses+'</b></button>';
+    });
+    const card=this.openActionPicker('<h3>'+(healing?'治疗':'辅助魔法')+'</h3><div class="battle-loadout-list">'+rows.join('')+
+      '</div><button type="button" class="command-back" data-overlay-close>‹ 返回行动</button>');
+    card.querySelectorAll('[data-support-choice]').forEach(b=>b.onclick=()=>this.chooseSupportTarget(u,b.dataset.supportChoice));
   };
   UP.chooseSupportTarget=function(caster,id){
     const s=Magic.get(id),targets=this.game.supportTargets(caster,id),amount=Magic.healAmount(s,caster);
     this.openActionPicker('<div class="modal-kicker">FAITH MAGIC</div><h2 class="modal-title" id="overlay-title">'+esc(s.name)+' · 选择目标</h2><p class="modal-sub">'+esc(s.description)+' 剩余 '+caster.spellUses[id]+'/'+s.uses+' 次。</p><div class="battle-loadout-list">'+targets.map(t=>'<button class="battle-loadout-row" data-support-target="'+esc(t.id)+'"><span><strong>'+esc(t.name)+'</strong><small>HP '+t.hp+'/'+t.maxHp+' · 距离 '+M.Grid.manhattan(caster,t)+' 格'+(['heal','fortify'].includes(s.effect)?' · 预计回复 '+Math.min(t.maxHp-t.hp,amount):'')+'</small></span><b>'+(s.effect==='fortify'||s.effect==='restore'?'范围内全体':'选择')+'</b></button>').join('')+'</div><div class="modal-actions"><button class="modal-btn" data-support-back>返回魔法</button></div>');
-    this.pickerBack=()=>this.showAttackLoadout(caster);
-    this.actionPickerCard.querySelector('[data-support-back]').onclick=()=>this.showAttackLoadout(caster);
+    const back=()=>this.showSupportSpells(caster,M.Talents.healingSpell(s));
+    this.pickerBack=back;
+    this.actionPickerCard.querySelector('[data-support-back]').onclick=back;
     this.actionPickerCard.querySelectorAll('[data-support-target]').forEach(b=>b.onclick=()=>{
       const target=this.game.getUnit(b.dataset.supportTarget);
       if(s.effect==='warp'){this.closeActionPicker();this.beginWarpTarget(caster,id,target);}else this.confirmSupport(caster,id,target);
@@ -157,7 +165,13 @@
   UP.confirmSupport=function(caster,id,target,destination){
     const s=Magic.get(id),affected=['fortify','restore'].includes(s.effect)?this.game.supportTargets(caster,id):[target];
     this.openOverlay('<div class="modal-kicker">CONFIRM SPELL</div><h2 class="modal-title" id="overlay-title">施放'+esc(s.name)+'？</h2><p class="modal-sub">目标：'+esc(affected.map(t=>t.name).join('、'))+(destination?' · 落点 '+(destination.x+1)+','+(destination.y+1):'')+'。消耗 1 次魔法，并结束'+esc(caster.name)+'的行动。</p><div class="modal-actions"><button class="modal-btn" data-support-back>取消</button><button class="modal-btn primary" data-cast-confirm>确认施放</button></div>','',true);
-    this.dom.overlayCard.querySelector('[data-support-back]').onclick=()=>this.chooseSupportTarget(caster,id);
+    this.dom.overlayCard.querySelector('[data-support-back]').onclick=()=>{
+      if (this.mode === 'warp') {
+        this.pendingWarp = null;
+        this.enterActionMode();
+      }
+      this.chooseSupportTarget(caster,id);
+    };
     this.dom.overlayCard.querySelector('[data-cast-confirm]').onclick=async()=>{
       if(this.busy)return;this.setBusy(true);
       try{const result=this.game.castSupport(caster,id,target,destination);this.closeOverlay();this.pendingWarp=null;
@@ -175,5 +189,5 @@
   };
   const boardClick=UP.onBoardClick,cancel=UP.cancelCurrent;
   UP.onBoardClick=function(event){if(this.mode==='warp'&&this.pendingWarp){const c=this.eventToCell(event),p=this.pendingWarp;if(c&&p.cells.some(t=>t.x===c.x&&t.y===c.y))this.confirmSupport(p.caster,p.id,p.target,c);return;}return boardClick.call(this,event);};
-  UP.cancelCurrent=function(){if(this.mode==='warp'){this.pendingWarp=null;this.enterActionMode();return;}return cancel.call(this);};
+  UP.cancelCurrent=function(){if(this.mode==='warp'&&this.dom.overlayRoot.hidden){this.pendingWarp=null;this.enterActionMode();return;}return cancel.call(this);};
 })(window);

@@ -772,8 +772,7 @@
           this.showHoverForecast(target);
         } else if (this.hoveredTargetId) {
           this.hoveredTargetId = null;
-          const active = this.game.getUnit(this.activeId);
-          if (active) this.renderAttackSide(active);
+          if (this.activeId) this.renderAttackSide();
         }
       }
     }
@@ -786,8 +785,7 @@
 
       // 鼠标离开棋盘后，底部面板不应停留在“目标预测”状态。
       if (this.mode === 'attack') {
-        const active = this.game.getUnit(this.activeId);
-        if (active) this.renderAttackSide(active);
+        if (this.activeId) this.renderAttackSide();
       }
     }
 
@@ -870,6 +868,7 @@
     selectUnit(unit) {
       if (unit.side !== 'player' || unit.acted || unit.dead) return;
       this.activeId = unit.id;
+      this.attackWeaponId = null;
       this.inspectedId = null;
       this.origin = { x: unit.x, y: unit.y };
       this.moved = false;
@@ -932,8 +931,9 @@
     enterActionMode() {
       const unit = this.game.getUnit(this.activeId);
       if (!unit) return;
+      this.attackWeaponId = null;
+      unit.combatArtId = null;
       this.mode = 'action';
-      this.actionTargets = this.game.getAttackableEnemies(unit);
       this.previewPath = [];
       this.hoverKey = null;
       this.setView();
@@ -941,24 +941,33 @@
       this.renderActionSide(unit);
     }
 
-    enterAttackMode() {
+    getAttackUnit() {
+      const unit = this.game.getUnit(this.activeId);
+      return unit && this.attackWeaponId ? MyGO.Inventory.withAttackWeapon(unit, this.attackWeaponId) : unit;
+    }
+
+    enterAttackMode(weaponId = null) {
       const unit = this.game.getUnit(this.activeId);
       if (!unit) return;
-      this.actionTargets = this.game.getAttackableEnemies(unit);
-      if (!this.actionTargets.length) {
+      if (weaponId && !MyGO.Inventory.options(unit).includes(weaponId)) return;
+      const attacker = weaponId ? MyGO.Inventory.withAttackWeapon(unit, weaponId) : unit;
+      const targets = this.game.getAttackableEnemies(attacker);
+      if (!targets.length) {
         this.showToast('当前没有可攻击的目标。', 'info', 1400);
         return;
       }
+      this.attackWeaponId = weaponId;
+      this.actionTargets = targets;
       this.mode = 'attack';
       this.attackTiles = new Set(
-        this.game.getAttackTiles(unit, unit.x, unit.y).map((tile) => Grid.key(tile.x, tile.y))
+        this.game.getAttackTiles(attacker).map((tile) => Grid.key(tile.x, tile.y))
       );
       this.targetIds = new Set(this.actionTargets.map((target) => target.id));
       this.hoverKey = null;
       this.previewPath = [];
       this.setView();
       this.renderUnitInfo(unit);
-      this.renderAttackSide(unit);
+      this.renderAttackSide();
     }
 
     revertMove() {
@@ -968,6 +977,7 @@
       this.renderer.snapUnit(unit);
       this.moved = false;
       this.mode = 'move';
+      this.attackWeaponId = null;
       this.actionTargets = [];
       this.attackTiles = new Set();
       this.targetIds = new Set();
@@ -1019,6 +1029,7 @@
       const opts = options || {};
       this.mode = 'idle';
       this.activeId = null;
+      this.attackWeaponId = null;
       this.origin = null;
       this.moved = false;
       this.reachable = null;
@@ -1175,11 +1186,9 @@
     }
 
     renderMoveSide(unit) {
-      this.dom.contextTitle.textContent = '移动阶段';
+      this.dom.contextTitle.textContent = '选择移动落点';
       this.dom.contextText.innerHTML =
-        '移动力 <strong>' + unit.move + '</strong>。蓝色格为可停留范围；' +
-        '森林、山地与浅滩消耗 2 点移动力，敌方单位会阻挡道路。' +
-        '<span class="hint-line">点击自身所在格可原地选择行动。</span>';
+        '移动力 <strong>' + unit.move + '</strong> · 点击蓝格移动，点击自身原地行动。';
       this.setActions([
         {
           label: '原地行动',
@@ -1194,17 +1203,17 @@
     }
 
     renderActionSide(unit) {
-      const targets = this.game.getAttackableEnemies(unit);
+      const chooseWeapon = typeof this.showWeaponChoices === 'function';
+      const targets = chooseWeapon
+        ? [...new Set(this.game.getAttackOptions(unit).flatMap(option => option.targets))]
+        : this.game.getAttackableEnemies(unit);
       this.actionTargets = targets;
       this.dom.contextTitle.textContent = '行动选择';
       const targetHint = targets.length
         ? '当前可攻击 <strong>' + targets.length + '</strong> 名敌人：' + esc(targets.map((t) => t.shortName).join('、')) + '。'
         : '当前攻击范围内没有敌人。可以待机，或撤回移动重新选位。';
-      const rangeHint = unit.weapon.range[0] === 1 && unit.weapon.range[1] === 1
-        ? '该武器为近战，射程 1 格。'
-        : '该武器为远程，射程 ' + unit.weapon.range[0] + '–' + unit.weapon.range[1] + ' 格。';
       this.dom.contextText.innerHTML =
-        targetHint + '<span class="hint-line">' + rangeHint + '攻击前会先显示红色范围。</span>';
+        targetHint + (targets.length ? '<span class="hint-line">攻击时会标出所选武器的射程。</span>' : '');
       if(this.game.canActivateResonance(unit)) this.dom.contextText.innerHTML=
         '唤醒共鸣会消耗本次行动，永久开启中央四格浅滩（移动消耗 2）。';
       if(this.game.canAwakenBell(unit))this.dom.contextText.innerHTML=
@@ -1243,12 +1252,11 @@
           this.updateAll();
           this.showToast('共鸣已唤醒！中央浅滩永久开放，移动消耗 2。', 'info', 4000);
         }}] : []),
-        {
+        ...(targets.length ? [{
           html: '攻击 <span class="count">' + targets.length + '</span>',
           className: 'attack',
-          disabled: targets.length === 0,
-          onClick: () => this.enterAttackMode()
-        },
+          onClick: () => chooseWeapon ? this.showWeaponChoices(unit, true) : this.enterAttackMode()
+        }] : []),
         {
           label: '待机',
           className: 'primary',
@@ -1284,13 +1292,12 @@
         '<button class="modal-btn primary" data-confirm>使用钥匙</button></div>', '', true);
     }
 
-    renderAttackSide(unit) {
-      const targets = this.game.getAttackableEnemies(unit);
-      this.actionTargets = targets;
+    renderAttackSide() {
+      const attacker = this.getAttackUnit();
       this.dom.contextTitle.textContent = '选择攻击目标';
-      const names = targets.map((target) => target.name).join('、');
+      const names = this.actionTargets.map((target) => target.name).join('、');
       this.dom.contextText.innerHTML =
-        '红色区域为攻击范围。点击范围内的敌人发动攻击。' +
+        '本次攻击：<strong>' + esc(attacker.weapon.name) + '</strong>。点击红色范围内的敌人。' +
         '<span class="hint-line">目标：' + esc(names) + '</span>';
       this.setActions([
         {
@@ -1306,7 +1313,7 @@
     }
 
     showHoverForecast(target) {
-      const active = this.game.getUnit(this.activeId);
+      const active = this.getAttackUnit();
       if (!active || this.busy) return;
       let preview;
       try {
@@ -1552,7 +1559,7 @@
       if (!attacker || !target || !this.targetIds.has(target.id)) return;
       this.setBusy(true);
       try {
-        const result = await this.performAttackSequence(attacker, target, false);
+        const result = await this.performAttackSequence(this.getAttackUnit(), target, false);
         this.game.markActed(attacker,true);
         this.setBusy(false);
         this.resetSelection();

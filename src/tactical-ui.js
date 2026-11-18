@@ -15,7 +15,6 @@
     const root = document.getElementById('unit-commands');
     if (!root) return null;
     this.commandRoot = root;
-    document.getElementById('command-actions').appendChild(this.dom.actionButtons);
     this.actionPickerCard = document.getElementById('command-picker');
     this.dom.boardViewport.addEventListener('scroll', () => this.positionCommands(), {passive:true});
     root.addEventListener('contextmenu', e => { e.preventDefault(); this.cancelCurrent(); });
@@ -27,14 +26,14 @@
     const root = this.ensureCommands();
     if (!root) return;
     const u = this.game.getUnit(this.activeId);
-    const selected = u && ['move','action','attack','warp'].includes(this.mode);
-    const host = selected ? document.getElementById('command-actions') : document.getElementById('info-side');
+    // Keep map selection modes clear of command buttons so every visible tile can be clicked.
+    const choosingAction = this.mode === 'action';
+    const host = choosingAction ? document.getElementById('command-actions') : document.getElementById('info-side');
     if (this.dom.actionButtons.parentElement !== host) host.appendChild(this.dom.actionButtons);
-    root.hidden = !selected || this.busy || !this.game.isPlayerPhase();
+    root.hidden = !u || !choosingAction || this.busy || !this.game.isPlayerPhase();
     if (root.hidden) return;
     root.classList.toggle('has-picker', !this.actionPickerCard.hidden);
     document.getElementById('command-unit-name').textContent = u.shortName || u.name;
-    document.getElementById('command-step').textContent = this.mode === 'move' ? '选择落点' : this.mode === 'attack' ? '选择目标' : this.mode === 'warp' ? '选择落点' : '选择行动';
     // Use layout coordinates inside the landscape shell, so rotation and scaling
     // affect both the board and menu identically. Scrolling only offsets the anchor.
     const board = this.dom.board, vp = this.dom.boardViewport, frame = vp.parentElement;
@@ -81,7 +80,7 @@
     this.positionCommands();
   };
 
-  for (const name of ['setView','updateChrome','layoutBoard']) {
+  for (const name of ['setView','updateChrome','layoutBoard','beginWarpTarget']) {
     const base = UP[name];
     UP[name] = function (...args) { const result = base.apply(this, args); this.positionCommands(); return result; };
   }
@@ -97,39 +96,64 @@
   const baseAction = UP.renderActionSide;
   UP.renderActionSide = function (u) {
     baseAction.call(this, u);
-    const attack = this.dom.actionButtons.querySelector('.attack');
-    if (attack) {
-      // A different weapon may reach an enemy even when the equipped one cannot.
-      attack.disabled = !M.Inventory.options(u).length;
-      const replacement = attack.cloneNode(true);
-      replacement.innerHTML = '攻击<span class="command-chevron">›</span>';
-      replacement.onclick = () => this.showAttackLoadout(u, true);
-      attack.replaceWith(replacement);
+    const buttons = this.dom.actionButtons;
+    const attack = buttons.querySelector('.attack');
+    if (attack) attack.textContent = '攻击';
+    const addCommand = (label, className, onClick, unavailable = '') => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'action-btn ' + className;
+      button.textContent = label;
+      button.disabled = !!unavailable;
+      if (unavailable) button.title = unavailable;
+      button.onclick = onClick;
+      buttons.appendChild(button);
+    };
+    addCommand('装备', 'equip-action', () => this.showWeaponChoices(u));
+    for (const [healing, label, className] of [[true,'治疗','heal-action'], [false,'辅助魔法','support-action']]) {
+      const spells = this.supportSpells(u, healing);
+      if (!spells.length) continue;
+      const canCast = spells.some(id => this.game.supportTargets(u, id).length);
+      addCommand(label, className, () => this.showSupportSpells(u, healing),
+        canCast ? '' : '当前没有有效目标或可用次数');
     }
-    const weapon = [...this.dom.actionButtons.children].find(b => b.textContent.startsWith('武器 / 魔法'));
-    if (weapon) { weapon.textContent = '武器 / 魔法'; weapon.insertAdjacentHTML('beforeend','<span class="command-chevron">›</span>'); }
-    // Keep offensive commands together, then contextual interactions, wait, back.
-    const buttons = [...this.dom.actionButtons.children];
-    buttons.sort((a,b) => rank(a) - rank(b)).forEach(b => this.dom.actionButtons.appendChild(b));
-    function rank(b) { return b.classList.contains('attack') ? 0 : b.textContent.startsWith('职业战技') ? 1 : b.classList.contains('loadout-action') ? 2 : /^(待机|撤回移动|取消)$/.test(b.textContent) ? 4 : 3; }
+    if (u.classId === 'dancer') {
+      addCommand('跳舞', 'dance-action', () => this.chooseMasteryTarget(u, 'dance'),
+        M.Mastery.assistTargets(this.game, u, 'dance').length ? '' : '需要相邻且已行动的非舞者同伴');
+    }
+    const ordered = ['attack','equip-action','heal-action','dance-action','support-action','loadout-action'];
+    const rank = b => {
+      const index = ordered.findIndex(name => b.classList.contains(name));
+      if (index >= 0) return index;
+      return /^(待机|撤回移动|取消)$/.test(b.textContent) ? ordered.length + 1 : ordered.length;
+    };
+    [...buttons.children].sort((a,b) => rank(a) - rank(b)).forEach(b => {
+      if (rank(b) < ordered.length) b.insertAdjacentHTML('beforeend','<span class="command-chevron" aria-hidden="true">›</span>');
+      buttons.appendChild(b);
+    });
     this.positionCommands();
   };
 
-  // Opening the attack command leads directly from weapon selection to targeting.
-  UP.showAttackLoadout = function (u, targeting = false) {
+  UP.showWeaponChoices = function (u, targeting = false) {
     if (this.busy || u.acted || !this.game.isPlayerPhase()) return;
-    const attacks = M.Inventory.options(u), support = u.learnedSpells.filter(id => M.Magic.get(id).support);
-    const card = this.openActionPicker('<h3>' + (targeting ? '攻击 · 选择武器' : '武器 / 魔法') + '</h3><div class="battle-loadout-list">' + attacks.map(id => {
+    const choices = targeting ? this.game.getAttackOptions(u).map(option => option.id) : M.Inventory.options(u);
+    const choiceAttr = targeting ? 'data-attack-choice' : 'data-equip-choice';
+    const heading = targeting ? '<h3>攻击 · 选择武器</h3><p class="modal-sub">攻击后装备所用武器。</p>' : '<h3>装备</h3><p class="modal-sub">当前装备：' + esc(u.weapon.name) + '。受击时以装备反击，切换不消耗行动。</p>';
+    const rows = choices.map(id => {
       const w = M.Inventory.weapons[id], range = w.kind === 'spell' ? M.Magic.rangeOf(w,u) : w.range;
-      return '<button type="button" class="battle-loadout-row' + (id === u.weaponId ? ' is-equipped' : '') + '" data-attack-choice="' + id + '"><span class="bag-icon">' + icon(w) + '</span><span><strong>' + esc(w.name) + '</strong><small>威力 ' + w.might + ' · 命中 ' + w.hit + ' · 射程 ' + range.join('–') + '</small></span><b>' + uses(u,w,u.inventory.find(i => i.id === id && i.uses > 0)) + '</b></button>';
-    }).join('') + '</div>' + (support.length ? '<h3>辅助魔法</h3><div class="battle-loadout-list">' + support.map(id => { const s = M.Magic.get(id), targets = this.game.supportTargets(u,id); return '<button type="button" class="battle-loadout-row" data-support-choice="' + id + '"' + (!targets.length ? ' disabled' : '') + '><span class="bag-icon">' + icon(s) + '</span><span><strong>' + esc(s.name) + '</strong><small>射程 ' + M.Magic.rangeOf(s,u).join('–') + ' · ' + targets.length + ' 个目标</small></span><b>' + uses(u,s) + '</b></button>'; }).join('') + '</div>' : '') + (!attacks.length ? '<p>没有可用的攻击手段。</p>' : '') + '<button type="button" class="command-back" data-overlay-close>‹ 返回行动</button>');
-    card.querySelectorAll('[data-attack-choice]').forEach(b => b.onclick = () => {
-      try { this.game.selectAttack(u,b.dataset.attackChoice); this.closeActionPicker();
-        if (targeting && this.game.getAttackableEnemies(u).length) this.enterAttackMode();
-        else { this.enterActionMode(); if (targeting) this.showToast('此武器射程内没有敌人，可换武器或撤回移动。','info',1800); }
-      } catch (e) { this.showToast(e.message,'error'); }
+      const equipped = id === u.equippedWeapon;
+      return '<button type="button" class="battle-loadout-row' + (equipped ? ' is-equipped' : '') + '" ' + choiceAttr + '="' + esc(id) + '"><span class="bag-icon">' + icon(w) + '</span><span><strong>' + esc(w.name) + (equipped ? ' · 已装备' : '') + '</strong><small>威力 ' + w.might + ' · 命中 ' + w.hit + ' · 射程 ' + range.join('–') + '</small></span><b>' + uses(u,w,u.inventory.find(i => i.id === id && i.uses > 0)) + '</b></button>';
     });
-    card.querySelectorAll('[data-support-choice]').forEach(b => b.onclick = () => this.chooseSupportTarget(u,b.dataset.supportChoice));
+    const card = this.openActionPicker(heading + '<div class="battle-loadout-list">' + rows.join('') + '</div>' +
+      (rows.length ? '' : '<p>当前没有可用的武器或攻击魔法。</p>') + '<button type="button" class="command-back" data-overlay-close>‹ 返回行动</button>');
+    card.querySelectorAll('[' + choiceAttr + ']').forEach(button => button.onclick = () => {
+      const id = button.getAttribute(choiceAttr);
+      if (targeting) { this.enterAttackMode(id); return; }
+      try {
+        this.game.selectAttack(u, id);
+        this.enterActionMode();
+      } catch (e) { this.showToast(e.message, 'error'); }
+    });
   };
 
   const baseSheet = EP.renderFormationDetail;
