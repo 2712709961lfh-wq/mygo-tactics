@@ -132,12 +132,6 @@
     turf.addColorStop(0,tone);
     turf.addColorStop(1,'transparent');
     oval(ctx,x,y,211,92,turf);
-    const corners=[[-2.55,-2.25],[2.55,-2.25],[2.55,2.25],[-2.55,2.25]];
-    for(const [du,dv] of corners){
-      const a=Math.sign(du), b=Math.sign(dv);
-      ground(ctx,[[u+du,v+dv],[u+du-a*.42,v+dv],[u+du-a*.42,v+dv-b*.12],
-        [u+du-a*.12,v+dv-b*.12],[u+du-a*.12,v+dv-b*.42],[u+du,v+dv-b*.42]],'#c0ba908f');
-    }
   }
 
   function bridge(ctx, {rect:[u,v,right,bottom],axis}) {
@@ -509,9 +503,9 @@
       paint(entry.ctx);
       props.push({...entry,depth:y+depth});
     }
-    const {shop,classes,portal,stage,lounge:rest,grove,shore,training}=layout.stations;
-    drawClearing(land.ctx,grove.point,'#b8b98544');
-    drawClearing(land.ctx,shore.point,'#b9c38e55');
+    const {shop,classes,portal,stage,lounge:rest,training}=layout.stations;
+    drawClearing(land.ctx,layout.clearings.grove,'#b8b98544');
+    drawClearing(land.ctx,layout.clearings.shore,'#b9c38e55');
     place(...portal.structure,portalStone,250,190,32);
     place(...shop.structure,ctx=>building(ctx,...shop.structure,{front:'#ba9a74',side:'#947e65',roofLight:'#b47c61',roofDark:'#835750',trim:'#dbc394',light:'#ffe0a0'},true),310,215,49);
     place(...classes.structure,ctx=>building(ctx,...classes.structure,{front:'#bab196',side:'#909488',roofLight:'#92798d',roofDark:'#625c76',trim:'#d3bca6',light:'#e6c7e8'},false),310,215,49);
@@ -590,6 +584,12 @@
     ctx.translate(x,y);
     if(effect==='guitar'){
       instrument(ctx,'guitar',side*12-12,-37,27,27);
+    }else if(effect==='bass'){
+      ctx.save();
+      ctx.translate(side*15,-9);
+      ctx.scale(.64,.64);
+      bass(ctx,0,0);
+      ctx.restore();
     }else if(effect==='drums'){
       oval(ctx,side*17,-9,11,4,'#20383c60');
       box(ctx,side*17-9,-16,18,8,'#8d6e75','#c0a998');
@@ -617,7 +617,7 @@
       polygon(ctx,[[look,-57],[look+2,-53],[look+6,-51],[look+2,-49],[look,-45],[look-2,-49],[look-6,-51],[look-2,-53]],'#dfd3a5');
       ctx.globalAlpha=1;
     }
-    if(['guitar','drums','voice'].includes(effect)){
+    if(['guitar','bass','drums','voice'].includes(effect)){
       const lift=time%1.1;
       ctx.globalAlpha=.78-lift*.44;
       note(ctx,side*(23+lift*5),-50-lift*15,'#edcba6');

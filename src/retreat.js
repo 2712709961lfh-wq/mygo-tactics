@@ -30,6 +30,7 @@
       this.save = this.root.querySelector('[data-retreat-save]');
       this.overviewButton = this.root.querySelector('[data-retreat-overview]');
       this.districtLabel = this.root.querySelector('[data-retreat-district]');
+      this.dialogue = this.root.querySelector('[data-retreat-conversation]');
       this.stageButton = this.root.querySelector('[data-station="stage"]');
       this.portalButton = this.root.querySelector('[data-station="portal"]');
       this.trainingStatus=this.root.querySelector('[data-training-status]');
@@ -61,6 +62,8 @@
       const leader = party.find(unit => unit.id === 'tomori') || party[0];
       this.avatar = { id: leader?.id || 'tomori', facing: 'up', point: [2.6, 2.6] };
       this.companions = party.filter(unit => unit !== leader).map(visitors.create);
+      this.interactions = visitors.createInteractions(this.companions);
+      this.dialogue.hidden = true;
       this.setOverview(false);
       this.camera = this.cameraGoal();
       this.stageLit = false;
@@ -121,7 +124,7 @@
       this.overview = open;
       this.root.classList.toggle('is-overview',open);
       this.overviewButton.setAttribute('aria-pressed', String(open));
-      this.overviewButton.textContent = open ? '返回跟随视角' : '营地图';
+      this.overviewButton.textContent = open ? '跟随视角' : '营地图';
     }
 
     cameraGoal() {
@@ -139,10 +142,26 @@
         const anchorX=width/2+(sx-x)*zoom, anchorY=height/2+(sy-y)*zoom;
         const left=anchorX+station.sign[0]*zoom, top=anchorY+station.sign[1]*zoom;
         button.hidden=anchorX<45||anchorX>width-45||anchorY<80||anchorY>height-91;
-        button.style.left=Math.max(107,Math.min(width-107,left))+'px';
-        button.style.top=Math.max(117,Math.min(height-126,top))+'px';
+        button.style.left=Math.max(85,Math.min(width-85,left))+'px';
+        button.style.top=Math.max(96,Math.min(height-106,top))+'px';
         button.classList.toggle('is-near',button===near);
       });
+    }
+
+    renderConversation() {
+      const line=visitors.conversation(this.interactions);
+      const distance=line?Math.hypot(line.speaker.point[0]-this.avatar.point[0],line.speaker.point[1]-this.avatar.point[1]):Infinity;
+      this.dialogue.hidden=this.overview||distance>5.5;
+      if(this.dialogue.hidden)return;
+      const [x,y]=art.project(...line.speaker.point,68);
+      const {x:cameraX,y:cameraY,zoom}=this.camera;
+      const left=width/2+(x-cameraX)*zoom;
+      const top=height/2+(y-cameraY)*zoom;
+      this.dialogue.style.left=Math.max(144,Math.min(width-144,left))+'px';
+      this.dialogue.style.top=Math.max(140,top)+'px';
+      const [speaker,text]=this.dialogue.children;
+      if(speaker.textContent!==line.speaker.name)speaker.textContent=line.speaker.name;
+      if(text.textContent!==line.text)text.textContent=line.text;
     }
 
     onMapClick(event) {
@@ -287,14 +306,17 @@
       this.lastFrame = now;
       this.move(dt);
       if (this.root.hidden || this.root.inert) return;
+      visitors.updateInteractions(this.interactions,dt);
       for(const companion of this.companions) visitors.update(companion,dt);
 
       const goal=this.cameraGoal();
       const blend=this.reduceMotion.matches?1:1-Math.exp(-dt*7.8);
       for(const key of ['x','y','zoom']) this.camera[key]+=(goal[key]-this.camera[key])*blend;
       this.positionSigns();
+      this.renderConversation();
       const area=district(...this.avatar.point);
       if(this.districtLabel.textContent!==area) this.districtLabel.textContent=area;
+      this.districtLabel.hidden=!area;
       const ctx = this.ctx;
       const time=this.reduceMotion.matches ? 0 : now / 1000;
       ctx.drawImage(this.scene.water.canvas,0,0);
@@ -315,7 +337,7 @@
       const actors=[...this.companions,this.avatar].map(actor=>({actor,depth:art.project(...actor.point)[1]}));
       let activeVisitor=null, closest=3.4;
       for(const companion of this.companions){
-        if(!companion.activity) continue;
+        if(!companion.activity||companion.interacting) continue;
         const distance=Math.hypot(companion.point[0]-this.avatar.point[0],companion.point[1]-this.avatar.point[1]);
         if(distance<closest){ activeVisitor=companion; closest=distance; }
       }
@@ -344,7 +366,7 @@
         ctx.stroke();
       }
       const work=actor.activity && !this.reduceMotion.matches;
-      const bob=work && ['guitar','drums','voice'].includes(actor.activity.effect)
+      const bob=work && ['guitar','bass','drums','voice'].includes(actor.activity.effect)
         ? Math.sin(actor.taskTime*11)*1.35 : 0;
       if (!M.Characters.drawMap(ctx, actor, x, y+bob, 61, now)) {
         const unit = this.ui.game.getUnit(actor.id);

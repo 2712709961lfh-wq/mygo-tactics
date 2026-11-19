@@ -5173,47 +5173,47 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 .retreat-map { display: block; width: 100%; height: 100%; touch-action: manipulation; cursor: crosshair; }
 .retreat-heading {
   position: absolute;
-  top: 40px;
-  left: 47px;
+  top: 29px;
+  left: 34px;
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 12px;
   pointer-events: none;
 }
 .retreat-emblem {
   display: grid;
   place-items: center;
-  width: 54px;
-  height: 54px;
+  width: 39px;
+  height: 39px;
   border: 1px solid #c3a97581;
   border-radius: 50%;
   color: #e6bd77;
-  box-shadow: 0 0 0 5px #ad92631b, inset 0 0 22px #cda26c19;
-  font: 37px/1 Georgia, serif;
+  box-shadow: 0 0 0 3px #ad92631b, inset 0 0 17px #cda26c19;
+  font: 27px/1 Georgia, serif;
 }
 .retreat-heading h1 {
-  margin: 0 0 6px;
+  margin: 0 0 4px;
   color: #f6edcf;
-  font: 600 39px/1.22 'Songti SC', 'SimSun', serif;
+  font: 600 29px/1.22 'Songti SC', 'SimSun', serif;
   letter-spacing: .16em;
   text-shadow: 0 4px 15px #06191b;
 }
-.retreat-heading p { margin: 0; color: #adc6bd; font-size: 14px; letter-spacing: .12em; }
+.retreat-heading p { margin: 0; color: #adc6bd; font-size: 12px; letter-spacing: .09em; }
 .retreat-toolbar {
   position: absolute;
-  top: 47px;
-  right: 45px;
+  top: 31px;
+  right: 34px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
 }
 .retreat-gold, .retreat-toolbar button {
-  min-height: 43px;
-  padding: 10px 15px;
+  min-height: 34px;
+  padding: 7px 11px;
   border: 1px solid #b6b49658;
   background: #102c31ed;
   color: #f0e7ce;
-  font: 15px/1.4 'Microsoft YaHei', sans-serif;
+  font: 13px/1.4 'Microsoft YaHei', sans-serif;
 }
 .retreat-gold { color: #e8c584; font-variant-numeric: tabular-nums; }
 .retreat-gold span { padding-right: 4px; }
@@ -5226,14 +5226,13 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   position: absolute;
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-width: 145px;
-  min-height: 54px;
-  padding: 8px 16px 8px 10px;
+  gap: 7px;
+  min-height: 39px;
+  padding: 5px 10px 5px 7px;
   border: 1px solid var(--accent);
   border-radius: 3px;
   background: linear-gradient(140deg, #203a3a, #10272c 80%);
-  box-shadow: 0 5px 18px #04161bbd, inset 0 0 0 3px #071e2363;
+  box-shadow: 0 3px 9px #04161b8c;
   color: #fff0d1;
   font: inherit;
   text-align: left;
@@ -5241,17 +5240,17 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   pointer-events: auto;
 }
 .retreat-station strong, .retreat-station small { display: block; white-space: nowrap; }
-.retreat-station strong { font-size: 17px; letter-spacing: .08em; line-height: 1.25; }
-.retreat-station small { margin-top: 3px; color: #c2cbc0; font-size: 12px; }
+.retreat-station strong { font-size: 14px; letter-spacing: .04em; line-height: 1.25; }
+.retreat-station small { margin-top: 2px; color: #d3dfd6; font-size: 11px; }
 .retreat-station-icon {
   display: grid;
   place-items: center;
-  width: 29px;
-  height: 29px;
+  width: 21px;
+  height: 21px;
   border: 1px solid var(--accent);
   border-radius: 50%;
   color: var(--accent);
-  font: 21px/1 Georgia, serif;
+  font: 15px/1 Georgia, serif;
 }
 .retreat-station:hover:enabled, .retreat-station.is-near {
   background: #285050;
@@ -5263,15 +5262,41 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 .retreat-portal { --accent: #92e4c7; }
 .retreat-stage { --accent: #aaa6ff; }
 .retreat-lounge { --accent: #f0aa9a; }
-.retreat-clearing { --accent: #a5c79e; }
 .retreat-training { --accent: #9dd9cb; }
-.retreat-screen.is-overview .retreat-station { min-width: 0; min-height: 42px; padding: 7px 10px; gap: 8px; }
-.retreat-screen.is-overview .retreat-station strong { font-size: 15px; }
+.retreat-screen.is-overview .retreat-station { min-height: 30px; padding: 4px 8px; gap: 5px; }
+.retreat-screen.is-overview .retreat-station strong { font-size: 12px; }
 .retreat-screen.is-overview .retreat-station small { display: none; }
-.retreat-screen.is-overview .retreat-station-icon { width: 24px; height: 24px; }
+.retreat-screen.is-overview .retreat-station-icon { width: 17px; height: 17px; font-size: 12px; }
+.retreat-conversation {
+  position: absolute;
+  max-width: 280px;
+  margin: 0;
+  padding: 7px 10px;
+  border: 1px solid #a3bfb3;
+  border-radius: 3px;
+  background: #11272e;
+  color: #f5eee0;
+  font: 15px/1.5 'Microsoft YaHei', sans-serif;
+  box-shadow: 0 3px 10px #06191b95;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+}
+.retreat-conversation::after {
+  position: absolute;
+  left: calc(50% - 4px);
+  bottom: -5px;
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid #a3bfb3;
+  border-bottom: 1px solid #a3bfb3;
+  background: #11272e;
+  content: '';
+  transform: rotate(45deg);
+}
+.retreat-conversation strong { display: block; margin-bottom: 1px; color: #ffe0a2; font-size: 12px; }
 .retreat-footer {
   position: absolute;
-  inset: auto 45px 32px;
+  inset: auto 34px 25px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -5279,25 +5304,23 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   pointer-events: none;
 }
 .retreat-footer p { margin: 0; }
-.retreat-hint { display: flex; gap: 16px; align-items: center; font-size: 13px; }
-.retreat-hint span + span { border-left: 1px solid #789e9361; padding-left: 16px; }
-.retreat-hint kbd { padding: 3px 6px; border: 1px solid #819f8f73; border-radius: 3px; color: #ead4a7; font-size: 12px; }
-.retreat-footer [role='status'] { color: #ecd8a7; font-size: 15px; }
+.retreat-hint { display: flex; gap: 11px; align-items: center; font-size: 12px; }
+.retreat-hint span + span { border-left: 1px solid #789e9361; padding-left: 11px; }
+.retreat-hint kbd { padding: 2px 5px; border: 1px solid #819f8f73; border-radius: 3px; color: #ead4a7; font-size: 11px; }
+.retreat-footer [role='status'] { color: #ecd8a7; font-size: 13px; }
 .retreat-location { display: flex; align-items: center; gap: 16px; }
 .retreat-location [data-retreat-district] {
-  padding: 8px 14px;
+  padding: 6px 10px;
   border: 1px solid #9ac1ad55;
   border-radius: 2px;
   background: #102c31ed;
   color: #e0efdd;
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: .09em;
 }
 @media (pointer: coarse) {
   .retreat-hint span:not(:first-child) { display: none; }
-  .retreat-station { min-height: 62px; }
-  .retreat-toolbar button { min-height: 52px; }
-  .retreat-screen.is-overview .retreat-station { min-height: 51px; }
+  .retreat-station, .retreat-screen.is-overview .retreat-station, .retreat-toolbar button { min-height: 44px; }
 }
 
 .training-entry {
@@ -5446,22 +5469,15 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         <span class="retreat-station-icon" aria-hidden="true">♪</span>
         <span><strong>乐队休息区</strong><small>前往水岸露台</small></span>
       </button>
-      <button class="retreat-station retreat-clearing" type="button" data-station="grove">
-        <span class="retreat-station-icon" aria-hidden="true">♧</span>
-        <span><strong>林间空地</strong><small>预留用地</small></span>
-      </button>
-      <button class="retreat-station retreat-clearing" type="button" data-station="shore">
-        <span class="retreat-station-icon" aria-hidden="true">♧</span>
-        <span><strong>湖岸空地</strong><small>预留用地</small></span>
-      </button>
       <button class="retreat-station retreat-training" type="button" data-station="training">
         <span class="retreat-station-icon" aria-hidden="true">◇</span>
         <span><strong>训练之塔</strong><small data-training-status>第 3 章通关后解锁</small></span>
       </button>
     </nav>
+    <p class="retreat-conversation" data-retreat-conversation aria-live="polite" aria-atomic="true" hidden><strong></strong><span></span></p>
     <footer class="retreat-footer">
       <p class="retreat-hint"><span>点击步道移动</span><span><kbd>W A S D</kbd> / <kbd>方向键</kbd> 移动</span><span><kbd>E</kbd> 使用设施</span></p>
-      <div class="retreat-location"><p data-retreat-status role="status"></p><p data-retreat-district></p></div>
+      <div class="retreat-location"><p data-retreat-status role="status"></p><p data-retreat-district hidden></p></div>
     </footer>
   </section>
 
@@ -5500,7 +5516,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.24.3</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.25.0</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -22421,12 +22437,13 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     [4.05,.5],[3.4,2.38],[1.75,3.56],[-1.15,3.72],[-3.22,2.74],[-4.2,.5]];
   const loungeRim = [[-3.62,-1.82],[-2.15,-3.46],[.1,-3.87],[2.82,-2.8],
     [3.92,-.68],[4.04,1.8],[2.9,3.63],[1.08,4.12],[-1.38,3.5],[-3.18,2.2]];
+  const clearings={grove:[-15.8,-6.35],shore:[-6.35,-16]};
   const islands = [
     { name:'营地广场', center:[0,0], scale:[1.65,1.65], rim:hubRim, palette:['#80967a','#527266','#365650'] },
     { name:'排练舞台', center:[-16.8,4.35], scale:[1.35,1.37], rim:stageRim, palette:['#79857f','#596c70','#3f515d'] },
     { name:'乐队休息区', center:[4.35,-17.2], scale:[1.36,1.38], rim:loungeRim, palette:['#8f9c72','#668571','#455e55'] },
-    { name:'林间空地', center:[-15.8,-6.35], scale:[1.04,.83], rim:hubRim, palette:['#87957d','#5c816b','#3a5753'] },
-    { name:'湖岸空地', center:[-6.35,-16], scale:[.83,1.04], rim:hubRim, palette:['#8e9b77','#658471','#446762'] }
+    { name:'', center:clearings.grove, scale:[1.04,.83], rim:hubRim, palette:['#87957d','#5c816b','#3a5753'] },
+    { name:'', center:clearings.shore, scale:[.83,1.04], rim:hubRim, palette:['#8e9b77','#658471','#446762'] }
   ].map(island => ({ ...island, rim:island.rim.map(([u,v])=>[
     u*island.scale[0]+island.center[0], v*island.scale[1]+island.center[1]
   ]) }));
@@ -22442,8 +22459,6 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     portal:{ name:'梦境传送门', point:[-2.25,-2.25], structure:[-3.38,-3.38], sign:[0,48], hit:[-61,-138,61,-4], footprint:[.93,.93] },
     stage:{ name:'排练舞台', point:[-16.1,4.7], structure:[-18.25,3.96], sign:[-70,85], hit:[-207,-154,221,56], footprint:[1.52,1.42] },
     lounge:{ name:'乐队休息区', point:[4.25,-16.3], structure:[4.38,-18.2], sign:[63,92], hit:[-157,-117,158,54], footprint:[1.38,1.5] },
-    grove:{ name:'林间空地', point:[-15.6,-6.2], structure:[-15.6,-6.2], sign:[-128,-66] },
-    shore:{ name:'湖岸空地', point:[-6.15,-15.8], structure:[-6.15,-15.8], sign:[128,-66] },
     training:{name:'训练之塔',point:[-6.95,-17.91],structure:[-7.15,-19.35],sign:[-84,-12],hit:[-87,-166,89,38],footprint:[.93,.93]}
   };
   const trees = [
@@ -22569,7 +22584,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   function district(u,v) {
     const island=islands.find(land=>inside(u,v,land.rim));
-    return island?.name || '水岸栈桥';
+    return island?.name ?? '水岸栈桥';
   }
 
   function facing(du,dv) {
@@ -22577,7 +22592,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     return du+dv>0?'down':'up';
   }
 
-  global.MyGO.RetreatLayout={islands,bridges,stations,trees,walkable,route,district,facing};
+  global.MyGO.RetreatLayout={islands,bridges,stations,clearings,trees,walkable,route,district,facing};
 })(window);
 
   </script>
@@ -22717,12 +22732,6 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     turf.addColorStop(0,tone);
     turf.addColorStop(1,'transparent');
     oval(ctx,x,y,211,92,turf);
-    const corners=[[-2.55,-2.25],[2.55,-2.25],[2.55,2.25],[-2.55,2.25]];
-    for(const [du,dv] of corners){
-      const a=Math.sign(du), b=Math.sign(dv);
-      ground(ctx,[[u+du,v+dv],[u+du-a*.42,v+dv],[u+du-a*.42,v+dv-b*.12],
-        [u+du-a*.12,v+dv-b*.12],[u+du-a*.12,v+dv-b*.42],[u+du,v+dv-b*.42]],'#c0ba908f');
-    }
   }
 
   function bridge(ctx, {rect:[u,v,right,bottom],axis}) {
@@ -23094,9 +23103,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       paint(entry.ctx);
       props.push({...entry,depth:y+depth});
     }
-    const {shop,classes,portal,stage,lounge:rest,grove,shore,training}=layout.stations;
-    drawClearing(land.ctx,grove.point,'#b8b98544');
-    drawClearing(land.ctx,shore.point,'#b9c38e55');
+    const {shop,classes,portal,stage,lounge:rest,training}=layout.stations;
+    drawClearing(land.ctx,layout.clearings.grove,'#b8b98544');
+    drawClearing(land.ctx,layout.clearings.shore,'#b9c38e55');
     place(...portal.structure,portalStone,250,190,32);
     place(...shop.structure,ctx=>building(ctx,...shop.structure,{front:'#ba9a74',side:'#947e65',roofLight:'#b47c61',roofDark:'#835750',trim:'#dbc394',light:'#ffe0a0'},true),310,215,49);
     place(...classes.structure,ctx=>building(ctx,...classes.structure,{front:'#bab196',side:'#909488',roofLight:'#92798d',roofDark:'#625c76',trim:'#d3bca6',light:'#e6c7e8'},false),310,215,49);
@@ -23175,6 +23184,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     ctx.translate(x,y);
     if(effect==='guitar'){
       instrument(ctx,'guitar',side*12-12,-37,27,27);
+    }else if(effect==='bass'){
+      ctx.save();
+      ctx.translate(side*15,-9);
+      ctx.scale(.64,.64);
+      bass(ctx,0,0);
+      ctx.restore();
     }else if(effect==='drums'){
       oval(ctx,side*17,-9,11,4,'#20383c60');
       box(ctx,side*17-9,-16,18,8,'#8d6e75','#c0a998');
@@ -23202,7 +23217,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       polygon(ctx,[[look,-57],[look+2,-53],[look+6,-51],[look+2,-49],[look,-45],[look-2,-49],[look-6,-51],[look-2,-53]],'#dfd3a5');
       ctx.globalAlpha=1;
     }
-    if(['guitar','drums','voice'].includes(effect)){
+    if(['guitar','bass','drums','voice'].includes(effect)){
       const lift=time%1.1;
       ctx.globalAlpha=.78-lift*.44;
       note(ctx,side*(23+lift*5),-50-lift*15,'#edcba6');
@@ -23281,6 +23296,35 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     ]
   };
 
+  const plazaMeeting=[[.42,3.32],[1.22,2.9]];
+  const interactions = [
+    {
+      ids:['rana','soyo'], points:plazaMeeting, label:'合练副歌', effects:['guitar','bass'],
+      lines:[[0,'从副歌开始吧。'],[1,'好，我用贝斯接你的尾音。'],[0,'这遍再慢一点。']]
+    },
+    {
+      ids:['anon','taki'], points:[[-15.98,3.78],[-15.66,2.7]], label:'对练节拍', effects:['guitar','drums'],
+      lines:[[0,'进副歌前数四拍，好吗？'],[1,'我先敲四下，你听到第四下再进。']]
+    },
+    {
+      ids:['nina','nijika'], points:[[-15.92,5.77],[-15.04,5.22]], label:'试唱与伴奏', effects:['voice','drums'],
+      lines:[[0,'副歌的最后一个字，我想唱得再长一点。'],[1,'好，那一拍我给你留出来。']]
+    },
+    {
+      ids:['xueyue','subaru'], points:[[-5.92,-6.85],[-4.94,-7.33]], label:'核对栈桥灯位', effects:['look','book'],
+      lines:[[0,'这座桥两端的灯都亮了。'],[1,'我记下了，等会儿沿湖再看一圈。']]
+    },
+    {
+      ids:['anon','rana'], points:[[-13.42,4.72],[-12.64,4.27]], label:'交流吉他指法', effects:['guitar','guitar'],
+      lines:[[0,'刚才那句你是从哪一品滑上去的？'],[1,'看我的手。慢一点弹就知道啦。']]
+    },
+    {
+      ids:['soyo','subaru'], points:[[4.44,-15.63],[5.18,-16.19]], label:'讨论排练顺序', effects:['book','drink'],
+      lines:[[0,'下一轮先从最难接的那一段开始吧。'],[1,'好，我去把曲谱翻到那一页。']]
+    }
+  ];
+  const secondsPerLine = 3.1;
+
   function create(unit,index) {
     const stops=routines[unit.id] || routines.tomori;
     const first=stops[0];
@@ -23300,19 +23344,34 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     actor._walking=false;
   }
 
+  function beginWalk(actor,waypoints) {
+    actor.waypoints=waypoints;
+    actor.waypointIndex=0;
+    actor.activity=null;
+    actor._walking=true;
+  }
+
+  function advanceWalk(actor,dt) {
+    const point=actor.waypoints[actor.waypointIndex];
+    const du=point[0]-actor.point[0], dv=point[1]-actor.point[1];
+    const distance=Math.hypot(du,dv), stride=actor.speed*dt;
+    if(distance<=stride){
+      actor.point=point;
+      actor.waypointIndex++;
+      if(actor.waypointIndex<actor.waypoints.length)return false;
+      actor.waypoints=null;
+      actor._walking=false;
+      return true;
+    }
+    actor.point=[actor.point[0]+du*stride/distance,actor.point[1]+dv*stride/distance];
+    actor.facing=facing(du,dv);
+    return false;
+  }
+
   function update(actor,dt) {
+    if(actor.interacting)return;
     if(actor.waypoints){
-      const point=actor.waypoints[actor.waypointIndex];
-      const du=point[0]-actor.point[0], dv=point[1]-actor.point[1];
-      const distance=Math.hypot(du,dv), stride=actor.speed*dt;
-      if(distance<=stride){
-        actor.point=point;
-        actor.waypointIndex++;
-        if(actor.waypointIndex===actor.waypoints.length) arrive(actor,actor.stops[actor.stopIndex]);
-      }else{
-        actor.point=[actor.point[0]+du*stride/distance,actor.point[1]+dv*stride/distance];
-        actor.facing=facing(du,dv);
-      }
+      if(advanceWalk(actor,dt)) arrive(actor,actor.stops[actor.stopIndex]);
       return;
     }
 
@@ -23320,19 +23379,85 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     actor.remaining-=dt;
     if(actor.remaining>0) return;
     const nextIndex=(actor.stopIndex+1)%actor.stops.length;
-    const waypoints=actor.routes[actor.stopIndex] ??= route(actor.point,actor.stops[nextIndex].point);
+    const destination=actor.stops[nextIndex].point;
+    const waypoints=actor.point===actor.stops[actor.stopIndex].point
+      ? (actor.routes[actor.stopIndex] ??= route(actor.point,destination)) : route(actor.point,destination);
     if(!waypoints.length){
       actor.remaining=actor.activity.seconds;
       return;
     }
     actor.stopIndex=nextIndex;
-    actor.waypoints=waypoints;
-    actor.waypointIndex=0;
-    actor.activity=null;
-    actor._walking=true;
+    beginWalk(actor,waypoints);
   }
 
-  M.RetreatVisitors={create,update};
+  function createInteractions(actors) {
+    const byId=new Map(actors.map(actor=>[actor.id,actor]));
+    const available=interactions.filter(scene=>scene.ids.every(id=>byId.has(id)))
+      .map(scene=>({...scene,actors:scene.ids.map(id=>byId.get(id))}));
+    if(!available.length&&actors.length>=2){
+      available.push({actors:actors.slice(0,2),points:plazaMeeting,label:'在广场聊天',effects:[],
+        lines:[[0,'今晚的风很舒服。'],[1,'嗯，在出发前多坐一会儿吧。']]});
+    }
+    return {available,next:0,wait:1.2,active:null};
+  }
+
+  function updateInteractions(state,dt) {
+    const active=state.active;
+    if(!active){
+      if(!state.available.length)return;
+      state.wait-=dt;
+      if(state.wait>0)return;
+      const scene=state.available[state.next];
+      state.next=(state.next+1)%state.available.length;
+      const paths=scene.actors.map((actor,i)=>route(actor.point,scene.points[i]));
+      if(paths.some(path=>!path.length)){
+        state.wait=3;
+        return;
+      }
+      scene.actors.forEach((actor,i)=>{
+        actor.interacting=true;
+        beginWalk(actor,paths[i]);
+      });
+      state.active={scene,elapsed:null};
+      return;
+    }
+
+    const {scene}=active;
+    if(active.elapsed===null){
+      for(const actor of scene.actors)if(actor.waypoints)advanceWalk(actor,dt);
+      if(scene.actors.some(actor=>actor.waypoints))return;
+      scene.actors.forEach((actor,i)=>{
+        const other=scene.actors[1-i];
+        actor.facing=facing(other.point[0]-actor.point[0],other.point[1]-actor.point[1]);
+        actor.activity={label:scene.label,effect:scene.effects[i]};
+        actor.taskTime=0;
+      });
+      active.elapsed=0;
+      return;
+    }
+
+    active.elapsed+=dt;
+    for(const actor of scene.actors)actor.taskTime=active.elapsed;
+    if(active.elapsed<scene.lines.length*secondsPerLine+1.1)return;
+    for(const actor of scene.actors){
+      actor.interacting=false;
+      const task=actor.stops[actor.stopIndex];
+      const waypoints=route(actor.point,task.point);
+      if(waypoints.length)beginWalk(actor,waypoints);
+      else arrive(actor,task);
+    }
+    state.active=null;
+    state.wait=5.5;
+  }
+
+  function conversation(state) {
+    const active=state.active;
+    if(!active||active.elapsed===null)return null;
+    const line=active.scene.lines[Math.floor(active.elapsed/secondsPerLine)];
+    return line?{speaker:active.scene.actors[line[0]],text:line[1]}:null;
+  }
+
+  M.RetreatVisitors={create,update,createInteractions,updateInteractions,conversation};
 })(window);
 
   </script>
@@ -23370,6 +23495,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.save = this.root.querySelector('[data-retreat-save]');
       this.overviewButton = this.root.querySelector('[data-retreat-overview]');
       this.districtLabel = this.root.querySelector('[data-retreat-district]');
+      this.dialogue = this.root.querySelector('[data-retreat-conversation]');
       this.stageButton = this.root.querySelector('[data-station="stage"]');
       this.portalButton = this.root.querySelector('[data-station="portal"]');
       this.trainingStatus=this.root.querySelector('[data-training-status]');
@@ -23401,6 +23527,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const leader = party.find(unit => unit.id === 'tomori') || party[0];
       this.avatar = { id: leader?.id || 'tomori', facing: 'up', point: [2.6, 2.6] };
       this.companions = party.filter(unit => unit !== leader).map(visitors.create);
+      this.interactions = visitors.createInteractions(this.companions);
+      this.dialogue.hidden = true;
       this.setOverview(false);
       this.camera = this.cameraGoal();
       this.stageLit = false;
@@ -23461,7 +23589,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.overview = open;
       this.root.classList.toggle('is-overview',open);
       this.overviewButton.setAttribute('aria-pressed', String(open));
-      this.overviewButton.textContent = open ? '返回跟随视角' : '营地图';
+      this.overviewButton.textContent = open ? '跟随视角' : '营地图';
     }
 
     cameraGoal() {
@@ -23479,10 +23607,26 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         const anchorX=width/2+(sx-x)*zoom, anchorY=height/2+(sy-y)*zoom;
         const left=anchorX+station.sign[0]*zoom, top=anchorY+station.sign[1]*zoom;
         button.hidden=anchorX<45||anchorX>width-45||anchorY<80||anchorY>height-91;
-        button.style.left=Math.max(107,Math.min(width-107,left))+'px';
-        button.style.top=Math.max(117,Math.min(height-126,top))+'px';
+        button.style.left=Math.max(85,Math.min(width-85,left))+'px';
+        button.style.top=Math.max(96,Math.min(height-106,top))+'px';
         button.classList.toggle('is-near',button===near);
       });
+    }
+
+    renderConversation() {
+      const line=visitors.conversation(this.interactions);
+      const distance=line?Math.hypot(line.speaker.point[0]-this.avatar.point[0],line.speaker.point[1]-this.avatar.point[1]):Infinity;
+      this.dialogue.hidden=this.overview||distance>5.5;
+      if(this.dialogue.hidden)return;
+      const [x,y]=art.project(...line.speaker.point,68);
+      const {x:cameraX,y:cameraY,zoom}=this.camera;
+      const left=width/2+(x-cameraX)*zoom;
+      const top=height/2+(y-cameraY)*zoom;
+      this.dialogue.style.left=Math.max(144,Math.min(width-144,left))+'px';
+      this.dialogue.style.top=Math.max(140,top)+'px';
+      const [speaker,text]=this.dialogue.children;
+      if(speaker.textContent!==line.speaker.name)speaker.textContent=line.speaker.name;
+      if(text.textContent!==line.text)text.textContent=line.text;
     }
 
     onMapClick(event) {
@@ -23627,14 +23771,17 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.lastFrame = now;
       this.move(dt);
       if (this.root.hidden || this.root.inert) return;
+      visitors.updateInteractions(this.interactions,dt);
       for(const companion of this.companions) visitors.update(companion,dt);
 
       const goal=this.cameraGoal();
       const blend=this.reduceMotion.matches?1:1-Math.exp(-dt*7.8);
       for(const key of ['x','y','zoom']) this.camera[key]+=(goal[key]-this.camera[key])*blend;
       this.positionSigns();
+      this.renderConversation();
       const area=district(...this.avatar.point);
       if(this.districtLabel.textContent!==area) this.districtLabel.textContent=area;
+      this.districtLabel.hidden=!area;
       const ctx = this.ctx;
       const time=this.reduceMotion.matches ? 0 : now / 1000;
       ctx.drawImage(this.scene.water.canvas,0,0);
@@ -23655,7 +23802,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const actors=[...this.companions,this.avatar].map(actor=>({actor,depth:art.project(...actor.point)[1]}));
       let activeVisitor=null, closest=3.4;
       for(const companion of this.companions){
-        if(!companion.activity) continue;
+        if(!companion.activity||companion.interacting) continue;
         const distance=Math.hypot(companion.point[0]-this.avatar.point[0],companion.point[1]-this.avatar.point[1]);
         if(distance<closest){ activeVisitor=companion; closest=distance; }
       }
@@ -23684,7 +23831,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         ctx.stroke();
       }
       const work=actor.activity && !this.reduceMotion.matches;
-      const bob=work && ['guitar','drums','voice'].includes(actor.activity.effect)
+      const bob=work && ['guitar','bass','drums','voice'].includes(actor.activity.effect)
         ? Math.sin(actor.taskTime*11)*1.35 : 0;
       if (!M.Characters.drawMap(ctx, actor, x, y+bob, 61, now)) {
         const unit = this.ui.game.getUnit(actor.id);

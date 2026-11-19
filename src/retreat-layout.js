@@ -9,12 +9,13 @@
     [4.05,.5],[3.4,2.38],[1.75,3.56],[-1.15,3.72],[-3.22,2.74],[-4.2,.5]];
   const loungeRim = [[-3.62,-1.82],[-2.15,-3.46],[.1,-3.87],[2.82,-2.8],
     [3.92,-.68],[4.04,1.8],[2.9,3.63],[1.08,4.12],[-1.38,3.5],[-3.18,2.2]];
+  const clearings={grove:[-15.8,-6.35],shore:[-6.35,-16]};
   const islands = [
     { name:'营地广场', center:[0,0], scale:[1.65,1.65], rim:hubRim, palette:['#80967a','#527266','#365650'] },
     { name:'排练舞台', center:[-16.8,4.35], scale:[1.35,1.37], rim:stageRim, palette:['#79857f','#596c70','#3f515d'] },
     { name:'乐队休息区', center:[4.35,-17.2], scale:[1.36,1.38], rim:loungeRim, palette:['#8f9c72','#668571','#455e55'] },
-    { name:'林间空地', center:[-15.8,-6.35], scale:[1.04,.83], rim:hubRim, palette:['#87957d','#5c816b','#3a5753'] },
-    { name:'湖岸空地', center:[-6.35,-16], scale:[.83,1.04], rim:hubRim, palette:['#8e9b77','#658471','#446762'] }
+    { name:'', center:clearings.grove, scale:[1.04,.83], rim:hubRim, palette:['#87957d','#5c816b','#3a5753'] },
+    { name:'', center:clearings.shore, scale:[.83,1.04], rim:hubRim, palette:['#8e9b77','#658471','#446762'] }
   ].map(island => ({ ...island, rim:island.rim.map(([u,v])=>[
     u*island.scale[0]+island.center[0], v*island.scale[1]+island.center[1]
   ]) }));
@@ -30,8 +31,6 @@
     portal:{ name:'梦境传送门', point:[-2.25,-2.25], structure:[-3.38,-3.38], sign:[0,48], hit:[-61,-138,61,-4], footprint:[.93,.93] },
     stage:{ name:'排练舞台', point:[-16.1,4.7], structure:[-18.25,3.96], sign:[-70,85], hit:[-207,-154,221,56], footprint:[1.52,1.42] },
     lounge:{ name:'乐队休息区', point:[4.25,-16.3], structure:[4.38,-18.2], sign:[63,92], hit:[-157,-117,158,54], footprint:[1.38,1.5] },
-    grove:{ name:'林间空地', point:[-15.6,-6.2], structure:[-15.6,-6.2], sign:[-128,-66] },
-    shore:{ name:'湖岸空地', point:[-6.15,-15.8], structure:[-6.15,-15.8], sign:[128,-66] },
     training:{name:'训练之塔',point:[-6.95,-17.91],structure:[-7.15,-19.35],sign:[-84,-12],hit:[-87,-166,89,38],footprint:[.93,.93]}
   };
   const trees = [
@@ -157,7 +156,7 @@
 
   function district(u,v) {
     const island=islands.find(land=>inside(u,v,land.rim));
-    return island?.name || '水岸栈桥';
+    return island?.name ?? '水岸栈桥';
   }
 
   function facing(du,dv) {
@@ -165,5 +164,5 @@
     return du+dv>0?'down':'up';
   }
 
-  global.MyGO.RetreatLayout={islands,bridges,stations,trees,walkable,route,district,facing};
+  global.MyGO.RetreatLayout={islands,bridges,stations,clearings,trees,walkable,route,district,facing};
 })(window);
