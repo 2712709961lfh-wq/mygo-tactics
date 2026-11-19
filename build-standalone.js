@@ -87,10 +87,14 @@ const SCRIPTS = [
   'src/loadout-ui.js',
   'src/mastery-ui.js',
   'src/shop-ui.js',
+  'src/retreat-layout.js',
+  'src/retreat-art.js',
+  'src/retreat-visitors.js',
+  'src/retreat.js',
   'src/main.js',
 ];
 
-const STYLES = ['styles.css', 'entry.css', 'soul-ui.css', 'diary-ui.css', 'equipment.css', 'tactical-ui.css'];
+const STYLES = ['styles.css', 'entry.css', 'soul-ui.css', 'diary-ui.css', 'equipment.css', 'tactical-ui.css', 'retreat.css'];
 const CHARACTER_IDS = ['tomori', 'anon', 'rana', 'soyo', 'taki', 'xueyue', 'nina', 'nijika', 'subaru'];
 const CHARACTER_DIR = 'assets/characters/sprites';
 const WALK_DIR = 'assets/characters/walk';

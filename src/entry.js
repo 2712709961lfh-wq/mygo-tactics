@@ -55,6 +55,14 @@
     return unit.weapon && unit.weapon.damageType === 'magic' ? unit.mag : unit.str;
   }
 
+  function hideTitle(entry) {
+    entry.dom.root.hidden = true;
+    if (entry.codex) entry.codex.close();
+    entry.closeSavePanel();
+    entry.closeFormation();
+    document.body.classList.remove('entry-open');
+  }
+
   class EntryScreen {
     constructor(ui) {
       this.ui = ui;
@@ -88,6 +96,7 @@
       }
 
       this.codex = global.MyGO.EquipmentCodex ? new global.MyGO.EquipmentCodex(this) : null;
+      this.retreat = global.MyGO.RetreatScreen ? new global.MyGO.RetreatScreen(this) : null;
       this.bind();
       this.renderRosterPreview();
       this.refreshSaveHint();
@@ -103,6 +112,7 @@
         this.ui.showToast('战斗结算中，暂时无法返回标题页。', 'error', 1800);
         return;
       }
+      this.retreat?.close();
       this.dom.root.hidden = false;
       this.dom.root.removeAttribute('hidden');
       document.body.classList.add('entry-open');
@@ -116,12 +126,16 @@
       if (first) global.setTimeout(() => first.focus(), 30);
     }
 
+    openRetreat() {
+      if (!this.retreat) return this.hideToGame();
+      hideTitle(this);
+      this.retreat.open();
+    }
+
     hideToGame() {
-      this.dom.root.hidden = true;
-      if (this.codex) this.codex.close();
-      this.closeSavePanel();
-      this.closeFormation();
-      document.body.classList.remove('entry-open');
+      hideTitle(this);
+      this.retreat?.close();
+      this.ui.game.retreat = null;
       this.ui.layoutBoard();
 
       const game = this.ui.game;
@@ -157,7 +171,7 @@
         const action = target.closest('[data-entry-action]');
         if (action) {
           const name = action.getAttribute('data-entry-action');
-          if (name === 'start') this.hideToGame();
+          if (name === 'start') this.openRetreat();
           if(name==='chapter10'){
             this.ui.chapterPlayed=false;this.ui.newGame(Date.now(),11);this.hasStarted=true;this.hideToGame();
           }
@@ -246,7 +260,8 @@
         }
         return;
       }
-      if (this.dom.root.hidden) return;
+      const inRetreat = this.retreat?.root.hidden === false;
+      if (this.dom.root.hidden && !inRetreat) return;
 
       if (!this.dom.formation.hidden) {
         if (event.key === 'Escape') {
@@ -255,6 +270,7 @@
           this.closeFormation();
           return;
         }
+        if (inRetreat) return;
       }
 
       if (this.savePanelOpen && event.key === 'Escape') {
@@ -268,6 +284,12 @@
         // 标题页是根界面，不允许 Esc 意外穿透到战棋操作。
         event.preventDefault();
         event.stopPropagation();
+        if (inRetreat) this.open();
+        return;
+      }
+
+      if (inRetreat) {
+        this.retreat.onKeyDown(event);
         return;
       }
 
@@ -292,7 +314,7 @@
       const info = this.getSaveInfo();
       if (this.dom.saveHint) {
         this.dom.saveHint.textContent = info.ok
-          ? '上次存档 · 第 ' + info.loaded.snapshot.turn + ' 回合 · ' + fullTimeText(info.loaded.savedAt)
+          ? '上次存档 · ' + (info.loaded.snapshot.retreat ? '休憩之地' : '第 ' + info.loaded.snapshot.turn + ' 回合') + ' · ' + fullTimeText(info.loaded.savedAt)
           : '暂无本地存档 · 开始一局后可保存';
       }
     }
@@ -339,7 +361,7 @@
           '<div class="entry-save-slot">',
           '  <div class="entry-save-slot-mark">' + esc(savedMission.chapter) + '</div>',
           '  <strong>' + esc(savedMission.title) + '</strong>',
-          '  <span>'+([9,10].includes(snapshot.stage)?(snapshot.stage===10?'后半段 · ':'前半段 · '):'')+'第 ' + esc(snapshot.turn) + ' 回合 · 我方 ' + mine + ' / 敌方 ' + foes + '</span>',
+          '  <span>' + (snapshot.retreat ? '休憩之地 · 我方 ' + mine : ([9,10].includes(snapshot.stage)?(snapshot.stage===10?'后半段 · ':'前半段 · '):'')+'第 ' + esc(snapshot.turn) + ' 回合 · 我方 ' + mine + ' / 敌方 ' + foes) + '</span>',
           '  <small>' + esc(fullTimeText(loaded.savedAt)) + ' · ' + esc(storage) + '</small>',
           '</div>'
         ].join('');
@@ -394,7 +416,7 @@
       }
       try {
         const applied = this.ui.loadSnapshot(info.loaded);
-        this.hideToGame();
+        if (this.retreat?.root.hidden !== false) this.hideToGame();
         if (applied) {
           this.refreshSaveHint();
           this.ui.showToast('已读取存档 · 第 ' + this.ui.game.turn + ' 回合。', 'success', 1800);
@@ -446,8 +468,9 @@
       return this.ui.game.units.filter((unit) => unit.side === 'player');
     }
 
-    openFormation() {
+    openFormation(tab) {
       this.closeSavePanel();
+      if (tab) this.loadoutTab = tab;
       this.dom.formation.hidden = false;
       this.dom.formation.removeAttribute('hidden');
       const players = this.players();
@@ -457,10 +480,20 @@
       }
       this.renderFormationList();
       this.renderFormationDetail();
+      if (this.retreat?.root.hidden === false) {
+        const close = this.dom.formation.querySelector('[data-formation-close]');
+        close.firstChild.textContent = '返回休憩之地 ';
+        close.focus();
+      }
     }
 
     closeFormation() {
+      const wasOpen = !this.dom.formation.hidden;
       this.dom.formation.hidden = true;
+      if (this.retreat && wasOpen) {
+        this.dom.formation.querySelector('[data-formation-close]').firstChild.textContent = '返回标题 ';
+        this.retreat.resume();
+      }
     }
 
     renderFormationList() {

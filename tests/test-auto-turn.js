@@ -103,6 +103,17 @@ function terrainCell(g,id){for(let y=0;y<g.map.rows;y++)for(let x=0;x<g.map.cols
   g.reclassUnit(last,'fighter');ui.updateAll();await advance(500);assert(!ui.ends);assert.equal(g.phase,'player');
   entry.hideToGame();await advance(350);assert.equal(ui.ends,1);assert.equal(g.phase,'enemy');
  });
+ await test('营地转职保留行动状态，读营地存档后回到战场才继续回合',async()=>{
+  const {g,ui,last}=fixture();last.certifiedClasses.push('fighter');
+  g.retreat={chapterIntroPlayed:true};
+  g.reclassUnit(last,'fighter');assert.equal(last.acted,false);
+  last.acted=true;
+  g.restore(g.serialize());assert.equal(g.retreat.chapterIntroPlayed,true);
+  ui.updateAll();await advance(500);assert(!ui.ends);assert.equal(g.phase,'player');
+  const entry=Object.create(M.EntryScreen.prototype);
+  Object.assign(entry,{ui,hasStarted:true,dom:{root:node()},closeSavePanel(){},closeFormation(){}});
+  entry.hideToGame();await advance(350);assert.equal(ui.ends,1);assert.equal(g.retreat,null);
+ });
  await test('全员已行动的存档返回战场后自动继续，无存活我方或仅友军不会触发',async()=>{
   let {g,ui,last}=fixture();last.acted=true;g.restore(g.serialize());ui.playChapterIntro();await advance(350);assert.equal(ui.ends,1);
   ({g,ui}=fixture(3));for(const u of g.living('player')){u.dead=true;u.hp=0;}ui.updateAll();await advance(500);assert(!ui.ends);

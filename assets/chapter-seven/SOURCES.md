@@ -29,3 +29,9 @@ Five supplied JPG originals are preserved in `assets/characters/nijika-source/`:
 `tools/prepare-nijika-assets.py` removes the green backdrop, keeps a consistent foot anchor, extracts 47 action frames, builds four-direction map sheets, and removes exterior white from the portrait. Output details: `assets/characters/actions/nijika-actions.json`. No original user file is modified.
 
 Existing party and enemy sprites retain their previous sources and attribution. No new enemy artwork pack is introduced by this chapter.
+
+## Band camp
+
+- The camp uses the same locally bundled CC0 drum, electric guitar and speaker artwork listed above. The instrument archive and speaker download were rechecked against the OpenGameArt originals on 2026-11-19. Both versions of the game load those props from local files or their embedded equivalents.
+- The camp layout takes inspiration from the walkable facilities in Fire Emblem Fates’ My Castle. The three connected terraces, landscape, architecture and stage lighting are drawn for this project. [Nintendo’s overview](https://www.nintendo.com/en-gb/Games/Nintendo-3DS-games/Fire-Emblem-Fates-Birthright-1026071.html) · [Serenes Forest facility overview](https://serenesforest.net/fire-emblem-fates/my-castle/)
+- The band areas use MyGO!!!!!’s live performance setup as a reference for the stage and rehearsal props. [BanG Dream! official artist page](https://bang-dream.com/mygo)

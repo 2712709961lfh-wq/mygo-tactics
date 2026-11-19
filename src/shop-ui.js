@@ -41,7 +41,7 @@
       if(reason){ui.showToast(reason,'info',2200);return;}
       this.previousFocus=document.activeElement;this.message='';this.root.hidden=false;this.render();this.root.querySelector('[data-shop-close]').focus();
     }
-    close(){this.root.hidden=true;if(this.previousFocus?.isConnected)this.previousFocus.focus();}
+    close(){this.root.hidden=true;if(this.previousFocus?.isConnected)this.previousFocus.focus();this.entry.retreat?.resume();}
     render(){
       const g=this.entry.ui.game,categories=[['all','全部商品'],['weapon','武器'],['medicine','药品'],['seal','转职证'],['equipment','辅助装备']];
       const matches=e=>this.category==='all'||e.kind===this.category||e.category===this.category;

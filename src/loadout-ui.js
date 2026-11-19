@@ -44,7 +44,12 @@
       else if(t.hasAttribute('data-bag-take'))this.ui.game.transferItem(u,+t.dataset.bagTake,false);
       else if(t.hasAttribute('data-spell-equip'))this.ui.game.selectAttack(u,t.dataset.spellEquip);
       else if(t.hasAttribute('data-mastery-equip'))this.ui.game.equipMasterySkill(u,t.dataset.masteryEquip);
-      else if(t.hasAttribute('data-reclass')){this.ui.game.reclassUnit(u,t.dataset.reclass);this.ui.showToast(u.name+'转职为'+u.className,'success',2500);}
+      else if(t.hasAttribute('data-reclass')){
+        this.ui.game.reclassUnit(u,t.dataset.reclass);
+        const message=u.name+'转职为'+u.className;
+        if(this.retreat?.root.hidden===false)this.retreat.announce(message);
+        this.ui.showToast(message,'success',2500);
+      }
       else if(t.hasAttribute('data-medicine-use')){const r=this.ui.game.useMedicine(u,+t.dataset.medicineUse);this.ui.showToast(u.name+'使用'+r.item.name+(r.healed?'，回复 '+r.healed+' HP':'')+(r.resourcePreserved?' · 爱笑女孩：未消耗次数':''),'success',2500);}
       else return;
       this.renderFormationList();this.renderFormationDetail();this.ui.updateAll();

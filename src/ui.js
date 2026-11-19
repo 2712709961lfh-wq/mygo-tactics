@@ -313,8 +313,8 @@
 
     /** 开始下一章（或直接指定章节）。 */
     startNextStage() {
-      if(this.game.chapterNumber >= 10 || this.game.stage===9 || this.game.phase !== 'victory') return;
-      const next = this.game.stage===10?11:this.game.stage + 1;
+      const next = this.game.nextChapterStage;
+      if (!next || this.game.phase !== 'victory') return;
       this.chapterPlayed = false;
       this.closeOverlay();
       this.endShown = false;
@@ -406,6 +406,7 @@
     onKeyDown(event) {
       if (event.ctrlKey || event.metaKey || event.altKey || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
       if ((document.getElementById('entry-screen') && !document.getElementById('entry-screen').hidden) ||
+          (document.getElementById('retreat-screen') && !document.getElementById('retreat-screen').hidden) ||
           (document.getElementById('formation-screen') && !document.getElementById('formation-screen').hidden) ||
           (document.getElementById('equipment-screen') && !document.getElementById('equipment-screen').hidden) ||
           (document.getElementById('shop-screen') && !document.getElementById('shop-screen').hidden)) return;
@@ -1940,6 +1941,7 @@
 
     canAutoEndTurn() {
       return !this.busy && !this.chapterOpen && !this.endShown && this.mode === 'idle' &&
+        !this.game.retreat &&
         this.dom.overlayRoot?.hidden !== false && this.dom.chapterIntro?.hidden !== false &&
         !(MyGO.entry?.ui === this && !MyGO.entry.dom.root.hidden) &&
         this.game.isPlayerPhase() && !this.game.isOver() && this.game.allPlayerActed();
@@ -2101,6 +2103,7 @@
       } else {
         this.showToast(result.message, 'error', 2200);
       }
+      return result;
     }
 
     /**
@@ -2115,12 +2118,20 @@
       if(this.chapterOpen)this.finishChapterIntro();
       this.game.restore(loaded.snapshot);
       this.chapterPlayed=this.game.stage===11?this.game.palaceIntroSeen:this.game.stage===10?this.game.stageTenIntroSeen:this.game.stage===9?this.game.stageNineIntroSeen:this.game.stage===8?this.game.stageEightIntroSeen:this.game.stage!==7||this.game.nijikaJoined;
+      const entry = MyGO.entry?.ui === this ? MyGO.entry : null;
+      entry?.retreat?.close();
+      if (this.game.retreat && entry?.retreat) this.chapterPlayed = this.game.retreat.chapterIntroPlayed;
+      else this.game.retreat = null;
       this.renderer.setGame(this.game);
       this.endShown = false;
       this.resetSelection({ silent: true });
       this.lastSaveAt = at;
       this.syncMission();
       this.updateAll();
+      if (this.game.retreat) {
+        entry.openRetreat();
+        return false;
+      }
       if([6,8,9,10,11].includes(this.game.stage)){this.layoutBoard();const lead=this.game.living('player')[0];if(lead)this.revealCell(lead.x,lead.y);}
       if(this.game.stage===6&&this.game.maskRetreatPending){this.playMaskedEscape().then(()=>this.showEndScreen());return false;}
       if (this.game.isOver()) {
@@ -2245,6 +2256,7 @@
       const defeated = this.game.stage===6?this.game.units.filter(u=>u.side==='enemy'&&u.dead).length:this.game.mission.enemyCount-this.game.livingCount('enemy')+(this.game.stage===10?(this.game.rehearsalFirstDefeated||0):0);
       const alive = this.game.livingCount('player');
       const partySize = this.game.units.filter(u => u.side === 'player').length;
+      const retreat = win && MyGO.entry?.ui === this && MyGO.entry.retreat;
       const html = [
         '<div class="end-card ' + (win ? '' : 'defeat') + '">',
         '  <div class="end-hero">',
@@ -2262,17 +2274,26 @@
           : '我方全灭。调整站位，利用森林与武器三角，再试一次。') + '</div>',
         '  <div class="modal-actions">',
         win ? '<button class="modal-btn" type="button" data-end-save>保存通关</button>' : '',
-        win ? '<button class="modal-btn" type="button" data-end-shop>商店 · 补给</button>' : '',
-        '<button class="modal-btn" type="button" data-end-formation>同行之人</button>',
-        win && (this.game.stage < 9||this.game.stage===10)
+        win && !retreat ? '<button class="modal-btn" type="button" data-end-shop>商店 · 补给</button>' : '',
+        !retreat ? '<button class="modal-btn" type="button" data-end-formation>同行之人</button>' : '',
+        win && !retreat && (this.game.stage < 9||this.game.stage===10)
           ? '    <button class="modal-btn gold" type="button" data-end-next>进入第'+(['','二','三','四','五','六','七','八','九','十'][this.game.chapterNumber])+'章</button>'
           : '',
-        '    <button class="modal-btn primary" type="button" data-end-restart>再次挑战</button>',
+        '    <button class="modal-btn ' + (retreat ? '' : 'primary') + '" type="button" data-end-restart>再次挑战</button>',
+        retreat ? '<button class="modal-btn primary" type="button" data-end-retreat>返回休憩之地</button>' : '',
         '  </div>',
         '</div>'
       ].join('');
 
       this.openOverlay(html, 'end-card-host', false);
+      const returnButton = this.dom.overlayCard.querySelector('[data-end-retreat]');
+      if (returnButton) {
+        returnButton.addEventListener('click', () => {
+          this.closeOverlay();
+          MyGO.entry.openRetreat();
+        });
+        returnButton.focus();
+      }
       const restart = this.dom.overlayCard.querySelector('[data-end-restart]');
       if (restart) restart.addEventListener('click', () => this.newGame());
       const next = this.dom.overlayCard.querySelector('[data-end-next]');

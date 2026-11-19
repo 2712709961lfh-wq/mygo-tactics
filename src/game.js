@@ -139,10 +139,12 @@
   class Game {
     // 10 remains an internal encounter key for old saves; both encounters are chapter 9.
     get chapterNumber(){return this.stage===11?10:this.stage===10?9:this.stage;}
+    get nextChapterStage(){return this.stage===9||this.stage===11?null:this.stage+1;}
     get rehearsalTransitionPending(){return this.stage===9&&this.gateOpen&&this.stageNineIntroSeen&&!!this.getUnit('rift_pegasus')?.dead&&!this.isOver();}
     constructor(options) {
       const opts = options || {};
       this.stage = [2,3,4,5,6,7,8,9,10,11].includes(opts.stage) ? opts.stage : 1;
+      this.retreat = null;
       this.recruited = Array.isArray(opts.recruited) ? ['xueyue','nina','nijika','subaru'].filter(id=>opts.recruited.includes(id)) : [];
       this.recruited=this.recruited.filter(id=>this.stage===11||id!=='subaru');
       if(this.stage===11&&!this.recruited.includes('subaru'))this.recruited.push('subaru');
@@ -301,7 +303,7 @@
       if(this.phase!=='player'&&this.phase!=='victory')return '请在我方阶段或战后转职';
       // Class management also applies to withdrawn companions. It never heals
       // or revives them; their acted flag cannot lock out roster management.
-      if(!unit.dead&&unit.acted&&this.phase!=='victory')return '该角色已行动，请在下回合转职';
+      if(!unit.dead&&unit.acted&&this.phase!=='victory'&&!this.retreat)return '该角色已行动，请在下回合转职';
       return '';
     }
 
@@ -335,7 +337,7 @@
       const job=MyGO.Classes.get(id);
       if(!unit.certifiedClasses.includes(id)&&job.seal){const bag=unit.inventory.some(i=>i.id===job.seal)?unit.inventory:this.convoy;bag.splice(bag.findIndex(i=>i.id===job.seal),1);}
       MyGO.Classes.apply(unit,id);
-      if(this.phase==='player')this.markActed(unit);
+      if(this.phase==='player'&&!this.retreat)this.markActed(unit);
       return job;
     }
 
@@ -364,7 +366,7 @@
     loadoutReason(unit) {
       if(!unit||unit.side!=='player'||unit.dead)return '该角色无法整理背包';
       if(this.phase!=='player'&&this.phase!=='victory')return '请在我方阶段整理背包';
-      if(unit.acted&&this.phase!=='victory')return '该角色已行动，请在下回合整理背包';
+      if(unit.acted&&this.phase!=='victory'&&!this.retreat)return '该角色已行动，请在下回合整理背包';
       return '';
     }
 
@@ -383,7 +385,7 @@
     }
 
     selectAttack(unit,id) {
-      if(!unit||unit.dead||!((this.phase===unit.side&&!unit.acted)||(this.phase==='victory'&&unit.side==='player')))throw Error('当前无法切换攻击手段');
+      if(!unit||unit.dead||!((this.phase===unit.side&&!unit.acted)||(unit.side==='player'&&!this.loadoutReason(unit))))throw Error('当前无法切换攻击手段');
       MyGO.Inventory.select(unit,id);
     }
 
@@ -1172,6 +1174,7 @@
         mapRevision: this.stage === 1 ? C.MAP_REVISION : this.mission.mapRevision,
         turn: this.turn,
         phase: this.phase,
+        ...(this.retreat ? { retreat: { ...this.retreat } } : {}),
         winner: this.winner,
         gateOpen: this.gateOpen,
         resonanceOpen: this.resonanceOpen,
@@ -1217,6 +1220,9 @@
         throw new Error('存档版本不兼容');
       }
       if (!Array.isArray(snapshot.units)) throw new Error('存档单位数据缺失');
+      if (snapshot.retreat !== undefined && (!snapshot.retreat ||
+          typeof snapshot.retreat.chapterIntroPlayed !== 'boolean' ||
+          !['player', 'victory'].includes(snapshot.phase))) throw new Error('休憩之地存档状态无效');
       if(snapshot.palaceChapterVersion!==undefined){
         if(snapshot.palaceChapterVersion!==1||snapshot.stage!==10||snapshot.rehearsalChapterVersion!==undefined||snapshot.rehearsalPart!==undefined)throw Error('第十关宫殿进度无效');
         snapshot={...snapshot,stage:11};
@@ -1484,6 +1490,7 @@
       this.refreshParkDiscovery();
       this.turn = Math.max(1, Number(snapshot.turn) || 1);
       this.phase = ['enemy','ally'].includes(snapshot.phase) ? 'player' : snapshot.phase;
+      this.retreat = snapshot.retreat ? { chapterIntroPlayed: snapshot.retreat.chapterIntroPlayed } : null;
       this.winner = snapshot.winner || null;
       if (this.stage === 1 && this.phase === 'victory' && this.getUnit('xueyue')?.dead) this.recruited = ['xueyue'];
       this.rng = MyGO.RNG.restore(snapshot.rngState);

@@ -47,7 +47,17 @@ try{for(const name of ['index.html','standalone.html']){
  await preview('status');
  await page.locator('[data-loadout-tab="bag"]').click();assert(await page.locator('.bag-slots').isVisible());
  await page.locator('[data-loadout-tab="stats"]').click();assert.equal(await page.locator('.sheet-column').count(),3);
- await page.locator('[data-formation-close]').click();await page.locator('[data-entry-action="start"]').click();await page.keyboard.press('Enter');await page.waitForFunction(()=>MYGO_UI.dom.chapterIntro.hidden);await page.waitForFunction(()=>MYGO_UI.dom.turnBanner.hidden&&MYGO_UI.dom.toast.hidden);
+ await page.locator('[data-formation-close]').click();
+ await page.locator('[data-entry-action="start"]').click();
+ await page.waitForSelector('#retreat-screen');
+ assert(await page.locator('#chapter-intro').isHidden());
+ await page.locator('[data-retreat-overview]').click();
+ await page.locator('[data-station="stage"]').click();
+ await page.waitForFunction(()=>MYGO_ENTRY.retreat.stageLit&&document.querySelector('[data-retreat-district]').textContent==='排练舞台');
+ await page.locator('[data-retreat-overview]').click();
+ await page.locator('[data-station="portal"]').click();
+ await page.waitForSelector('#chapter-intro');
+ await page.keyboard.press('Enter');await page.waitForFunction(()=>MYGO_UI.dom.chapterIntro.hidden);await page.waitForFunction(()=>MYGO_UI.dom.turnBanner.hidden&&MYGO_UI.dom.toast.hidden);
  await page.locator('[data-party-id="tomori"]').click();
  const origin=await page.evaluate(()=>MYGO_UI.origin);
  const landing=(await mapSelection(page)).filter(c=>c.x>origin.x).sort((a,b)=>b.x-a.x)[0];

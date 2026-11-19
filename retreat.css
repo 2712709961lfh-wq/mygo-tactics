@@ -1,0 +1,139 @@
+.retreat-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 95;
+  overflow: hidden;
+  background: #0b2429;
+  color: #f6edcf;
+  font-family: 'Microsoft YaHei', sans-serif;
+}
+.retreat-screen[hidden] { display: none; }
+.retreat-screen:focus { outline: none; }
+.retreat-map { display: block; width: 100%; height: 100%; touch-action: manipulation; cursor: crosshair; }
+.retreat-heading {
+  position: absolute;
+  top: 40px;
+  left: 47px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  pointer-events: none;
+}
+.retreat-emblem {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border: 1px solid #c3a97581;
+  border-radius: 50%;
+  color: #e6bd77;
+  box-shadow: 0 0 0 5px #ad92631b, inset 0 0 22px #cda26c19;
+  font: 37px/1 Georgia, serif;
+}
+.retreat-heading h1 {
+  margin: 0 0 6px;
+  color: #f6edcf;
+  font: 600 39px/1.22 'Songti SC', 'SimSun', serif;
+  letter-spacing: .16em;
+  text-shadow: 0 4px 15px #06191b;
+}
+.retreat-heading p { margin: 0; color: #adc6bd; font-size: 14px; letter-spacing: .12em; }
+.retreat-toolbar {
+  position: absolute;
+  top: 47px;
+  right: 45px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.retreat-gold, .retreat-toolbar button {
+  min-height: 43px;
+  padding: 10px 15px;
+  border: 1px solid #b6b49658;
+  background: #102c31ed;
+  color: #f0e7ce;
+  font: 15px/1.4 'Microsoft YaHei', sans-serif;
+}
+.retreat-gold { color: #e8c584; font-variant-numeric: tabular-nums; }
+.retreat-gold span { padding-right: 4px; }
+.retreat-toolbar button:hover:enabled { background-color: #234743; border-color: #ddc495; }
+.retreat-toolbar button[aria-pressed='true'] { background-color: #285253; border-color: #9dcab6; }
+.retreat-toolbar button:disabled { opacity: .5; }
+.retreat-stations { position: absolute; inset: 0; pointer-events: none; }
+.retreat-station {
+  --accent: #e8b56b;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 145px;
+  min-height: 54px;
+  padding: 8px 16px 8px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  background: linear-gradient(140deg, #203a3a, #10272c 80%);
+  box-shadow: 0 5px 18px #04161bbd, inset 0 0 0 3px #071e2363;
+  color: #fff0d1;
+  font: inherit;
+  text-align: left;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+.retreat-station strong, .retreat-station small { display: block; white-space: nowrap; }
+.retreat-station strong { font-size: 17px; letter-spacing: .08em; line-height: 1.25; }
+.retreat-station small { margin-top: 3px; color: #c2cbc0; font-size: 12px; }
+.retreat-station-icon {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
+  font: 21px/1 Georgia, serif;
+}
+.retreat-station:hover:enabled, .retreat-station.is-near {
+  background: #285050;
+  box-shadow: 0 0 18px #a8e2c45c, 0 5px 18px #04161bbd;
+}
+.retreat-station[hidden] { display: none; }
+.retreat-station:disabled { filter: saturate(.25); color: #c9cdc4; }
+.retreat-classes { --accent: #d8afd5; }
+.retreat-portal { --accent: #92e4c7; }
+.retreat-stage { --accent: #aaa6ff; }
+.retreat-lounge { --accent: #f0aa9a; }
+.retreat-clearing { --accent: #a5c79e; }
+.retreat-screen.is-overview .retreat-station { min-width: 0; min-height: 42px; padding: 7px 10px; gap: 8px; }
+.retreat-screen.is-overview .retreat-station strong { font-size: 15px; }
+.retreat-screen.is-overview .retreat-station small { display: none; }
+.retreat-screen.is-overview .retreat-station-icon { width: 24px; height: 24px; }
+.retreat-footer {
+  position: absolute;
+  inset: auto 45px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #c9d8cf;
+  pointer-events: none;
+}
+.retreat-footer p { margin: 0; }
+.retreat-hint { display: flex; gap: 16px; align-items: center; font-size: 13px; }
+.retreat-hint span + span { border-left: 1px solid #789e9361; padding-left: 16px; }
+.retreat-hint kbd { padding: 3px 6px; border: 1px solid #819f8f73; border-radius: 3px; color: #ead4a7; font-size: 12px; }
+.retreat-footer [role='status'] { color: #ecd8a7; font-size: 15px; }
+.retreat-location { display: flex; align-items: center; gap: 16px; }
+.retreat-location [data-retreat-district] {
+  padding: 8px 14px;
+  border: 1px solid #9ac1ad55;
+  border-radius: 2px;
+  background: #102c31ed;
+  color: #e0efdd;
+  font-size: 14px;
+  letter-spacing: .09em;
+}
+@media (pointer: coarse) {
+  .retreat-hint span:not(:first-child) { display: none; }
+  .retreat-station { min-height: 62px; }
+  .retreat-toolbar button { min-height: 52px; }
+  .retreat-screen.is-overview .retreat-station { min-height: 51px; }
+}
