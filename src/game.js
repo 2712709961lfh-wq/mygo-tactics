@@ -279,7 +279,7 @@
 
     buyItem(id,quantity=1){
       const p=MyGO.Shop.get(id),reason=this.shopReason();if(reason)throw Error(reason);
-      if(!p||this.stage<p.stage)throw Error('尚未解锁该商品');
+      if(!p||!MyGO.Shop.unlocked(this,p))throw Error('尚未解锁该商品');
       if(!Number.isInteger(quantity)||quantity<1||quantity>99)throw Error('购买数量无效');
       if(p.limit!==null&&(this.shopPurchases[id]||0)+quantity>p.limit)throw Error('本章库存不足');
       if(this.convoy.length+quantity>500)throw Error('运输队容量不足');
@@ -433,8 +433,8 @@
       const talentHealing=MyGO.Talents?.onSupport(caster,s,changes)||0;
       if(talentHealing)changes.push({id:caster.id,amount:talentHealing,talent:'同心'});
       this.markActed(caster);MyGO.Inventory.sync(caster);
-      let growth=MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
-      if(MyGO.Mastery)growth=MyGO.Mastery.attachReport(caster,growth,MyGO.Mastery.award(caster));
+      let growth=this.isTraining?null:MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
+      if(MyGO.Mastery)growth=MyGO.Mastery.attachReport(caster,growth,MyGO.Mastery.award(caster,this.isTraining?2:1));
       return {spell:s,changes,talentHealing,resourcePreserved,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
     }
 
@@ -1066,8 +1066,8 @@
         const killed=outgoing.some(s=>s.killed);
         const amount=MyGO.Growth.combatExp(before,enemy,damage,killed);
         const bonus=this.stage===4&&u.id==='soyo'&&enemy.id==='dark_soyo'&&killed;
-        let report=MyGO.Growth.award(u,amount,bonus?2:1);
-        if(MyGO.Mastery)report=MyGO.Mastery.attachReport(u,report,MyGO.Mastery.award(u));
+        let report=this.isTraining?null:MyGO.Growth.award(u,amount,bonus?2:1);
+        if(MyGO.Mastery)report=MyGO.Mastery.attachReport(u,report,MyGO.Mastery.award(u,this.isTraining?2:1));
         if(bonus)this.soyoBossBonus=true;
         if(report){if(bonus)report.bonus='直面过去 · 击破经验 ×2';reports.push(report);}
       }
@@ -1490,6 +1490,7 @@
       this.refreshParkDiscovery();
       this.turn = Math.max(1, Number(snapshot.turn) || 1);
       this.phase = ['enemy','ally'].includes(snapshot.phase) ? 'player' : snapshot.phase;
+      if(this.stage===3&&this.phase==='victory'&&!this.rewardedChapters.includes(3))this.rewardedChapters.push(3);
       this.retreat = snapshot.retreat ? { chapterIntroPlayed: snapshot.retreat.chapterIntroPlayed } : null;
       this.winner = snapshot.winner || null;
       if (this.stage === 1 && this.phase === 'victory' && this.getUnit('xueyue')?.dead) this.recruited = ['xueyue'];

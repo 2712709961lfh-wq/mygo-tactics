@@ -147,7 +147,7 @@
     play(attacker, defender, result, options) {
       this._cancel();
       const opt = options || {};
-      if(opt.stage){
+      if(opt.stage!==undefined){
         this.stage=opt.stage;this.mission=opt.mission;this.lampsLit=!!opt.lampsLit;
         if(this._backgroundKey!==this.stage+'|'+this.lampsLit)this._buildBackground();
       }
@@ -1316,12 +1316,13 @@
       const ctx = bg.getContext('2d');
       ctx.imageSmoothingEnabled = false;
       ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
-      if(this.stage===11&&MyGO.PalaceMap)MyGO.PalaceMap.drawBattleBackground(ctx,W,H);
+      if(this.stage===0&&MyGO.TrainingArt)MyGO.TrainingArt.drawBattleBackground(ctx,W,H);
+      else if(this.stage===11&&MyGO.PalaceMap)MyGO.PalaceMap.drawBattleBackground(ctx,W,H);
       else if(this.stage>=9&&MyGO.RehearsalMap)MyGO.RehearsalMap.drawBattleBackground(ctx,W,H);
       else if(this.stage>=7&&MyGO.LivehouseArt)MyGO.LivehouseArt.drawBattleBackground(ctx,W,H);
       else if(this.stage>=4&&MyGO.ParkMap)MyGO.ParkMap.drawBattleBackground(ctx,W,H,this.lampsLit);
       else this._paintBackground(ctx);
-      this._backgroundKey=(this.stage||1)+'|'+!!this.lampsLit;
+      this._backgroundKey=(this.stage??1)+'|'+!!this.lampsLit;
       this.bg = bg;
     }
 

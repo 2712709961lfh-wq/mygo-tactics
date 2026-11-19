@@ -12,8 +12,11 @@
     effect:'第九关击败裂空天马后，在奇怪的门旁使用并通关。钥匙在运输队或战利品暂存中时也可使用。'});
   const chestKey=Object.freeze({id:'chest_key',name:'宝箱钥匙',kind:'key',category:'key',uses:1,icon:'accuracy-ring',
     effect:'持有者站在宝箱上或相邻1格，消耗钥匙开箱并结束行动。'});
+  const trainingTicket=Object.freeze({id:'training_ticket',name:'训练之塔门票',en:'Training Tower Ticket',kind:'ticket',category:'ticket',uses:1,
+    icon:'beginner_seal',effect:'从休憩之地派两位同伴进入训练之塔时消耗一张。'});
+  const specialItems=new Map([courtyardKey,strangeDoorKey,chestKey,trainingTicket].map(e=>[e.id,e]));
   const supplyIds=E.items.filter(e=>['consumable','seal'].includes(e.kind)).map(e=>e.id);
-  const allowed=new Set([...E.items.map(e=>e.id),courtyardKey.id,chestKey.id,strangeDoorKey.id]);
+  const allowed=new Set([...E.items.map(e=>e.id),...specialItems.keys()]);
   // Soyo's original v4.8 spell list is accepted only for save migration.
   const retiredSoyoSpells=new Set(['wind','thunder','thoron','nosferatu','physic','restore','ward','rescue','warp','silence','fortify']);
   const weapons=Object.fromEntries(E.items.filter(e=>e.kind==='weapon').map(e=>{
@@ -25,7 +28,7 @@
   for(const s of Magic.items)if(!s.support)weapons[s.id]=Object.freeze({...s,absoluteHit:true});
   const unarmed=Object.freeze({id:'unarmed',name:'未装备攻击手段',type:'none',range:[0,0],might:0,hit:0,crit:0,weight:0,damageType:'physical',cannotAttack:true,color:'#aaa'});
   weapons.unarmed=unarmed;
-  function item(id){return id===strangeDoorKey.id?strangeDoorKey:id===courtyardKey.id?courtyardKey:id===chestKey.id?chestKey:E.get(id);}
+  function item(id){return specialItems.get(id)||E.get(id);}
   function make(id){if(!allowed.has(id))throw Error('该物品尚未开放配置');const e=item(id);return{id,uses:e.uses};}
   function magicAllowed(u){return !u.classId||!!M.Classes?.get(u.classId)?.magic;}
   function canEquip(u,e){
@@ -53,6 +56,7 @@
     ...(M.Mastery?.canUnarmed(u)?['mastery_unarmed']:[]),...u.learnedSpells.filter(id=>magicAllowed(u)&&!Magic.get(id).support&&u.spellUses[id]>0&&!u.status?.silence)])];}
   function weaponFor(u,id){
     const weapon=weapons[id]||unarmed;
+    if(u.trainingSlime&&id==='training_sword')return {...weapon,name:'黏液撞击',might:2,hit:75,crit:0,weight:0};
     if(weapon.kind!=='spell')return weapon;
     const range=Magic.rangeOf(weapon,u);
     return range.some((n,i)=>n!==weapon.range[i])?{...weapon,range}:weapon;
@@ -82,6 +86,7 @@
   function consume(u,id,preserved=false,count=1){
     if(id==='mastery_unarmed')return;
     if(!Number.isInteger(count)||count<1)throw Error('耐久消耗无效');
+    if(u.trainingPractice) return;
     if(count>1){
       const slots=u.inventory.filter(i=>i.id===id&&i.uses>0);
       if(slots.reduce((n,i)=>n+i.uses,0)<count)throw Error('武器耐久不足');
@@ -98,7 +103,7 @@
   function validateBag(bag,max=5){
     if(!Array.isArray(bag)||bag.length>max)throw Error('背包格数无效');
     return bag.map(i=>{const e=i&&item(i.id);if(!e||!allowed.has(i.id))throw Error('存档包含未知物品');
-      if(e.uses!==null&&(!Number.isInteger(i.uses)||i.uses<(['key','seal','consumable'].includes(e.kind)?1:0)||i.uses>e.uses))throw Error('存档耐久无效');return{id:i.id,uses:e.uses===null?null:i.uses};});
+      if(e.uses!==null&&(!Number.isInteger(i.uses)||i.uses<(['key','seal','consumable','ticket'].includes(e.kind)?1:0)||i.uses>e.uses))throw Error('存档耐久无效');return{id:i.id,uses:e.uses===null?null:i.uses};});
   }
   function restore(u,s,refresh){
     if(!s||!Array.isArray(s.inventory))return;
@@ -127,7 +132,7 @@
   function stock(){return [...Array.from({length:25},()=>make('vulnerary')),...['iron_sword','iron_lance','iron_axe','iron_bow','iron_gauntlets'].map(make)];}
   function equip(u,index){u.combatArtId=null;const i=u.inventory[index],e=i&&item(i.id);if(!e)throw Error('背包物品不存在');
     if(e.kind==='key')throw Error('钥匙需在对应门旁使用');
-    if(e.kind==='consumable'||e.kind==='seal')throw Error('该物品需要使用，不能装备');
+    if(['consumable','seal','ticket'].includes(e.kind))throw Error('该物品需要使用，不能装备');
     if(e.kind==='weapon'){if(!canEquip(u,e))throw Error('当前职业不能装备此类武器');if(i.uses<=0)throw Error('该武器已损坏');u.equippedWeapon=i.id;
       // Duplicate items are selected by slot: put the selected instance first among its family.
       const first=u.inventory.findIndex(a=>a.id===i.id);[u.inventory[first],u.inventory[index]]=[u.inventory[index],u.inventory[first]];
@@ -159,8 +164,11 @@
     const stage=({vulnerary:1,concoction:2,elixir:4,antitoxin:1,pure_water:2,beginner_seal:1,intermediate_seal:2,advanced_seal:3,master_seal:4,dark_seal:3,abyssian_seal:4,dancer_seal:2})[e.id];
     offer(e.id,e.price,stage,e.kind==='seal'?e.id==='dancer_seal'?1:3:null);
   }
-  M.Shop=Object.freeze({products:Object.freeze(products),START_GOLD:3000,CHAPTER_REWARD:2000,
+  offer(trainingTicket.id,500,3);
+  const trainingUnlocked=game=>!!game.rewardedChapters?.includes(3)||(game.chapterNumber===3&&game.phase==='victory');
+  const unlocked=(game,p)=>p.id===trainingTicket.id?trainingUnlocked(game):game.stage>=p.stage;
+  M.Shop=Object.freeze({products:Object.freeze(products),START_GOLD:3000,CHAPTER_REWARD:2000,TICKET:trainingTicket.id,trainingUnlocked,unlocked,
     get:id=>products.find(p=>p.id===id)||null,
-    stock:game=>products.map(p=>({...p,item:item(p.id),locked:game.stage<p.stage,
+    stock:game=>products.map(p=>({...p,item:item(p.id),locked:!unlocked(game,p),
       remaining:p.limit===null?null:Math.max(0,p.limit-(game.shopPurchases[p.id]||0))}))});
 })(window);

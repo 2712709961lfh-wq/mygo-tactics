@@ -173,6 +173,7 @@
       this.dom.missionTitle.textContent = mission.title;
       this.dom.missionSub.textContent = mission.subtitle;
       this.dom.objectiveText.textContent = mission.objective;
+      if(this.game.isTraining)this.dom.objectiveText.textContent=this.trainingObjective();
       if(this.game.stage===11)this.dom.objectiveText.textContent='击败精英战马骑士 · '+(this.game.getUnit('gilded_cavalier')?.dead?'已击败':'北端王座厅')+' · 敌军剩余 '+this.game.livingCount('enemy')+' 名';
       if(this.game.stage===10)this.dom.objectiveText.textContent='后半段 · 全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.subaruJoined?' · 昴已入队':' · 与昴会合');
       if(this.game.stage===9)this.dom.objectiveText.textContent=this.game.gateOpen?'正在进入本关后半段':this.game.getUnit('rift_pegasus')?.dead?'前半段 · Boss 已击败 · 到北端门旁使用钥匙':'前半段 · 击败裂空天马 → 取得钥匙 → 开门';
@@ -194,10 +195,12 @@
     /** 把关卡标题、任务目标同步到顶部和底部信息栏。 */
     syncMission() {
       const mission = this.game.mission;
+      this.syncTrainingChrome?.();
       this.dom.missionChapter.textContent = mission.chapter;
       this.dom.missionTitle.textContent = mission.title;
       this.dom.missionSub.textContent = mission.subtitle;
       this.dom.objectiveText.textContent = mission.objective;
+      if(this.game.isTraining)this.dom.objectiveText.textContent=this.trainingObjective();
       if(this.game.stage===11)this.dom.objectiveText.textContent='击败精英战马骑士 · '+(this.game.getUnit('gilded_cavalier')?.dead?'已击败':'北端王座厅')+' · 敌军剩余 '+this.game.livingCount('enemy')+' 名';
       if(this.game.stage===10)this.dom.objectiveText.textContent='后半段 · 全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.subaruJoined?' · 昴已入队':' · 与昴会合');
       if(this.game.stage===9)this.dom.objectiveText.textContent=this.game.gateOpen?'正在进入本关后半段':this.game.getUnit('rift_pegasus')?.dead?'前半段 · Boss 已击败 · 到北端门旁使用钥匙':'前半段 · 击败裂空天马 → 取得钥匙 → 开门';
@@ -517,6 +520,7 @@
     updateAll() {
       this.updateChrome();
       this.updateCounts();
+      if(this.game.isTraining)this.dom.objectiveText.textContent=this.trainingObjective();
       if(this.game.stage===2){
         const g=this.game;
         this.dom.objectiveText.textContent='星铃 '+g.awakenedBells.length+'/'+g.mission.requiredBells+
@@ -1073,7 +1077,9 @@
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, 32, 32);
       ctx.imageSmoothingEnabled = false;
-      if(this.game.stage>=7&&MyGO.LivehouseArt){
+      if(this.game.isTraining&&MyGO.TrainingArt){
+        MyGO.TrainingArt.drawGround(ctx,{rows:1,cols:1,tiles:[[terrainId]]});
+      }else if(this.game.stage>=7&&MyGO.LivehouseArt){
         ctx.fillStyle=terrainId==='wall'?'#56343c':terrainId==='road'?'#25222e':'#38323b';ctx.fillRect(0,0,32,32);
         ctx.strokeStyle='#64545a';ctx.strokeRect(1,1,30,30);ctx.beginPath();ctx.moveTo(0,16);ctx.lineTo(32,16);ctx.stroke();
         if(terrainId==='fort'){ctx.fillStyle='#a6c8b4';ctx.fillRect(13,6,6,20);ctx.fillRect(6,13,20,6);}
@@ -1361,7 +1367,11 @@
         '<span class="tag">第 ' + this.game.turn + ' 回合</span>'
       ].join('');
       const open = this.game.gateOpen;
-      const steps = this.game.stage===11?[['突破宫门','沿中央红毯推进，或从立柱两侧回廊迂回。'],['防备骑兵突击','战马骑士移动7格，先查看威胁范围；魔法突破重装，弓应对天马。'],['击败金鬃卫长','王座前的金甲白马为精英Boss，击败即可通关。两侧圣泉可提供据点防护与回复。']]:this.game.stage===10?[['与昴会合','开场对话后昴直接入队，可施法攻击并支援队伍。'],['辨认真正的仁菜','紫黑色幻影是拳斗士，钢拳套具有连续攻击。保护脆弱后排，集中火力应对。'],['清除所有敌人','幻影倒下后仍须击败四周幻兵、重装与天马。右上角显示剩余敌人数量。']]:this.game.stage===9?[['向门推进','沿中央地毯北上，利用音箱与乐器架分流敌人。'],['击败裂空天马','苍蓝羽光与双环光晕标记 Boss。弓对飞行有效；击败后获得门的钥匙与钢枪。'],['打开奇怪的门','击败 Boss 后仍可行动。队员走到最北端门旁使用钥匙；运输队与暂存中的门钥匙也可直接使用。开门后继续本关，与昴会合并全歼后半段敌军。']]:this.game.stage===8?[['击败两名幻影','向舞台最深处推进，同时击败术士爽世之影与佣兵灯之影即可获胜。'],['破甲与防空','重装高守备低魔防，使用魔法；携钥天马机动很高，注意弓的飞行特效。'],['三个宝箱','三名携钥天马各掉一把钥匙。西箱中级转职证，东箱1500 G，后台钢剑。击败最后一名幻影前完成搜宝。']]:this.game.stage===7?[['回应求助','开场回应虹夏后，她立即成为可操控同伴。'],['清理演出厅','利用两侧通道绕过设备，逐组击败失真回声。'],['夺回舞台','舞台上的敌人也要全部击败；右上角显示剩余敌人。']]:this.game.stage===6?[
+      const steps = this.game.isTraining?[
+        ['双人演练','前进接近史莱姆，利用柱子和休憩据点分散围攻。'],
+        ['职业经验 ×2','每次交战按双倍职业经验结算，途中不获得等级经验。'],
+        ['清除全部史莱姆','完成后两位同伴各领取一次同级击破的等级经验；两位都倒下则提前结束。']
+      ]:this.game.stage===11?[['突破宫门','沿中央红毯推进，或从立柱两侧回廊迂回。'],['防备骑兵突击','战马骑士移动7格，先查看威胁范围；魔法突破重装，弓应对天马。'],['击败金鬃卫长','王座前的金甲白马为精英Boss，击败即可通关。两侧圣泉可提供据点防护与回复。']]:this.game.stage===10?[['与昴会合','开场对话后昴直接入队，可施法攻击并支援队伍。'],['辨认真正的仁菜','紫黑色幻影是拳斗士，钢拳套具有连续攻击。保护脆弱后排，集中火力应对。'],['清除所有敌人','幻影倒下后仍须击败四周幻兵、重装与天马。右上角显示剩余敌人数量。']]:this.game.stage===9?[['向门推进','沿中央地毯北上，利用音箱与乐器架分流敌人。'],['击败裂空天马','苍蓝羽光与双环光晕标记 Boss。弓对飞行有效；击败后获得门的钥匙与钢枪。'],['打开奇怪的门','击败 Boss 后仍可行动。队员走到最北端门旁使用钥匙；运输队与暂存中的门钥匙也可直接使用。开门后继续本关，与昴会合并全歼后半段敌军。']]:this.game.stage===8?[['击败两名幻影','向舞台最深处推进，同时击败术士爽世之影与佣兵灯之影即可获胜。'],['破甲与防空','重装高守备低魔防，使用魔法；携钥天马机动很高，注意弓的飞行特效。'],['三个宝箱','三名携钥天马各掉一把钥匙。西箱中级转职证，东箱1500 G，后台钢剑。击败最后一名幻影前完成搜宝。']]:this.game.stage===7?[['回应求助','开场回应虹夏后，她立即成为可操控同伴。'],['清理演出厅','利用两侧通道绕过设备，逐组击败失真回声。'],['夺回舞台','舞台上的敌人也要全部击败；右上角显示剩余敌人。']]:this.game.stage===6?[
         ['沿中央林荫道向北','从南部中央出发，穿过池塘、长椅与花圃，到达十八盏宫廷立灯围绕的王座。滚轮或触摸拖动纵向查看地图，点击同伴自动跟随。'],
         ['防备暗幕召唤','推进越过四个区段后，敌方阶段每轮最多召唤一波，混合普通兵、重装和天马。新援军当轮不行动。'],
         ['保持队形并应对兵种','援军会在队伍附近出现。用弓防空、用魔法破甲，保护后排并利用休憩据点恢复。'],
@@ -1397,7 +1407,7 @@
         '</ol>'+(this.game.stage===2?'<div class="bell-directory">'+this.game.mission.bells.map((b,i)=>
           '<button type="button" data-bell-focus="'+b.id+'">'+(this.game.awakenedBells.includes(b.id)?'✓ ':'')+(i+1)+' · '+esc(b.name)+
           ' <small>'+columnLabel(b.x)+(b.y+1)+'</small></button>').join('')+'</div>':'')+
-        '<div class="mission-quote">“即使声音被封闭，我也想再相信一次。”</div>';
+        (this.game.isTraining?'':'<div class="mission-quote">“即使声音被封闭，我也想再相信一次。”</div>');
       if(this.game.stage===2)this.dom.infoBody.querySelectorAll('[data-bell-focus]').forEach(button=>button.addEventListener('click',()=>{
         const b=this.game.mission.bells.find(b=>b.id===button.dataset.bellFocus);
         this.revealCell(b.x,b.y);this.renderTerrainInfo(b.x,b.y);
@@ -1406,7 +1416,7 @@
       this.dom.contextText.innerHTML =
         C.TEXT.hints.idle +
         '<span class="hint-line">' +
-        (this.game.stage>=5?this.game.mission.gateHint:this.game.stage===4?'找到路灯后在灯旁选择「点亮路灯」，留意随之传来的声音方向。黑暗中的敌人会主动靠近，也会被点灯声惊动，请安排掩护。':this.game.stage === 3
+        (this.game.isTraining||this.game.stage>=5?this.game.mission.gateHint:this.game.stage===4?'找到路灯后在灯旁选择「点亮路灯」，留意随之传来的声音方向。黑暗中的敌人会主动靠近，也会被点灯声惊动，请安排掩护。':this.game.stage === 3
           ? '仁菜位于南部中央，绿色友军由 AI 控制。请尽快赶到她身边；仁菜阵亡仍可通关，但永久失去招募机会。'
           : this.game.stage === 2
           ? '五处星铃任选三处 + 击败指挥家。中央集市便于转线，花林提供掩护；沿房舍外侧可绕开部分警戒队。点击编号星铃查看位置。'
@@ -2012,6 +2022,7 @@
         this.game.beginNextPlayerPhase();
         this.resetSelection({ silent: true });
         this.setBusy(false);
+        if(this.game.isTraining)this.saveCheckpoint();
         this.updateAll();
         this.renderIdleInfo();
         this.showBanner('第 ' + this.game.turn + ' 回合', '我方行动 · PLAYER PHASE', 1500);
@@ -2106,6 +2117,15 @@
       return result;
     }
 
+    saveCheckpoint(game=this.game) {
+      const result=this.saveManager.save(game,{automatic:true});
+      if(result.ok){
+        this.lastSaveAt=timeText(result.savedAt);
+        this.updateSaveNote();
+      }
+      return result;
+    }
+
     /**
      * 把 SaveManager.load() 的快照真正应用到场上的公共入口。
      * 标题页读档也走这里，避免复制一套恢复逻辑。
@@ -2116,7 +2136,11 @@
       if(this._livehouseEndingCancel)this._livehouseEndingCancel();
       const at = timeText(loaded.savedAt) || '未知时间';
       if(this.chapterOpen)this.finishChapterIntro();
-      this.game.restore(loaded.snapshot);
+      if(loaded.snapshot.training||this.game.isTraining){
+        const campaign=new MyGO.Game();
+        campaign.restore(loaded.snapshot);
+        this.game=loaded.snapshot.training?MyGO.Training.Game.fromSnapshot(campaign,loaded.snapshot.training):campaign;
+      }else this.game.restore(loaded.snapshot);
       this.chapterPlayed=this.game.stage===11?this.game.palaceIntroSeen:this.game.stage===10?this.game.stageTenIntroSeen:this.game.stage===9?this.game.stageNineIntroSeen:this.game.stage===8?this.game.stageEightIntroSeen:this.game.stage!==7||this.game.nijikaJoined;
       const entry = MyGO.entry?.ui === this ? MyGO.entry : null;
       entry?.retreat?.close();
@@ -2128,6 +2152,7 @@
       this.lastSaveAt = at;
       this.syncMission();
       this.updateAll();
+      if(this.game.isTraining)this.revealCell(this.game.units[0].x,this.game.units[0].y);
       if (this.game.retreat) {
         entry.openRetreat();
         return false;
@@ -2183,6 +2208,7 @@
 
     askRestart() {
       if (this.busy) return;
+      if(this.game.isTraining)return this.askLeaveTraining();
       this.confirmHandler = () => this.newGame();
       this.openOverlay(
         [
@@ -2230,10 +2256,13 @@
     }
 
     async showEndScreen() {
+      if(this.game.isTraining)return this.showTrainingEnd();
       if(this.game.stage===6&&this.game.maskRetreatPending){await this.playMaskedEscape();}
       if (this.endShown) return;
       this.endShown = true;
       const win = this.game.phase === 'victory';
+      const retreat = win && MyGO.entry?.ui === this && MyGO.entry.retreat;
+      if(retreat&&!this.game.retreat)this.saveCheckpoint();
       if (win && this.game.stage === 1 && this.game.recruited.includes('xueyue') && !this.game.recruitmentShown) {
         const clearedGame = this.game;
         await this.showRecruitment(this.game.getUnit('xueyue'));
@@ -2256,7 +2285,11 @@
       const defeated = this.game.stage===6?this.game.units.filter(u=>u.side==='enemy'&&u.dead).length:this.game.mission.enemyCount-this.game.livingCount('enemy')+(this.game.stage===10?(this.game.rehearsalFirstDefeated||0):0);
       const alive = this.game.livingCount('player');
       const partySize = this.game.units.filter(u => u.side === 'player').length;
-      const retreat = win && MyGO.entry?.ui === this && MyGO.entry.retreat;
+      let checkpoint;
+      if(retreat){
+        this.game.retreat={chapterIntroPlayed:this.chapterPlayed};
+        checkpoint=this.saveCheckpoint();
+      }
       const html = [
         '<div class="end-card ' + (win ? '' : 'defeat') + '">',
         '  <div class="end-hero">',
@@ -2272,6 +2305,7 @@
         '  <div class="end-copy">' + (win
           ? (this.game.stage===11?'金鬃卫长已被击败，宫廷守军的防线随之瓦解。<br>众人穿过鎏金大厅，继续寻找回到现实的方法。<br>第十关完成，本章奖励 2000 G。':this.game.stage===10?'裂空天马已经倒下，门后的仁菜幻影与敌军也已全部消散。<br>排练室终于安静下来，安和昴已成为同行的伙伴。<br>第九关完成，本章奖励 2000 G。':this.game.stage===8?'两名往日之影已消散，扩张的舞台恢复了寂静。<br>宝箱收集：'+this.game.openedChests.length+'/3；本章奖励 2000 G。':this.game.stage===7?'失真的噪音终于平息，STARRY 的舞台再次亮起。<br>全部敌人已击败，虹夏与大家一同守住了这里。<br>本章奖励 2000 G。':this.game.stage===6?'“留你们一命。”<br>神秘面具人在 1 HP 时打开传送阵离开，王座已空。<br>众人突破暗幕包围，本章奖励 2000 G。':this.game.stage===5?'双桥防线已突破。中级转职证 ×1、钢斧 ×1 已作为 Boss 战利品领取。<br>宝箱收集：'+this.game.openedChests.length+'/2；本章奖励 2000 G。':this.game.stage===4?'“这一次，我会和大家一起向前走。”<br>神秘幻影已击败。'+(this.game.soyoBossBonus?'爽世直面过去，已获得双倍击破经验。':'由爽世亲手击败幻影可获得双倍击破经验。'):this.game.stage===3?(this.game.ninaLost?'仁菜没能走出这场梦。今后的旅途中，她将不会加入同行之人。':'井芹仁菜已获救，加入同行之人。'):'“即使迷路，也要把这首歌传达出去。”')+'<br>' + esc(this.game.mission.chapter) + ' · ' + esc(this.game.mission.title) + ' · CLEAR'
           : '我方全灭。调整站位，利用森林与武器三角，再试一次。') + '</div>',
+        checkpoint ? '<p class="end-copy" role="status">'+esc(checkpoint.ok?'进度已自动保存。':checkpoint.message)+'</p>' : '',
         '  <div class="modal-actions">',
         win ? '<button class="modal-btn" type="button" data-end-save>保存通关</button>' : '',
         win && !retreat ? '<button class="modal-btn" type="button" data-end-shop>商店 · 补给</button>' : '',

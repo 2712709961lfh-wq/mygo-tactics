@@ -32,6 +32,8 @@
       this.districtLabel = this.root.querySelector('[data-retreat-district]');
       this.stageButton = this.root.querySelector('[data-station="stage"]');
       this.portalButton = this.root.querySelector('[data-station="portal"]');
+      this.trainingStatus=this.root.querySelector('[data-training-status]');
+      this.training=new M.TrainingScreen(this);
       this.reduceMotion = global.matchMedia('(prefers-reduced-motion: reduce)');
       this.pressed = new Set();
       this.update = this.update.bind(this);
@@ -72,6 +74,7 @@
 
     close() {
       this.root.hidden = true;
+      this.training.close();
       this.pause();
       this.target = null;
     }
@@ -102,6 +105,8 @@
         ? (game.nextChapterStage ? '继续冒险 · 第 ' + (game.chapterNumber + 1) + ' 章' : '目前章节已全部通关')
         : (this.ui.chapterPlayed ? '返回当前战场' : '出发 · 第 ' + game.chapterNumber + ' 章');
       this.save.disabled = defeat;
+      const tickets=M.Training.ticketCount(game);
+      this.trainingStatus.textContent=M.Shop.trainingUnlocked(game)?'双人演练 · 门票 '+tickets:'第 3 章通关后解锁';
       this.buttons.forEach(button => {
         const id=button.dataset.station;
         button.disabled = id === 'portal' ? victory && !game.nextChapterStage : defeat && (id==='shop'||id==='classes');
@@ -225,6 +230,8 @@
         this.announce(this.stageLit?'舞台灯已亮起':'舞台灯已熄灭');
       } else if (id === 'lounge') {
         this.announce('已抵达水岸露台');
+      } else if (id === 'training') {
+        this.training.open();
       } else if (id === 'portal') {
         const game = this.ui.game;
         this.close();

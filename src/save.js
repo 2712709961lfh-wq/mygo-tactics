@@ -9,7 +9,9 @@
   const MyGO = (global.MyGO = global.MyGO || {});
   const C = MyGO.CONFIG;
 
-  let memoryStore = null;
+  const memoryStore = new Map();
+  const manualKey = C.SAVE_KEY;
+  const checkpointKey = manualKey + ':checkpoint';
   let storageAvailable = null;
 
   function canUseStorage() {
@@ -25,45 +27,59 @@
     return storageAvailable;
   }
 
-  function readRaw() {
+  function readRaw(key) {
     if (canUseStorage()) {
       try {
-        return global.localStorage.getItem(C.SAVE_KEY);
+        return global.localStorage.getItem(key);
       } catch (err) {
         return null;
       }
     }
-    return memoryStore;
+    return memoryStore.get(key) || null;
   }
 
-  function writeRaw(value) {
+  function writeRaw(key, value) {
     if (canUseStorage()) {
       try {
-        global.localStorage.setItem(C.SAVE_KEY, value);
+        global.localStorage.setItem(key, value);
         return true;
       } catch (err) {
         return false;
       }
     }
-    memoryStore = value;
+    memoryStore.set(key,value);
     return true;
   }
 
-  function removeRaw() {
+  function removeRaw(key) {
     if (canUseStorage()) {
       try {
-        global.localStorage.removeItem(C.SAVE_KEY);
+        global.localStorage.removeItem(key);
       } catch (err) {
-        /* noop */
+        return false;
       }
     } else {
-      memoryStore = null;
+      memoryStore.delete(key);
+    }
+    return true;
+  }
+
+  function readSlot(key,slot){
+    try {
+      const raw=readRaw(key);
+      if(!raw)return {ok:false,message:'没有找到存档'};
+      const payload=JSON.parse(raw);
+      if(!payload||payload.version!==C.SAVE_VERSION)return {ok:false,message:'存档版本不兼容'};
+      if(!payload.snapshot)return {ok:false,message:'存档内容损坏'};
+      return {ok:true,snapshot:payload.snapshot,savedAt:payload.savedAt,slot,message:'读档成功'};
+    }catch(err){
+      return {ok:false,message:'读取存档失败：'+err.message};
     }
   }
 
   class SaveManager {
     /** 写入快照。返回 {ok, message, savedAt}。 */
-    save(game) {
+    save(game, options) {
       try {
         const payload = {
           version: C.SAVE_VERSION,
@@ -71,7 +87,7 @@
           snapshot: game.serialize()
         };
         const raw = JSON.stringify(payload);
-        if (!writeRaw(raw)) throw new Error('浏览器拒绝写入本地存储');
+        if (!writeRaw(options?.automatic?checkpointKey:manualKey,raw)) throw new Error('浏览器拒绝写入本地存储');
         return {
           ok: true,
           message: '存档成功',
@@ -83,32 +99,22 @@
     }
 
     /** 读取快照。返回 {ok, snapshot, savedAt, message}。 */
-    load() {
-      try {
-        const raw = readRaw();
-        if (!raw) return { ok: false, message: '没有找到存档' };
-        const payload = JSON.parse(raw);
-        if (!payload || payload.version !== C.SAVE_VERSION) {
-          return { ok: false, message: '存档版本不兼容' };
-        }
-        if (!payload.snapshot) return { ok: false, message: '存档内容损坏' };
-        return {
-          ok: true,
-          snapshot: payload.snapshot,
-          savedAt: payload.savedAt,
-          message: '读档成功'
-        };
-      } catch (err) {
-        return { ok: false, message: '读取存档失败：' + err.message };
-      }
+    load(slot) {
+      const manual=readSlot(manualKey,'manual');
+      if(slot==='manual')return manual;
+      const checkpoint=readSlot(checkpointKey,'automatic');
+      if(slot==='automatic')return checkpoint;
+      if(checkpoint.ok && (!manual.ok||checkpoint.savedAt>manual.savedAt))return checkpoint;
+      return manual.ok||readRaw(manualKey)?manual:checkpoint;
     }
 
     hasSave() {
-      return !!readRaw();
+      return !!(readRaw(manualKey)||readRaw(checkpointKey));
     }
 
     delete() {
-      removeRaw();
+      const manual=removeRaw(manualKey), checkpoint=removeRaw(checkpointKey);
+      return {ok:manual&&checkpoint};
     }
 
     get storageType() {

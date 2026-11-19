@@ -190,7 +190,7 @@
     else if(id==='steal'){const i=t.inventory[itemIndex];if(!i||!stealable(t).includes(i))throw Error('该物品不可偷取');u.inventory.push(t.inventory.splice(itemIndex,1)[0]);if(t.drops?.includes(i.id)){t.drops=t.drops.filter(id=>id!==i.id);t.stolenDrops=[...(t.stolenDrops||[]),i.id];}M.Inventory.sync(t);}
     else {moves=assistMoves(game,u,t,id);for(const p of moves){const unit=game.getUnit(p.id);unit.x=p.x;unit.y=p.y;}game.refreshParkDiscovery();}
     game.markActed(u);u.combatArtId=null;M.Inventory.sync(u);
-    const report=attachReport(u,null,award(u));return {affected:[u.id,t.id],moves,experience:report?[report]:[]};
+    const report=attachReport(u,null,award(u,game.isTraining?2:1));return {affected:[u.id,t.id],moves,experience:report?[report]:[]};
   }
   M.Mastery=Object.freeze({abilities,arts,jobs,get,progress,learned,has,sync,init,pack,restore,equip,award,attachReport,bonus,canUnarmed,unarmed,availableArts,selectedArt,artReason,rangeOf,targetReason,strikeEffects,afterBattle,applyEffects,startTurn,endTurn,assistTargets,useAssist,stealable});
 })(window);

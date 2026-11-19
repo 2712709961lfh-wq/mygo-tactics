@@ -55,9 +55,11 @@ const SCRIPTS = [
   'src/pathfinding.js',
   'src/combat.js',
   'src/game.js',
+  'src/training.js',
   'src/ai.js',
   'src/save.js',
   'src/assets.js',
+  'src/training-art.js',
   'src/garden-map.js',
   'src/moon-map.js',
   'src/park-map.js',
@@ -91,6 +93,7 @@ const SCRIPTS = [
   'src/retreat-art.js',
   'src/retreat-visitors.js',
   'src/retreat.js',
+  'src/training-ui.js',
   'src/main.js',
 ];
 
@@ -100,6 +103,7 @@ const CHARACTER_DIR = 'assets/characters/sprites';
 const WALK_DIR = 'assets/characters/walk';
 const IDLE_DIR = 'assets/characters/idle';
 const MAP_IMAGES = {
+  trainingslimes: 'assets/training/slimes.png',
   palacecavalier: 'assets/chapter-ten/cavalier-actions.png',
   palaceelite: 'assets/chapter-ten/elite-actions.png',
   palacescenery: 'assets/chapter-ten/palace-scenery.png',

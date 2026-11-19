@@ -96,6 +96,12 @@
       // 用逻辑坐标排版，绘制结果落到 2× 背板上。
       lc.setTransform(this.scale, 0, 0, this.scale, 0, 0);
       const map = this.game.map;
+      if(this.game.isTraining&&MyGO.TrainingArt){
+        MyGO.TrainingArt.drawGround(lc,map);
+        this._depthScene=null;
+        this.terrainLayer=layer;
+        return;
+      }
       if(this.game.stage>=4&&MyGO.ParkMap){
         lc.fillStyle='#050c17';lc.fillRect(0,0,this.logicalWidth,this.logicalHeight);
         lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===11?MyGO.PalaceMap:this.game.stage===10?MyGO.TenthMap:this.game.stage===9?MyGO.RehearsalMap:this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
@@ -751,9 +757,9 @@
     _drawHpBar(unit, v) {
       const ctx = this.ctx;
       // 血条悬在 60px 素材小人头顶上方，宽度略大于一格。
-      const w = SPRITE_WIDTH - 10;
+      const w = unit.trainingSlime ? 29 : SPRITE_WIDTH - 10;
       const x = Math.round(v.px) + TILE / 2 - w / 2;
-      const y = Math.max(2, Math.round(v.py) + TILE - SPRITE_HEIGHT - 7);
+      const y = Math.max(2, Math.round(v.py) + TILE - (unit.trainingSlime ? 31 : SPRITE_HEIGHT) - 7);
       const h = 5;
       const ratio = clamp(unit.hp / unit.maxHp, 0, 1);
       const color = ratio > 0.6 ? '#68d98a' : ratio > 0.3 ? '#ffd166' : '#ff5b6e';

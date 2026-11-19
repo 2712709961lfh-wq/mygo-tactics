@@ -75,6 +75,7 @@
         saveStatus: document.getElementById('entry-save-status'),
         saveCurrent: document.querySelector('[data-save-current]'),
         saveLoad: document.querySelector('[data-save-load]'),
+        saveManual: document.querySelector('[data-save-load-manual]'),
         saveDelete: document.querySelector('[data-save-delete]'),
         formation: document.getElementById('formation-screen'),
         formationList: document.getElementById('formation-list'),
@@ -199,6 +200,10 @@
           this.loadSave();
           return;
         }
+        if (target.closest('[data-save-load-manual]')) {
+          this.loadSave('manual');
+          return;
+        }
         if (target.closest('[data-save-delete]')) {
           this.deleteSave();
         }
@@ -229,6 +234,7 @@
 
       if (this.dom.titleBtn) {
         this.dom.titleBtn.addEventListener('click', () => {
+          if(this.ui.game.isTraining)return this.ui.askLeaveTraining();
           const overlayOpen = !this.ui.dom.overlayRoot.hidden;
           if (this.ui.busy || overlayOpen || this.ui.mode !== 'idle') {
             this.ui.showToast('请先结束当前行动，再返回标题页。', 'error', 1900);
@@ -262,6 +268,7 @@
       }
       const inRetreat = this.retreat?.root.hidden === false;
       if (this.dom.root.hidden && !inRetreat) return;
+      if(inRetreat && this.retreat.training?.onKeyDown(event)) return;
 
       if (!this.dom.formation.hidden) {
         if (event.key === 'Escape') {
@@ -304,8 +311,8 @@
      * 存档
      * ---------------------------------------------------------- */
 
-    getSaveInfo() {
-      const loaded = this.ui.saveManager.load();
+    getSaveInfo(slot) {
+      const loaded = this.ui.saveManager.load(slot);
       if (!loaded.ok) return { ok: false, loaded: null };
       return { ok: true, loaded };
     }
@@ -314,7 +321,7 @@
       const info = this.getSaveInfo();
       if (this.dom.saveHint) {
         this.dom.saveHint.textContent = info.ok
-          ? '上次存档 · ' + (info.loaded.snapshot.retreat ? '休憩之地' : '第 ' + info.loaded.snapshot.turn + ' 回合') + ' · ' + fullTimeText(info.loaded.savedAt)
+          ? '上次存档 · ' + (info.loaded.snapshot.training ? '训练之塔' : info.loaded.snapshot.retreat ? '休憩之地' : '第 ' + info.loaded.snapshot.turn + ' 回合') + ' · ' + fullTimeText(info.loaded.savedAt)
           : '暂无本地存档 · 开始一局后可保存';
       }
     }
@@ -360,9 +367,9 @@
         this.dom.saveInfo.innerHTML = [
           '<div class="entry-save-slot">',
           '  <div class="entry-save-slot-mark">' + esc(savedMission.chapter) + '</div>',
-          '  <strong>' + esc(savedMission.title) + '</strong>',
-          '  <span>' + (snapshot.retreat ? '休憩之地 · 我方 ' + mine : ([9,10].includes(snapshot.stage)?(snapshot.stage===10?'后半段 · ':'前半段 · '):'')+'第 ' + esc(snapshot.turn) + ' 回合 · 我方 ' + mine + ' / 敌方 ' + foes) + '</span>',
-          '  <small>' + esc(fullTimeText(loaded.savedAt)) + ' · ' + esc(storage) + '</small>',
+          '  <strong>' + esc(snapshot.training?'训练之塔':savedMission.title) + '</strong>',
+          '  <span>' + (snapshot.training ? '训练第 '+esc(snapshot.training.turn)+' 回合' : snapshot.retreat ? '休憩之地 · 我方 ' + mine : ([9,10].includes(snapshot.stage)?(snapshot.stage===10?'后半段 · ':'前半段 · '):'')+'第 ' + esc(snapshot.turn) + ' 回合 · 我方 ' + mine + ' / 敌方 ' + foes) + '</span>',
+          '  <small>' + esc(fullTimeText(loaded.savedAt)) + ' · ' + esc(storage) + (loaded.slot==='automatic'?' · 自动存档':'') + '</small>',
           '</div>'
         ].join('');
         this.dom.saveLoad.disabled = false;
@@ -378,6 +385,8 @@
         this.dom.saveLoad.disabled = true;
         this.dom.saveDelete.disabled = true;
       }
+
+      if(this.dom.saveManual)this.dom.saveManual.hidden=!(info.loaded?.slot==='automatic'&&this.getSaveInfo('manual').ok);
 
       this.dom.saveCurrent.disabled = !canSave;
       this.dom.saveCurrent.title = canSave ? '保存当前战场进度' : '只能在无单位行动时保存';
@@ -408,8 +417,8 @@
       this.setSaveStatus('已保存当前进度。', 'success');
     }
 
-    loadSave() {
-      const info = this.getSaveInfo();
+    loadSave(slot) {
+      const info = this.getSaveInfo(slot);
       if (!info.ok) {
         this.setSaveStatus('没有可读取的存档。', 'warn');
         return;
@@ -431,7 +440,7 @@
         this.deleteArmed = true;
         this.dom.saveDelete.textContent = '再按一次确认删除';
         this.dom.saveDelete.classList.add('is-armed');
-        this.setSaveStatus('删除后无法恢复，请再按一次确认。', 'warn');
+        this.setSaveStatus('手动存档和自动存档都会删除，请再按一次确认。', 'warn');
         if (this.deleteTimer) clearTimeout(this.deleteTimer);
         this.deleteTimer = global.setTimeout(() => {
           this.deleteArmed = false;

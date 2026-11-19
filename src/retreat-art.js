@@ -509,7 +509,7 @@
       paint(entry.ctx);
       props.push({...entry,depth:y+depth});
     }
-    const {shop,classes,portal,stage,lounge:rest,grove,shore}=layout.stations;
+    const {shop,classes,portal,stage,lounge:rest,grove,shore,training}=layout.stations;
     drawClearing(land.ctx,grove.point,'#b8b98544');
     drawClearing(land.ctx,shore.point,'#b9c38e55');
     place(...portal.structure,portalStone,250,190,32);
@@ -517,6 +517,8 @@
     place(...classes.structure,ctx=>building(ctx,...classes.structure,{front:'#bab196',side:'#909488',roofLight:'#92798d',roofDark:'#625c76',trim:'#d3bca6',light:'#e6c7e8'},false),310,215,49);
     place(...stage.structure,drawStage,465,237,74,47);
     place(...rest.structure,lounge,350,199,59,47);
+    const [towerX,towerY]=project(...training.structure);
+    place(...training.structure,ctx=>global.MyGO.TrainingArt.drawTower(ctx,towerX,towerY),192,219,42,17);
     const treeColors={green,pink,gold:yellow};
     for(const [u,v,size,color] of layout.trees){
       place(u,v,ctx=>tree(ctx,u,v,size,treeColors[color],random),206,189,28);

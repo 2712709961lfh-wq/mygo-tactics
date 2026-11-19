@@ -103,6 +103,7 @@
 .retreat-stage { --accent: #aaa6ff; }
 .retreat-lounge { --accent: #f0aa9a; }
 .retreat-clearing { --accent: #a5c79e; }
+.retreat-training { --accent: #9dd9cb; }
 .retreat-screen.is-overview .retreat-station { min-width: 0; min-height: 42px; padding: 7px 10px; gap: 8px; }
 .retreat-screen.is-overview .retreat-station strong { font-size: 15px; }
 .retreat-screen.is-overview .retreat-station small { display: none; }
@@ -137,3 +138,50 @@
   .retreat-toolbar button { min-height: 52px; }
   .retreat-screen.is-overview .retreat-station { min-height: 51px; }
 }
+
+.training-entry {
+  position: absolute;
+  inset: 0;
+  z-index: 181;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: #071820cb;
+  color: #f1e7d0;
+}
+.training-entry[hidden] { display: none; }
+.training-panel {
+  width: min(780px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  border: 1px solid #89b3a5;
+  padding: 28px;
+  background: radial-gradient(ellipse at 90% 0, #2d595d 0%, #18323a 57%, #132831 100%);
+  box-shadow: 0 18px 80px #05131d;
+}
+.training-head, .training-actions, .training-summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.training-head h2 { margin: 0 0 5px; font: 600 34px/1.28 'Songti SC', 'SimSun', serif; letter-spacing: .12em; }
+.training-head p, .training-note, .training-actions p { margin: 0; color: #c3d1c8; }
+.training-summary { margin: 20px 0 14px; padding: 10px 0; border-block: 1px solid #8db4a760; color: #bdd0c6; }
+.training-summary b { color: #eed29a; padding-left: 6px; }
+.training-roster { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+.training-recruit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 74px;
+  padding: 7px;
+  border: 1px solid #779f965c;
+  border-radius: 3px;
+  background: #112931b3;
+  color: #f2e5c9;
+  text-align: left;
+}
+.training-recruit[aria-pressed='true'] { border-color: #ead098; background: #31575a; }
+.training-recruit:disabled { opacity: .53; }
+.training-recruit canvas { width: 56px; height: 56px; border: 1px solid #83a59f6e; }
+.training-recruit strong, .training-recruit small { display: block; line-height: 1.45; }
+.training-recruit small { color: #c2d2c9; font-size: 12px; }
+.training-note { padding: 17px 0; font-size: 13px; line-height: 1.6; }
+.training-actions { padding-top: 10px; border-top: 1px solid #8db4a756; }
+.training-actions button:disabled { opacity: .48; }
