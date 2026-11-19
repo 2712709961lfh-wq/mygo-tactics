@@ -52,6 +52,25 @@ test('Holy spring healing and defensive terrain work; flying ignores terrain def
 test('Corrupt version, map, missing roster, units, one-boss victory and wall positions reject',()=>{
  for(const mutate of [s=>s.royalGardenChapterVersion=2,s=>delete s.royalGardenChapterVersion,s=>s.stage=12,s=>s.mapRevision++,s=>s.palaceChapterVersion=1,s=>s.rehearsalChapterVersion=1,s=>delete s.royalGardenIntroSeen,s=>s.gateOpen=true,s=>s.units.pop(),s=>s.recruited=s.recruited.filter(id=>id!=='subaru'),s=>s.phase='victory',s=>Object.assign(s.units[0],{x:16,y:30}),s=>s.economy.chapter=12]){const snapshot=plain(fresh().serialize());mutate(snapshot);assert.throws(()=>new M.Game().restore(snapshot));}
 });
+test('Older fountain layouts restore blocked units onto freed ground without changing battle progress',()=>{
+ for(const revision of [1,2])for(const x of [11,12,13,20,21,22])for(const y of revision===2?[20,33]:[20,35]){
+  const g=fresh();g.royalGardenIntroSeen=true;
+  const snapshot=plain(g.serialize());snapshot.mapRevision=revision;
+  Object.assign(snapshot.units.find(u=>u.id==='tomori'),{x,y,hp:7,acted:true});
+  const original=plain(snapshot),h=new M.Game();h.restore(snapshot);
+  const targetY=y===20?18:35;
+  assert.deepEqual(snapshot,original);assert.equal(h.getUnit('tomori').x,x);assert.equal(h.getUnit('tomori').y,targetY);
+  assert.equal(h.map.tiles[20][x],'wall');assert.equal(h.map.tiles[33][x],'wall');
+  assert.notEqual(h.map.tiles[targetY][x],'wall');
+  const expected=plain(snapshot);expected.mapRevision=3;expected.units.find(u=>u.id==='tomori').y=targetY;
+  assert.deepEqual(plain(h.serialize()),expected);assert.deepEqual(plain(reload(h).serialize()),expected);
+ }
+ for(const [revision,y]of [[1,18],[1,33],[2,18],[2,35]]){
+  const corrupt=plain(fresh().serialize());corrupt.mapRevision=revision;Object.assign(corrupt.units[0],{x:11,y});
+  assert.throws(()=>new M.Game().restore(corrupt));
+ }
+});
+
 test('Enemy profiles are fixed after party growth, import, turns and loaded wounds',()=>{
  const g=fresh(),stats=g=>plain(g.units.filter(u=>u.side==='enemy').map(u=>[u.id,u.level,u.maxHp,u.str,u.mag,u.dex,u.spd,u.def,u.res,u.move])),before=stats(g);for(const u of g.living('player'))M.Growth.award(u,600);const h=fresh({recruited:g.recruited,loadout:g.exportLoadout()});assert.deepEqual(stats(h),before);h.royalGardenIntroSeen=true;h.getUnit('garden_rift_pegasus').hp=7;h.beginNextPlayerPhase();assert.deepEqual(stats(reload(h)),before);assert.equal(reload(h).getUnit('garden_rift_pegasus').hp,7);
 });

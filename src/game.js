@@ -1238,6 +1238,19 @@
         if(snapshot.royalGardenChapterVersion!==1||snapshot.stage!==11||snapshot.palaceChapterVersion!==undefined||snapshot.rehearsalChapterVersion!==undefined||snapshot.rehearsalPart!==undefined)throw Error('第十一关御苑进度无效');
         snapshot={...snapshot,stage:12};
       }else if(snapshot.stage===12)throw Error('第十一关御苑进度缺失');
+      if(snapshot.stage===12&&[1,2].includes(snapshot.mapRevision)){
+        // The bridge-side beds move south; the entrance beds return to their original place.
+        // Move affected saved units to the freed tile in the same column, preserving the battle.
+        const columns=[11,12,13,20,21,22];
+        const previousRevision=snapshot.mapRevision;
+        if(snapshot.units.some(u=>columns.includes(u.x)&&(u.y===18||previousRevision===2&&u.y===35)))throw Error('存档停留在旧版喷泉阻挡地形');
+        snapshot={...snapshot,mapRevision:3,units:snapshot.units.map(u=>{
+          if(!columns.includes(u.x))return u;
+          if(u.y===20)return {...u,y:18};
+          if(previousRevision===2&&u.y===33)return {...u,y:35};
+          return u;
+        })};
+      }
       if(snapshot.palaceChapterVersion!==undefined){
         if(snapshot.palaceChapterVersion!==1||snapshot.stage!==10||snapshot.rehearsalChapterVersion!==undefined||snapshot.rehearsalPart!==undefined)throw Error('第十关宫殿进度无效');
         snapshot={...snapshot,stage:11};

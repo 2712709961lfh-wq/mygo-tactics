@@ -60,3 +60,5 @@
 - 浏览器截图保存在 `docs/previews/chapter-11-*.png`。
 
 版本5.26.1另由 `tools/render-royal-garden-details.js` 检查17个精灵坐标、内容与阻挡区域装饰落点，并用实际Renderer与BattleScene渲染地图和战斗背景，确认绘制前后游戏快照一致。更新预览为 `chapter-11-luxury-map.png`、`chapter-11-luxury-entrance.png`、`chapter-11-luxury-canals.png` 和 `chapter-11-luxury-battle.png`。
+
+版本5.26.4撤销此前南侧入口两组喷泉的误移，恢复第33行；正确调整往北靠近石桥的两组喷泉花圃，从第18行整体移到第19行，喷泉、底座、花卉、边框和阻挡同步。地图修订号为3，SAVE_VERSION与章节标记不变；读取修订号1、2的旧档时，新增花圃范围内的单位移到同列腾出的空格，其余战斗数据保留。关卡13组检查覆盖原版与误移版旧档、六个受影响列、输入快照不被修改和再次存读档。桥边近景见 `docs/previews/chapter-11-bridge-fountains.png`。

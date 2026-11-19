@@ -16,10 +16,10 @@
   [2,22,7,1],[12,22,3,1],[19,22,3,1],[25,22,7,1],[9,19,1,4],[24,19,1,4],
   [2,12,7,1],[11,12,3,1],[20,12,3,1],[26,12,6,1],[8,7,1,6],[25,7,1,6],
   [11,4,1,5],[22,4,1,5]])put('royal-wall',x,y,w,h);
- // Symmetrical parterres leave two-cell walking borders around every enclosure.
+ // Fountain beds below the northern bridges move together with their blocked ground.
  for(const [x,y,w,h] of [[3,33,3,2],[28,33,3,2],[11,33,3,2],[20,33,3,2],
   [3,23,3,2],[28,23,3,2],[11,23,3,2],[20,23,3,2],
-  [3,18,3,2],[28,18,3,2],[11,18,3,2],[20,18,3,2],
+  [3,18,3,2],[28,18,3,2],[11,19,3,2],[20,19,3,2],
   [3,8,3,2],[28,8,3,2],[12,8,2,2],[20,8,2,2]])put('royal-parterre',x,y,w,h);
  for(const [x,y] of [[5,20],[28,20]]){terrain[y][x]='fort';put('palace-font',x,y,1,1,false);}
  for(const y of [9,19,29,36])for(const x of [3,30])put('palace-lamp',x,y,1,1,false);
@@ -40,7 +40,7 @@
  const horse=from(base.enemies.find(u=>u.id==='gilded_cavalier'),'garden_cavalier_boss',25,5,
   {name:'战马骑士·御苑统领',shortName:'御苑统领',level:18,maxHp:48,str:19,mag:7,dex:17,spd:15,lck:10,def:16,res:11,boss:true,drops:['steel_lance'],guardGroup:'garden-horse-boss',guardRadius:7,quote:'花园的出口，由我们共同守住。'});
  enemies.push(sky,horse);
- C.STAGE_ROYAL_GARDEN={id:'mission-11-royal-garden',mapRevision:1,cols,rows,chapter:'MISSION 11',chapterJp:'第十一话',chapterEn:'CHAPTER 11',
+ C.STAGE_ROYAL_GARDEN={id:'mission-11-royal-garden',mapRevision:3,cols,rows,chapter:'MISSION 11',chapterJp:'第十一话',chapterEn:'CHAPTER 11',
   title:'花墙水道的双骑士',mapName:'王宫后花园 · 御苑水庭',subtitle:'众人穿过金鬃卫长身后的门，来到王宫后花园。花墙切断直路，水道间的桥头被骑兵占据，北端两名统领封锁着去路。',
   objective:'击败裂空天马骑士与战马骑士',gateHint:'中央水道与三道花墙分隔御苑。先从南侧两座桥过河，再绕到中段错位桥继续北上。围墙所有兵种均不可穿越；天马可以飞过水面，战马必须经过桥梁。弓对付天马、魔法突破重装，利用墙角和两侧圣泉稳住阵线。北端两名Boss都被击败才会通关。',
   terrain,decor,enemies,enemyCount:enemies.length,bossIds:[sky.id,horse.id],

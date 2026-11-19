@@ -79,7 +79,7 @@
   }else if(o.kind==='royal-parterre'){
    const top=y-h+5;rect(c,x-w/2-2,top-2,w+4,h, '#b5aa83');rect(c,x-w/2,top,w,h-4,'#294c39');rect(c,x-w/2+5,top+5,w-10,h-14,'#506d43');
    c.strokeStyle='#9dac73';c.lineWidth=2;c.strokeRect(x-w/2+8,top+8,w-16,h-20);line(c,x-w/2+1,top-1,x+w/2-1,top-1,'#e2d3a1');
-   if([11,20].includes(o.x)&&[18,33].includes(o.y)){
+   if([11,20].includes(o.x)&&[19,33].includes(o.y)){
     stone(c,x-27,y-8,54,10);sprite(c,'fountain'+(Math.floor((global.performance?.now()||0)/280)%2),x-22,y-64,44,66);
     for(const dx of [-w*.39,w*.39])sprite(c,'rosePink',x+dx-10,y-27,20,20);
    }else{
@@ -128,8 +128,7 @@
  function obscures(o,u){if(o.kind==='royal-palace-door')return Math.abs(u.x-(o.x+o.w/2))<2&&u.y>=36;
   if(o.kind==='royal-wall')return u.x>=o.x-1&&u.x<o.x+(o.w||1)+1&&u.y<o.y+(o.h||1)&&o.y+(o.h||1)-u.y<2;
   if(o.kind==='royal-angel'||o.kind==='royal-knight'||o.kind==='royal-urn'||o.kind==='palace-statue'||o.kind==='palace-font')return Math.abs(u.x-o.x)<1.2&&u.y<=o.y&&o.y-u.y<2.7;
-  // Beds and their inset fountains stay inside their blocked footprint; they
-  // do not need to fade merely because a rider is in the lane behind them.
+  // Fountain beds stay inside their blocked footprint without fading for nearby riders.
   if(o.kind==='royal-parterre')return false;return M.PalaceMap.obscures(o,u);}
  const rift=id=>id==='garden_rift_pegasus';
  // Use chapter nine's established cyan double-ring identity for the new rift captain.
