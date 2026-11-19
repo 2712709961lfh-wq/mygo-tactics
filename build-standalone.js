@@ -46,6 +46,7 @@ const SCRIPTS = [
   'src/chapter-nine.js',
   'src/chapter-ten.js',
   'src/chapter-palace.js',
+  'src/chapter-royal-garden.js',
   'src/map-projection.js',
   'src/rng.js',
   'src/growth-data.js',
@@ -72,6 +73,7 @@ const SCRIPTS = [
   'src/rehearsal-art.js',
   'src/tenth-art.js',
   'src/palace-art.js',
+  'src/royal-garden-art.js',
   'src/renderer.js',
   'src/combat-vfx.js',
   'src/battle.js',
@@ -84,6 +86,7 @@ const SCRIPTS = [
   'src/ninth-intro.js',
   'src/tenth-intro.js',
   'src/palace-intro.js',
+  'src/royal-garden-intro.js',
   'src/equipment-ui.js',
   'src/entry.js',
   'src/loadout-ui.js',
@@ -103,6 +106,7 @@ const CHARACTER_DIR = 'assets/characters/sprites';
 const WALK_DIR = 'assets/characters/walk';
 const IDLE_DIR = 'assets/characters/idle';
 const MAP_IMAGES = {
+  royalGardenDetails: 'assets/chapter-eleven/royal-details.png',
   trainingslimes: 'assets/training/slimes.png',
   palacecavalier: 'assets/chapter-ten/cavalier-actions.png',
   palaceelite: 'assets/chapter-ten/elite-actions.png',

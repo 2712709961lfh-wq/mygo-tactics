@@ -104,7 +104,7 @@
       }
       if(this.game.stage>=4&&MyGO.ParkMap){
         lc.fillStyle='#050c17';lc.fillRect(0,0,this.logicalWidth,this.logicalHeight);
-        lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===11?MyGO.PalaceMap:this.game.stage===10?MyGO.TenthMap:this.game.stage===9?MyGO.RehearsalMap:this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
+        lc.save();MyGO.MapProjection.apply(lc,this.projection);(this.game.stage===12?MyGO.RoyalGardenMap:this.game.stage===11?MyGO.PalaceMap:this.game.stage===10?MyGO.TenthMap:this.game.stage===9?MyGO.RehearsalMap:this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:MyGO.ParkMap).drawGround(lc,map);lc.restore();
         this._depthScene=null;this._parkFogKey=null;this.terrainLayer=layer;return;
       }
       if (this.game.stage >= 2 && MyGO.MoonMap) {
@@ -861,7 +861,7 @@
     /** Upright pieces and scenery share foot depth above an undistorted square board. */
     _renderDepth(now) {
       const ctx=this.ctx,P=MyGO.MapProjection,v=this.projection;
-      const first=this.game.stage===1,art=this.game.stage===11?MyGO.PalaceMap:this.game.stage===10?MyGO.TenthMap:this.game.stage===9?MyGO.RehearsalMap:this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:this.game.stage===4?MyGO.ParkMap:first?MyGO.GardenMap:MyGO.MoonMap;
+      const first=this.game.stage===1,art=this.game.stage===12?MyGO.RoyalGardenMap:this.game.stage===11?MyGO.PalaceMap:this.game.stage===10?MyGO.TenthMap:this.game.stage===9?MyGO.RehearsalMap:this.game.stage===8?MyGO.EighthMap:this.game.stage===7?MyGO.LivehouseMap:this.game.stage===6?MyGO.MaskedCourtMap:this.game.stage===5?MyGO.WatercourtMap:this.game.stage===4?MyGO.ParkMap:first?MyGO.GardenMap:MyGO.MoonMap;
       this.time=now;
       ctx.clearRect(0,0,this.logicalWidth,this.logicalHeight);
       if(!this.terrainLayer)this._buildTerrainLayer();
@@ -898,6 +898,7 @@
         art.drawObject(ctx,v,item);ctx.restore();
       }
       if(this.game.stage===4)art.drawFog(ctx,v,this.game,this);
+      if(this.game.stage===12)MyGO.RoyalGardenMap.drawEffects(ctx,v,this.game,now);
       if([9,10].includes(this.game.stage))MyGO.RehearsalMap.drawEffects(ctx,v,this.game,now);
       if(this.game.stage===6)MyGO.MaskedCourtArt.drawMapEffects(ctx,v,this.game,now);
       // Status bars stay visible even behind a flowering canopy.

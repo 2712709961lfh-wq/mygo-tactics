@@ -18,7 +18,7 @@
 
   // Keep core-only consumers independent of optional chapter modules.
   function missionForStage(stage) {
-    return stage===11?C.STAGE_PALACE:stage===10?C.STAGE_TEN:stage===9?C.STAGE_NINE:stage===8?C.STAGE_EIGHT:stage===7?C.STAGE_SEVEN:stage===6?C.STAGE_SIX:stage===5?C.STAGE_FIVE:stage===4?C.STAGE_FOUR:stage===3?C.STAGE_THREE:stage===2?C.STAGE_TWO:C.MISSION;
+    return stage===12?C.STAGE_ROYAL_GARDEN:stage===11?C.STAGE_PALACE:stage===10?C.STAGE_TEN:stage===9?C.STAGE_NINE:stage===8?C.STAGE_EIGHT:stage===7?C.STAGE_SEVEN:stage===6?C.STAGE_SIX:stage===5?C.STAGE_FIVE:stage===4?C.STAGE_FOUR:stage===3?C.STAGE_THREE:stage===2?C.STAGE_TWO:C.MISSION;
   }
 
   function cloneMap() {
@@ -46,7 +46,7 @@
       const heroes=C.UNITS.filter(u=>u.side==='player'||u.id==='xueyue'&&recruited.includes('xueyue'));
       if(recruited.includes('nina'))heroes.push(C.NINA);
       if(stage>=8)heroes.push(C.NIJIKA);
-      if(stage===11)heroes.push(C.SUBARU);
+      if(stage>=11)heroes.push(C.SUBARU);
       return heroes.map(u=>createUnit({...u,...m.spawns[u.id],side:'player',boss:false,dormant:false,
         facing:stage>=6?'up':'right',mapCols:m.cols,mapRows:m.rows})).concat(m.enemies.map(createUnit),stage===10?[createUnit({...C.SUBARU,side:recruited.includes('subaru')?'player':'ally'})]:stage===7?[createUnit({...C.NIJIKA,side:recruited.includes('nijika')?'player':'ally'})]:[]);
     }
@@ -138,17 +138,17 @@
 
   class Game {
     // 10 remains an internal encounter key for old saves; both encounters are chapter 9.
-    get chapterNumber(){return this.stage===11?10:this.stage===10?9:this.stage;}
-    get nextChapterStage(){return this.stage===9||this.stage===11?null:this.stage+1;}
+    get chapterNumber(){return this.stage>=10?this.stage-1:this.stage;}
+    get nextChapterStage(){return this.stage===9||this.stage>=12?null:this.stage+1;}
     get rehearsalTransitionPending(){return this.stage===9&&this.gateOpen&&this.stageNineIntroSeen&&!!this.getUnit('rift_pegasus')?.dead&&!this.isOver();}
     constructor(options) {
       const opts = options || {};
-      this.stage = [2,3,4,5,6,7,8,9,10,11].includes(opts.stage) ? opts.stage : 1;
+      this.stage = [2,3,4,5,6,7,8,9,10,11,12].includes(opts.stage) ? opts.stage : 1;
       this.retreat = null;
       this.recruited = Array.isArray(opts.recruited) ? ['xueyue','nina','nijika','subaru'].filter(id=>opts.recruited.includes(id)) : [];
-      this.recruited=this.recruited.filter(id=>this.stage===11||id!=='subaru');
-      if(this.stage===11&&!this.recruited.includes('subaru'))this.recruited.push('subaru');
-      if(this.stage===11&&!opts.loadout&&!this.recruited.includes('xueyue'))this.recruited.push('xueyue');
+      this.recruited=this.recruited.filter(id=>this.stage>=11||id!=='subaru');
+      if(this.stage>=11&&!this.recruited.includes('subaru'))this.recruited.push('subaru');
+      if(this.stage>=11&&!opts.loadout&&!this.recruited.includes('xueyue'))this.recruited.push('xueyue');
       if(this.stage<7)this.recruited=this.recruited.filter(id=>id!=='nijika');
       if(this.stage>=8&&!this.recruited.includes('nijika'))this.recruited.push('nijika');
       if (this.stage === 1) this.recruited = [];
@@ -163,8 +163,8 @@
       this.stageEightIntroSeen=false;
       this.stageNineIntroSeen=false;
       this.stageTenIntroSeen=false;this.subaruJoined=false;
-      this.palaceIntroSeen=false;
-      if(this.stage===11)this.subaruJoined=true;
+      this.palaceIntroSeen=false;this.royalGardenIntroSeen=false;
+      if(this.stage>=11)this.subaruJoined=true;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       bindCombatMap(this);
       this.units = unitsForStage(this.stage, this.recruited);
@@ -267,12 +267,12 @@
     restoreEconomy(data){
       if(data===undefined){this.gold=MyGO.Shop.START_GOLD;this.shopPurchases={};this.shopChapter=this.chapterNumber;this.rewardedChapters=[];this.trainingTicketsPurchased=0;return;}
       if(!data||data.version!==1||!Number.isSafeInteger(data.gold)||data.gold<0||data.gold>99999999||
-        !Number.isInteger(data.chapter)||data.chapter<1||data.chapter>(this.stage===11?10:this.stage)||
+        !Number.isInteger(data.chapter)||data.chapter<1||data.chapter>(this.stage>=11?this.chapterNumber:this.stage)||
         !data.purchases||typeof data.purchases!=='object'||Array.isArray(data.purchases)||
-        !Array.isArray(data.rewarded)||new Set(data.rewarded).size!==data.rewarded.length||data.rewarded.some(c=>!Number.isInteger(c)||c<1||c>(this.stage===11?10:this.stage)))throw Error('存档商店数据无效');
+        !Array.isArray(data.rewarded)||new Set(data.rewarded).size!==data.rewarded.length||data.rewarded.some(c=>!Number.isInteger(c)||c<1||c>(this.stage>=11?this.chapterNumber:this.stage)))throw Error('存档商店数据无效');
       for(const [id,n] of Object.entries(data.purchases)){const p=MyGO.Shop.get(id);
         if(!p||p.stage>data.chapter||!Number.isInteger(n)||n<0||p.limit===null||n>p.limit)throw Error('存档限购数据无效');}
-      const rewarded=[...new Set(data.rewarded.map(n=>this.stage!==11&&n===10?9:n))];
+      const rewarded=[...new Set(data.rewarded.map(n=>this.stage<11&&n===10?9:n))];
       const ticketsPurchased=data.trainingTicketsPurchased===undefined?0:data.trainingTicketsPurchased;
       if(!Number.isInteger(ticketsPurchased)||ticketsPurchased<0||ticketsPurchased>MyGO.Shop.ticketAllowance(rewarded)||
         (ticketsPurchased>0&&!rewarded.includes(3)))throw Error('存档训练门票限购数据无效');
@@ -461,7 +461,7 @@
 
     /** 切换静态关卡数据（不影响回合/单位状态，由 restore 重新填充）。 */
     _setupStage(stage) {
-      this.stage = [2,3,4,5,6,7,8,9,10,11].includes(stage) ? stage : 1;
+      this.stage = [2,3,4,5,6,7,8,9,10,11,12].includes(stage) ? stage : 1;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       bindCombatMap(this);
       this.units = unitsForStage(this.stage, this.recruited);
@@ -1090,7 +1090,7 @@
      */
     checkOutcome() {
       if (this.isOver()) return this.winner;
-      const victory=this.stage===11 ? this.palaceIntroSeen&&!!this.getUnit('gilded_cavalier')?.dead : this.stage===10 ? this.stageTenIntroSeen&&this.subaruJoined&&this.livingCount('enemy')===0 : this.stage===9 ? false : this.stage===8 ? this.stageEightIntroSeen&&this.mission.phantomIds.every(id=>this.getUnit(id)?.dead) : this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
+      const victory=this.stage===12 ? this.royalGardenIntroSeen&&this.mission.bossIds.every(id=>this.getUnit(id)?.dead) : this.stage===11 ? this.palaceIntroSeen&&!!this.getUnit('gilded_cavalier')?.dead : this.stage===10 ? this.stageTenIntroSeen&&this.subaruJoined&&this.livingCount('enemy')===0 : this.stage===9 ? false : this.stage===8 ? this.stageEightIntroSeen&&this.mission.phantomIds.every(id=>this.getUnit(id)?.dead) : this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
         ? this.awakenedBells.length>=this.mission.requiredBells && !!this.getUnit('conductor')?.dead
         : this.livingCount('enemy')===0;
       if (this.livingCount('player') === 0) {
@@ -1178,6 +1178,7 @@
         ...(this.stage>=4?{fixedEnemyStatsVersion:1}:{}),
         ...([9,10].includes(this.stage)?{rehearsalBalanceVersion:1,rehearsalBossBalanceVersion:1,rehearsalHpVersion:1}:{}),
         stage: this.chapterNumber,
+        ...(this.stage===12?{royalGardenChapterVersion:1,royalGardenIntroSeen:this.royalGardenIntroSeen,nijikaLevelVersion:1}:{}),
         ...(this.stage===11?{palaceChapterVersion:1,palaceIntroSeen:this.palaceIntroSeen,nijikaLevelVersion:1}:{}),
         ...([9,10].includes(this.stage)?{rehearsalChapterVersion:1,rehearsalPart:this.stage===10?2:1,
           rehearsalFirstDefeated:this.stage===10?(this.rehearsalFirstDefeated||0):0}:{}),
@@ -1233,6 +1234,10 @@
       if (snapshot.retreat !== undefined && (!snapshot.retreat ||
           typeof snapshot.retreat.chapterIntroPlayed !== 'boolean' ||
           !['player', 'victory'].includes(snapshot.phase))) throw new Error('休憩之地存档状态无效');
+      if(snapshot.royalGardenChapterVersion!==undefined){
+        if(snapshot.royalGardenChapterVersion!==1||snapshot.stage!==11||snapshot.palaceChapterVersion!==undefined||snapshot.rehearsalChapterVersion!==undefined||snapshot.rehearsalPart!==undefined)throw Error('第十一关御苑进度无效');
+        snapshot={...snapshot,stage:12};
+      }else if(snapshot.stage===12)throw Error('第十一关御苑进度缺失');
       if(snapshot.palaceChapterVersion!==undefined){
         if(snapshot.palaceChapterVersion!==1||snapshot.stage!==10||snapshot.rehearsalChapterVersion!==undefined||snapshot.rehearsalPart!==undefined)throw Error('第十关宫殿进度无效');
         snapshot={...snapshot,stage:11};
@@ -1254,6 +1259,7 @@
       }
       if (snapshot.stage === 3 && snapshot.mapRevision !== C.STAGE_THREE.mapRevision) throw new Error('第三关地图版本不兼容');
       if(snapshot.stage===10&&snapshot.mapRevision!==C.STAGE_TEN.mapRevision)throw Error('第九关后半段地图版本不兼容');
+      if(snapshot.stage===12&&snapshot.mapRevision!==C.STAGE_ROYAL_GARDEN.mapRevision)throw Error('第十一关御苑地图版本不兼容');
       if(snapshot.stage===11&&snapshot.mapRevision!==C.STAGE_PALACE.mapRevision)throw Error('第十关宫殿地图版本不兼容');
       if(snapshot.stage===9&&snapshot.mapRevision!==C.STAGE_NINE.mapRevision)throw Error('第九关地图版本不兼容');
       if(snapshot.stage===8&&snapshot.mapRevision!==C.STAGE_EIGHT.mapRevision)throw Error('第八关地图版本不兼容');
@@ -1261,7 +1267,7 @@
       if (snapshot.stage === 6 && snapshot.mapRevision !== C.STAGE_SIX.mapRevision) throw Error('第六关地图版本不兼容');
       if (snapshot.stage === 5 && snapshot.mapRevision !== C.STAGE_FIVE.mapRevision) throw new Error('第五关地图版本不兼容');
       if (snapshot.stage === 4 && snapshot.mapRevision !== C.STAGE_FOUR.mapRevision) throw new Error('第四关地图版本不兼容');
-      if (![2,3,4,5,6,7,8,9,10,11].includes(snapshot.stage) && snapshot.mapRevision !== C.MAP_REVISION) {
+      if (![2,3,4,5,6,7,8,9,10,11,12].includes(snapshot.stage) && snapshot.mapRevision !== C.MAP_REVISION) {
         throw new Error('第一关地图已更新，请重开第一关；旧存档仍然保留。');
       }
       const bells=snapshot.stage===2 ? snapshot.awakenedBells || [] : [];
@@ -1269,7 +1275,7 @@
         bells.some(id=>!C.STAGE_TWO.bells.some(b=>b.id===id)))throw new Error('存档星铃数据无效');
 
       // 地图是可变的（大门开启后会换成 gateOpen），读档先恢复关卡与静态地图。
-      this.stage = [2,3,4,5,6,7,8,9,10,11].includes(snapshot.stage) ? snapshot.stage : 1;
+      this.stage = [2,3,4,5,6,7,8,9,10,11,12].includes(snapshot.stage) ? snapshot.stage : 1;
       if(this.stage===4){
         const lamps=snapshot.litLamps;
         if(!Array.isArray(lamps)||new Set(lamps).size!==lamps.length||lamps.some(id=>!C.STAGE_FOUR.lamps.some(l=>l.id===id)))throw Error('存档路灯数据无效');
@@ -1316,6 +1322,15 @@
       this.stageTenIntroSeen=this.stage===10&&snapshot.stageTenIntroSeen===true;
       this.subaruJoined=this.stage===10&&snapshot.subaruJoined===true;
       this.palaceIntroSeen=this.stage===11&&snapshot.palaceIntroSeen===true;
+      this.royalGardenIntroSeen=this.stage===12&&snapshot.royalGardenIntroSeen===true;
+      if(this.stage===12){
+        if(typeof snapshot.royalGardenIntroSeen!=='boolean'||!this.recruited.includes('subaru')||!this.recruited.includes('nijika')||snapshot.nijikaLevelVersion!==1||snapshot.fixedEnemyStatsVersion!==1||snapshot.gateOpen!==false)throw Error('第十一关御苑状态无效');
+        if(!this.royalGardenIntroSeen&&snapshot.phase!=='player')throw Error('第十一关开场尚未完成');
+        const expected=unitsForStage(12,this.recruited);
+        if(snapshot.units.length!==expected.length||snapshot.units.some(u=>!expected.some(t=>t.id===u.id)))throw Error('第十一关御苑单位数据无效');
+        if(snapshot.phase==='victory'&&!C.STAGE_ROYAL_GARDEN.bossIds.every(id=>snapshot.units.find(u=>u.id===id)?.dead))throw Error('第十一关双骑士尚未击败');
+        this.subaruJoined=true;
+      }
       if(this.stage===11){
         if(typeof snapshot.palaceIntroSeen!=='boolean'||!this.recruited.includes('subaru')||!this.recruited.includes('nijika')||snapshot.nijikaLevelVersion!==1||snapshot.fixedEnemyStatsVersion!==1||snapshot.gateOpen!==false)throw Error('第十关宫殿状态无效');
         if(!this.palaceIntroSeen&&snapshot.phase!=='player')throw Error('第十关宫殿开场尚未完成');

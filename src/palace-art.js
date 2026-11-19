@@ -95,6 +95,9 @@
    rect(c,x-5,y-30,10,23,'#b9a577');oval(c,x,y-30,14,4,'#dfcc9b');oval(c,x,y-31,10,3,'#70aebb');diamond(c,x,y-40,6,'#f4e6ad');
    for(const dx of [-11,11]){c.strokeStyle='rgba(173,222,229,.8)';c.lineWidth=1.5;c.beginPath();c.moveTo(x,y-30);c.quadraticCurveTo(x+dx,y-28,x+dx,y-10);c.stroke();}
   }
+  if(o.kind==='palace-rear-door'){
+   if(M.RoyalGardenArt){c.translate(x,y);c.scale(.58,.58);M.RoyalGardenArt.door(c,0,0,false);}
+  }
   if(o.kind==='palace-entrance'){
    rect(c,x-34,y-32,68,32,'#9d7e46');rect(c,x-28,y-29,56,29,'#3c3240');line(c,x-28,y-29,x-48,y-4,'#d5b16a',4);line(c,x+28,y-29,x+48,y-4,'#d5b16a',4);
   }c.restore();
@@ -110,18 +113,19 @@
   line(c,w*.42,h*.56,w*.25,h,'#d4ae61',3);line(c,w*.58,h*.56,w*.75,h,'#d4ae61',3);
   for(const x of [w*.025,w*.21,w*.77,w*.955]){marble(c,x-12,h*.08,24,h*.49);rect(c,x-22,h*.06,44,14,'#bc9b57');rect(c,x-21,h*.55,42,12,'#c3a263');}
   rect(c,0,h*.025,w,8,'#bc9953');rect(c,0,h*.09,w,4,'#b08b4b');lamp(c,w*.5,h*.22);c.restore();}
- const isCavalry=id=>M.CONFIG.STAGE_PALACE?.enemies.some(u=>u.id===id&&String(u.art).startsWith('palace-cavalier'))||false;
+ const isCavalry=id=>[M.CONFIG.STAGE_PALACE,M.CONFIG.STAGE_ROYAL_GARDEN].some(m=>m?.enemies.some(u=>u.id===id&&String(u.art).startsWith('palace-cavalier')));
+ const isElite=id=>id==='gilded_cavalier'||id==='garden_cavalier_boss';
  const actions={idle:[0,2],walk:[4,6],run:[8,6],attack:[12,8],hurt:[16,3],down:[20,6],jump:[24,5]};
  function pose(id,state='idle',frame=0,facing='left'){
   const name=actions[state]?state:'idle',spec=actions[name];
-  return {kind:id==='gilded_cavalier'?'elite':'cavalier',state:name,count:spec[1],
+  return {kind:isElite(id)?'elite':'cavalier',state:name,count:spec[1],
    frame:Math.max(0,Math.min(spec[1]-1,Math.floor(frame))),row:spec[0]+({up:0,left:1,down:2,right:3}[facing]??1)};
  }
  function drawMounted(c,id,x,y,h,now,state='idle',frame,facing='left'){
   const tick=frame??Math.floor(now/(state==='idle'?400:state==='walk'?115:85))%(actions[state]?.[1]||2),p=pose(id,state,tick,facing),im=images[p.kind];
   if(!im)return false;
   const scale=h/90;c.save();c.imageSmoothingEnabled=false;
-  if(id==='gilded_cavalier'&&state!=='down'){
+  if(isElite(id)&&state!=='down'){
    c.strokeStyle='rgba(223,183,93,.52)';c.lineWidth=1.1;c.beginPath();c.ellipse(x,y+1,h*.34,h*.075,0,0,Math.PI*2);c.stroke();
   }
   c.drawImage(im,p.frame*192,p.row*192,192,192,x-96*scale,y-152*scale,192*scale,192*scale);

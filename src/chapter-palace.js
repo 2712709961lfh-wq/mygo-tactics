@@ -11,6 +11,7 @@
  prop('palace-throne',14,3,2,2);
  for(let y=5;y<=33;y++)for(let x=13;x<=16;x++)terrain[y][x]='road';
  for(const [x,y] of [[5,17],[24,17]]){terrain[y][x]='fort';decor.push({kind:'palace-font',x,y});}
+ decor.push({kind:'palace-rear-door',x:14,y:1,w:2,h:1});
  decor.push({kind:'palace-entrance',x:14,y:33,w:2,h:1});
  for(const y of [6,13,20,27])for(const x of [3,26])decor.push({kind:'palace-lamp',x,y});
  for(const y of [9,16,23,30])for(const x of [0,29])decor.push({kind:'palace-banner',x,y});

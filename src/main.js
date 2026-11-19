@@ -13,7 +13,7 @@
     const hashParams = new URLSearchParams(global.location.hash.replace(/^#/, ''));
     const seed = params.get('seed') || hashParams.get('seed');
     const stageParam = Number(params.get('stage') || hashParams.get('stage'));
-    const stage = params.get('chapter')==='10'||hashParams.get('chapter')==='10'||[10,11].includes(stageParam)?11:[2,3,4,5,6,7,8,9].includes(stageParam) ? stageParam : 1;
+    const stage = params.get('chapter')==='11'||hashParams.get('chapter')==='11'||stageParam===12?12:params.get('chapter')==='10'||hashParams.get('chapter')==='10'||[10,11].includes(stageParam)?11:[2,3,4,5,6,7,8,9].includes(stageParam) ? stageParam : 1;
     const ui = new global.MyGO.UI({ seed: seed ? Number(seed) : undefined, stage: stage });
     global.MYGO_UI = ui;
     global.MyGO.ui = ui;
@@ -116,6 +116,7 @@
     if (global.MyGO.MaskedCourtArt) tasks.push(global.MyGO.MaskedCourtArt.load());
     if (global.MyGO.LivehouseArt) tasks.push(global.MyGO.LivehouseArt.load());
     if (global.MyGO.PalaceArt) tasks.push(global.MyGO.PalaceArt.load());
+    if (global.MyGO.RoyalGardenArt) tasks.push(global.MyGO.RoyalGardenArt.load());
     if (global.MyGO.DarkSoyo) tasks.push(global.MyGO.DarkSoyo.load());
     if (global.MyGO.TrainingArt) tasks.push(global.MyGO.TrainingArt.load());
     if (global.MyGO.CombatVfx) tasks.push(global.MyGO.CombatVfx.load());

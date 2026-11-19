@@ -1,0 +1,115 @@
+{
+  "sprites": {
+    "fountain0": [
+      0,
+      0,
+      64,
+      96
+    ],
+    "fountain1": [
+      96,
+      0,
+      64,
+      96
+    ],
+    "angel": [
+      192,
+      0,
+      32,
+      64
+    ],
+    "knight": [
+      288,
+      0,
+      64,
+      96
+    ],
+    "lion": [
+      384,
+      0,
+      64,
+      96
+    ],
+    "column": [
+      480,
+      0,
+      64,
+      108
+    ],
+    "pedestal": [
+      576,
+      0,
+      32,
+      64
+    ],
+    "rosePink": [
+      672,
+      0,
+      32,
+      32
+    ],
+    "roseIvory": [
+      0,
+      128,
+      32,
+      32
+    ],
+    "roseRed": [
+      96,
+      128,
+      32,
+      32
+    ],
+    "roseBlue": [
+      192,
+      128,
+      32,
+      32
+    ],
+    "flowerBush": [
+      288,
+      128,
+      32,
+      32
+    ],
+    "hedge": [
+      384,
+      128,
+      64,
+      32
+    ],
+    "roundBush": [
+      480,
+      128,
+      32,
+      32
+    ],
+    "cypress": [
+      576,
+      128,
+      32,
+      64
+    ],
+    "topiary": [
+      672,
+      128,
+      40,
+      64
+    ],
+    "lily": [
+      0,
+      256,
+      32,
+      32
+    ]
+  },
+  "sourceSha256": {
+    "lpc-flowers-plants-fungi-wood/plants.png": "35317691a1b4c2ef5469c9971c56fc5e3134c8cf47847a3f4f9bbe653394c0cb",
+    "WaterFountain.png": "0e2dc51f551c93299b74e759b01f79779dcd74233d79f6c11e0fec0813195333",
+    "static/PNG/32x32/angel.png": "da470c78a26789b42bb42cd05e0e12a5d2c64b00b28793728e752e967e1ff63a",
+    "static/PNG/32x32/knight-sword-1-small.png": "e9e801650f396893d677a893a188fc12cbeb355678838fb2195b10972797edfb",
+    "static/PNG/32x32/foodog.png": "bccb1b5109b146a2f4a8e32c882a6b8e933ff443f1ff1f58a660852b683df5c3",
+    "static/PNG/32x32/column-2.png": "1be903a40e55e4e5336e18944f6201073634fbc38c4f7b9301c02a2abde25888",
+    "static/PNG/32x32/pedestal.png": "3da114d787dccf62103dfe2fcba7ed982982338391f668404f99f25615d1303c"
+  }
+}
