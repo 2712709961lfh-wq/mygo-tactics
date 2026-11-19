@@ -5347,6 +5347,63 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 .training-actions { padding-top: 10px; border-top: 1px solid #8db4a756; }
 .training-actions button:disabled { opacity: .48; }
 
+#overlay-card:is(.training-result, .end-card-host) {
+  border: 1px solid #75969f;
+  border-image: none;
+  background: #101f29;
+  color: #f3f7f9;
+  font-family: 'Microsoft YaHei', sans-serif;
+  font-size: 16px;
+}
+#overlay-card:is(.training-result, .end-card-host) h2 { color: #fff3d9; font-weight: 700; }
+#overlay-card:is(.training-result, .end-card-host) .modal-btn {
+  min-height: 44px;
+  border: 1px solid #75969f;
+  border-image: none;
+  background: #244452;
+  color: #fff8ea;
+  font: 600 16px/1.4 'Microsoft YaHei', sans-serif;
+  box-shadow: none;
+}
+#overlay-card:is(.training-result, .end-card-host) .modal-btn.primary { background: #f6d59b; color: #172730; border-color: #f6d59b; }
+#overlay-card:is(.training-result, .end-card-host) .modal-btn:focus-visible { outline: 2px solid #fff3d9; outline-offset: 3px; }
+
+#overlay-card.training-result { width: min(860px, 100%); padding: 28px; }
+.training-result-heading { margin-bottom: 20px; }
+.training-result-heading h2 { margin: 0; font-size: 32px; line-height: 1.25; }
+.training-result-heading p, .training-result-footer p { margin: 8px 0 0; color: #d4e0e7; font-size: 16px; }
+.training-result-heading strong { color: #ffe0a2; }
+.training-result-party { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 14px; }
+.training-result-member { padding: 16px; border: 1px solid #506d79; border-radius: 3px; background: #192f3c; }
+.training-result-member header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.training-result-member h3 { margin: 0; color: #f9fbfc; font-size: 22px; }
+.training-result-level-change { color: #ffe0a2; font-size: 16px; font-weight: 700; }
+.training-result-rewards { display: flex; flex-wrap: wrap; gap: 16px 24px; margin: 12px 0 0; }
+.training-result-rewards div { display: flex; align-items: baseline; gap: 8px; }
+.training-result-rewards dt { color: #d4e0e7; }
+.training-result-rewards dd { margin: 0; color: #fff3d9; font-size: 20px; font-weight: 700; }
+.training-result-growth { margin-top: 14px; padding-top: 12px; border-top: 1px solid #506d79; }
+.training-result-growth h4 { margin: 0 0 7px; color: #f9fbfc; font-size: 16px; }
+.training-result-growth ul { margin: 0; padding: 0; list-style: none; }
+.training-result-growth li {
+  display: grid;
+  grid-template-columns: 1fr auto 3ch;
+  gap: 10px;
+  align-items: baseline;
+  padding: 5px 0;
+  font-variant-numeric: tabular-nums;
+}
+.training-result-growth li strong { color: #a8efc2; text-align: right; }
+.training-result-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 20px; }
+.training-result-footer p { margin: 0; }
+
+#overlay-card.end-card-host .end-sub, #overlay-card.end-card-host .end-copy { color: #d4e0e7; font-size: 16px; }
+#overlay-card.end-card-host .end-stat { background: #192f3c; border-color: #506d79; }
+#overlay-card.end-card-host .end-stat span { color: #d4e0e7; font-size: 15px; }
+#overlay-card.end-card-host .end-stat b { color: #f9fbfc; font-size: 22px; }
+#overlay-card.end-card-host .end-mark { color: #ffe0a2; }
+#overlay-card.end-card-host .defeat .end-mark { color: #ffb8bc; }
+
   </style>
 </head>
 <body class="soul-ui">
@@ -5443,7 +5500,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.24.1</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.24.3</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -6167,7 +6224,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const chestKey=Object.freeze({id:'chest_key',name:'宝箱钥匙',kind:'key',category:'key',uses:1,icon:'accuracy-ring',
     effect:'持有者站在宝箱上或相邻1格，消耗钥匙开箱并结束行动。'});
   const trainingTicket=Object.freeze({id:'training_ticket',name:'训练之塔门票',en:'Training Tower Ticket',kind:'ticket',category:'ticket',uses:1,
-    icon:'beginner_seal',effect:'从休憩之地派两位同伴进入训练之塔时消耗一张。'});
+    icon:'beginner_seal',effect:'派两位同伴入塔时消耗一张。每通关一章，累计购买上限增加两张。'});
   const specialItems=new Map([courtyardKey,strangeDoorKey,chestKey,trainingTicket].map(e=>[e.id,e]));
   const supplyIds=E.items.filter(e=>['consumable','seal'].includes(e.kind)).map(e=>e.id);
   const allowed=new Set([...E.items.map(e=>e.id),...specialItems.keys()]);
@@ -6301,7 +6358,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   }
   M.Inventory={MAX_SLOTS:5,weaponIds,accessoryIds,supplyIds,weapons,item,make,usable,options,withAttackWeapon,sync,init,consume,copy,pack,restore,validateBag,stock,equip,select,useEffects,learn,magicAllowed,canEquip};
 
-  // Four authored chapters compress the original campaign's staged shop upgrades.
+  // Retain legacy product prices/limits for old saves and selling existing items.
+  // The current campaign's buy shelves are selected below.
   const products=[];
   function offer(id,price,stage,limit=null){products.push(Object.freeze({id,price,stage,limit}));}
   const prices={training_sword:260,iron_sword:520,steel_sword:910,silver_sword:1560,killing_edge:1800,brave_sword:4000,armorslayer:2500,rapier:2000,levin_sword:1500,
@@ -6315,16 +6373,34 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   }
   [['leather_shield',500,1],['iron_shield',1000,2],['steel_shield',1500,3],['silver_shield',2000,4],['magic_staff',1500,3],['healing_staff',1500,3]].forEach(r=>offer(...r));
   for(const e of E.items.filter(e=>['consumable','seal'].includes(e.kind))){
-    const stage=({vulnerary:1,concoction:2,elixir:4,antitoxin:1,pure_water:2,beginner_seal:1,intermediate_seal:2,advanced_seal:3,master_seal:4,dark_seal:3,abyssian_seal:4,dancer_seal:2})[e.id];
+    const stage=({vulnerary:1,concoction:2,elixir:4,antitoxin:1,pure_water:2,beginner_seal:1,intermediate_seal:1,advanced_seal:3,master_seal:4,dark_seal:3,abyssian_seal:4,dancer_seal:2})[e.id];
     offer(e.id,e.price,stage,e.kind==='seal'?e.id==='dancer_seal'?1:3:null);
   }
   offer(trainingTicket.id,500,3);
+  const earlyShelf=new Set(['iron_sword','iron_lance','iron_axe','iron_bow','iron_gauntlets',
+    'vulnerary','beginner_seal','intermediate_seal','leather_shield']);
+  const steelShelf=new Set(['steel_sword','steel_lance','steel_axe','steel_bow','steel_gauntlets',
+    'iron_shield','concoction','antitoxin']);
+  const chapterOf=game=>game.chapterNumber??(game.stage===11?10:game.stage===10?9:game.stage);
+  // Later chapter saves also prove chapter six has been passed, including old
+  // saves without its reward record. Victory in chapter six unlocks immediately.
+  const steelUnlocked=game=>!!game.rewardedChapters?.includes(6)||chapterOf(game)>6||
+    (chapterOf(game)===6&&game.phase==='victory'&&game.winner==='player');
   const trainingUnlocked=game=>!!game.rewardedChapters?.includes(3)||(game.chapterNumber===3&&game.phase==='victory');
-  const unlocked=(game,p)=>p.id===trainingTicket.id?trainingUnlocked(game):game.stage>=p.stage;
-  M.Shop=Object.freeze({products:Object.freeze(products),START_GOLD:3000,CHAPTER_REWARD:2000,TICKET:trainingTicket.id,trainingUnlocked,unlocked,
+  const unlocked=(game,p)=>p.id===trainingTicket.id?trainingUnlocked(game):earlyShelf.has(p.id)||steelShelf.has(p.id)&&steelUnlocked(game);
+  const ticketAllowance=(clearedChapters=[])=>clearedChapters.length*2;
+  const limit=(game,p)=>p.id===trainingTicket.id?ticketAllowance(game.rewardedChapters):p.limit;
+  function remaining(game,p){
+    const cap=limit(game,p);
+    if(cap===null)return null;
+    const purchased=p.id===trainingTicket.id?game.trainingTicketsPurchased:game.shopPurchases[p.id];
+    return Math.max(0,cap-(purchased||0));
+  }
+  M.Shop=Object.freeze({products:Object.freeze(products),START_GOLD:3000,CHAPTER_REWARD:2000,TICKET:trainingTicket.id,trainingUnlocked,steelUnlocked,unlocked,ticketAllowance,remaining,
     get:id=>products.find(p=>p.id===id)||null,
-    stock:game=>products.map(p=>({...p,item:item(p.id),locked:!unlocked(game,p),
-      remaining:p.limit===null?null:Math.max(0,p.limit-(game.shopPurchases[p.id]||0))}))});
+    stock:game=>products.filter(p=>earlyShelf.has(p.id)||steelShelf.has(p.id)||p.id===trainingTicket.id).map(p=>({...p,item:item(p.id),locked:!unlocked(game,p),
+      unlockLabel:p.id===trainingTicket.id?'第 3 关通关后开放':steelShelf.has(p.id)?'第 6 关通关后开放':'初始开放',
+      limit:limit(game,p),remaining:remaining(game,p)}))});
 })(window);
 
   </script>
@@ -9711,6 +9787,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.lootReserve=[];
       this.gold=MyGO.Shop.START_GOLD;
       this.shopPurchases={};this.shopChapter=this.chapterNumber;this.rewardedChapters=[];
+      this.trainingTicketsPurchased=0;
       this.rng = new MyGO.RNG(opts.seed);
       for(const u of this.units)u.growthRngState=MyGO.Growth.seed(u.id,this.rng.serialize());
       if (opts.loadout) this.importLoadout(opts.loadout);
@@ -9798,19 +9875,25 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       for(const saved of data.units||[]){const u=this.getUnit(saved.id);if(u&&u.side==='player'){MyGO.Growth.restore(u,saved.growth,true);MyGO.Classes.restore(u,saved.classState);MyGO.Mastery?.restore(u,saved.classMastery,true);MyGO.Inventory.restore(u,saved,true);}}
     }
 
-    packEconomy(){return {version:1,gold:this.gold,chapter:this.shopChapter,purchases:{...this.shopPurchases},rewarded:this.rewardedChapters.slice()};}
+    packEconomy(){return {version:1,gold:this.gold,chapter:this.shopChapter,purchases:{...this.shopPurchases},rewarded:this.rewardedChapters.slice(),
+      trainingTicketsPurchased:this.trainingTicketsPurchased};}
 
     restoreEconomy(data){
-      if(data===undefined){this.gold=MyGO.Shop.START_GOLD;this.shopPurchases={};this.shopChapter=this.chapterNumber;this.rewardedChapters=[];return;}
+      if(data===undefined){this.gold=MyGO.Shop.START_GOLD;this.shopPurchases={};this.shopChapter=this.chapterNumber;this.rewardedChapters=[];this.trainingTicketsPurchased=0;return;}
       if(!data||data.version!==1||!Number.isSafeInteger(data.gold)||data.gold<0||data.gold>99999999||
         !Number.isInteger(data.chapter)||data.chapter<1||data.chapter>(this.stage===11?10:this.stage)||
         !data.purchases||typeof data.purchases!=='object'||Array.isArray(data.purchases)||
         !Array.isArray(data.rewarded)||new Set(data.rewarded).size!==data.rewarded.length||data.rewarded.some(c=>!Number.isInteger(c)||c<1||c>(this.stage===11?10:this.stage)))throw Error('存档商店数据无效');
       for(const [id,n] of Object.entries(data.purchases)){const p=MyGO.Shop.get(id);
         if(!p||p.stage>data.chapter||!Number.isInteger(n)||n<0||p.limit===null||n>p.limit)throw Error('存档限购数据无效');}
+      const rewarded=[...new Set(data.rewarded.map(n=>this.stage!==11&&n===10?9:n))];
+      const ticketsPurchased=data.trainingTicketsPurchased===undefined?0:data.trainingTicketsPurchased;
+      if(!Number.isInteger(ticketsPurchased)||ticketsPurchased<0||ticketsPurchased>MyGO.Shop.ticketAllowance(rewarded)||
+        (ticketsPurchased>0&&!rewarded.includes(3)))throw Error('存档训练门票限购数据无效');
       this.gold=data.gold;this.shopChapter=this.chapterNumber;
       this.shopPurchases=[this.stage,this.chapterNumber].includes(data.chapter)?{...data.purchases}:{};
-      this.rewardedChapters=[...new Set(data.rewarded.map(n=>this.stage!==11&&n===10?9:n))];
+      this.rewardedChapters=rewarded;
+      this.trainingTicketsPurchased=ticketsPurchased;
     }
 
     shopReason(){return this.phase!=='player'&&this.phase!=='victory'?'请在我方阶段或战后购物':'';}
@@ -9819,11 +9902,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const p=MyGO.Shop.get(id),reason=this.shopReason();if(reason)throw Error(reason);
       if(!p||!MyGO.Shop.unlocked(this,p))throw Error('尚未解锁该商品');
       if(!Number.isInteger(quantity)||quantity<1||quantity>99)throw Error('购买数量无效');
-      if(p.limit!==null&&(this.shopPurchases[id]||0)+quantity>p.limit)throw Error('本章库存不足');
+      const remaining=MyGO.Shop.remaining(this,p);
+      if(remaining!==null&&quantity>remaining)throw Error(id===MyGO.Shop.TICKET?'训练门票购买额度不足':'本章库存不足');
       if(this.convoy.length+quantity>500)throw Error('运输队容量不足');
       const cost=p.price*quantity;if(this.gold<cost)throw Error('资金不足');
       const entries=Array.from({length:quantity},()=>MyGO.Inventory.make(id));
-      this.gold-=cost;if(p.limit!==null)this.shopPurchases[id]=(this.shopPurchases[id]||0)+quantity;
+      this.gold-=cost;
+      if(id===MyGO.Shop.TICKET)this.trainingTicketsPurchased+=quantity;
+      else if(p.limit!==null)this.shopPurchases[id]=(this.shopPurchases[id]||0)+quantity;
       this.convoy.push(...entries);return {id,quantity,cost};
     }
 
@@ -22270,16 +22356,19 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const g=this.entry.ui.game,categories=[['all','全部商品'],['weapon','武器'],['medicine','药品'],['seal','转职证'],['equipment','辅助装备'],['ticket','训练门票']];
       const matches=e=>this.category==='all'||e.kind===this.category||e.category===this.category;
       const stock=M.Shop.stock(g),rows=this.mode==='buy'?stock.filter(p=>matches(p.item)):g.convoy.map((slot,index)=>({slot,index,item:I.item(slot.id)})).filter(p=>matches(p.item));
-      this.root.innerHTML='<div class="eq-book"><header class="eq-header"><div><div class="eq-kicker">TRAVELING MARKET / PROVISIONS</div><h2>行旅商店 <span>旅途补给</span></h2></div><div class="eq-summary"><b>'+g.gold.toLocaleString()+'</b><span>G · 共享资金<br>第 '+(g.chapterNumber||g.stage)+' 章</span></div><button class="eq-close" data-shop-close>返回 <span>ESC</span></button></header><div class="shop-layout"><aside class="eq-sidebar"><div class="eq-nav-title">货架分类 <span>MARKET</span></div><nav class="eq-categories">'+categories.map(([id,name])=>'<button data-shop-category="'+id+'" aria-pressed="'+(id===this.category)+'">'+name+'</button>').join('')+'</nav><div class="eq-side-note"><span>旅途备忘</span><p>购买送入运输队。<br>每章补充限购库存。<br>章节胜利获得 2,000 G。</p><small>在「同行之人 → 背包」领取。<br>保存游戏以保留交易。</small></div></aside><section class="shop-catalogue"><div class="shop-toolbar"><div class="eq-versions"><button data-shop-mode="buy" aria-pressed="'+(this.mode==='buy')+'">购买</button><button data-shop-mode="sell" aria-pressed="'+(this.mode==='sell')+'">出售运输队物品</button></div><span>运输队 '+g.convoy.length+' / 500'+(g.lootReserve?.length?' · 战利品暂存 '+g.lootReserve.length+' 件，腾位后自动领取':'')+'</span></div><p class="shop-message" role="status" aria-live="polite">'+esc(this.message||'第一章：铁制与训练武器；第二章：钢制；第三章：银制与必杀；第四章：魔法与特殊武器。未解锁商品会标明开放章节。')+'</p><div class="shop-list">'+rows.map(p=>{
+      this.root.innerHTML='<div class="eq-book"><header class="eq-header"><div><div class="eq-kicker">TRAVELING MARKET / PROVISIONS</div><h2>行旅商店 <span>旅途补给</span></h2></div><div class="eq-summary"><b>'+g.gold.toLocaleString()+'</b><span>G · 共享资金<br>第 '+(g.chapterNumber||g.stage)+' 章</span></div><button class="eq-close" data-shop-close>返回 <span>ESC</span></button></header><div class="shop-layout"><aside class="eq-sidebar"><div class="eq-nav-title">货架分类 <span>MARKET</span></div><nav class="eq-categories">'+categories.map(([id,name])=>'<button data-shop-category="'+id+'" aria-pressed="'+(id===this.category)+'">'+name+'</button>').join('')+'</nav><div class="eq-side-note"><span>旅途备忘</span><p>购买送入运输队。<br>每章补充限购库存。<br>章节胜利获得 2,000 G。</p><small>在「同行之人 → 背包」领取。<br>保存游戏以保留交易。</small></div></aside><section class="shop-catalogue"><div class="shop-toolbar"><div class="eq-versions"><button data-shop-mode="buy" aria-pressed="'+(this.mode==='buy')+'">购买</button><button data-shop-mode="sell" aria-pressed="'+(this.mode==='sell')+'">出售运输队物品</button></div><span>运输队 '+g.convoy.length+' / 500'+(g.lootReserve?.length?' · 战利品暂存 '+g.lootReserve.length+' 件，腾位后自动领取':'')+'</span></div><p class="shop-message" role="status" aria-live="polite">'+esc(this.message||'前五关：铁系武器、伤药、初级／中级转职证与皮盾。第六关通关后追加钢系武器、铁盾、调合药与解毒药；各关限购保留。')+'</p><div class="shop-list">'+rows.map(p=>{
         const e=p.item;
         if(this.mode==='sell'){
           const product=M.Shop.get(e.id),price=product?Math.floor(product.price/2*(e.uses===null?1:p.slot.uses/e.uses)):0;
           return '<article class="shop-row"><img src="'+art(e)+'" alt=""><div class="shop-copy"><h3>'+esc(e.name)+'</h3><p>'+esc(e.effect)+'</p><small>'+(e.uses===null?'辅助装备':'剩余 '+p.slot.uses+' / '+e.uses)+' · 售价按剩余次数折算</small></div><strong>'+price+' G</strong><button data-shop-sell="'+p.index+'"'+(!price?' disabled':'')+'>出售</button></article>';
         }
         const disabled=p.locked||p.remaining===0||g.gold<p.price||g.convoy.length>=500;
-        const availability=p.locked?(e.kind==='ticket'?'第 3 章通关后开放':'第 '+p.stage+' 章开放'):p.remaining===null?'不限量':'本章剩余 '+p.remaining+' 件';
-        return '<article class="shop-row'+(p.locked?' is-locked':'')+'"><img src="'+art(e)+'" alt=""><div class="shop-copy"><h3>'+esc(e.name)+' <small>'+esc(e.en)+'</small></h3><p>'+esc(e.effect)+'</p><small>'+availability+(e.uses===null?'':' · 每件 '+e.uses+' 次')+'</small></div><strong>'+p.price+' G</strong><label class="shop-quantity">数量<input aria-label="'+esc(e.name)+'购买数量" data-quantity="'+e.id+'" type="number" min="1" max="'+Math.max(1,Math.min(99,p.remaining??99,Math.floor(g.gold/p.price),500-g.convoy.length))+'" step="1" value="1"'+(disabled?' disabled':'')+'></label><button data-shop-buy="'+e.id+'"'+(disabled?' disabled':'')+'>'+(p.locked?'未解锁':p.remaining===0?'已售罄':g.gold<p.price?'资金不足':'购买')+'</button></article>';
-      }).join('')+(rows.length?'':'<p class="loadout-empty">此分类暂无物品。</p>')+'</div></section></div><footer class="eq-footer"><span>商品分阶段开放 · 原作机制参照，本作四章进度安排</span><span>限购、金币、转职与学法术均随存档保留</span></footer></div>';
+        const ticket=e.kind==='ticket';
+        const availability=p.locked?p.unlockLabel
+          :ticket?'剩余可买 '+p.remaining+' / '+p.limit+' 张':p.remaining===null?'不限量':'本章剩余 '+p.remaining+' 件';
+        const buyLabel=p.locked?'未解锁':p.remaining===0?(ticket?'额度用尽':'已售罄'):g.gold<p.price?'资金不足':'购买';
+        return '<article class="shop-row'+(p.locked?' is-locked':'')+'"><img src="'+art(e)+'" alt=""><div class="shop-copy"><h3>'+esc(e.name)+' <small>'+esc(e.en)+'</small></h3><p>'+esc(e.effect)+'</p><small>'+availability+(e.uses===null||ticket?'':' · 每件 '+e.uses+' 次')+'</small></div><strong>'+p.price+' G</strong><label class="shop-quantity">数量<input aria-label="'+esc(e.name)+'购买数量" data-quantity="'+e.id+'" type="number" min="1" max="'+Math.max(1,Math.min(99,p.remaining??99,Math.floor(g.gold/p.price),500-g.convoy.length))+'" step="1" value="1"'+(disabled?' disabled':'')+'></label><button data-shop-buy="'+e.id+'"'+(disabled?' disabled':'')+'>'+buyLabel+'</button></article>';
+      }).join('')+(rows.length?'':'<p class="loadout-empty">此分类暂无物品。</p>')+'</div></section></div><footer class="eq-footer"><span>第六关通关后扩充货架 · 进入下一关补充限购库存</span><span>限购、金币、转职与学法术均随存档保留</span></footer></div>';
     }
   }
   M.ShopScreen=ShopScreen;
@@ -23619,6 +23708,21 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const M=global.MyGO, T=M.Training;
   const escape=value=>String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 
+  function trainingResultMember({name,mastery,growth}){
+    const levels=growth?.levels||[];
+    const levelChange=levels.length?`<span class="training-result-level-change">Lv.${growth.before.level} → Lv.${growth.after.level}</span>`:'';
+    const growthRows=levels.map(level=>{
+      const stats=M.GrowthData.keys.filter(key=>level.after[key]>level.before[key]);
+      return `<section class="training-result-growth"><h4>升至 Lv.${level.level} · 属性增长</h4>
+        <ul>${stats.map(key=>`<li><span>${escape(M.GrowthData.labels[key])}</span>
+          <span>${level.before[key]} → ${level.after[key]}</span><strong>+${level.after[key]-level.before[key]}</strong></li>`).join('')}</ul></section>`;
+    }).join('');
+    return `<section class="training-result-member">
+      <header><h3>${escape(name)}</h3>${levelChange}</header>
+      <dl class="training-result-rewards"><div><dt>等级经验</dt><dd>+${growth?.gained||0}</dd></div>
+        <div><dt>职业经验</dt><dd>+${mastery}</dd></div></dl>${growthRows}</section>`;
+  }
+
   class TrainingScreen {
     constructor(retreat){
       this.retreat=retreat;
@@ -23766,21 +23870,19 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     if(this.endShown)return;
     this.endShown=true;
     const battle=this.game, result=battle.settle(), saved=this.saveCheckpoint(battle.campaign);
-    const rows=result.party.map(entry=>{
-      const gained=entry.growth?.gained||0;
-      const level=entry.growth?.levels.length?' · 升至 Lv.'+entry.growth.after.level:'';
-      return '<div class="detail-row"><span>'+escape(entry.name)+'</span><b>经验 +'+gained+' · 职业经验 +'+entry.mastery+level+'</b></div>';
-    }).join('');
-    this.openOverlay('<div class="modal-kicker">TRAINING TOWER</div><h2 class="modal-title" id="overlay-title">'+
-      (result.complete?'训练完成':'训练结束')+'</h2><p class="modal-sub">已击败 '+result.defeated+' / '+battle.mission.enemyCount+' 个史莱姆</p><div class="modal-section">'+rows+
-      '</div><p class="modal-sub" role="status">'+escape(saved.ok?'营地进度已自动保存。':saved.message)+'</p><div class="modal-actions"><button type="button" class="modal-btn primary" data-training-return>返回休憩之地</button></div>','',false);
+    this.openOverlay(`<header class="training-result-heading">
+      <h2 id="overlay-title">${result.complete?'训练完成':'训练结束'}</h2>
+      <p>已击败 <strong>${result.defeated} / ${battle.mission.enemyCount}</strong> 个史莱姆</p></header>
+      <div class="training-result-party">${result.party.map(trainingResultMember).join('')}</div>
+      <footer class="training-result-footer"><p role="status">${escape(saved.ok?'营地进度已自动保存。':saved.message)}</p>
+      <button type="button" class="modal-btn primary" data-training-return>返回休憩之地</button></footer>`, 'training-result', false);
     const button=this.dom.overlayCard.querySelector('[data-training-return]');
     button.onclick=()=>{
       this.switchTrainingGame(battle.campaign);
       M.entry.openRetreat();
       M.entry.retreat.announce(saved.ok?(result.complete?'训练完成，奖励已记入队伍。':'已带着本次职业经验回到营地。'):saved.message);
     };
-    button.focus();
+    button.focus({preventScroll:true});
   };
 
   M.TrainingScreen=TrainingScreen;

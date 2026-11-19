@@ -4,6 +4,21 @@
   const M=global.MyGO, T=M.Training;
   const escape=value=>String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 
+  function trainingResultMember({name,mastery,growth}){
+    const levels=growth?.levels||[];
+    const levelChange=levels.length?`<span class="training-result-level-change">Lv.${growth.before.level} → Lv.${growth.after.level}</span>`:'';
+    const growthRows=levels.map(level=>{
+      const stats=M.GrowthData.keys.filter(key=>level.after[key]>level.before[key]);
+      return `<section class="training-result-growth"><h4>升至 Lv.${level.level} · 属性增长</h4>
+        <ul>${stats.map(key=>`<li><span>${escape(M.GrowthData.labels[key])}</span>
+          <span>${level.before[key]} → ${level.after[key]}</span><strong>+${level.after[key]-level.before[key]}</strong></li>`).join('')}</ul></section>`;
+    }).join('');
+    return `<section class="training-result-member">
+      <header><h3>${escape(name)}</h3>${levelChange}</header>
+      <dl class="training-result-rewards"><div><dt>等级经验</dt><dd>+${growth?.gained||0}</dd></div>
+        <div><dt>职业经验</dt><dd>+${mastery}</dd></div></dl>${growthRows}</section>`;
+  }
+
   class TrainingScreen {
     constructor(retreat){
       this.retreat=retreat;
@@ -151,21 +166,19 @@
     if(this.endShown)return;
     this.endShown=true;
     const battle=this.game, result=battle.settle(), saved=this.saveCheckpoint(battle.campaign);
-    const rows=result.party.map(entry=>{
-      const gained=entry.growth?.gained||0;
-      const level=entry.growth?.levels.length?' · 升至 Lv.'+entry.growth.after.level:'';
-      return '<div class="detail-row"><span>'+escape(entry.name)+'</span><b>经验 +'+gained+' · 职业经验 +'+entry.mastery+level+'</b></div>';
-    }).join('');
-    this.openOverlay('<div class="modal-kicker">TRAINING TOWER</div><h2 class="modal-title" id="overlay-title">'+
-      (result.complete?'训练完成':'训练结束')+'</h2><p class="modal-sub">已击败 '+result.defeated+' / '+battle.mission.enemyCount+' 个史莱姆</p><div class="modal-section">'+rows+
-      '</div><p class="modal-sub" role="status">'+escape(saved.ok?'营地进度已自动保存。':saved.message)+'</p><div class="modal-actions"><button type="button" class="modal-btn primary" data-training-return>返回休憩之地</button></div>','',false);
+    this.openOverlay(`<header class="training-result-heading">
+      <h2 id="overlay-title">${result.complete?'训练完成':'训练结束'}</h2>
+      <p>已击败 <strong>${result.defeated} / ${battle.mission.enemyCount}</strong> 个史莱姆</p></header>
+      <div class="training-result-party">${result.party.map(trainingResultMember).join('')}</div>
+      <footer class="training-result-footer"><p role="status">${escape(saved.ok?'营地进度已自动保存。':saved.message)}</p>
+      <button type="button" class="modal-btn primary" data-training-return>返回休憩之地</button></footer>`, 'training-result', false);
     const button=this.dom.overlayCard.querySelector('[data-training-return]');
     button.onclick=()=>{
       this.switchTrainingGame(battle.campaign);
       M.entry.openRetreat();
       M.entry.retreat.announce(saved.ok?(result.complete?'训练完成，奖励已记入队伍。':'已带着本次职业经验回到营地。'):saved.message);
     };
-    button.focus();
+    button.focus({preventScroll:true});
   };
 
   M.TrainingScreen=TrainingScreen;

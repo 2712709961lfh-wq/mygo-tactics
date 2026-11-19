@@ -185,3 +185,60 @@
 .training-note { padding: 17px 0; font-size: 13px; line-height: 1.6; }
 .training-actions { padding-top: 10px; border-top: 1px solid #8db4a756; }
 .training-actions button:disabled { opacity: .48; }
+
+#overlay-card:is(.training-result, .end-card-host) {
+  border: 1px solid #75969f;
+  border-image: none;
+  background: #101f29;
+  color: #f3f7f9;
+  font-family: 'Microsoft YaHei', sans-serif;
+  font-size: 16px;
+}
+#overlay-card:is(.training-result, .end-card-host) h2 { color: #fff3d9; font-weight: 700; }
+#overlay-card:is(.training-result, .end-card-host) .modal-btn {
+  min-height: 44px;
+  border: 1px solid #75969f;
+  border-image: none;
+  background: #244452;
+  color: #fff8ea;
+  font: 600 16px/1.4 'Microsoft YaHei', sans-serif;
+  box-shadow: none;
+}
+#overlay-card:is(.training-result, .end-card-host) .modal-btn.primary { background: #f6d59b; color: #172730; border-color: #f6d59b; }
+#overlay-card:is(.training-result, .end-card-host) .modal-btn:focus-visible { outline: 2px solid #fff3d9; outline-offset: 3px; }
+
+#overlay-card.training-result { width: min(860px, 100%); padding: 28px; }
+.training-result-heading { margin-bottom: 20px; }
+.training-result-heading h2 { margin: 0; font-size: 32px; line-height: 1.25; }
+.training-result-heading p, .training-result-footer p { margin: 8px 0 0; color: #d4e0e7; font-size: 16px; }
+.training-result-heading strong { color: #ffe0a2; }
+.training-result-party { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 14px; }
+.training-result-member { padding: 16px; border: 1px solid #506d79; border-radius: 3px; background: #192f3c; }
+.training-result-member header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.training-result-member h3 { margin: 0; color: #f9fbfc; font-size: 22px; }
+.training-result-level-change { color: #ffe0a2; font-size: 16px; font-weight: 700; }
+.training-result-rewards { display: flex; flex-wrap: wrap; gap: 16px 24px; margin: 12px 0 0; }
+.training-result-rewards div { display: flex; align-items: baseline; gap: 8px; }
+.training-result-rewards dt { color: #d4e0e7; }
+.training-result-rewards dd { margin: 0; color: #fff3d9; font-size: 20px; font-weight: 700; }
+.training-result-growth { margin-top: 14px; padding-top: 12px; border-top: 1px solid #506d79; }
+.training-result-growth h4 { margin: 0 0 7px; color: #f9fbfc; font-size: 16px; }
+.training-result-growth ul { margin: 0; padding: 0; list-style: none; }
+.training-result-growth li {
+  display: grid;
+  grid-template-columns: 1fr auto 3ch;
+  gap: 10px;
+  align-items: baseline;
+  padding: 5px 0;
+  font-variant-numeric: tabular-nums;
+}
+.training-result-growth li strong { color: #a8efc2; text-align: right; }
+.training-result-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 20px; }
+.training-result-footer p { margin: 0; }
+
+#overlay-card.end-card-host .end-sub, #overlay-card.end-card-host .end-copy { color: #d4e0e7; font-size: 16px; }
+#overlay-card.end-card-host .end-stat { background: #192f3c; border-color: #506d79; }
+#overlay-card.end-card-host .end-stat span { color: #d4e0e7; font-size: 15px; }
+#overlay-card.end-card-host .end-stat b { color: #f9fbfc; font-size: 22px; }
+#overlay-card.end-card-host .end-mark { color: #ffe0a2; }
+#overlay-card.end-card-host .defeat .end-mark { color: #ffb8bc; }

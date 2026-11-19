@@ -13,7 +13,7 @@
   const chestKey=Object.freeze({id:'chest_key',name:'宝箱钥匙',kind:'key',category:'key',uses:1,icon:'accuracy-ring',
     effect:'持有者站在宝箱上或相邻1格，消耗钥匙开箱并结束行动。'});
   const trainingTicket=Object.freeze({id:'training_ticket',name:'训练之塔门票',en:'Training Tower Ticket',kind:'ticket',category:'ticket',uses:1,
-    icon:'beginner_seal',effect:'从休憩之地派两位同伴进入训练之塔时消耗一张。'});
+    icon:'beginner_seal',effect:'派两位同伴入塔时消耗一张。每通关一章，累计购买上限增加两张。'});
   const specialItems=new Map([courtyardKey,strangeDoorKey,chestKey,trainingTicket].map(e=>[e.id,e]));
   const supplyIds=E.items.filter(e=>['consumable','seal'].includes(e.kind)).map(e=>e.id);
   const allowed=new Set([...E.items.map(e=>e.id),...specialItems.keys()]);
@@ -147,7 +147,8 @@
   }
   M.Inventory={MAX_SLOTS:5,weaponIds,accessoryIds,supplyIds,weapons,item,make,usable,options,withAttackWeapon,sync,init,consume,copy,pack,restore,validateBag,stock,equip,select,useEffects,learn,magicAllowed,canEquip};
 
-  // Four authored chapters compress the original campaign's staged shop upgrades.
+  // Retain legacy product prices/limits for old saves and selling existing items.
+  // The current campaign's buy shelves are selected below.
   const products=[];
   function offer(id,price,stage,limit=null){products.push(Object.freeze({id,price,stage,limit}));}
   const prices={training_sword:260,iron_sword:520,steel_sword:910,silver_sword:1560,killing_edge:1800,brave_sword:4000,armorslayer:2500,rapier:2000,levin_sword:1500,
@@ -161,14 +162,32 @@
   }
   [['leather_shield',500,1],['iron_shield',1000,2],['steel_shield',1500,3],['silver_shield',2000,4],['magic_staff',1500,3],['healing_staff',1500,3]].forEach(r=>offer(...r));
   for(const e of E.items.filter(e=>['consumable','seal'].includes(e.kind))){
-    const stage=({vulnerary:1,concoction:2,elixir:4,antitoxin:1,pure_water:2,beginner_seal:1,intermediate_seal:2,advanced_seal:3,master_seal:4,dark_seal:3,abyssian_seal:4,dancer_seal:2})[e.id];
+    const stage=({vulnerary:1,concoction:2,elixir:4,antitoxin:1,pure_water:2,beginner_seal:1,intermediate_seal:1,advanced_seal:3,master_seal:4,dark_seal:3,abyssian_seal:4,dancer_seal:2})[e.id];
     offer(e.id,e.price,stage,e.kind==='seal'?e.id==='dancer_seal'?1:3:null);
   }
   offer(trainingTicket.id,500,3);
+  const earlyShelf=new Set(['iron_sword','iron_lance','iron_axe','iron_bow','iron_gauntlets',
+    'vulnerary','beginner_seal','intermediate_seal','leather_shield']);
+  const steelShelf=new Set(['steel_sword','steel_lance','steel_axe','steel_bow','steel_gauntlets',
+    'iron_shield','concoction','antitoxin']);
+  const chapterOf=game=>game.chapterNumber??(game.stage===11?10:game.stage===10?9:game.stage);
+  // Later chapter saves also prove chapter six has been passed, including old
+  // saves without its reward record. Victory in chapter six unlocks immediately.
+  const steelUnlocked=game=>!!game.rewardedChapters?.includes(6)||chapterOf(game)>6||
+    (chapterOf(game)===6&&game.phase==='victory'&&game.winner==='player');
   const trainingUnlocked=game=>!!game.rewardedChapters?.includes(3)||(game.chapterNumber===3&&game.phase==='victory');
-  const unlocked=(game,p)=>p.id===trainingTicket.id?trainingUnlocked(game):game.stage>=p.stage;
-  M.Shop=Object.freeze({products:Object.freeze(products),START_GOLD:3000,CHAPTER_REWARD:2000,TICKET:trainingTicket.id,trainingUnlocked,unlocked,
+  const unlocked=(game,p)=>p.id===trainingTicket.id?trainingUnlocked(game):earlyShelf.has(p.id)||steelShelf.has(p.id)&&steelUnlocked(game);
+  const ticketAllowance=(clearedChapters=[])=>clearedChapters.length*2;
+  const limit=(game,p)=>p.id===trainingTicket.id?ticketAllowance(game.rewardedChapters):p.limit;
+  function remaining(game,p){
+    const cap=limit(game,p);
+    if(cap===null)return null;
+    const purchased=p.id===trainingTicket.id?game.trainingTicketsPurchased:game.shopPurchases[p.id];
+    return Math.max(0,cap-(purchased||0));
+  }
+  M.Shop=Object.freeze({products:Object.freeze(products),START_GOLD:3000,CHAPTER_REWARD:2000,TICKET:trainingTicket.id,trainingUnlocked,steelUnlocked,unlocked,ticketAllowance,remaining,
     get:id=>products.find(p=>p.id===id)||null,
-    stock:game=>products.map(p=>({...p,item:item(p.id),locked:!unlocked(game,p),
-      remaining:p.limit===null?null:Math.max(0,p.limit-(game.shopPurchases[p.id]||0))}))});
+    stock:game=>products.filter(p=>earlyShelf.has(p.id)||steelShelf.has(p.id)||p.id===trainingTicket.id).map(p=>({...p,item:item(p.id),locked:!unlocked(game,p),
+      unlockLabel:p.id===trainingTicket.id?'第 3 关通关后开放':steelShelf.has(p.id)?'第 6 关通关后开放':'初始开放',
+      limit:limit(game,p),remaining:remaining(game,p)}))});
 })(window);

@@ -38,13 +38,14 @@ test('解毒药只解除中毒，圣水增加魔防且逐回合衰减，读档�
   const before=M.Combat.defenseOf(u,g.map,true);g.useMedicine(u,w);assert.equal(M.Combat.defenseOf(u,g.map,true),before+7);
   const h=new M.Game();h.restore(g.serialize());assert.equal(h.getUnit('soyo').status.ward,7);g.beginNextPlayerPhase();assert.equal(u.status.ward,6);
 });
-test('商店按四章逐步解锁训练铁制、钢制、银制必杀、特殊武器',()=>{
-  for(const [stage,open,locked] of [[1,'iron_sword','steel_sword'],[2,'steel_sword','silver_sword'],[3,'silver_sword','brave_sword'],[4,'brave_sword',null]]){
-    const g=new M.Game({stage});g.gold=99999;g.buyItem(open);assert.equal(g.convoy.at(-1).id,open);
-    if(locked)unchanged(g,()=>g.buyItem(locked),/尚未解锁/);
+test('商店前期只开放铁制，其他旧商品不可提前购买',()=>{
+  for(const stage of [1,2,3,4]){
+    const g=new M.Game({stage});g.gold=99999;g.buyItem('iron_sword');assert.equal(g.convoy.at(-1).id,'iron_sword');
+    for(const id of ['steel_sword','silver_sword','brave_sword','training_sword','dancer_seal'])unchanged(g,()=>g.buyItem(id),/尚未解锁/);
     for(const p of M.Shop.products)assert(Number.isInteger(p.price)&&p.price>0,p.id);
   }
 });
+
 test('购买原子校验金额、数量、空间与阶段，扣款并送运输队',()=>{
   const g=new M.Game(),before=g.gold,n=g.convoy.length;g.buyItem('vulnerary',3);
   assert.equal(g.gold,before-900);assert.equal(g.convoy.length,n+3);
@@ -54,9 +55,9 @@ test('购买原子校验金额、数量、空间与阶段，扣款并送运输�
   g.phase='enemy';unchanged(g,()=>g.buyItem('vulnerary'),/我方/);
 });
 test('限购库存读档不能刷新，跨章补货且不重复给初始运输队与资金',()=>{
-  const g=new M.Game({stage:2});g.gold=10000;g.buyItem('dancer_seal');unchanged(g,()=>g.buyItem('dancer_seal'),/库存/);
-  const h=new M.Game();h.restore(g.serialize());assert.equal(h.gold,g.gold);unchanged(h,()=>h.buyItem('dancer_seal'),/库存/);
-  const next=new M.Game({stage:3,loadout:g.exportLoadout()});assert.equal(next.gold,g.gold);assert.equal(next.convoy.length,g.convoy.length);next.buyItem('dancer_seal');
+  const g=new M.Game({stage:2});g.gold=10000;g.buyItem('intermediate_seal',3);unchanged(g,()=>g.buyItem('intermediate_seal',3),/库存/);
+  const h=new M.Game();h.restore(g.serialize());assert.equal(h.gold,g.gold);unchanged(h,()=>h.buyItem('intermediate_seal'),/库存/);
+  const next=new M.Game({stage:3,loadout:g.exportLoadout()});assert.equal(next.gold,g.gold);assert.equal(next.convoy.length,g.convoy.length);next.buyItem('intermediate_seal');
 });
 test('出售按剩余耐久折价，钥匙禁止出售，不回补限购额度',()=>{
   const g=new M.Game(),n=g.convoy.findIndex(i=>i.id==='iron_sword');g.convoy[n].uses=20;
@@ -69,10 +70,10 @@ test('通关奖励只发一次，重复检查及恢复胜利档不重复发钱',
   assert.equal(g.gold,before+2000);g.checkOutcome();assert.equal(g.gold,before+2000);
   const h=new M.Game();h.restore(g.serialize());h.checkOutcome();assert.equal(h.gold,g.gold);
 });
-test('商店特效武器实战接入二连、克制与逐击耐久截断',()=>{
+test('旧有特效武器继续支持二连、克制与逐击耐久截断',()=>{
   const g=new M.Game({stage:4}),u=g.getUnit('tomori'),v=g.units.find(a=>a.side==='enemy');g.gold=10000;
   for(const p of M.Shop.products){assert(Number.isSafeInteger(p.price)&&p.price>0,p.id);assert(I.item(p.id),p.id);}
-  g.buyItem('brave_sword');g.transferItem(u,g.convoy.length-1,false);I.equip(u,1);
+  g.convoy.push(I.make('brave_sword'));g.transferItem(u,g.convoy.length-1,false);I.equip(u,1);
   Object.assign(u,{x:3,y:3,spd:0,str:10});Object.assign(v,{x:4,y:3,spd:0});
   assert.equal(M.Combat.forecast(u,v,g.map).attackCount,2);
   assert.equal(M.Combat.forecast(v,u,g.map).counterCount,1);

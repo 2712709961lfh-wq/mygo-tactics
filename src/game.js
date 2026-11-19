@@ -173,6 +173,7 @@
       this.lootReserve=[];
       this.gold=MyGO.Shop.START_GOLD;
       this.shopPurchases={};this.shopChapter=this.chapterNumber;this.rewardedChapters=[];
+      this.trainingTicketsPurchased=0;
       this.rng = new MyGO.RNG(opts.seed);
       for(const u of this.units)u.growthRngState=MyGO.Growth.seed(u.id,this.rng.serialize());
       if (opts.loadout) this.importLoadout(opts.loadout);
@@ -260,19 +261,25 @@
       for(const saved of data.units||[]){const u=this.getUnit(saved.id);if(u&&u.side==='player'){MyGO.Growth.restore(u,saved.growth,true);MyGO.Classes.restore(u,saved.classState);MyGO.Mastery?.restore(u,saved.classMastery,true);MyGO.Inventory.restore(u,saved,true);}}
     }
 
-    packEconomy(){return {version:1,gold:this.gold,chapter:this.shopChapter,purchases:{...this.shopPurchases},rewarded:this.rewardedChapters.slice()};}
+    packEconomy(){return {version:1,gold:this.gold,chapter:this.shopChapter,purchases:{...this.shopPurchases},rewarded:this.rewardedChapters.slice(),
+      trainingTicketsPurchased:this.trainingTicketsPurchased};}
 
     restoreEconomy(data){
-      if(data===undefined){this.gold=MyGO.Shop.START_GOLD;this.shopPurchases={};this.shopChapter=this.chapterNumber;this.rewardedChapters=[];return;}
+      if(data===undefined){this.gold=MyGO.Shop.START_GOLD;this.shopPurchases={};this.shopChapter=this.chapterNumber;this.rewardedChapters=[];this.trainingTicketsPurchased=0;return;}
       if(!data||data.version!==1||!Number.isSafeInteger(data.gold)||data.gold<0||data.gold>99999999||
         !Number.isInteger(data.chapter)||data.chapter<1||data.chapter>(this.stage===11?10:this.stage)||
         !data.purchases||typeof data.purchases!=='object'||Array.isArray(data.purchases)||
         !Array.isArray(data.rewarded)||new Set(data.rewarded).size!==data.rewarded.length||data.rewarded.some(c=>!Number.isInteger(c)||c<1||c>(this.stage===11?10:this.stage)))throw Error('存档商店数据无效');
       for(const [id,n] of Object.entries(data.purchases)){const p=MyGO.Shop.get(id);
         if(!p||p.stage>data.chapter||!Number.isInteger(n)||n<0||p.limit===null||n>p.limit)throw Error('存档限购数据无效');}
+      const rewarded=[...new Set(data.rewarded.map(n=>this.stage!==11&&n===10?9:n))];
+      const ticketsPurchased=data.trainingTicketsPurchased===undefined?0:data.trainingTicketsPurchased;
+      if(!Number.isInteger(ticketsPurchased)||ticketsPurchased<0||ticketsPurchased>MyGO.Shop.ticketAllowance(rewarded)||
+        (ticketsPurchased>0&&!rewarded.includes(3)))throw Error('存档训练门票限购数据无效');
       this.gold=data.gold;this.shopChapter=this.chapterNumber;
       this.shopPurchases=[this.stage,this.chapterNumber].includes(data.chapter)?{...data.purchases}:{};
-      this.rewardedChapters=[...new Set(data.rewarded.map(n=>this.stage!==11&&n===10?9:n))];
+      this.rewardedChapters=rewarded;
+      this.trainingTicketsPurchased=ticketsPurchased;
     }
 
     shopReason(){return this.phase!=='player'&&this.phase!=='victory'?'请在我方阶段或战后购物':'';}
@@ -281,11 +288,14 @@
       const p=MyGO.Shop.get(id),reason=this.shopReason();if(reason)throw Error(reason);
       if(!p||!MyGO.Shop.unlocked(this,p))throw Error('尚未解锁该商品');
       if(!Number.isInteger(quantity)||quantity<1||quantity>99)throw Error('购买数量无效');
-      if(p.limit!==null&&(this.shopPurchases[id]||0)+quantity>p.limit)throw Error('本章库存不足');
+      const remaining=MyGO.Shop.remaining(this,p);
+      if(remaining!==null&&quantity>remaining)throw Error(id===MyGO.Shop.TICKET?'训练门票购买额度不足':'本章库存不足');
       if(this.convoy.length+quantity>500)throw Error('运输队容量不足');
       const cost=p.price*quantity;if(this.gold<cost)throw Error('资金不足');
       const entries=Array.from({length:quantity},()=>MyGO.Inventory.make(id));
-      this.gold-=cost;if(p.limit!==null)this.shopPurchases[id]=(this.shopPurchases[id]||0)+quantity;
+      this.gold-=cost;
+      if(id===MyGO.Shop.TICKET)this.trainingTicketsPurchased+=quantity;
+      else if(p.limit!==null)this.shopPurchases[id]=(this.shopPurchases[id]||0)+quantity;
       this.convoy.push(...entries);return {id,quantity,cost};
     }
 
