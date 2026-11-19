@@ -37,7 +37,7 @@ original.inventory[0].uses=1;
 const battle=T.Game.start(campaign,squad,797);
 assert.equal(T.ticketCount(campaign),1);
 assert.equal(battle.livingCount('player'),2);
-assert.equal(battle.livingCount('enemy'),30);
+assert.equal(battle.livingCount('enemy'),20);
 const hero=battle.getUnit('tomori'), rival=battle.getUnit('soyo');
 assert.equal(hero.hp,hero.maxHp);
 assert.notEqual(hero.inventory[0].uses,original.inventory[0].uses);
@@ -46,7 +46,7 @@ for(const enemy of battle.living('enemy')){
   const difference=M.Combat.statTotalOf(chosen)-M.Combat.statTotalOf(enemy);
   assert(difference>=30&&difference<=40);
 }
-assert.equal(battle.living('enemy').filter(u=>u.slimeGroup===0).length,15);
+assert.equal(battle.living('enemy').filter(u=>u.slimeGroup===0).length,10);
 assert.notDeepEqual(plain(battle.map.tiles),plain(new T.Game(campaign,squad,133).map.tiles));
 
 const slime=battle.living('enemy')[0];
@@ -57,7 +57,7 @@ battle.setUnitPosition(slime.id,spawn.x,spawn.y);
 const xp=hero.classXp[hero.classId]||0;
 const strike=battle.applyCombat({attackerId:hero.id,defenderId:slime.id,hit:true,finalDamage:999});
 assert.equal(strike.experience[0].gained,0);
-assert.equal(hero.classXp[hero.classId],xp+2);
+assert.equal(hero.classXp[hero.classId],xp+4);
 assert.equal(hero.exp,14);
 assert.equal(original.classXp[original.classId]||0,xp);
 
@@ -66,10 +66,31 @@ const restoredCampaign=new M.Game();
 restoredCampaign.restore(save);
 const resumed=T.Game.fromSnapshot(restoredCampaign,save.training);
 assert.equal(resumed.seed,battle.seed);
-assert.equal(resumed.livingCount('enemy'),29);
+assert.equal(resumed.livingCount('enemy'),19);
 assert.equal(T.ticketCount(restoredCampaign),1);
 assert.deepEqual(plain(resumed.serialize()),save);
 assert.throws(()=>T.Game.fromSnapshot(restoredCampaign,{...save.training,ids:['tomori','tomori']}),/两位/);
+
+const legacy=new T.Game(restoredCampaign,squad,797,1);
+const legacyHero=legacy.getUnit('tomori');
+const legacyXp=legacyHero.classXp[legacyHero.classId]||0;
+M.Mastery.award(legacyHero,2);
+Object.assign(legacy.living('enemy')[0],{dead:true,hp:0,acted:true});
+const legacySave=plain(legacy.serialize().training);
+const legacyResumed=T.Game.fromSnapshot(restoredCampaign,legacySave);
+assert.equal(legacyResumed.mission.enemyCount,30);
+assert.equal(legacyResumed.livingCount('enemy'),29);
+assert.deepEqual(plain(legacyResumed.serialize().training),legacySave);
+legacyResumed.applyCombat({attackerId:legacyHero.id,defenderId:legacyResumed.living('enemy')[0].id,hit:true,finalDamage:999});
+assert.equal(legacyResumed.getUnit(legacyHero.id).classXp[legacyHero.classId],legacyXp+2+4);
+
+const support=new T.Game(restoredCampaign,squad,133);
+const supportTarget=support.getUnit('tomori'), healer=support.getUnit('soyo');
+supportTarget.hp--;
+support.setUnitPosition(healer.id,supportTarget.x+1,supportTarget.y);
+const supportReport=support.castSupport(healer,'heal',supportTarget).experience[0];
+assert.equal(supportReport.gained,0);
+assert.equal(supportReport.mastery.gained,4);
 
 const expected=squad.map(id=>T.sameLevelExp(campaign.getUnit(id)));
 Object.assign(rival,{hp:0,dead:true});
@@ -94,7 +115,7 @@ assert.equal(last.phase,'defeat');
 const failure=last.settle();
 assert(!failure.complete);
 assert(failure.party.every(row=>row.growth===null));
-assert(failure.party[1].mastery>=2);
+assert(failure.party[1].mastery>=4);
 assert.equal(campaign.getUnit('soyo').exp,before);
 assert(!campaign.getUnit('soyo').dead);
 

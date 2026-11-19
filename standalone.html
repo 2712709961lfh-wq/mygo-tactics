@@ -5443,7 +5443,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.24.0</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.24.1</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -6661,7 +6661,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     else if(id==='steal'){const i=t.inventory[itemIndex];if(!i||!stealable(t).includes(i))throw Error('该物品不可偷取');u.inventory.push(t.inventory.splice(itemIndex,1)[0]);if(t.drops?.includes(i.id)){t.drops=t.drops.filter(id=>id!==i.id);t.stolenDrops=[...(t.stolenDrops||[]),i.id];}M.Inventory.sync(t);}
     else {moves=assistMoves(game,u,t,id);for(const p of moves){const unit=game.getUnit(p.id);unit.x=p.x;unit.y=p.y;}game.refreshParkDiscovery();}
     game.markActed(u);u.combatArtId=null;M.Inventory.sync(u);
-    const report=attachReport(u,null,award(u,game.isTraining?2:1));return {affected:[u.id,t.id],moves,experience:report?[report]:[]};
+    const report=attachReport(u,null,award(u,game.masteryMultiplier??1));return {affected:[u.id,t.id],moves,experience:report?[report]:[]};
   }
   M.Mastery=Object.freeze({abilities,arts,jobs,get,progress,learned,has,sync,init,pack,restore,equip,award,attachReport,bonus,canUnarmed,unarmed,availableArts,selectedArt,artReason,rangeOf,targetReason,strikeEffects,afterBattle,applyEffects,startTurn,endTurn,assistTargets,useAssist,stealable});
 })(window);
@@ -9972,7 +9972,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(talentHealing)changes.push({id:caster.id,amount:talentHealing,talent:'同心'});
       this.markActed(caster);MyGO.Inventory.sync(caster);
       let growth=this.isTraining?null:MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
-      if(MyGO.Mastery)growth=MyGO.Mastery.attachReport(caster,growth,MyGO.Mastery.award(caster,this.isTraining?2:1));
+      if(MyGO.Mastery)growth=MyGO.Mastery.attachReport(caster,growth,MyGO.Mastery.award(caster,this.masteryMultiplier??1));
       return {spell:s,changes,talentHealing,resourcePreserved,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
     }
 
@@ -10605,7 +10605,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         const amount=MyGO.Growth.combatExp(before,enemy,damage,killed);
         const bonus=this.stage===4&&u.id==='soyo'&&enemy.id==='dark_soyo'&&killed;
         let report=this.isTraining?null:MyGO.Growth.award(u,amount,bonus?2:1);
-        if(MyGO.Mastery)report=MyGO.Mastery.attachReport(u,report,MyGO.Mastery.award(u,this.isTraining?2:1));
+        if(MyGO.Mastery)report=MyGO.Mastery.attachReport(u,report,MyGO.Mastery.award(u,this.masteryMultiplier??1));
         if(bonus)this.soyoBossBonus=true;
         if(report){if(bonus)report.bonus='直面过去 · 击破经验 ×2';reports.push(report);}
       }
@@ -11057,7 +11057,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 (function (global) {
   'use strict';
   const M=global.MyGO;
-  const ENEMY_COUNT=30;
+  const ENEMY_COUNT=20;
+  const MASTERY_MULTIPLIER=4;
+  const SNAPSHOT_VERSION=2;
+  const enemyCountByVersion=new Map([[1,30],[SNAPSHOT_VERSION,ENEMY_COUNT]]);
   const statKeys=['maxHp','str','mag','dex','spd','lck','def','res','move'];
 
   function trainees(campaign){
@@ -11079,7 +11082,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     return Math.ceil(M.Growth.killExp(unit,{level:unit.level,expClassBase:30})-1e-9);
   }
 
-  function arena(rng){
+  function arena(rng,enemyCount){
     const cols=rng.int(18,20), rows=rng.int(14,16);
     const pillarColumn=rng.int(1,3), pillarRow=rng.int(1,3);
     const tiles=Array.from({length:rows},(_,y)=>Array.from({length:cols},(_,x)=>{
@@ -11095,7 +11098,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const at=rng.int(0,i);
       [points[i],points[at]]=[points[at],points[i]];
     }
-    return {map:{cols,rows,tiles,decor:[]},spawns,enemies:points.slice(0,ENEMY_COUNT)};
+    return {map:{cols,rows,tiles,decor:[]},spawns,enemies:points.slice(0,enemyCount)};
   }
 
   function slimeStats(hero,rng){
@@ -11131,19 +11134,24 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   }
 
   class TrainingGame extends M.Game {
-    constructor(campaign,ids,seed){
+    get masteryMultiplier(){return MASTERY_MULTIPLIER;}
+
+    constructor(campaign,ids,seed,snapshotVersion=SNAPSHOT_VERSION){
       if(!M.Shop.trainingUnlocked(campaign)||!campaign.retreat||campaign.phase==='defeat'||
         !Array.isArray(ids)||ids.length!==2||new Set(ids).size!==2||!ids.every(id=>trainees(campaign).some(u=>u.id===id))) {
         throw Error('请选择两位可出战的同伴。');
       }
       if(!Number.isInteger(seed)||seed<1||seed>0xffffffff)throw Error('训练地图种子无效。');
+      const enemyCount=enemyCountByVersion.get(snapshotVersion);
+      if(!enemyCount)throw Error('训练存档版本无效。');
       super({seed});
       this.stage=0;
       this.isTraining=true;
       this.campaign=campaign;
       this.seed=seed;
       this.traineeIds=ids.slice();
-      const setup=arena(this.rng);
+      this.snapshotVersion=snapshotVersion;
+      const setup=arena(this.rng,enemyCount);
       this.map=setup.map;
       Object.defineProperty(this.map,'units',{configurable:true,get:()=>this.units});
       const participants=ids.map(id=>campaign.getUnit(id));
@@ -11161,7 +11169,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.convoy=[];
       this.gold=0;
       this.mission={chapter:'TRAINING',chapterJp:'演练',chapterEn:'TRAINING TOWER',title:'训练之塔',subtitle:'双人演练 · 随机战场',
-        mapName:'塔内试炼场',objective:'击败全部 30 个史莱姆',gateHint:'两位同伴都倒下时，本次训练结束。',enemyCount:ENEMY_COUNT};
+        mapName:'塔内试炼场',objective:'击败全部 '+enemyCount+' 个史莱姆',gateHint:'两位同伴都倒下时，本次训练结束。',enemyCount};
     }
 
     static start(campaign,ids,seed){
@@ -11199,24 +11207,25 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         const growth=complete?M.Growth.award(unit,sameLevelExp(unit)):null;
         return {name:unit.name,mastery,growth};
       });
-      this.settlement={complete,defeated:ENEMY_COUNT-this.livingCount('enemy'),party};
+      this.settlement={complete,defeated:this.mission.enemyCount-this.livingCount('enemy'),party};
       return this.settlement;
     }
 
     serialize(){
       const snapshot=this.campaign.serialize();
       if(this.settlement)return snapshot;
-      return {...snapshot,training:{version:1,seed:this.seed,ids:this.traineeIds.slice(),turn:this.turn,
+      return {...snapshot,training:{version:this.snapshotVersion,seed:this.seed,ids:this.traineeIds.slice(),turn:this.turn,
         rngState:this.rng.serialize(),units:this.units.map(unit=>({id:unit.id,x:unit.x,y:unit.y,hp:unit.hp,
           dead:unit.dead,acted:unit.acted,alerted:unit.alerted,talentSwapReady:!!unit.talentSwapReady,
           talentAttacked:!!unit.talentAttacked,talentAttackCount:unit.talentAttackCount||0,...M.Inventory.pack(unit)}))}};
     }
 
     static fromSnapshot(campaign,snapshot){
-      if(!snapshot||snapshot.version!==1||!Number.isInteger(snapshot.turn)||snapshot.turn<1||
+      const enemyCount=enemyCountByVersion.get(snapshot?.version);
+      if(!enemyCount||!Number.isInteger(snapshot.turn)||snapshot.turn<1||
         !Number.isInteger(snapshot.rngState)||snapshot.rngState<1||snapshot.rngState>0xffffffff||
-        !Array.isArray(snapshot.units)||snapshot.units.length!==ENEMY_COUNT+2)throw Error('训练存档数据无效。');
-      const battle=new TrainingGame(campaign,snapshot.ids,snapshot.seed);
+        !Array.isArray(snapshot.units)||snapshot.units.length!==enemyCount+2)throw Error('训练存档数据无效。');
+      const battle=new TrainingGame(campaign,snapshot.ids,snapshot.seed,snapshot.version);
       const ids=new Set(), occupied=new Set();
       for(const state of snapshot.units){
         const unit=battle.getUnit(state?.id);
@@ -11242,7 +11251,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     }
   }
 
-  M.Training=Object.freeze({Game:TrainingGame,trainees,ticketCount,entryReason,sameLevelExp,ENEMY_COUNT});
+  M.Training=Object.freeze({Game:TrainingGame,trainees,ticketCount,entryReason,sameLevelExp,ENEMY_COUNT,MASTERY_MULTIPLIER});
 })(window);
 
   </script>
@@ -19563,7 +19572,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const open = this.game.gateOpen;
       const steps = this.game.isTraining?[
         ['双人演练','前进接近史莱姆，利用柱子和休憩据点分散围攻。'],
-        ['职业经验 ×2','每次交战按双倍职业经验结算，途中不获得等级经验。'],
+        ['职业经验 ×'+this.game.masteryMultiplier,'每次交战按 '+this.game.masteryMultiplier+' 倍职业经验结算，途中不获得等级经验。'],
         ['清除全部史莱姆','完成后两位同伴各领取一次同级击破的等级经验；两位都倒下则提前结束。']
       ]:this.game.stage===11?[['突破宫门','沿中央红毯推进，或从立柱两侧回廊迂回。'],['防备骑兵突击','战马骑士移动7格，先查看威胁范围；魔法突破重装，弓应对天马。'],['击败金鬃卫长','王座前的金甲白马为精英Boss，击败即可通关。两侧圣泉可提供据点防护与回复。']]:this.game.stage===10?[['与昴会合','开场对话后昴直接入队，可施法攻击并支援队伍。'],['辨认真正的仁菜','紫黑色幻影是拳斗士，钢拳套具有连续攻击。保护脆弱后排，集中火力应对。'],['清除所有敌人','幻影倒下后仍须击败四周幻兵、重装与天马。右上角显示剩余敌人数量。']]:this.game.stage===9?[['向门推进','沿中央地毯北上，利用音箱与乐器架分流敌人。'],['击败裂空天马','苍蓝羽光与双环光晕标记 Boss。弓对飞行有效；击败后获得门的钥匙与钢枪。'],['打开奇怪的门','击败 Boss 后仍可行动。队员走到最北端门旁使用钥匙；运输队与暂存中的门钥匙也可直接使用。开门后继续本关，与昴会合并全歼后半段敌军。']]:this.game.stage===8?[['击败两名幻影','向舞台最深处推进，同时击败术士爽世之影与佣兵灯之影即可获胜。'],['破甲与防空','重装高守备低魔防，使用魔法；携钥天马机动很高，注意弓的飞行特效。'],['三个宝箱','三名携钥天马各掉一把钥匙。西箱中级转职证，东箱1500 G，后台钢剑。击败最后一名幻影前完成搜宝。']]:this.game.stage===7?[['回应求助','开场回应虹夏后，她立即成为可操控同伴。'],['清理演出厅','利用两侧通道绕过设备，逐组击败失真回声。'],['夺回舞台','舞台上的敌人也要全部击败；右上角显示剩余敌人。']]:this.game.stage===6?[
         ['沿中央林荫道向北','从南部中央出发，穿过池塘、长椅与花圃，到达十八盏宫廷立灯围绕的王座。滚轮或触摸拖动纵向查看地图，点击同伴自动跟随。'],
@@ -23676,7 +23685,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     render(focus){
       const game=this.ui.game, roster=T.trainees(game), reason=T.entryReason(game), count=T.ticketCount(game);
       this.root.innerHTML=`<div class="training-panel">
-        <header class="training-head"><div><h2 id="training-entry-title">训练之塔</h2><p>选择两位同伴，迎战 30 个史莱姆。</p></div>
+        <header class="training-head"><div><h2 id="training-entry-title">训练之塔</h2><p>选择两位同伴，迎战 ${T.ENEMY_COUNT} 个史莱姆。</p></div>
         <button type="button" class="modal-btn" data-training-close>返回</button></header>
         <div class="training-summary"><span>可用门票 <b>${count}</b></span><span>每次消耗 1 张</span></div>
         <div class="training-roster" aria-label="选择参训同伴">${roster.map(unit=>{
@@ -23686,7 +23695,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span><strong>${escape(unit.name)}</strong><small>Lv.${unit.level} · ${escape(unit.className)}</small>
             <small>属性总和 ${M.Combat.statTotalOf(unit)}</small></span></button>`;
         }).join('')}</div>
-        <p class="training-note">每人对应 15 个史莱姆，总属性低 30～40 点。途中获得双倍职业经验，全部击败后两人各领取一次同级击破的等级经验。训练使用临时的生命值和装备副本。</p>
+        <p class="training-note">每人对应 ${T.ENEMY_COUNT/2} 个史莱姆，总属性低 30～40 点。途中获得 ${T.MASTERY_MULTIPLIER} 倍职业经验，全部击败后两人各领取一次同级击破的等级经验。训练使用临时的生命值和装备副本。</p>
         <footer class="training-actions"><p data-training-selection role="status">${escape(reason||('已选 '+this.selection.size+' / 2'))}</p>
         <button type="button" class="modal-btn primary" data-training-enter ${reason||this.selection.size!==2?'disabled':''}>消耗门票 · 进入训练</button></footer></div>`;
       for(const unit of roster){
@@ -23699,7 +23708,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
   const UI=M.UI.prototype;
   UI.trainingObjective=function(){
-    return '击败全部史莱姆 · 剩余 '+this.game.livingCount('enemy')+' / '+T.ENEMY_COUNT;
+    return '击败全部史莱姆 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount;
   };
 
   UI.syncTrainingChrome=function(){
@@ -23739,7 +23748,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     this.switchTrainingGame(battle);
     this.revealCell(battle.units[0].x,battle.units[0].y);
     const saved=this.saveCheckpoint();
-    this.showBanner('训练之塔','击败 30 个史莱姆',1500);
+    this.showBanner('训练之塔',battle.mission.objective,1500);
     this.showToast(saved.ok?'已消耗 1 张训练之塔门票。':saved.message,saved.ok?'info':'error',2400);
   };
 
@@ -23763,7 +23772,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       return '<div class="detail-row"><span>'+escape(entry.name)+'</span><b>经验 +'+gained+' · 职业经验 +'+entry.mastery+level+'</b></div>';
     }).join('');
     this.openOverlay('<div class="modal-kicker">TRAINING TOWER</div><h2 class="modal-title" id="overlay-title">'+
-      (result.complete?'训练完成':'训练结束')+'</h2><p class="modal-sub">已击败 '+result.defeated+' / '+T.ENEMY_COUNT+' 个史莱姆</p><div class="modal-section">'+rows+
+      (result.complete?'训练完成':'训练结束')+'</h2><p class="modal-sub">已击败 '+result.defeated+' / '+battle.mission.enemyCount+' 个史莱姆</p><div class="modal-section">'+rows+
       '</div><p class="modal-sub" role="status">'+escape(saved.ok?'营地进度已自动保存。':saved.message)+'</p><div class="modal-actions"><button type="button" class="modal-btn primary" data-training-return>返回休憩之地</button></div>','',false);
     const button=this.dom.overlayCard.querySelector('[data-training-return]');
     button.onclick=()=>{

@@ -70,7 +70,7 @@
     render(focus){
       const game=this.ui.game, roster=T.trainees(game), reason=T.entryReason(game), count=T.ticketCount(game);
       this.root.innerHTML=`<div class="training-panel">
-        <header class="training-head"><div><h2 id="training-entry-title">训练之塔</h2><p>选择两位同伴，迎战 30 个史莱姆。</p></div>
+        <header class="training-head"><div><h2 id="training-entry-title">训练之塔</h2><p>选择两位同伴，迎战 ${T.ENEMY_COUNT} 个史莱姆。</p></div>
         <button type="button" class="modal-btn" data-training-close>返回</button></header>
         <div class="training-summary"><span>可用门票 <b>${count}</b></span><span>每次消耗 1 张</span></div>
         <div class="training-roster" aria-label="选择参训同伴">${roster.map(unit=>{
@@ -80,7 +80,7 @@
             <span><strong>${escape(unit.name)}</strong><small>Lv.${unit.level} · ${escape(unit.className)}</small>
             <small>属性总和 ${M.Combat.statTotalOf(unit)}</small></span></button>`;
         }).join('')}</div>
-        <p class="training-note">每人对应 15 个史莱姆，总属性低 30～40 点。途中获得双倍职业经验，全部击败后两人各领取一次同级击破的等级经验。训练使用临时的生命值和装备副本。</p>
+        <p class="training-note">每人对应 ${T.ENEMY_COUNT/2} 个史莱姆，总属性低 30～40 点。途中获得 ${T.MASTERY_MULTIPLIER} 倍职业经验，全部击败后两人各领取一次同级击破的等级经验。训练使用临时的生命值和装备副本。</p>
         <footer class="training-actions"><p data-training-selection role="status">${escape(reason||('已选 '+this.selection.size+' / 2'))}</p>
         <button type="button" class="modal-btn primary" data-training-enter ${reason||this.selection.size!==2?'disabled':''}>消耗门票 · 进入训练</button></footer></div>`;
       for(const unit of roster){
@@ -93,7 +93,7 @@
 
   const UI=M.UI.prototype;
   UI.trainingObjective=function(){
-    return '击败全部史莱姆 · 剩余 '+this.game.livingCount('enemy')+' / '+T.ENEMY_COUNT;
+    return '击败全部史莱姆 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount;
   };
 
   UI.syncTrainingChrome=function(){
@@ -133,7 +133,7 @@
     this.switchTrainingGame(battle);
     this.revealCell(battle.units[0].x,battle.units[0].y);
     const saved=this.saveCheckpoint();
-    this.showBanner('训练之塔','击败 30 个史莱姆',1500);
+    this.showBanner('训练之塔',battle.mission.objective,1500);
     this.showToast(saved.ok?'已消耗 1 张训练之塔门票。':saved.message,saved.ok?'info':'error',2400);
   };
 
@@ -157,7 +157,7 @@
       return '<div class="detail-row"><span>'+escape(entry.name)+'</span><b>经验 +'+gained+' · 职业经验 +'+entry.mastery+level+'</b></div>';
     }).join('');
     this.openOverlay('<div class="modal-kicker">TRAINING TOWER</div><h2 class="modal-title" id="overlay-title">'+
-      (result.complete?'训练完成':'训练结束')+'</h2><p class="modal-sub">已击败 '+result.defeated+' / '+T.ENEMY_COUNT+' 个史莱姆</p><div class="modal-section">'+rows+
+      (result.complete?'训练完成':'训练结束')+'</h2><p class="modal-sub">已击败 '+result.defeated+' / '+battle.mission.enemyCount+' 个史莱姆</p><div class="modal-section">'+rows+
       '</div><p class="modal-sub" role="status">'+escape(saved.ok?'营地进度已自动保存。':saved.message)+'</p><div class="modal-actions"><button type="button" class="modal-btn primary" data-training-return>返回休憩之地</button></div>','',false);
     const button=this.dom.overlayCard.querySelector('[data-training-return]');
     button.onclick=()=>{

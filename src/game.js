@@ -434,7 +434,7 @@
       if(talentHealing)changes.push({id:caster.id,amount:talentHealing,talent:'同心'});
       this.markActed(caster);MyGO.Inventory.sync(caster);
       let growth=this.isTraining?null:MyGO.Growth.award(caster,MyGO.Growth.supportExp(caster,spellId,this.turn));
-      if(MyGO.Mastery)growth=MyGO.Mastery.attachReport(caster,growth,MyGO.Mastery.award(caster,this.isTraining?2:1));
+      if(MyGO.Mastery)growth=MyGO.Mastery.attachReport(caster,growth,MyGO.Mastery.award(caster,this.masteryMultiplier??1));
       return {spell:s,changes,talentHealing,resourcePreserved,affected:affected.map(u=>u.id).concat(talentHealing?[caster.id]:[]),experience:growth?[growth]:[]};
     }
 
@@ -1067,7 +1067,7 @@
         const amount=MyGO.Growth.combatExp(before,enemy,damage,killed);
         const bonus=this.stage===4&&u.id==='soyo'&&enemy.id==='dark_soyo'&&killed;
         let report=this.isTraining?null:MyGO.Growth.award(u,amount,bonus?2:1);
-        if(MyGO.Mastery)report=MyGO.Mastery.attachReport(u,report,MyGO.Mastery.award(u,this.isTraining?2:1));
+        if(MyGO.Mastery)report=MyGO.Mastery.attachReport(u,report,MyGO.Mastery.award(u,this.masteryMultiplier??1));
         if(bonus)this.soyoBossBonus=true;
         if(report){if(bonus)report.bonus='直面过去 · 击破经验 ×2';reports.push(report);}
       }

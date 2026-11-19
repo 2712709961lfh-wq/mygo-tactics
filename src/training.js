@@ -2,7 +2,10 @@
 (function (global) {
   'use strict';
   const M=global.MyGO;
-  const ENEMY_COUNT=30;
+  const ENEMY_COUNT=20;
+  const MASTERY_MULTIPLIER=4;
+  const SNAPSHOT_VERSION=2;
+  const enemyCountByVersion=new Map([[1,30],[SNAPSHOT_VERSION,ENEMY_COUNT]]);
   const statKeys=['maxHp','str','mag','dex','spd','lck','def','res','move'];
 
   function trainees(campaign){
@@ -24,7 +27,7 @@
     return Math.ceil(M.Growth.killExp(unit,{level:unit.level,expClassBase:30})-1e-9);
   }
 
-  function arena(rng){
+  function arena(rng,enemyCount){
     const cols=rng.int(18,20), rows=rng.int(14,16);
     const pillarColumn=rng.int(1,3), pillarRow=rng.int(1,3);
     const tiles=Array.from({length:rows},(_,y)=>Array.from({length:cols},(_,x)=>{
@@ -40,7 +43,7 @@
       const at=rng.int(0,i);
       [points[i],points[at]]=[points[at],points[i]];
     }
-    return {map:{cols,rows,tiles,decor:[]},spawns,enemies:points.slice(0,ENEMY_COUNT)};
+    return {map:{cols,rows,tiles,decor:[]},spawns,enemies:points.slice(0,enemyCount)};
   }
 
   function slimeStats(hero,rng){
@@ -76,19 +79,24 @@
   }
 
   class TrainingGame extends M.Game {
-    constructor(campaign,ids,seed){
+    get masteryMultiplier(){return MASTERY_MULTIPLIER;}
+
+    constructor(campaign,ids,seed,snapshotVersion=SNAPSHOT_VERSION){
       if(!M.Shop.trainingUnlocked(campaign)||!campaign.retreat||campaign.phase==='defeat'||
         !Array.isArray(ids)||ids.length!==2||new Set(ids).size!==2||!ids.every(id=>trainees(campaign).some(u=>u.id===id))) {
         throw Error('请选择两位可出战的同伴。');
       }
       if(!Number.isInteger(seed)||seed<1||seed>0xffffffff)throw Error('训练地图种子无效。');
+      const enemyCount=enemyCountByVersion.get(snapshotVersion);
+      if(!enemyCount)throw Error('训练存档版本无效。');
       super({seed});
       this.stage=0;
       this.isTraining=true;
       this.campaign=campaign;
       this.seed=seed;
       this.traineeIds=ids.slice();
-      const setup=arena(this.rng);
+      this.snapshotVersion=snapshotVersion;
+      const setup=arena(this.rng,enemyCount);
       this.map=setup.map;
       Object.defineProperty(this.map,'units',{configurable:true,get:()=>this.units});
       const participants=ids.map(id=>campaign.getUnit(id));
@@ -106,7 +114,7 @@
       this.convoy=[];
       this.gold=0;
       this.mission={chapter:'TRAINING',chapterJp:'演练',chapterEn:'TRAINING TOWER',title:'训练之塔',subtitle:'双人演练 · 随机战场',
-        mapName:'塔内试炼场',objective:'击败全部 30 个史莱姆',gateHint:'两位同伴都倒下时，本次训练结束。',enemyCount:ENEMY_COUNT};
+        mapName:'塔内试炼场',objective:'击败全部 '+enemyCount+' 个史莱姆',gateHint:'两位同伴都倒下时，本次训练结束。',enemyCount};
     }
 
     static start(campaign,ids,seed){
@@ -144,24 +152,25 @@
         const growth=complete?M.Growth.award(unit,sameLevelExp(unit)):null;
         return {name:unit.name,mastery,growth};
       });
-      this.settlement={complete,defeated:ENEMY_COUNT-this.livingCount('enemy'),party};
+      this.settlement={complete,defeated:this.mission.enemyCount-this.livingCount('enemy'),party};
       return this.settlement;
     }
 
     serialize(){
       const snapshot=this.campaign.serialize();
       if(this.settlement)return snapshot;
-      return {...snapshot,training:{version:1,seed:this.seed,ids:this.traineeIds.slice(),turn:this.turn,
+      return {...snapshot,training:{version:this.snapshotVersion,seed:this.seed,ids:this.traineeIds.slice(),turn:this.turn,
         rngState:this.rng.serialize(),units:this.units.map(unit=>({id:unit.id,x:unit.x,y:unit.y,hp:unit.hp,
           dead:unit.dead,acted:unit.acted,alerted:unit.alerted,talentSwapReady:!!unit.talentSwapReady,
           talentAttacked:!!unit.talentAttacked,talentAttackCount:unit.talentAttackCount||0,...M.Inventory.pack(unit)}))}};
     }
 
     static fromSnapshot(campaign,snapshot){
-      if(!snapshot||snapshot.version!==1||!Number.isInteger(snapshot.turn)||snapshot.turn<1||
+      const enemyCount=enemyCountByVersion.get(snapshot?.version);
+      if(!enemyCount||!Number.isInteger(snapshot.turn)||snapshot.turn<1||
         !Number.isInteger(snapshot.rngState)||snapshot.rngState<1||snapshot.rngState>0xffffffff||
-        !Array.isArray(snapshot.units)||snapshot.units.length!==ENEMY_COUNT+2)throw Error('训练存档数据无效。');
-      const battle=new TrainingGame(campaign,snapshot.ids,snapshot.seed);
+        !Array.isArray(snapshot.units)||snapshot.units.length!==enemyCount+2)throw Error('训练存档数据无效。');
+      const battle=new TrainingGame(campaign,snapshot.ids,snapshot.seed,snapshot.version);
       const ids=new Set(), occupied=new Set();
       for(const state of snapshot.units){
         const unit=battle.getUnit(state?.id);
@@ -187,5 +196,5 @@
     }
   }
 
-  M.Training=Object.freeze({Game:TrainingGame,trainees,ticketCount,entryReason,sameLevelExp,ENEMY_COUNT});
+  M.Training=Object.freeze({Game:TrainingGame,trainees,ticketCount,entryReason,sameLevelExp,ENEMY_COUNT,MASTERY_MULTIPLIER});
 })(window);
