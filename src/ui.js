@@ -1343,7 +1343,7 @@
         ' · 地形回避 +' + preview.terrainAvoid + '</span>' +
         (preview.canCounter ? '<div class="forecast-strip counter-forecast"><span>反击命中<b>' + preview.counter.hit + '%</b></span>' +
           '<span>反击伤害<b class="damage">' + damageText(target.id) + '</b></span>' +
-          '<span>反击暴击<b>' + preview.counter.crit + '%</b></span></div>'
+          '<span>反击暴击<b>' + preview.counter.crit + '%'+(preview.counter.critAfterDodge!==undefined?'（闪避后 '+preview.counter.critAfterDodge+'%）':'')+'</b></span></div>'
           : '<span class="hint-line">无法反击 · ' + esc(preview.counterReason) + '</span>') +
         '<span class="hint-line">攻速 ' + preview.attackSpeed + ' / ' + preview.defenderAttackSpeed +
         ' · ' + preview.order.map(s => (s.attackerId === active.id ? '我方' : '敌方') +
@@ -1630,7 +1630,6 @@
         if(strike.talentHealed){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('战斗爽 +'+strike.talentHealed,actor.x,actor.y-0.5,'#bcebd7',11);}
         if(strike.resourcePreserved){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('爱笑女孩 · 未消耗次数',actor.x,actor.y-0.8,'#f5d7eb',10);}
         if(strike.angel){
-          const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('天使 −'+strike.angel.cost+' HP',actor.x,actor.y-0.5,'#f5d7eb',11);
           for(const c of strike.angel.healing){const u=this.game.getUnit(c.id);this.renderer.floatText('天使 +'+c.amount,u.x,u.y-0.5,'#bcebd7',11);}
         }
         if (strike.hit) {
@@ -1921,13 +1920,15 @@
       const rows = result.strikes.map((s,i) => '<div class="exchange-strike ' + (s.attackerSide !== 'enemy' ? 'is-player' : 'is-enemy') + '">' +
         '<span class="exchange-order">' + (i+1) + '</span><div><strong>' + label[s.kind] + ' · ' + esc(s.attackerName) +
         '</strong><small>→ ' + esc(s.defenderName) + ' · ' + esc(s.weaponName) + ' · 命中 ' + s.hitChance + '% · 暴击 ' + s.critChance + '%' +
+        (s.haqiBonus?' · 哈气：必杀＋15':'')+
+        (s.confident?' · 自信者光芒：武器威力×2':'')+
         (s.masteryProcs?.length?' · '+esc(s.masteryProcs.join(' / ')):'')+
         (s.masteryHealing?' · 生命吸收回复 '+s.masteryHealing+' HP':'')+
         (s.healed ? ' · 吸取回复 ' + s.healed : '') +
         (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') +
         (s.talentDamageBonus ? ' · 拳拳到肉：伤害＋' + s.talentDamageBonus*(s.crit?MyGO.CONFIG.COMBAT.critMultiplier:1) : '') +
         (s.resourcePreserved ? ' · 爱笑女孩：未消耗次数' : '') +
-        (s.angel ? ' · 天使：自身−'+s.angel.cost+' HP，'+s.angel.healing.map(c=>esc(this.game.getUnit(c.id)?.name||c.id)+'＋'+c.amount+' HP').join('、') : '') + '</small></div>' +
+        (s.angel ? ' · 天使：'+s.angel.healing.map(c=>esc(this.game.getUnit(c.id)?.name||c.id)+'＋'+c.amount+' HP').join('、') : '') + '</small></div>' +
         '<b class="' + (s.crit ? 'crit-text' : s.hit ? 'dmg-text' : 'miss-text') + '">' +
         (s.hit ? (s.crit ? '暴击 ' : '') + s.finalDamage : 'MISS') + '</b></div>').join('');
       const hp = (name,before,after,max) => '<div class="result-hpbar"><div class="result-hp-label"><span>' + esc(name) +

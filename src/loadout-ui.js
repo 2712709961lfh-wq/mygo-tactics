@@ -96,11 +96,12 @@
     this.drawPortrait(this.dom.formationDetail.querySelector('[data-loadout-portrait]'),u,true);this.renderPoseDock(u);
   };
 
-  const UP=M.UI.prototype,baseAction=UP.renderActionSide;
+  const UP=M.UI.prototype;
   const baseUnitInfo=UP.renderUnitInfo;
   UP.renderUnitInfo=function(u){baseUnitInfo.call(this,u);if(!u)return;
     if(M.Talents&&u.side!=='enemy')this.dom.infoBody.insertAdjacentHTML('beforeend',talentSummary(u));
     const guard=M.Talents?.guardBonus(u,this.game.map)||0;
+    if(M.Talents?.defBonus(u))this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">拿好武器 · 守备＋3、命中＋10</span>');
     if(guard)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">天赋守护 · 守备／魔防＋'+guard+'</span>');
     const line=this.dom.infoBody.querySelector('.weapon-line');
     if(line&&!u.weapon.cannotAttack)line.textContent+=' · '+(u.weapon.kind==='unarmed'?'空手 · 无耐久消耗':u.weapon.kind==='spell'?'剩余 '+u.spellUses[u.weaponId]+'/'+u.weapon.uses+' 次':'耐久 '+(u.inventory.find(i=>i.id===u.weaponId&&i.uses>0)?.uses||0)+'/'+u.weapon.uses);
@@ -109,36 +110,7 @@
     for(const [id,n] of Object.entries(u.status))if(n&&id!=='frostFresh'&&!(M.Talents?.immune(u)&&['defDown','spdDown','moveDown','talentResDown','frostSpeedDown','masterySealDef','masterySealRes'].includes(id)))this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(labels[id]||id)+(id==='ward'?'＋'+n:id==='frostSpeedDown'?' · 剩余'+n+'回合':'')+'</span>');
     if(u.equippedAccessory)this.dom.infoTags.insertAdjacentHTML('beforeend','<span class="tag">'+esc(I.item(u.equippedAccessory).name)+'</span>');
   };
-  UP.renderActionSide=function(u){baseAction.call(this,u);
-    if(u.id==='anon'&&M.Talents?.active(u,3)){
-      const swap=document.createElement('button');swap.type='button';swap.className='action-btn';swap.textContent='待机后交换 · 幸福者退让';
-      swap.onclick=()=>{this.game.markActed(u);this.resetSelection({silent:true});this.updateAll();this.showTalentSwap(u);};this.dom.actionButtons.appendChild(swap);
-    }
-  };
-  UP.showTalentSwap=function(u){
-    if(this.busy||this.dom.overlayRoot?.hidden===false)return;
-    const targets=this.game.talentSwapTargets(u);if(!targets.length){this.game.skipTalentSwap(u);this.updateAll();return;}
-    this.openOverlay('<div class="modal-kicker">PERSONAL TALENT 3</div><h2 class="modal-title" id="overlay-title">幸福者退让 · 交换位置</h2><p class="modal-sub">爱音本次未攻击，可与一名相邻队友交换位置。队友保留原有行动状态，爱音仍为已行动。</p><div class="battle-loadout-list">'+targets.map(t=>'<button class="battle-loadout-row" data-talent-swap="'+esc(t.id)+'"><span><strong>'+esc(t.name)+'</strong><small>位置 '+(t.x+1)+','+(t.y+1)+' · '+(t.acted?'已行动':'未行动')+'</small></span><b>交换</b></button>').join('')+'</div><div class="modal-actions"><button class="modal-btn" data-talent-swap-skip>不交换</button></div>','loadout-modal',true);
-    this.dom.overlayCard.querySelector('[data-talent-swap-skip]').onclick=()=>{this.game.skipTalentSwap(u);this.closeOverlay();this.updateAll();};
-    this.dom.overlayCard.querySelectorAll('[data-talent-swap]').forEach(b=>b.onclick=()=>{
-      const target=this.game.getUnit(b.dataset.talentSwap);
-      try{this.game.talentSwap(u,target);this.renderer.snapUnit(u);this.renderer.snapUnit(target);this.closeOverlay();this.resetSelection({silent:true});this.updateAll();this.showToast('幸福者退让：爱音与'+target.name+'交换了位置。','success',2400);}
-      catch(err){this.closeOverlay();this.showToast(err.message,'error',2200);this.updateAll();}
-    });
-  };
-  const baseWait=UP.waitActiveUnit,baseInspect=UP.inspectUnit;
-  UP.waitActiveUnit=function(){const u=this.game.getUnit(this.activeId);baseWait.call(this);if(u&&this.game.talentSwapTargets(u).length)this.showTalentSwap(u);};
-  UP.inspectUnit=function(u){baseInspect.call(this,u);if(this.game.talentSwapTargets(u).length){
-    const b=document.createElement('button');b.type='button';b.className='action-btn primary';b.textContent='幸福者退让 · 交换位置';b.onclick=()=>this.showTalentSwap(u);this.dom.actionButtons.appendChild(b);
-  }};
-  UP.offerTalentSwap=function(){
-    if(this.busy||this.chapterOpen||this.mode!=='idle'||this.game.isOver()||this.dom.overlayRoot?.hidden!==true||
-      M.entry?.ui===this&&(!M.entry.dom.root.hidden||!M.entry.dom.formation.hidden))return;
-    const u=this.game.getUnit('anon');if(this.game.talentSwapTargets(u).length)this.showTalentSwap(u);
-  };
-  const baseUpdate=UP.updateAll,baseBusy=UP.setBusy;
-  UP.updateAll=function(){baseUpdate.call(this);this.offerTalentSwap();};
-  UP.setBusy=function(value){baseBusy.call(this,value);if(!value)this.offerTalentSwap();};
+  UP.offerTalentSwap=function(){};
   UP.supportSpells=function(u,healing){
     if(!I.magicAllowed(u))return [];
     return u.learnedSpells.filter(id=>{

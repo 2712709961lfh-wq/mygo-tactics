@@ -187,7 +187,7 @@
         M.Inventory.restore(unit,state,false);
         if(state.hp>unit.maxHp)throw Error('训练生命值无效。');
         Object.assign(unit,{x:state.x,y:state.y,hp:state.hp,dead:state.dead,acted:state.acted,alerted:state.alerted,
-          talentSwapReady:!!state.talentSwapReady,talentAttacked:!!state.talentAttacked,talentAttackCount:state.talentAttackCount});
+          talentSwapReady:false,talentAttacked:!!state.talentAttacked,talentAttackCount:state.talentAttackCount});
       }
       battle.turn=snapshot.turn;
       battle.rng=M.RNG.restore(snapshot.rngState);

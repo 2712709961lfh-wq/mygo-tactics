@@ -46,20 +46,12 @@ test('幸运猫对物理和魔法攻击都增加5闪避百分点，未觉醒无�
     const p=C.preview(a,u,g.map);u.level=14;const q=C.preview(a,u,g.map);u.level=15;
     assert.equal(p.targetAvoid,q.targetAvoid+5);assert.equal(p.hit,Math.max(M.CONFIG.COMBAT.minHit,q.hit-5));}
 });
-test('队友守护仅作用于紧邻队友，移动、倒下、撤离即时失效，预告与实战一致',()=>{
-  const g=fixture(),t=level(g.getUnit('taki'),20),u=g.getUnit('tomori'),a=enemy(g);
-  Object.assign(t,{x:5,y:5});Object.assign(u,{x:6,y:5});Object.assign(a,{x:7,y:5});
-  for(const magic of [false,true]){
-    a.weapon=M.Inventory.weapons[magic?'fire':'iron_sword'];
-    const p=C.preview(a,u,g.map);t.x=4;const q=C.preview(a,u,g.map);t.x=5;
-    assert.equal(p.defense,q.defense+4);assert.equal(C.defenseOf(u,g.map,magic),p.defense);
-  }
-  assert.equal(T.guardBonus(t,g.map),0);assert.equal(T.guardBonus(a,g.map),0);
-  for(const delta of [[1,1],[2,0]]){Object.assign(u,{x:t.x+delta[0],y:t.y+delta[1]});assert.equal(T.guardBonus(u,g.map),0);}
-  Object.assign(u,{x:6,y:5});for(const flag of ['dead','escaped']){t[flag]=true;assert.equal(T.guardBonus(u,g.map),0);t[flag]=false;}
-  t.hp=0;assert.equal(T.guardBonus(u,g.map),0);t.hp=t.maxHp;t.level=19;assert.equal(T.guardBonus(u,g.map),0);t.level=20;
-  a.weapon={...M.Inventory.weapons.iron_sword};a.inventory=[M.Inventory.make('iron_sword')];a.equippedWeapon='iron_sword';a.spd=0;u.spd=0;
-  const r=C.rollRound(a,u,g.map,{int:()=>100});assert.equal(r.strikes[0].defense,C.preview(a,u,g.map).defense);
+test('拿好武器只提升持斧立希自身守备，不再给相邻队友提供守护',()=>{
+  const g=fixture(),t=level(g.getUnit('taki'),20),u=g.getUnit('tomori');
+  Object.assign(t,{x:5,y:5});Object.assign(u,{x:6,y:5});t.weapon=M.Inventory.weapons.iron_axe;
+  assert.equal(T.guardBonus(u,g.map),0);assert.equal(T.guardBonus(t,g.map),0);
+  assert.equal(C.defenseOf(t,g.map,false),t.def+3);assert.equal(C.defenseOf(t,g.map,true),t.res);
+  t.weapon=M.Inventory.weapons.iron_sword;assert.equal(C.defenseOf(t,g.map,false),t.def);
 });
 test('爆头只在弓箭出手时提供必杀+10，不改变技巧与命中',()=>{
   const g=fixture(),u=level(g.getUnit('anon'),14);u.dex=10;u.lck=0;u.level=15;u.weapon=M.Inventory.weapons.iron_bow;

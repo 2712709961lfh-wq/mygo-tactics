@@ -106,10 +106,10 @@ test('存档保留减速剩余回合和反击计时，拒绝无效状态，跨�
   }
 });
 
-test('哈气忽略并清理冰霜减速，复原可以解除减速及计时标记',()=>{
+test('哈气不再免疫冰霜减速，复原仍可解除减速及计时标记',()=>{
   const {g,x}=fixture(),r=level(g.getUnit('rana'),20);
-  assert(T.immune(r));assert(!T.afterDamage(x,r,5,true,'player'));
-  r.status={frostSpeedDown:2,frostFresh:1};const spd=r.spd;assert.equal(C.speedOf(r),spd);T.sync(r);assert(!r.status.frostSpeedDown);assert(!r.status.frostFresh);
+  assert(!T.immune(r));assert(T.afterDamage(x,{...r,side:'enemy'},5,true,'player'));
+  r.status={frostSpeedDown:2,frostFresh:1};const spd=r.spd;assert.equal(C.speedOf(r),Math.max(0,spd-6));T.sync(r);assert.equal(r.status.frostSpeedDown,2);assert.equal(r.status.frostFresh,1);
   const caster=level(g.getUnit('nijika'),25),target=g.getUnit('tomori');M.Classes.apply(caster,'priest');
   if(!caster.learnedSpells.includes('restore'))caster.learnedSpells.push('restore');caster.spellUses.restore=5;
   Object.assign(caster,{x:4,y:4});Object.assign(target,{x:5,y:4});target.status={frostSpeedDown:2,frostFresh:1};

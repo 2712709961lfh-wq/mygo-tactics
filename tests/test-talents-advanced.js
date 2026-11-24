@@ -23,7 +23,7 @@ test('八人20/25级分别觉醒一次，升级报告含正确天赋槽位',()=>
   assert(!T.active({id:'tomori',side:'enemy',level:99},2));assert(!T.active({id:'taki',side:'enemy',level:99},3));
 });
 test('固定能力奖励独立于随机成长，旧档、转职与跨章重建均不叠加',()=>{
-  const g=game(),expected={xueyue:{spd:5},tomori:{spd:4},soyo:{mag:4,res:5},taki:{def:4,res:4},anon:{dex:5},rana:{dex:6},nina:{},nijika:{}};
+  const g=game(),expected={xueyue:{spd:5},tomori:{spd:4},soyo:{mag:4,res:5},taki:{def:5,res:5},anon:{dex:5},rana:{dex:6},nina:{},nijika:{}};
   for(const id of Object.keys(T.data).filter(id=>g.getUnit(id))){
     const u=level(g.getUnit(id),25);for(const k of M.GrowthData.keys)assert.equal(u[k],u.growthBase.stats[k]+u.growthGains[k]+(expected[id][k]||0)+(k==='dex'?1:k==='maxHp'?5:0),id+'/'+k);
     for(let n=0;n<3;n++)T.sync(u);
@@ -47,24 +47,21 @@ test('有在努力按每次经验结算向上取整，包含战斗和治疗，20
   Object.assign(caster,{x:4,y:4});Object.assign(target,{x:5,y:4,hp:1});const base=G.supportExp(caster,'heal',h.turn);
   assert.equal(h.castSupport(caster,'heal',target).experience[0].gained,Math.ceil(base*13/10));
 });
-test('哈气阻止新能力削弱并忽略旧削弱，保留伤害、沉默及正常装备负重',()=>{
+test('哈气改为闪避反击必杀，乐奈不再免疫能力削弱',()=>{
   const g=fixture(),u=level(g.getUnit('rana'),20),a=enemy(g);Object.assign(u,{x:4,y:4});
-  const spd=C.speedOf(u),def=C.defenseOf(u,g.map,false),res=C.defenseOf(u,g.map,true),reach=g.getReachable(u).size;
-  u.status={defDown:1,spdDown:1,moveDown:1,talentResDown:2};
-  assert.equal(C.speedOf(u),spd);assert.equal(C.defenseOf(u,g.map,false),def);assert.equal(C.defenseOf(u,g.map,true),res);assert.equal(g.getReachable(u).size,reach);
-  T.sync(u);assert.equal(Object.keys(u.status).length,0);
-  for(const id of ['mire','swarm','banshee'])M.Inventory.useEffects(a,u,M.Magic.get(id),4,true);
-  assert.equal(Object.keys(u.status).length,0);M.Inventory.useEffects(a,u,M.Magic.get('silence'),0,true);assert.equal(u.status.silence,1);
-  u.level=19;M.Inventory.useEffects(a,u,M.Magic.get('swarm'),0,true);assert.equal(C.speedOf(u),Math.max(0,spd-5));
-  u.level=20;equip(u,'steel_lance');assert(C.attackSpeedOf(u)<=C.speedOf(u));
+  const spd=C.speedOf(u),def=C.defenseOf(u,g.map,false),res=C.defenseOf(u,g.map,true);
+  u.status={defDown:1,spdDown:1,moveDown:1,talentResDown:2};T.sync(u);
+  assert(!T.immune(u));assert.equal(C.speedOf(u),Math.max(0,spd-5));
+  assert.equal(C.defenseOf(u,g.map,false),Math.max(0,def-5));assert.equal(C.defenseOf(u,g.map,true),Math.max(0,res-5));
+  assert(u.status.spdDown);M.Inventory.useEffects(a,u,M.Magic.get('silence'),0,true);assert.equal(u.status.silence,1);
 });
 test('威吓只减轻仁菜主动交战的敌方反击及追击，暴击后取整，预告与实战相符',()=>{
   const g=fixture(),n=level(g.getUnit('nina'),20),e=enemy(g);Object.assign(n,{x:4,y:4,str:0,spd:0,def:0,hp:999,maxHp:999,lck:0});
   Object.assign(e,{x:5,y:4,str:6,spd:20,hp:999,maxHp:999,dex:200,lck:200});equip(n,'iron_sword');equip(e,'iron_sword');
-  const base=C.preview(e,n,g.map),p=C.forecast(n,e,g.map);assert.equal(p.counter.damage,Math.floor(base.damage*3/4));
-  assert.equal(p.counter.critDamage,Math.floor(base.critDamage*3/4));
+  const base=C.preview(e,n,g.map),p=C.forecast(n,e,g.map);assert.equal(p.counter.damage,Math.floor(base.damage*67/100));
+  assert.equal(p.counter.critDamage,Math.floor(base.critDamage*67/100));
   const r=C.rollRound(n,e,g.map,{int:()=>1}),incoming=r.strikes.filter(s=>s.attackerId===e.id);assert(incoming.length>=2);
-  for(const s of incoming){assert.equal(s.damageFactor,.75);assert.equal(s.finalDamage,Math.floor(base.critDamage*3/4));}
+  for(const s of incoming){assert.equal(s.damageFactor,.67);assert.equal(s.finalDamage,Math.floor(base.critDamage*67/100));}
   const hp=n.hp;g.applyCombat(r);assert.equal(n.hp,hp-incoming.reduce((sum,s)=>sum+s.finalDamage,0));
   const reverse=C.forecast(e,n,g.map);assert.equal(reverse.damage,base.damage);n.level=19;assert.equal(C.forecast(n,e,g.map).counter.damage,base.damage);
 });
@@ -102,30 +99,21 @@ test('魔力打击在交战结束后削弱存活目标，不影响本轮追击�
   T.afterMagic(s,e,false,true);assert(!e.status.talentResDown);T.afterMagic(s,e,true,false);assert(!e.status.talentResDown);
   e.hp=0;e.dead=true;T.afterMagic(s,e,true,true);assert(!e.status.talentResDown);
 });
-test('护灯无距离限制，与紧邻守护叠加，任一角色倒下或离场即时失效',()=>{
+test('护灯无距离限制，相邻不再叠加守护，任一角色倒下或离场即时失效',()=>{
   const g=fixture(),t=level(g.getUnit('taki'),25),lamp=g.getUnit('tomori');Object.assign(t,{x:4,y:4});Object.assign(lamp,{x:10,y:10});
-  assert.equal(T.guardBonus(lamp,g.map),4);assert.equal(C.strOf(t,g.map),t.str+4);
-  Object.assign(lamp,{x:5,y:4});assert.equal(T.guardBonus(lamp,g.map),8);assert.equal(T.guardBonus(t,g.map),0);
+  assert.equal(T.guardBonus(lamp,g.map),5);assert.equal(C.strOf(t,g.map),t.str+5);
+  Object.assign(lamp,{x:5,y:4});assert.equal(T.guardBonus(lamp,g.map),5);assert.equal(T.guardBonus(t,g.map),0);
   for(const id of ['taki','tomori'])for(const flag of ['dead','escaped']){const u=g.getUnit(id);u[flag]=true;assert.equal(T.guardBonus(lamp,g.map),0);assert.equal(C.strOf(t,g.map),t.str);u[flag]=false;}
-  lamp.hp=0;assert.equal(C.strOf(t,g.map),t.str);lamp.hp=lamp.maxHp;t.level=24;assert.equal(T.guardBonus(lamp,g.map),4);assert.equal(C.strOf(t,g.map),t.str);
+  lamp.hp=0;assert.equal(C.strOf(t,g.map),t.str);lamp.hp=lamp.maxHp;t.level=24;assert.equal(T.guardBonus(lamp,g.map),0);assert.equal(C.strOf(t,g.map),t.str);
 });
-test('幸福者退让在非攻击行动后可选相邻队友，交换一次并保留双方行动状态',()=>{
-  const g=fixture(),a=level(g.getUnit('anon'),25),t=g.getUnit('tomori'),e=enemy(g);Object.assign(a,{x:4,y:4});Object.assign(t,{x:5,y:4,acted:false});Object.assign(e,{x:4,y:5});
-  assert.equal(g.talentSwapTargets(a).length,0);g.markActed(a);assert(g.talentSwapTargets(a).includes(t));assert(!g.talentSwapTargets(a).includes(e));
-  const r=g.talentSwap(a,t);assert.equal(r.targetId,t.id);assert.equal(a.x,5);assert.equal(t.x,4);assert(a.acted);assert(!t.acted);assert.equal(g.talentSwapTargets(a).length,0);assert.throws(()=>g.talentSwap(a,t));
-  g.markActed(a);assert.equal(g.talentSwapTargets(a).length,0);
-  g.resetActed('player');g.markActed(a,true);assert.equal(g.talentSwapTargets(a).length,0);
-  g.resetActed('player');a.level=24;g.markActed(a);assert.equal(g.talentSwapTargets(a).length,0);
+test('自信者光芒替换换位，旧档残留换位机会读档清除',()=>{
+  const g=game(),a=level(g.getUnit('anon'),25);assert.equal(T.get(a,3).name,'自信者光芒');
+  g.markActed(a);assert.equal(g.talentSwapTargets(a).length,0);assert(!a.talentSwapReady);
+  const save=JSON.parse(JSON.stringify(g.serialize()));save.units.find(u=>u.id==='anon').talentSwapReady=true;
+  const h=game();h.restore(save);assert(!h.getUnit('anon').talentSwapReady);assert.equal(h.talentSwapTargets(h.getUnit('anon')).length,0);
+  assert.throws(()=>h.talentSwap(h.getUnit('anon'),h.getUnit('tomori')));
 });
-test('交换支持用药等非攻击行动、存档恢复、放弃与下回合重置，阻挡地形和斜角不可交换',()=>{
-  const g=fixture(),a=level(g.getUnit('anon'),25),t=g.getUnit('tomori');Object.assign(a,{x:4,y:4,hp:1});Object.assign(t,{x:5,y:4});
-  a.inventory.push(M.Inventory.make('vulnerary'));g.useMedicine(a,a.inventory.length-1);assert(g.talentSwapTargets(a).includes(t));
-  g.map.tiles[4][5]='wall';assert(!g.talentSwapTargets(a).includes(t));g.map.tiles[4][5]='plain';t.y=5;assert(!g.talentSwapTargets(a).includes(t));t.y=4;
-  for(const u of g.living('player'))u.acted=true;assert(!g.allPlayerActed());g.skipTalentSwap(a);assert(g.allPlayerActed());
-  g.resetActed('player');g.markActed(a);g.beginEnemyPhase();assert.equal(g.talentSwapTargets(a).length,0);g.beginNextPlayerPhase();assert(!a.talentSwapReady);assert(!a.talentAttacked);
-  const h=game(),anon=level(h.getUnit('anon'),25);h.markActed(anon);const save=JSON.parse(JSON.stringify(h.serialize())),j=game();j.restore(save);assert(j.getUnit('anon').talentSwapReady);
-  h.skipTalentSwap(anon);j.restore(JSON.parse(JSON.stringify(h.serialize())));assert(!j.getUnit('anon').talentSwapReady);
-});
+
 test('三档天赋全部显示等级与锁定状态，未指定角色和敌人无额外天赋',()=>{
   const g=game(),u=level(g.getUnit('tomori'),20),ctx={loadoutTab:'growth',players:()=>[u],selectedUnitId:u.id,dom:{formationDetail:{innerHTML:''}},renderPoseDock(){}};
   M.EntryScreen.prototype.renderFormationDetail.call(ctx);const html=ctx.dom.formationDetail.innerHTML;

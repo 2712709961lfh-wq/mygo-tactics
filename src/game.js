@@ -749,7 +749,7 @@
     markActed(unit,attacked=false) {
       if(!unit)return;
       unit.combatArtId=null;unit.talentAttacked=!!unit.talentAttacked||attacked;
-      if(!unit.acted)unit.talentSwapReady=unit.id==='anon'&&!!MyGO.Talents?.active(unit,3)&&!unit.talentAttacked;
+      unit.talentSwapReady=false;
       unit.acted=true;
     }
 
@@ -757,19 +757,10 @@
       for (const unit of this.living(side)){unit.acted=false;unit.talentAttacked=false;unit.talentSwapReady=false;}
     }
 
-    talentSwapTargets(unit) {
-      if(!unit||!this.isPlayerPhase()||unit.side!=='player'||unit.dead||unit.escaped||unit.hp<=0||!unit.acted||
-        !unit.talentSwapReady||unit.talentAttacked||unit.id!=='anon'||!MyGO.Talents?.active(unit,3))return [];
-      return this.living().filter(t=>t.id!==unit.id&&!t.escaped&&!Grid.hostile(t,unit)&&Grid.manhattan(unit,t)===1&&
-        Number.isFinite(Grid.movementCost(this.map,unit,t.x,t.y))&&Number.isFinite(Grid.movementCost(this.map,t,unit.x,unit.y)));
-    }
+    // Compatibility entry points for older saves and consumers. The swap talent was replaced.
+    talentSwapTargets(){return [];}
 
-    talentSwap(unit,target) {
-      if(!this.talentSwapTargets(unit).some(t=>t===target))throw Error('当前无法与该队友交换位置');
-      const {x,y}=unit;unit.x=target.x;unit.y=target.y;target.x=x;target.y=y;
-      unit.talentSwapReady=false;
-      this.refreshParkDiscovery();return {unitId:unit.id,targetId:target.id};
-    }
+    talentSwap(){throw Error('幸福者退让已替换为自信者光芒，无法交换位置');}
 
     skipTalentSwap(unit){
       if(unit?.id==='anon')unit.talentSwapReady=false;
@@ -1034,7 +1025,7 @@
         if (this.stage === 3 && defender.id === 'nina') this.ninaLost = true;
       }
       result.talentHealed=attacker?(MyGO.Talents?.onKill(attacker,defender,killed)||0):0;
-      result.angel=attacker?(MyGO.Talents?.onAngel(attacker,defender,killed,this.map)||null):null;
+      result.angel=attacker?(MyGO.Talents?.onAngel(attacker,defender,result,this.map)||null):null;
       if(attacker)MyGO.Talents?.onAttack(attacker,defender,result.weaponType||result.weaponSnapshot?.type||attacker.weapon?.type);
       result.applied = true;
       result.hpBeforeApply = before;
@@ -1460,7 +1451,7 @@
         unit.talentAttacked=!!saved.talentAttacked;
         if(saved.talentAttackCount!==undefined&&(!Number.isSafeInteger(saved.talentAttackCount)||saved.talentAttackCount<0||unit.id!=='nina'&&saved.talentAttackCount!==0))throw Error('存档拳拳到肉计数无效');
         unit.talentAttackCount=saved.talentAttackCount||0;
-        unit.talentSwapReady=unit.id==='anon'&&!!MyGO.Talents?.active(unit,3)&&unit.acted&&!unit.dead&&!unit.talentAttacked&&!!saved.talentSwapReady;
+        unit.talentSwapReady=false;
         unit.alerted = !!saved.alerted;
         MyGO.Inventory.restore(unit,saved,false);
         if (this.stage === 1 && unit.id === 'xueyue' && legacyJoined) {

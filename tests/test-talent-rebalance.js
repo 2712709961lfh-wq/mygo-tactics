@@ -20,13 +20,13 @@ function fixture(n=25){
 }
 function noCrit(){let n=0;return {int:()=>++n%3===0?100:1};}
 
-test('立希与虹夏在15/20级按新顺序解锁，自己与队友奖励互不提前生效',()=>{
+test('立希与虹夏在15/20级按新顺序解锁，固定与持斧奖励互不提前生效',()=>{
   const g=game(),t=level(g.getUnit('taki'),14),n=level(g.getUnit('nijika'),14),lamp=g.getUnit('tomori');
   Object.assign(t,{x:4,y:4});Object.assign(lamp,{x:5,y:4});const def=t.def,res=t.res;
   const r=G.award(t,G.required(14)-t.exp);assert.equal(r.levels[0].awakened.name,'自我防备');
-  assert.equal(t.def,def+r.levels[0].gains.def+4);assert.equal(t.res,res+r.levels[0].gains.res+4);
+  assert.equal(t.def,def+r.levels[0].gains.def+5);assert.equal(t.res,res+r.levels[0].gains.res+5);
   assert.equal(T.guardBonus(lamp,g.map),0);level(t,19);assert.equal(T.guardBonus(lamp,g.map),0);
-  const r2=G.award(t,G.required(19)-t.exp);assert.equal(r2.levels[0].awakened.name,'队友守护');assert.equal(T.guardBonus(lamp,g.map),4);
+  const r2=G.award(t,G.required(19)-t.exp);assert.equal(r2.levels[0].awakened.name,'拿好武器');assert.equal(T.guardBonus(lamp,g.map),0);t.weapon=I.weapons.iron_axe;assert.equal(T.defBonus(t),3);
   const heal=M.Magic.get('heal');assert.equal(T.rangeBonus(n,heal),0);
   const r3=G.award(n,G.required(14)-n.exp);assert.equal(r3.levels[0].awakened.name,'妈妈守护');assert.equal(T.rangeBonus(n,heal),2);
   n.hp=1;assert.equal(T.onSupport(n,heal,[{amount:2}]),0);level(n,19);n.hp=1;assert.equal(T.onSupport(n,heal,[{amount:2}]),0);
@@ -46,7 +46,7 @@ test('幸运猫的必杀回避对所有攻击生效，未觉醒和敌方不生�
   }
 });
 
-test('魔力打击同时削弱双防，取最强减益且可存读档、复原、免疫与到期',()=>{
+test('魔力打击同时削弱双防，取最强减益且可存读档、复原与到期',()=>{
   const {g,e}=fixture(),s=level(g.getUnit('soyo'),25);e.def=12;e.res=13;
   const def=C.defenseOf(e,g.map,false),res=C.defenseOf(e,g.map,true);
   assert(T.afterMagic(s,e,true,true));assert.equal(C.defenseOf(e,g.map,false),def-5);assert.equal(C.defenseOf(e,g.map,true),res-5);
@@ -54,7 +54,7 @@ test('魔力打击同时削弱双防，取最强减益且可存读档、复原�
   e.status.masterySealDef=1;e.status.masterySealRes=1;assert.equal(C.defenseOf(e,g.map,false),def-6);assert.equal(C.defenseOf(e,g.map,true),res-6);
   const packed=I.pack(e),copy=I.copy(e);I.restore(copy,packed,false);assert.equal(C.defenseOf(copy,g.map,false),def-6);
   const r=level(g.getUnit('rana'),20);r.status.talentResDown=2;const rd=C.defenseOf(r,g.map,false),rr=C.defenseOf(r,g.map,true);T.sync(r);
-  assert(!r.status.talentResDown);assert.equal(C.defenseOf(r,g.map,false),rd);assert.equal(C.defenseOf(r,g.map,true),rr);
+  assert.equal(r.status.talentResDown,2);assert.equal(C.defenseOf(r,g.map,false),rd);assert.equal(C.defenseOf(r,g.map,true),rr);
   const caster=level(g.getUnit('nijika'),25),target=g.getUnit('tomori');M.Classes.apply(caster,'priest');
   caster.learnedSpells.push('restore');caster.spellUses.restore=3;Object.assign(caster,{x:4,y:4});Object.assign(target,{x:5,y:4,status:{talentResDown:2}});
   assert(g.supportTargets(caster,'restore').includes(target));g.castSupport(caster,'restore',target);assert(!target.status.talentResDown);

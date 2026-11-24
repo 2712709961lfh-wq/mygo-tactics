@@ -166,7 +166,7 @@
     const C = M.Combat, map = this.ui.game.map, w = u.weapon;
     const need = M.Growth.required(u.level), p = M.Mastery.progress(u), arts = M.Mastery.availableArts(u);
     const total = C.statTotalOf(u), guard = M.Talents?.guardBonus(u,map) || 0;
-    const rows = [['力量',u.str,M.Talents?.strBonus(u,map)||0],['幸运',u.lck,0],['魔力',u.mag,0],['守备',u.def,guard],['技巧',u.dex,M.Talents?.dexBonus(u)||0],['魔防',u.res,guard],['速度',u.spd,0],['移动',u.move,0]];
+    const rows = [['力量',u.str,M.Talents?.strBonus(u,map)||0],['幸运',u.lck,0],['魔力',u.mag,0],['守备',u.def,guard+(M.Talents?.defBonus(u)||0)],['技巧',u.dex,M.Talents?.dexBonus(u)||0],['魔防',u.res,guard],['速度',u.spd,0],['移动',u.move,0]];
     const itemRow = (e,slot,equipped=false) => '<div class="sheet-item' + (equipped ? ' is-equipped' : '') + '"><span class="sheet-item-icon">' + icon(e) + '</span><strong>' + esc(e.name) + '</strong><span>' + uses(u,e,slot) + '</span></div>';
     const talentRows = M.Talents.list(u).map(t => skill(t.name,(t.slot === 0 ? '通用' : '个人') + ' · ' + (t.active ? '已觉醒' : 'Lv.' + t.level),t.description,t.active)).join('');
     const equipped = u.masteryEquipped.map(id => { const s = M.Mastery.abilities[id]; return skill(s.name,'已装备',s.description); }).join('');

@@ -90,24 +90,29 @@ test('魔力延伸影响攻击范围、反击、预告和实战，辅助/魔法�
   s.weaponTypes=['sword'];s.inventory=[I.make('levin_sword')];s.equippedWeapon='levin_sword';I.sync(s);assert.equal(s.weapon.range.join(','),'1,2');
   M.Classes.apply(s,'mage');s.equippedWeapon='fire';I.sync(s);assert.equal(s.weapon.range[1],3);
 });
-test('天使锁定预演只改副本，击破治疗所有存活队友且封顶，确认只结算一次',()=>{
+test('天使魔法必杀治疗我方15HP，包括自身，预演仅改副本，确认只结算一次',()=>{
   const {g,s,e,t}=fixture();const a=g.getUnit('anon'),dead=g.getUnit('soyo'),escaped=g.getUnit('rana');
-  t.hp=t.maxHp-8;a.hp=a.maxHp-2;dead.hp=0;dead.dead=true;escaped.hp=1;escaped.escaped=true;
-  e.hp=1;e.cannotCounter=true;s.hp=10;const before=g.units.map(u=>[u.id,u.hp]);
+  t.hp=t.maxHp-20;a.hp=a.maxHp-2;dead.hp=0;dead.dead=true;escaped.hp=1;escaped.escaped=true;
+  e.hp=1;e.cannotCounter=true;s.hp=10;s.lck=400;const before=g.units.map(u=>[u.id,u.hp]);
   const r=C.rollRound(s,e,g.map,{int:()=>1});assert.equal(JSON.stringify(g.units.map(u=>[u.id,u.hp])),JSON.stringify(before));
-  const angel=r.strikes[0].angel;assert.equal(angel.cost,2);assert.equal(angel.healing.find(c=>c.id===t.id).amount,5);assert.equal(angel.healing.find(c=>c.id===a.id).amount,2);
-  assert.equal(r.attackerHpAfter,8);g.applyCombat(r);assert.equal(s.hp,8);assert.equal(t.hp,t.maxHp-3);assert.equal(a.hp,a.maxHp);assert.equal(dead.hp,0);assert.equal(escaped.hp,1);
+  const angel=r.strikes[0].angel;assert(angel);assert.equal(angel.cost,undefined);
+  assert.equal(angel.healing.find(c=>c.id===t.id).amount,15);assert.equal(angel.healing.find(c=>c.id===a.id).amount,2);
+  assert.equal(r.attackerHpAfter,25);g.applyCombat(r);assert.equal(s.hp,25);assert.equal(t.hp,t.maxHp-5);assert.equal(a.hp,a.maxHp);assert.equal(dead.hp,0);assert.equal(escaped.hp,1);
   assert.equal(e.hp,0);assert.throws(()=>g.applyCombat(r),/已结算/);
 });
-test('天使支持反击击破，扣血最低保留1HP，队友全满/无队友/未觉醒/锁血/未击破不发动',()=>{
-  const {g,s,e,t}=fixture();s.hp=1;t.hp=1;e.hp=1;e.str=0;e.dex=-1000;s.def=999;
-  const r=C.rollRound(e,s,g.map,{int:()=>25});assert(r.strikes.some(x=>x.kind==='counter'&&x.angel));g.applyCombat(r);assert.equal(s.hp,1);assert.equal(t.hp,6);
-  for(const mode of ['full','alone','locked','floor','nonkill','miss']){
-    const f=fixture(mode==='locked'?24:25);if(mode!=='full')f.t.hp=1;if(mode==='alone')for(const u of f.g.units)if(u.id!==f.s.id&&u.side!=='enemy')u.escaped=true;
-    if(mode==='floor')f.e.hpFloor=1;f.e.hp=mode==='nonkill'?999:1;const hp=f.s.hp;
-    const hit=mode!=='miss',x={attackerId:f.s.id,defenderId:f.e.id,hit,finalDamage:hit?30:0};f.g.applyCombat(x);assert(!x.angel,mode);assert.equal(f.s.hp,hp,mode);
+
+test('天使反击必杀、非击杀及锁血也触发；普通命中、物理、未觉醒和落空不触发',()=>{
+  const {g,s,e,t}=fixture();s.hp=1;t.hp=1;e.hp=999;e.str=0;e.dex=-1000;s.def=999;s.lck=400;s.spd=e.spd;
+  let draws=0;const r=C.rollRound(e,s,g.map,{int:()=>++draws<=3?100:1});assert(r.strikes.some(x=>x.kind==='counter'&&x.angel));g.applyCombat(r);assert.equal(s.hp,16);assert.equal(t.hp,16);
+  for(const mode of ['normal','physical','locked','miss','floor','nonkill']){
+    const f=fixture(mode==='locked'?24:25);f.t.hp=1;f.s.hp=1;
+    if(mode==='floor')f.e.hpFloor=1;f.e.hp=mode==='nonkill'?999:1;
+    const hit=mode!=='miss',x={attackerId:f.s.id,defenderId:f.e.id,hit,crit:mode!=='normal',magic:mode!=='physical',finalDamage:hit?30:0};
+    f.g.applyCombat(x);const triggered=['floor','nonkill'].includes(mode);assert.equal(!!x.angel,triggered,mode);
+    assert.equal(f.t.hp,triggered?16:1,mode);assert.equal(f.s.hp,triggered?16:1,mode);
   }
 });
+
 test('当前击破升25级从下一次击破起发动，存档随机状态恢复后保留次数结果一致',()=>{
   const {g,s,e,t}=fixture(24);s.exp=G.required(24)-1;t.hp=1;e.hp=1;
   const r=g.rollCombat(s,e);g.applyCombat(r);assert.equal(s.level,25);assert(!r.strikes.some(x=>x.angel));assert.equal(t.hp,1);

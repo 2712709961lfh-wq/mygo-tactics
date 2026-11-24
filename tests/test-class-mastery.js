@@ -129,8 +129,8 @@ test('专精在交战结束后才解锁，不回头改变已锁定的本次交�
   const {g,u,e}=setup();u.level=30;M.Classes.apply(u,'dark_mage');u.classXp.dark_mage=99;u.dex=100;u.mag=1;e.res=999;e.str=0;e.maxHp=e.hp=300;
   const r=C.rollRound(u,e,g.map,low);assert.equal(r.masteryEffects.length,0);g.applyCombat(r);assert(A.has(u,'poison_strike'));assert.equal(e.hp,r.defenderHpAfter);assert(r.experience[0].mastery.unlocked.includes('poison_strike'));
 });
-test('战后封锁尊重哈气免疫，与其他减益取最大且可被复原清除',()=>{
-  const {g,u}=setup(),t=g.getUnit('rana');t.level=20;M.Talents.sync(t);t.status.masterySealDef=1;assert.equal(M.Talents.penalty(t,'masterySealDef',6),0);M.Talents.sync(t);assert.equal(t.status.masterySealDef,undefined);
+test('战后封锁不受新版哈气阻止，与其他减益取最大且可被复原清除',()=>{
+  const {g,u}=setup(),t=g.getUnit('rana');t.level=20;M.Talents.sync(t);t.status.masterySealDef=1;assert.equal(M.Talents.penalty(t,'masterySealDef',6),6);M.Talents.sync(t);assert.equal(t.status.masterySealDef,1);
   u.status={defDown:1,masterySealDef:1,masterySealRes:1,talentResDown:1};const physical=C.defenseOf(u,g.map,false),magic=C.defenseOf(u,g.map,true);u.status={};assert.equal(C.defenseOf(u,g.map,false)-physical,6);assert.equal(C.defenseOf(u,g.map,true)-magic,6);
   const s=g.getUnit('soyo');Object.assign(s,{level:30,x:4,y:5});I.learn(s);u.status.masterySealDef=1;const r=g.castSupport(s,'restore',u);assert(r);assert.equal(u.status.masterySealDef,undefined);
 });

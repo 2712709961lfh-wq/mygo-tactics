@@ -7,7 +7,7 @@ function world(legacy=false){
     'growth','grid','pathfinding','combat','game','ui','entry','loadout-ui']){
     let source=fs.readFileSync(path.join(__dirname,'../src',name+'.js'),'utf8');
     if(legacy&&name==='talents')source=source.replace('return [0,1,2,3].filter','return [1,2,3].filter')
-      .replace('function hitBonus(u){return active(u,0)?5:0;}','function hitBonus(){return 0;}');
+      .replace('(active(u,0)?5:0)','0');
     vm.runInContext(source,w,{filename:name});
   }
   return w.MyGO;

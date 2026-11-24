@@ -83,12 +83,12 @@
   /** 展示用闪避值（地形闪避 + 速度回避）。 */
   function avoidOf(unit, map,context={},foe) {
     const terrain = terrainOf(unit, map);
-    return Math.floor(speedOf(unit,context) * C.COMBAT.speedAvoidFactor) + terrain.avoid + (unit.gear?.avoid||0) + (MyGO.Talents?.avoidBonus(unit)||0)+(MyGO.Mastery?.bonus(unit,'avoid',context,foe)||0);
+    return Math.floor(speedOf(unit,context) * C.COMBAT.speedAvoidFactor) + terrain.avoid + (unit.gear?.avoid||0) + (MyGO.Talents?.avoidBonus(unit,foe)||0)+(MyGO.Mastery?.bonus(unit,'avoid',context,foe)||0);
   }
 
   /** 风花雪月：技巧和幸运共同产生暴击，防守方幸运抵消暴击。 */
-  function critRateOf(unit,context={}) {
-    return Math.floor((dexOf(unit) + ((unit.lck || 0)+(MyGO.Mastery?.bonus(unit,'lck',context)||0))) / 2) + (unit.weapon.crit || 0) + (unit.gear?.crit||0)+(MyGO.Talents?.critBonus(unit)||0)+(MyGO.Mastery?.bonus(unit,'crit',context)||0);
+  function critRateOf(unit,context={},foe) {
+    return Math.floor((dexOf(unit) + ((unit.lck || 0)+(MyGO.Mastery?.bonus(unit,'lck',context)||0))) / 2) + (unit.weapon.crit || 0) + (unit.gear?.crit||0)+(MyGO.Talents?.critBonus(unit,context,foe)||0)+(MyGO.Mastery?.bonus(unit,'crit',context)||0);
   }
 
   function critAvoidOf(unit) {
@@ -111,7 +111,7 @@
   function speedOf(u,context={}){return Math.max(0,u.spd+(u.gear?.spd||0)+(MyGO.Mastery?.bonus(u,'spd',context)||0)-Math.max(penalty(u,'spdDown',5),penalty(u,'frostSpeedDown',6)));}
   function strOf(u,map,context){return (u.str||0)+(MyGO.Talents?.strBonus(u,map,context)||0)+(MyGO.Mastery?.bonus(u,'str',context)||0);}
   function dexOf(u){return (u.dex||0)+(MyGO.Talents?.dexBonus(u)||0)+(MyGO.Mastery?.bonus(u,'dex')||0);}
-  function hitOf(u,context={},foe){return (u.weapon.absoluteHit?(u.weapon.damageType==='magic'?Math.floor((dexOf(u)+(u.lck||0)+(MyGO.Mastery?.bonus(u,'lck')||0))/2):dexOf(u)):(u.hit||0)+(MyGO.Talents?.dexBonus(u)||0))+(u.weapon.hit||0)+(u.gear?.hit||0)+(MyGO.Talents?.hitBonus(u)||0)+(MyGO.Mastery?.bonus(u,'hit',context,foe)||0);}
+  function hitOf(u,context={},foe){return (u.weapon.absoluteHit?(u.weapon.damageType==='magic'?Math.floor((dexOf(u)+(u.lck||0)+(MyGO.Mastery?.bonus(u,'lck')||0))/2):dexOf(u)):(u.hit||0)+(MyGO.Talents?.dexBonus(u)||0))+(u.weapon.hit||0)+(u.gear?.hit||0)+(MyGO.Talents?.hitBonus(u,context,foe)||0)+(MyGO.Mastery?.bonus(u,'hit',context,foe)||0);}
 
   function counterReason(attacker, defender) {
     if (!defender || defender.dead || defender.hp <= 0) return '单位已被击倒';
@@ -152,6 +152,7 @@
       if(remaining(u)>0&&MyGO.Talents?.canPreserve(u,u.weapon.kind)){step.resourceConditional=true;return true;}
       return false;
     });
+    if(counter&&defender.id==='rana'&&MyGO.Talents?.active(defender,2)&&attacker.side==='enemy'){counter.critAfterDodge=clamp(counter.crit+15,0,100);}
     const attacks={};
     for(const step of executable){
       const u=step.attackerId===attacker.id?attacker:defender,p=step.attackerId===attacker.id?first:counter;
@@ -171,12 +172,13 @@
     const units = new Map([...(map.units||[]),attacker,defender].map(u=>[u.id,MyGO.Inventory.copy(u)]));
     const battleMap={...map,units:[...units.values()]};
     const strikes = [];let artPaid=false;
+    const context={initiatorId:attacker.id,dodgedIds:new Set()};
     if(units.get(defender.id))units.get(defender.id).combatArtId=null;
     for (const step of plan.order) {
       const a = units.get(step.attackerId), b = units.get(step.defenderId);
       if (a.hp <= 0 || b.hp <= 0) break;
       if(!(art&&a.id===attacker.id&&artPaid)&&!MyGO.Inventory.usable(a))continue;
-      const strike = {...roll(preview(a,b,battleMap,{initiatorId:attacker.id}),rng), kind:step.kind,
+      const strike = {...roll(preview(a,b,battleMap,context),rng), kind:step.kind,
         attackerHp:a.hp, attackerMaxHp:a.maxHp,resourceId:a.inventory?a.weapon.id:null,weaponSnapshot:a.weapon};
       const usingArt=art&&a.id===attacker.id;
       if(usingArt){strike.combatArtId=art.id;strike.resourceCost=artPaid?0:art.cost;if(artPaid)strike.resourceId=null;}
@@ -187,7 +189,8 @@
       strike.healed=MyGO.Inventory.useEffects(a,b,MyGO.Magic.get(a.weapon.id),strike.finalDamage,strike.hit);
       strike.talentHealed=MyGO.Talents?.onKill(a,b,strike.hit&&strike.hpAfter<=0)||0;
       b.hp = strike.hpAfter;
-      strike.angel=MyGO.Talents?.onAngel(a,b,strike.hit&&b.hp<=0,battleMap)||null;
+      strike.angel=MyGO.Talents?.onAngel(a,b,strike,battleMap)||null;
+      if(!strike.hit&&a.side==='enemy')context.dodgedIds.add(b.id);
       MyGO.Talents?.onAttack(a,b,strike.weaponType);
       strike.attackerHpAfterStrike=a.hp;
       const reverse = b.id === defender.id ? plan.counter : plan;
@@ -226,7 +229,7 @@
     // ① 武器威力：威力 × 三角克制 × 有效特攻，四舍五入为整数。
     const triMultiplier = triangleMultiplier(triangle);
     const effectiveness = art?.effective?3:effectivenessAgainst(aw, defender);
-    const weaponPower = Math.round((aw.might+(art?.might||0)) * triMultiplier * effectiveness);
+    const weaponPower = Math.round((aw.might*(MyGO.Talents?.weaponFactor(attacker,defender)||1)+(art?.might||0)) * triMultiplier * effectiveness);
 
     // ② 攻击力：对应属性 + 武器威力 + 技能/骑士团等固定修正。
     //    当前角色 atkMod 均为 0，后续加技能时直接写入该字段即可。
@@ -240,13 +243,13 @@
     const damageFactor=MyGO.Talents?.counterFactor(attacker,defender,context)||1;
     const baseDamage = Math.max(C.COMBAT.minDamage, attack - defense);
     const talentDamageBonus=MyGO.Talents?.damageBonus(attacker)||0;
-    const damage = Math.floor(baseDamage*damageFactor*(art?.factor||1))+talentDamageBonus;
-    const critDamage = Math.floor(baseDamage*C.COMBAT.critMultiplier*damageFactor*(art?.factor||1))+talentDamageBonus*C.COMBAT.critMultiplier;
+    const damage = Math.floor(baseDamage*(damageFactor===0.67?67:100)/100*(art?.factor||1))+talentDamageBonus;
+    const critDamage = Math.floor(baseDamage*C.COMBAT.critMultiplier*(damageFactor===0.67?67:100)/100*(art?.factor||1))+talentDamageBonus*C.COMBAT.critMultiplier;
 
     const targetAvoid = avoidOf(defender,map,context,attacker);
     const rawHit = hitOf(attacker,context,defender)+(art?.hit||0) + triangle * C.TRIANGLE_BONUS.hit - targetAvoid;
     const hit = clamp(rawHit, C.COMBAT.minHit, C.COMBAT.maxHit);
-    const baseCrit = critRateOf(attacker,context)+(art?.crit||0);
+    const baseCrit = critRateOf(attacker,context,defender)+(art?.crit||0);
     const targetCritAvoid = critAvoidOf(defender);
     const crit = clamp(baseCrit - targetCritAvoid, 0, 100);
 
@@ -282,6 +285,8 @@
       damage,
       damageFactor,
       talentDamageBonus,
+      haqiBonus:MyGO.Talents?.haqiBonus(attacker,context,defender)||0,
+      confident:!!MyGO.Talents?.confident(attacker,defender),
       hit,
       baseCrit,
       targetCritAvoid,
@@ -332,7 +337,7 @@
   function defenseOf(unit, map, magic,context={}) {
     const terrain = terrainOf(unit, map);
     const guard=MyGO.Talents?.guardBonus(unit,map)||0;
-    return magic ? Math.max(0,unit.res+(unit.gear?.res||0)+(unit.status?.ward||0)+guard+(MyGO.Mastery?.bonus(unit,'res',context)||0)-Math.max(penalty(unit,'talentResDown',5),penalty(unit,'masterySealRes',6))) : Math.max(0,unit.def+(unit.gear?.def||0)+guard+(MyGO.Mastery?.bonus(unit,'def',context)||0)-Math.max(penalty(unit,'defDown',5),penalty(unit,'talentResDown',5),penalty(unit,'masterySealDef',6))) + terrain.def;
+    return magic ? Math.max(0,unit.res+(unit.gear?.res||0)+(unit.status?.ward||0)+guard+(MyGO.Mastery?.bonus(unit,'res',context)||0)-Math.max(penalty(unit,'talentResDown',5),penalty(unit,'masterySealRes',6))) : Math.max(0,unit.def+(unit.gear?.def||0)+guard+(MyGO.Talents?.defBonus(unit)||0)+(MyGO.Mastery?.bonus(unit,'def',context)||0)-Math.max(penalty(unit,'defDown',5),penalty(unit,'talentResDown',5),penalty(unit,'masterySealDef',6))) + terrain.def;
   }
 
   MyGO.Combat = {
