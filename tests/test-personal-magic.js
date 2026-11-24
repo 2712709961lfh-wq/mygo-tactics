@@ -131,7 +131,7 @@ test('当前档拒绝提前或表外法术、未知法术、非法次数与版�
   for(const [unit,id]of [['soyo','thoron'],['subaru','fire'],['nijika','bolting'],['soyo','hades'],['soyo','unknown']]){
     const snap=plain(game().serialize());snap.units.find(u=>u.id===unit).learnedSpells.push(id);assert.throws(()=>game().restore(snap),/魔法/);
   }
-  for(const value of [null,0,3,'1']){const snap=plain(game().serialize());snap.units.find(u=>u.id==='soyo').spellLearningVersion=value;assert.throws(()=>game().restore(snap),/魔法/);}
+  for(const value of [null,0,4,'1']){const snap=plain(game().serialize());snap.units.find(u=>u.id==='soyo').spellLearningVersion=value;assert.throws(()=>game().restore(snap),/魔法/);}
   const snap=plain(game().serialize()),u=snap.units.find(u=>u.id==='subaru');delete u.spellLearningVersion;u.learnedSpells=['fire','thunder','heal'];u.spellUses={fire:11,thunder:8,heal:10};assert.throws(()=>game().restore(snap),/次数/);
 });
 

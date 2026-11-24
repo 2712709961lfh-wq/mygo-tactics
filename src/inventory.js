@@ -17,6 +17,7 @@
   const specialItems=new Map([courtyardKey,strangeDoorKey,chestKey,trainingTicket].map(e=>[e.id,e]));
   const supplyIds=E.items.filter(e=>['consumable','seal'].includes(e.kind)).map(e=>e.id);
   const allowed=new Set([...E.items.map(e=>e.id),...specialItems.keys()]);
+  const spellLearningVersion=3;
   // Soyo's original v4.8 spell list is accepted only for save migration.
   const retiredSoyoSpells=new Set(['wind','thunder','thoron','nosferatu','physic','restore','ward','rescue','warp','silence','fortify']);
   const weapons=Object.fromEntries(E.items.filter(e=>e.kind==='weapon').map(e=>{
@@ -100,7 +101,7 @@
   function pack(u){return{inventory:u.inventory.map(i=>({...i})),equippedWeapon:u.equippedWeapon,equippedAccessory:u.equippedAccessory,
     classMastery:M.Mastery?.pack(u),stolenDrops:(u.stolenDrops||[]).slice(),
     classState:{version:1,id:u.classId,certified:(u.certifiedClasses||[u.classId]).filter(Boolean)},mageTrained:!!u.mageTrained,
-    spellLearningVersion:2,learnedSpells:u.learnedSpells.slice(),spellUses:{...u.spellUses},status:{...u.status}};}
+    spellLearningVersion,learnedSpells:u.learnedSpells.slice(),spellUses:{...u.spellUses},status:{...u.status}};}
   function validateBag(bag,max=5){
     if(!Array.isArray(bag)||bag.length>max)throw Error('背包格数无效');
     return bag.map(i=>{const e=i&&item(i.id);if(!e||!allowed.has(i.id))throw Error('存档包含未知物品');
@@ -114,17 +115,27 @@
     u.stolenDrops=stolen.slice();u.drops=authoredDrops.filter(id=>!stolen.includes(id));
     if(s.mageTrained!==undefined&&typeof s.mageTrained!=='boolean')throw Error('存档魔法训练无效');
     u.mageTrained=!!s.mageTrained||u.id==='soyo'||!!M.Classes?.get(u.classId)?.magic;
-    if(s.spellLearningVersion!==undefined&&![1,2].includes(s.spellLearningVersion))throw Error('存档魔法学习版本无效');
+    if(s.spellLearningVersion!==undefined&&![1,2,spellLearningVersion].includes(s.spellLearningVersion))throw Error('存档魔法学习版本无效');
     const personal=u.side!=='enemy'&&Magic.personalLearning[u.id];
     if(personal){u.learnedSpells=[];u.spellUses={};}
     learn(u);
     if(!Array.isArray(s.learnedSpells)||new Set(s.learnedSpells).size!==s.learnedSpells.length||s.learnedSpells.some(id=>!Magic.get(id)))throw Error('存档魔法无效');
-    // Accept only authored spells and the old level table when migrating an old
-    // personal spell list. The new table controls what remains learned.
-    const legacy=new Set(s.spellLearningVersion!==2?[...Magic.learning.filter(r=>r.level<=u.level).map(r=>r.id),
-      ...(u.id==='subaru'?['fire','thunder','heal']:u.id==='nijika'?['nosferatu','heal']:[])]:[]);
-    if(s.learnedSpells.some(id=>!u.learnedSpells.includes(id)&&!(personal&&s.spellLearningVersion!==2&&
-      (legacy.has(id)||u.id==='soyo'&&retiredSoyoSpells.has(id)))))throw Error('角色尚未学会该魔法');
+    const legacy=new Set();
+    if(personal&&s.spellLearningVersion!==spellLearningVersion){
+      // Older saves can contain shared spells or spells learned at earlier
+      // personal thresholds. Only the current list determines what is kept.
+      if(s.spellLearningVersion!==2||!personal.length){
+        for(const row of Magic.learning)if(row.level<=u.level)legacy.add(row.id);
+      }
+      if(s.spellLearningVersion===2){
+        for(const row of personal)legacy.add(row.id);
+      }else{
+        if(u.id==='subaru')for(const id of ['fire','thunder','heal'])legacy.add(id);
+        if(u.id==='nijika')for(const id of ['nosferatu','heal'])legacy.add(id);
+        if(u.id==='soyo')for(const id of retiredSoyoSpells)legacy.add(id);
+      }
+    }
+    if(s.learnedSpells.some(id=>!u.learnedSpells.includes(id)&&!legacy.has(id)))throw Error('角色尚未学会该魔法');
     for(const id of s.learnedSpells){const n=s.spellUses?.[id];if(n!==undefined&&(!Number.isInteger(n)||n<0||n>Magic.get(id).uses))throw Error('存档魔法次数无效');}
     for(const id of u.learnedSpells){const n=s.learnedSpells.includes(id)?s.spellUses?.[id]:undefined;u.spellUses[id]=refresh?Magic.get(id).uses:(n??Magic.get(id).uses);}
     u.equippedWeapon=s.equippedWeapon;u.equippedAccessory=s.equippedAccessory;

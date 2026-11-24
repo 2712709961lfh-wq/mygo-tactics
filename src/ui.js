@@ -2154,15 +2154,18 @@
      * @returns {boolean} 是否已进入一场可继续操作的对局
      */
     loadSnapshot(loaded) {
+      // Restore into a separate game so a failed validation cannot change the
+      // live chapter while leaving its old roster in place.
+      const campaign = new MyGO.Game();
+      campaign.restore(loaded.snapshot);
+      const restoredGame = loaded.snapshot.training
+        ? MyGO.Training.Game.fromSnapshot(campaign, loaded.snapshot.training)
+        : campaign;
       this.enemyThreatId=null;this.enemyThreatTiles=new Set();
       if(this._livehouseEndingCancel)this._livehouseEndingCancel();
       const at = timeText(loaded.savedAt) || '未知时间';
       if(this.chapterOpen)this.finishChapterIntro();
-      if(loaded.snapshot.training||this.game.isTraining){
-        const campaign=new MyGO.Game();
-        campaign.restore(loaded.snapshot);
-        this.game=loaded.snapshot.training?MyGO.Training.Game.fromSnapshot(campaign,loaded.snapshot.training):campaign;
-      }else this.game.restore(loaded.snapshot);
+      this.game = restoredGame;
       this.chapterPlayed=this.game.stage===12?this.game.royalGardenIntroSeen:this.game.stage===11?this.game.palaceIntroSeen:this.game.stage===10?this.game.stageTenIntroSeen:this.game.stage===9?this.game.stageNineIntroSeen:this.game.stage===8?this.game.stageEightIntroSeen:this.game.stage!==7||this.game.nijikaJoined;
       const entry = MyGO.entry?.ui === this ? MyGO.entry : null;
       entry?.retreat?.close();
@@ -2206,7 +2209,8 @@
           this.showBanner('第 ' + this.game.turn + ' 回合', '读档完成 · PLAYER PHASE', 1500);
           this.showToast('已读取 ' + storage + '存档（存档时间 ' + at + '）。', 'success', 2200);
         } catch (err) {
-          this.handleError(err);
+          console.error(err);
+          this.showToast('读档失败：' + err.message, 'error', 2600);
         }
       };
       this.openOverlay(

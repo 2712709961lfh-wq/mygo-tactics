@@ -434,7 +434,8 @@
           this.ui.showToast('已读取存档 · 第 ' + this.ui.game.turn + ' 回合。', 'success', 1800);
         }
       } catch (err) {
-        this.ui.handleError(err);
+        console.error(err);
+        this.setSaveStatus('读档失败：' + err.message, 'error');
       }
     }
 

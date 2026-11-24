@@ -1,8 +1,8 @@
 /* Chapter eight rules, rewards, continuity and snapshot regressions. */
 'use strict';
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('node:assert/strict');
-const w={console};w.window=w;vm.createContext(w);
-for(const f of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','rng','growth-data','growth','grid','pathfinding','combat','game','ai'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
+const w={console,document:{readyState:'loading'},addEventListener(){}};w.window=w;vm.createContext(w);
+for(const f of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','rng','growth-data','growth','grid','pathfinding','combat','game','ai','save','ui','entry'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
 const M=w.MyGO,C=M.CONFIG,I=M.Inventory,plain=x=>JSON.parse(JSON.stringify(x)),fresh=opts=>new M.Game({stage:8,seed:8811,...opts});
 const reload=g=>{const h=new M.Game();h.restore(plain(g.serialize()));return h;};
 let cases=0;function test(name,f){f();cases++;console.log('✓ '+name);}
@@ -97,6 +97,41 @@ test('Stage seven to eight preserves growth/class/equipment/gold and Nijika join
  assert.equal(h.gold,g.gold);assert.deepEqual(plain(M.Growth.pack(h.getUnit('nijika'))),plain(M.Growth.pack(n)));assert.deepEqual(plain(h.convoy),plain(g.convoy));
  assert.equal(h.getUnit('nijika').side,'player');assert.equal(h.livingCount('player'),8);assert.equal(h.getUnit('nijika').x,14);assert.equal(h.getUnit('nijika').y,18);assert(reload(h).getUnit('nijika').level===n.level);
  const s=h.getUnit('echo-armor-0'),before=stats(s);for(const u of h.living('player'))M.Growth.award(u,15000);h.beginNextPlayerPhase();assert.deepEqual(stats(s),before);assert(s.def-s.res>=12);assert.equal(reload(h).getUnit(s.id).maxHp,s.maxHp);
+});
+test('Title load restores the turn-six roster and keeps the current game on failed validation',()=>{
+ const saved=fresh({recruited:['xueyue','nina']});saved.completeEighthIntro();saved.turn=6;
+ const tomori=saved.getUnit('tomori'),soyo=saved.getUnit('soyo');
+ while(tomori.level<10)M.Growth.award(tomori,M.Growth.required(tomori.level));
+ M.Classes.apply(tomori,'mage');
+ tomori.exp=23;tomori.inventory[0].uses=18;tomori.hp-=5;soyo.spellUses.fire=2;
+ const old=plain(saved.serialize()),oldTomori=old.units.find(u=>u.id==='tomori');
+ oldTomori.spellLearningVersion=2;oldTomori.equippedWeapon='fire';
+ oldTomori.learnedSpells=['fire','heal','wind','thunder'];oldTomori.spellUses={fire:3,heal:5,wind:2,thunder:1};
+ const saveManager=new M.SaveManager();
+ assert(saveManager.save({serialize:()=>old}).ok);
+ const ui=Object.create(M.UI.prototype);
+ const noop=()=>{};
+ Object.assign(ui,{game:new M.Game(),saveManager,renderer:{setGame(g){this.game=g;}},
+  resetSelection:noop,syncMission:noop,updateAll:noop,layoutBoard:noop,revealCell:noop,renderIdleInfo:noop,showToast:noop});
+ const entry=Object.create(M.EntryScreen.prototype);
+ Object.assign(entry,{ui,hideToGame(){this.entered=ui.game;},refreshSaveHint:noop,setSaveStatus(message){this.status=message;}});
+ const broken=plain(old);broken.units[0].growth.exp=-1;
+ assert(saveManager.save({serialize:()=>broken},{automatic:true}).ok);
+ const active=ui.game,state=plain(active.serialize());
+ ui.renderer.setGame(active);
+ const previousConsole=w.console;w.console={error:noop};
+ try{entry.loadSave('automatic');}finally{w.console=previousConsole;}
+ assert.match(entry.status,/读档失败.*成长数据无效/);
+ assert.equal(ui.game,active);assert.equal(ui.renderer.game,active);assert.equal(entry.entered,undefined);
+ assert.deepEqual(plain(ui.game.serialize()),state);
+ assert.deepEqual(plain(saveManager.load('automatic').snapshot),broken);
+
+ entry.loadSave('manual');
+ assert.equal(entry.entered,ui.game);assert.equal(ui.renderer.game,ui.game);
+ assert.equal(ui.game.stage,8);assert.equal(ui.game.turn,6);assert.equal(entry.players().length,8);
+ for(const id of ['xueyue','nina','nijika'])assert(entry.players().some(u=>u.id===id));
+ assert.deepEqual(plain(ui.game.serialize()),plain(reload(saved).serialize()));
+ assert.deepEqual(plain(saveManager.load('manual').snapshot),old);
 });
 test('Reject corrupt flags, chest state, level, missing/duplicate units and blocked cells',()=>{
  const s=fresh().serialize();for(const mutate of [s=>s.stageEightIntroSeen='yes',s=>s.stageEightIntroSeen=undefined,s=>s.recruited=[],s=>s.openedChests=['wrong'],s=>s.openedChests=['echo-seal','echo-seal'],s=>s.enemyScaleLevel=0,s=>s.units.find(u=>u.id==='dark_soyo').classState.id='monk',s=>s.units.pop(),s=>s.units.push(s.units[0]),s=>s.mapRevision=9,s=>s.units[0].x=0]){const bad=plain(s);mutate(bad);assert.throws(()=>fresh().restore(bad));}
