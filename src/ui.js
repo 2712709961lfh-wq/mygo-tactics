@@ -1347,7 +1347,7 @@
           : '<span class="hint-line">无法反击 · ' + esc(preview.counterReason) + '</span>') +
         '<span class="hint-line">攻速 ' + preview.attackSpeed + ' / ' + preview.defenderAttackSpeed +
         ' · ' + preview.order.map(s => (s.attackerId === active.id ? '我方' : '敌方') +
-          (s.kind === 'counter' ? '反击' : s.kind === 'followup' ? '追击' : '首击')+(s.resourceConditional?'（须触发爱笑女孩保留次数）':'')).join(' → ') +
+          (s.kind === 'counter' ? '反击' : s.kind === 'followup' ? '追击' : '首击')+(s.resourceConditional?'（须触发幸运女孩保留次数）':'')).join(' → ') +
         '<br>任一方被击倒，后续攻击取消。</span>';
     }
 
@@ -1628,7 +1628,7 @@
         if(strike.masteryProcs?.length)this.renderer.floatText(strike.masteryProcs.join(' · '),target.x,target.y-0.8,'#dfc992',11);
         if(strike.masteryHealing){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('生命吸收 +'+strike.masteryHealing,actor.x,actor.y-0.5,'#bcebd7',11);}
         if(strike.talentHealed){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('战斗爽 +'+strike.talentHealed,actor.x,actor.y-0.5,'#bcebd7',11);}
-        if(strike.resourcePreserved){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('爱笑女孩 · 未消耗次数',actor.x,actor.y-0.8,'#f5d7eb',10);}
+        if(strike.resourcePreserved){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('幸运女孩 · 未消耗次数',actor.x,actor.y-0.8,'#f5d7eb',10);}
         if(strike.angel){
           for(const c of strike.angel.healing){const u=this.game.getUnit(c.id);this.renderer.floatText('天使 +'+c.amount,u.x,u.y-0.5,'#bcebd7',11);}
         }
@@ -1943,7 +1943,7 @@
         (s.healed ? ' · 吸取回复 ' + s.healed : '') +
         (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') +
         (s.talentDamageBonus ? ' · 拳拳到肉：伤害＋' + s.talentDamageBonus*(s.crit?MyGO.CONFIG.COMBAT.critMultiplier:1) : '') +
-        (s.resourcePreserved ? ' · 爱笑女孩：未消耗次数' : '') +
+        (s.resourcePreserved ? ' · 幸运女孩：未消耗次数' : '') +
         (s.angel ? ' · 天使：'+s.angel.healing.map(c=>esc(this.game.getUnit(c.id)?.name||c.id)+'＋'+c.amount+' HP').join('、') : '') + '</small></div>' +
         '<b class="' + (s.crit ? 'crit-text' : s.hit ? 'dmg-text' : 'miss-text') + '">' +
         (s.hit ? (s.crit ? '暴击 ' : '') + s.finalDamage : 'MISS') + '</b></div>').join('');
@@ -1959,7 +1959,7 @@
         hp(result.defenderName,result.defenderHp,result.defenderHpAfter,result.defenderMaxHp) +
         (result.masteryEffects?.length?'<div class="mastery-unlock">'+result.masteryEffects.map(e=>'<p>'+esc(this.game.getUnit(e.id)?.name||e.id)+(e.damage?' · 蛇毒 −'+e.damage+' HP':'')+Object.keys(e.status).map(k=>' · '+esc({masterySealDef:'防守封锁：守备−6',masterySealRes:'魔防封锁：魔防−6',masteryTransmute:'魔力转换：七项属性＋3'}[k]||k)).join('')+'</p>').join('')+'</div>':'')+
         '<div class="result-note">' + (result.strikes.length < plan.order.length ? '因单位倒下、撤离或次数耗尽，后续攻击取消。' : '首击、反击与追击依次结算。') +
-        ' 拳套主动攻击时两连击，反击时不会额外连击。反击不消耗行动。普通攻击每次出手消耗1耐久或魔法次数；战技按整次行动收取标示耐久，空手格斗不耗耐久。爱笑女孩触发时保留次数。点击确认后统一结算HP、耐久和魔法次数。</div>' +
+        ' 拳套主动攻击时两连击，反击时不会额外连击。反击不消耗行动。普通攻击每次出手消耗1耐久或魔法次数；战技按整次行动收取标示耐久，空手格斗不耗耐久。幸运女孩触发时保留次数。点击确认后统一结算HP、耐久和魔法次数。</div>' +
         '<div class="modal-actions"><button class="modal-btn primary" type="button" data-confirm>确认结算</button></div>';
       return new Promise(resolve => {
         this.confirmHandler = () => resolve(result);

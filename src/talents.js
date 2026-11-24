@@ -5,7 +5,7 @@
   const LEVEL=15;
   const data={
     xueyue:{name:'剑意',description:'装备剑时力量＋5，切换其他武器或未装备时失效。'},
-    subaru:{name:'爱笑女孩',description:'使用魔法或药品时，有30%几率不消耗次数；每次出手独立判定，仍须有剩余次数。'},
+    subaru:{name:'魔力延伸',description:'伤害型魔法最大射程＋1，最小射程不变；不影响辅助魔法或魔法武器。'},
     tomori:{name:'行动派',description:'速度＋4。',stat:'spd',amount:4},
     rana:{name:'幸运猫',description:'回避＋5、必杀回避＋5，对物理和魔法攻击均生效。'},
     soyo:{name:'魔力觉醒',description:'魔力＋4。',stat:'mag',amount:4},
@@ -17,7 +17,7 @@
   const common=Object.freeze({name:'掌握战斗',description:'命中＋5、技巧＋1。技巧计入基础属性，命中加成适用于所有攻击、反击与追击。',stats:Object.freeze({dex:1})});
   const levels=[10,15,20,25];
   const data2={
-    subaru:{name:'魔力延伸',description:'伤害型魔法最大射程＋1，最小射程不变；不影响辅助魔法或魔法武器。'},
+    subaru:{name:'幸运女孩',description:'使用魔法或药品时，有50%几率不消耗次数；每次出手独立判定，仍须有剩余次数。'},
     xueyue:{name:'疾风',description:'速度＋5。',stats:{spd:5}},
     tomori:{name:'有在努力',description:'获得的经验值＋30%，向上取整。'},
     rana:{name:'哈气',description:'本次交战闪避敌人攻击后，后续反击必杀＋15；持续至本次交战结束，不叠加。'},
@@ -63,11 +63,11 @@
   function experience(u,amount){return active(u,2)&&u.id==='tomori'?Math.ceil(amount*13/10):amount;}
   function healingSpell(s){return !!s&&['heal','fortify'].includes(s.effect);}
   function rangeBonus(u,s){
-    if(u.id==='subaru'&&active(u,2)&&s?.kind==='spell'&&!s.support)return 1;
+    if(u.id==='subaru'&&active(u,1)&&s?.kind==='spell'&&!s.support)return 1;
     return u.id==='nijika'&&active(u,1)&&healingSpell(s)?2:0;
   }
-  function canPreserve(u,kind){return u?.id==='subaru'&&active(u)&&['spell','consumable'].includes(kind);}
-  function preserveUse(u,kind,rng){return canPreserve(u,kind)&&rng.int(1,100)<=30;}
+  function canPreserve(u,kind){return u?.id==='subaru'&&active(u,2)&&['spell','consumable'].includes(kind);}
+  function preserveUse(u,kind,rng){return canPreserve(u,kind)&&rng.int(1,100)<=50;}
   function healingAmount(u,s,amount){return active(u,3)&&u.id==='nijika'&&healingSpell(s)?Math.ceil(amount*7/4):amount;}
   function dexBonus(){return 0;}
   function confident(u,foe){

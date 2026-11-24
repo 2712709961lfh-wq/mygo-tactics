@@ -50,7 +50,7 @@
         if(this.retreat?.root.hidden===false)this.retreat.announce(message);
         this.ui.showToast(message,'success',2500);
       }
-      else if(t.hasAttribute('data-medicine-use')){const r=this.ui.game.useMedicine(u,+t.dataset.medicineUse);this.ui.showToast(u.name+'使用'+r.item.name+(r.healed?'，回复 '+r.healed+' HP':'')+(r.resourcePreserved?' · 爱笑女孩：未消耗次数':''),'success',2500);}
+      else if(t.hasAttribute('data-medicine-use')){const r=this.ui.game.useMedicine(u,+t.dataset.medicineUse);this.ui.showToast(u.name+'使用'+r.item.name+(r.healed?'，回复 '+r.healed+' HP':'')+(r.resourcePreserved?' · 幸运女孩：未消耗次数':''),'success',2500);}
       else return;
       this.renderFormationList();this.renderFormationDetail();this.ui.updateAll();
     }catch(err){this.ui.showToast(err.message,'error',2200);}
@@ -155,7 +155,7 @@
       try{const result=this.game.castSupport(caster,id,target,destination);this.closeOverlay();this.pendingWarp=null;
         for(const tid of result.affected){const t=this.game.getUnit(tid);this.renderer.snapUnit(t);this.renderer.floatText(result.changes.find(c=>c.id===tid)?.amount?'+'+result.changes.find(c=>c.id===tid).amount:s.name,t.x,t.y,'#bcebd7',11);}
         await this.showGrowthResults(result.experience);
-        this.resetSelection({silent:true});this.updateAll();this.renderIdleInfo();this.showToast(caster.name+'施放了'+s.name+'，剩余 '+caster.spellUses[id]+' 次。'+(result.resourcePreserved?' 爱笑女孩：未消耗次数。':'')+(result.experience.length?' 经验 +'+result.experience[0].gained:''),'success',2600);
+        this.resetSelection({silent:true});this.updateAll();this.renderIdleInfo();this.showToast(caster.name+'施放了'+s.name+'，剩余 '+caster.spellUses[id]+' 次。'+(result.resourcePreserved?' 幸运女孩：未消耗次数。':'')+(result.experience.length?' 经验 +'+result.experience[0].gained:''),'success',2600);
       }catch(e){this.showToast(e.message,'error');}finally{this.setBusy(false);}
     };
   };

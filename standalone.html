@@ -5516,7 +5516,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.28.2</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.28.3</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -8867,7 +8867,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const LEVEL=15;
   const data={
     xueyue:{name:'剑意',description:'装备剑时力量＋5，切换其他武器或未装备时失效。'},
-    subaru:{name:'爱笑女孩',description:'使用魔法或药品时，有30%几率不消耗次数；每次出手独立判定，仍须有剩余次数。'},
+    subaru:{name:'魔力延伸',description:'伤害型魔法最大射程＋1，最小射程不变；不影响辅助魔法或魔法武器。'},
     tomori:{name:'行动派',description:'速度＋4。',stat:'spd',amount:4},
     rana:{name:'幸运猫',description:'回避＋5、必杀回避＋5，对物理和魔法攻击均生效。'},
     soyo:{name:'魔力觉醒',description:'魔力＋4。',stat:'mag',amount:4},
@@ -8879,7 +8879,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   const common=Object.freeze({name:'掌握战斗',description:'命中＋5、技巧＋1。技巧计入基础属性，命中加成适用于所有攻击、反击与追击。',stats:Object.freeze({dex:1})});
   const levels=[10,15,20,25];
   const data2={
-    subaru:{name:'魔力延伸',description:'伤害型魔法最大射程＋1，最小射程不变；不影响辅助魔法或魔法武器。'},
+    subaru:{name:'幸运女孩',description:'使用魔法或药品时，有50%几率不消耗次数；每次出手独立判定，仍须有剩余次数。'},
     xueyue:{name:'疾风',description:'速度＋5。',stats:{spd:5}},
     tomori:{name:'有在努力',description:'获得的经验值＋30%，向上取整。'},
     rana:{name:'哈气',description:'本次交战闪避敌人攻击后，后续反击必杀＋15；持续至本次交战结束，不叠加。'},
@@ -8925,11 +8925,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function experience(u,amount){return active(u,2)&&u.id==='tomori'?Math.ceil(amount*13/10):amount;}
   function healingSpell(s){return !!s&&['heal','fortify'].includes(s.effect);}
   function rangeBonus(u,s){
-    if(u.id==='subaru'&&active(u,2)&&s?.kind==='spell'&&!s.support)return 1;
+    if(u.id==='subaru'&&active(u,1)&&s?.kind==='spell'&&!s.support)return 1;
     return u.id==='nijika'&&active(u,1)&&healingSpell(s)?2:0;
   }
-  function canPreserve(u,kind){return u?.id==='subaru'&&active(u)&&['spell','consumable'].includes(kind);}
-  function preserveUse(u,kind,rng){return canPreserve(u,kind)&&rng.int(1,100)<=30;}
+  function canPreserve(u,kind){return u?.id==='subaru'&&active(u,2)&&['spell','consumable'].includes(kind);}
+  function preserveUse(u,kind,rng){return canPreserve(u,kind)&&rng.int(1,100)<=50;}
   function healingAmount(u,s,amount){return active(u,3)&&u.id==='nijika'&&healingSpell(s)?Math.ceil(amount*7/4):amount;}
   function dexBonus(){return 0;}
   function confident(u,foe){
@@ -19910,7 +19910,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           : '<span class="hint-line">无法反击 · ' + esc(preview.counterReason) + '</span>') +
         '<span class="hint-line">攻速 ' + preview.attackSpeed + ' / ' + preview.defenderAttackSpeed +
         ' · ' + preview.order.map(s => (s.attackerId === active.id ? '我方' : '敌方') +
-          (s.kind === 'counter' ? '反击' : s.kind === 'followup' ? '追击' : '首击')+(s.resourceConditional?'（须触发爱笑女孩保留次数）':'')).join(' → ') +
+          (s.kind === 'counter' ? '反击' : s.kind === 'followup' ? '追击' : '首击')+(s.resourceConditional?'（须触发幸运女孩保留次数）':'')).join(' → ') +
         '<br>任一方被击倒，后续攻击取消。</span>';
     }
 
@@ -20191,7 +20191,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         if(strike.masteryProcs?.length)this.renderer.floatText(strike.masteryProcs.join(' · '),target.x,target.y-0.8,'#dfc992',11);
         if(strike.masteryHealing){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('生命吸收 +'+strike.masteryHealing,actor.x,actor.y-0.5,'#bcebd7',11);}
         if(strike.talentHealed){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('战斗爽 +'+strike.talentHealed,actor.x,actor.y-0.5,'#bcebd7',11);}
-        if(strike.resourcePreserved){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('爱笑女孩 · 未消耗次数',actor.x,actor.y-0.8,'#f5d7eb',10);}
+        if(strike.resourcePreserved){const actor=this.game.getUnit(strike.attackerId);this.renderer.floatText('幸运女孩 · 未消耗次数',actor.x,actor.y-0.8,'#f5d7eb',10);}
         if(strike.angel){
           for(const c of strike.angel.healing){const u=this.game.getUnit(c.id);this.renderer.floatText('天使 +'+c.amount,u.x,u.y-0.5,'#bcebd7',11);}
         }
@@ -20506,7 +20506,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         (s.healed ? ' · 吸取回复 ' + s.healed : '') +
         (s.talentHealed ? ' · 战斗爽回复 ' + s.talentHealed + ' HP' : '') +
         (s.talentDamageBonus ? ' · 拳拳到肉：伤害＋' + s.talentDamageBonus*(s.crit?MyGO.CONFIG.COMBAT.critMultiplier:1) : '') +
-        (s.resourcePreserved ? ' · 爱笑女孩：未消耗次数' : '') +
+        (s.resourcePreserved ? ' · 幸运女孩：未消耗次数' : '') +
         (s.angel ? ' · 天使：'+s.angel.healing.map(c=>esc(this.game.getUnit(c.id)?.name||c.id)+'＋'+c.amount+' HP').join('、') : '') + '</small></div>' +
         '<b class="' + (s.crit ? 'crit-text' : s.hit ? 'dmg-text' : 'miss-text') + '">' +
         (s.hit ? (s.crit ? '暴击 ' : '') + s.finalDamage : 'MISS') + '</b></div>').join('');
@@ -20522,7 +20522,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         hp(result.defenderName,result.defenderHp,result.defenderHpAfter,result.defenderMaxHp) +
         (result.masteryEffects?.length?'<div class="mastery-unlock">'+result.masteryEffects.map(e=>'<p>'+esc(this.game.getUnit(e.id)?.name||e.id)+(e.damage?' · 蛇毒 −'+e.damage+' HP':'')+Object.keys(e.status).map(k=>' · '+esc({masterySealDef:'防守封锁：守备−6',masterySealRes:'魔防封锁：魔防−6',masteryTransmute:'魔力转换：七项属性＋3'}[k]||k)).join('')+'</p>').join('')+'</div>':'')+
         '<div class="result-note">' + (result.strikes.length < plan.order.length ? '因单位倒下、撤离或次数耗尽，后续攻击取消。' : '首击、反击与追击依次结算。') +
-        ' 拳套主动攻击时两连击，反击时不会额外连击。反击不消耗行动。普通攻击每次出手消耗1耐久或魔法次数；战技按整次行动收取标示耐久，空手格斗不耗耐久。爱笑女孩触发时保留次数。点击确认后统一结算HP、耐久和魔法次数。</div>' +
+        ' 拳套主动攻击时两连击，反击时不会额外连击。反击不消耗行动。普通攻击每次出手消耗1耐久或魔法次数；战技按整次行动收取标示耐久，空手格斗不耗耐久。幸运女孩触发时保留次数。点击确认后统一结算HP、耐久和魔法次数。</div>' +
         '<div class="modal-actions"><button class="modal-btn primary" type="button" data-confirm>确认结算</button></div>';
       return new Promise(resolve => {
         this.confirmHandler = () => resolve(result);
@@ -22447,7 +22447,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         if(this.retreat?.root.hidden===false)this.retreat.announce(message);
         this.ui.showToast(message,'success',2500);
       }
-      else if(t.hasAttribute('data-medicine-use')){const r=this.ui.game.useMedicine(u,+t.dataset.medicineUse);this.ui.showToast(u.name+'使用'+r.item.name+(r.healed?'，回复 '+r.healed+' HP':'')+(r.resourcePreserved?' · 爱笑女孩：未消耗次数':''),'success',2500);}
+      else if(t.hasAttribute('data-medicine-use')){const r=this.ui.game.useMedicine(u,+t.dataset.medicineUse);this.ui.showToast(u.name+'使用'+r.item.name+(r.healed?'，回复 '+r.healed+' HP':'')+(r.resourcePreserved?' · 幸运女孩：未消耗次数':''),'success',2500);}
       else return;
       this.renderFormationList();this.renderFormationDetail();this.ui.updateAll();
     }catch(err){this.ui.showToast(err.message,'error',2200);}
@@ -22552,7 +22552,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       try{const result=this.game.castSupport(caster,id,target,destination);this.closeOverlay();this.pendingWarp=null;
         for(const tid of result.affected){const t=this.game.getUnit(tid);this.renderer.snapUnit(t);this.renderer.floatText(result.changes.find(c=>c.id===tid)?.amount?'+'+result.changes.find(c=>c.id===tid).amount:s.name,t.x,t.y,'#bcebd7',11);}
         await this.showGrowthResults(result.experience);
-        this.resetSelection({silent:true});this.updateAll();this.renderIdleInfo();this.showToast(caster.name+'施放了'+s.name+'，剩余 '+caster.spellUses[id]+' 次。'+(result.resourcePreserved?' 爱笑女孩：未消耗次数。':'')+(result.experience.length?' 经验 +'+result.experience[0].gained:''),'success',2600);
+        this.resetSelection({silent:true});this.updateAll();this.renderIdleInfo();this.showToast(caster.name+'施放了'+s.name+'，剩余 '+caster.spellUses[id]+' 次。'+(result.resourcePreserved?' 幸运女孩：未消耗次数。':'')+(result.experience.length?' 经验 +'+result.experience[0].gained:''),'success',2600);
       }catch(e){this.showToast(e.message,'error');}finally{this.setBusy(false);}
     };
   };
