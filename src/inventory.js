@@ -37,10 +37,11 @@
     return (u.weaponTypes||[u.weaponType]).includes(e.category);
   }
   function learn(u){
-    if(u.side!=='player'||(!u.mageTrained&&u.id!=='soyo'&&!M.Classes?.get(u.classId)?.magic))return [];
+    if(u.side==='enemy')return [];
+    const rows=Magic.learningFor(u);if(!rows.length)return [];
     u.mageTrained=true;
     const added=[];
-    for(const row of Magic.learning)if(u.level>=row.level&&!u.learnedSpells.includes(row.id)){
+    for(const row of rows)if(u.level>=row.level&&!u.learnedSpells.includes(row.id)){
       u.learnedSpells.push(row.id);u.spellUses[row.id]=Magic.get(row.id).uses;added.push(row.id);
     }
     return added;
@@ -79,7 +80,7 @@
   function init(u,t){
     const w=weapons[t.weapon];if(!w)throw Error('未知攻击手段：'+t.weapon);
     u.weaponType=w.type;u.inventory=w.kind==='spell'?[]:[make(w.id)];
-    u.learnedSpells=(t.spells|| (w.kind==='spell'?[w.id]:[])).slice();
+    u.learnedSpells=u.side!=='enemy'&&Magic.personalLearning[u.id]?[]:(t.spells|| (w.kind==='spell'?[w.id]:[])).slice();
     u.spellUses=Object.fromEntries(u.learnedSpells.map(id=>[id,Magic.get(id).uses]));
     u.status={};u.equippedWeapon=w.id;u.equippedAccessory=null;learn(u);sync(u);
   }
@@ -99,25 +100,33 @@
   function pack(u){return{inventory:u.inventory.map(i=>({...i})),equippedWeapon:u.equippedWeapon,equippedAccessory:u.equippedAccessory,
     classMastery:M.Mastery?.pack(u),stolenDrops:(u.stolenDrops||[]).slice(),
     classState:{version:1,id:u.classId,certified:(u.certifiedClasses||[u.classId]).filter(Boolean)},mageTrained:!!u.mageTrained,
-    learnedSpells:u.learnedSpells.slice(),spellUses:{...u.spellUses},status:{...u.status}};}
+    spellLearningVersion:2,learnedSpells:u.learnedSpells.slice(),spellUses:{...u.spellUses},status:{...u.status}};}
   function validateBag(bag,max=5){
     if(!Array.isArray(bag)||bag.length>max)throw Error('背包格数无效');
     return bag.map(i=>{const e=i&&item(i.id);if(!e||!allowed.has(i.id))throw Error('存档包含未知物品');
       if(e.uses!==null&&(!Number.isInteger(i.uses)||i.uses<(['key','seal','consumable','ticket'].includes(e.kind)?1:0)||i.uses>e.uses))throw Error('存档耐久无效');return{id:i.id,uses:e.uses===null?null:i.uses};});
   }
   function restore(u,s,refresh){
-    if(!s||!Array.isArray(s.inventory))return;
+    if(!s||!Array.isArray(s.inventory)){learn(u);sync(u);return;}
     u.inventory=validateBag(s.inventory);
     const stolen=s.stolenDrops??[],authoredDrops=[...new Set([...(u.drops||[]),...(u.stolenDrops||[])])];
     if(!Array.isArray(stolen)||stolen.some(id=>!authoredDrops.includes(id))||new Set(stolen).size!==stolen.length)throw Error('存档偷窃记录无效');
     u.stolenDrops=stolen.slice();u.drops=authoredDrops.filter(id=>!stolen.includes(id));
     if(s.mageTrained!==undefined&&typeof s.mageTrained!=='boolean')throw Error('存档魔法训练无效');
     u.mageTrained=!!s.mageTrained||u.id==='soyo'||!!M.Classes?.get(u.classId)?.magic;
+    if(s.spellLearningVersion!==undefined&&![1,2].includes(s.spellLearningVersion))throw Error('存档魔法学习版本无效');
+    const personal=u.side!=='enemy'&&Magic.personalLearning[u.id];
+    if(personal){u.learnedSpells=[];u.spellUses={};}
     learn(u);
     if(!Array.isArray(s.learnedSpells)||new Set(s.learnedSpells).size!==s.learnedSpells.length||s.learnedSpells.some(id=>!Magic.get(id)))throw Error('存档魔法无效');
-    // Templates remain authoritative: discard Soyo's retired spells from old saves.
-    if(s.learnedSpells.some(id=>!u.learnedSpells.includes(id)&&!(u.id==='soyo'&&retiredSoyoSpells.has(id))))throw Error('角色尚未学会该魔法');
-    for(const id of u.learnedSpells){const n=s.spellUses?.[id];if(n!==undefined&&(!Number.isInteger(n)||n<0||n>Magic.get(id).uses))throw Error('存档魔法次数无效');u.spellUses[id]=refresh?Magic.get(id).uses:(n??Magic.get(id).uses);}
+    // Accept only authored spells and the old level table when migrating an old
+    // personal spell list. The new table controls what remains learned.
+    const legacy=new Set(s.spellLearningVersion!==2?[...Magic.learning.filter(r=>r.level<=u.level).map(r=>r.id),
+      ...(u.id==='subaru'?['fire','thunder','heal']:u.id==='nijika'?['nosferatu','heal']:[])]:[]);
+    if(s.learnedSpells.some(id=>!u.learnedSpells.includes(id)&&!(personal&&s.spellLearningVersion!==2&&
+      (legacy.has(id)||u.id==='soyo'&&retiredSoyoSpells.has(id)))))throw Error('角色尚未学会该魔法');
+    for(const id of s.learnedSpells){const n=s.spellUses?.[id];if(n!==undefined&&(!Number.isInteger(n)||n<0||n>Magic.get(id).uses))throw Error('存档魔法次数无效');}
+    for(const id of u.learnedSpells){const n=s.learnedSpells.includes(id)?s.spellUses?.[id]:undefined;u.spellUses[id]=refresh?Magic.get(id).uses:(n??Magic.get(id).uses);}
     u.equippedWeapon=s.equippedWeapon;u.equippedAccessory=s.equippedAccessory;
     u.status={};if(!refresh)for(const k of ['defDown','spdDown','moveDown','silence','ward','poison','talentResDown','masteryDance','masteryTransmute','masterySealDef','masterySealRes']){const n=s.status?.[k];if(Number.isInteger(n)&&n>0&&n<=7)u.status[k]=n;}
     if(!refresh){

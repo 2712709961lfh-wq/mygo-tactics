@@ -33,7 +33,7 @@ test('固定能力奖励独立于随机成长，旧档、转职与跨章重建�
   for(let i=0;i<3;i++){h.restore(save);for(const id of Object.keys(T.data).filter(id=>g.getUnit(id)))for(const k of M.GrowthData.keys){assert.equal(h.getUnit(id)[k],g.getUnit(id)[k]);assert.equal(next.getUnit(id)[k],g.getUnit(id)[k]);}}
   const u=h.getUnit('anon'),dex=u.dex;M.Classes.apply(u,'archer');assert.equal(u.dex,dex);T.sync(u);assert.equal(u.dex,dex);
 });
-test('有在努力按每次经验结算向上取整，包含战斗和治疗，20级当次经验不追补',()=>{
+test('有在努力按每次经验结算向上取整，20级当次不追补；灯转职不会获得治疗魔法',()=>{
   const g=game(),u=level(g.getUnit('tomori'),19);u.exp=G.required(19)-1;
   const unlock=G.award(u,1);assert.equal(unlock.gained,1);assert.equal(u.level,20);
   for(const [base,expected]of [[1,2],[5,7],[6,8],[35,46],[101,132]])assert.equal(G.award(u,base).gained,expected);
@@ -44,8 +44,8 @@ test('有在努力按每次经验结算向上取整，包含战斗和治疗，20
   const damage=r.strikes.filter(s=>s.attackerId===t.id&&s.applied).reduce((n,s)=>n+s.hpBeforeApply-s.hpAfterApply,0);
   assert.equal(r.experience.find(x=>x.unitId===t.id).gained,Math.ceil(G.combatExp(before,other,damage,false)*13/10));
   const h=fixture(),caster=level(h.getUnit('tomori'),20),target=h.getUnit('anon');M.Classes.apply(caster,'priest');
-  Object.assign(caster,{x:4,y:4});Object.assign(target,{x:5,y:4,hp:1});const base=G.supportExp(caster,'heal',h.turn);
-  assert.equal(h.castSupport(caster,'heal',target).experience[0].gained,Math.ceil(base*13/10));
+  Object.assign(caster,{x:4,y:4});Object.assign(target,{x:5,y:4,hp:1});
+  assert.equal(caster.learnedSpells.length,0);assert.throws(()=>h.castSupport(caster,'heal',target),/魔法目标/);
 });
 test('哈气改为闪避反击必杀，乐奈不再免疫能力削弱',()=>{
   const g=fixture(),u=level(g.getUnit('rana'),20),a=enemy(g);Object.assign(u,{x:4,y:4});

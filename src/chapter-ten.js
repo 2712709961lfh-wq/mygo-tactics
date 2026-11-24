@@ -2,7 +2,7 @@
 (function(global){
  'use strict';const C=global.MyGO.CONFIG,base=C.STAGE_NINE;
  C.SUBARU={id:'subaru',name:'安和昴',shortName:'昴',gender:'女',side:'ally',classId:'mage',className:'术师',level:12,
-  maxHp:30,str:6,mag:15,dex:13,spd:12,lck:12,def:7,res:13,hit:0,move:4,tags:[],weapon:'fire',spells:['fire','thunder','heal'],
+  maxHp:30,str:6,mag:15,dex:13,spd:12,lck:12,def:7,res:13,hit:0,move:4,tags:[],weapon:'miasma',spells:['miasma','heal','nosferatu','ward'],
   x:13,y:16,facing:'up',quote:'mmk叫我抓你回去训练……不过现在，还是先把这些家伙解决掉吧！',
   art:{kind:'girl',hair:'#303037',hairDark:'#16191e',hairStyle:'long',outfit:'#283049',outfitDark:'#171e2e',accent:'#b7bdd1',skin:'#f5d6c6',eye:'#785b9c'}};
  const sources=['rehearsal-sword-a','rehearsal-axe-a','rehearsal-bow-a','rehearsal-lance-a','rehearsal-mage-a','rehearsal-sword-b','rehearsal-bow-b'];

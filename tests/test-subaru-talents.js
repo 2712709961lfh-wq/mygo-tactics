@@ -17,7 +17,7 @@ function fixture(n=25){
   Object.assign(s,{x:4,y:4,mag:12,spd:10,dex:200,lck:0,hp:50,maxHp:50});
   Object.assign(e,{x:5,y:4,str:1,res:0,spd:10,dex:200,lck:200,hp:999,maxHp:999});
   e.inventory=[I.make('iron_sword')];e.equippedWeapon='iron_sword';I.sync(e);
-  s.equippedWeapon='fire';I.sync(s);return {g,s,e,t};
+  s.equippedWeapon='miasma';I.sync(s);return {g,s,e,t};
 }
 function rolls(g,values){let i=0;g.rng={int(){assert(i<values.length,'unexpected RNG draw');return values[i++];},serialize:()=>1212};return ()=>i;}
 
@@ -41,27 +41,27 @@ test('爱笑女孩30成功31失败，未觉醒/其他角色/实体物品不抽�
   assert(T.preserveUse(s,'spell',rng));assert(T.preserveUse(s,'consumable',rng));assert.equal(draws,2);
   assert(!T.preserveUse(s,'spell',{int:()=>31}));
   for(const [u,kind]of [[{...s,level:14},'spell'],[t,'spell'],[s,'weapon'],[s,'seal'],[s,'key']])assert(!T.preserveUse(u,kind,{int(){throw Error('should not roll');}}));
-  s.spellUses.fire=0;assert(!I.usable(s));assert.throws(()=>I.consume(s,'fire',true),/次数不足/);
+  s.spellUses.miasma=0;assert(!I.usable(s));assert.throws(()=>I.consume(s,'miasma',true),/次数不足/);
 });
 test('攻击每次独立抽签，锁定不改真实次数，确认不重抽也不重复消耗',()=>{
-  const {g,s,e}=fixture(15);s.spd=40;e.spd=0;e.cannotCounter=true;s.spellUses.fire=2;
+  const {g,s,e}=fixture(15);s.spd=40;e.spd=0;e.cannotCounter=true;s.spellUses.miasma=2;
   const draws=rolls(g,[1,1,100,30,1,1,100,31]),r=g.rollCombat(s,e);
   assert.equal(r.strikes.length,2);assert(r.strikes[0].resourcePreserved);assert(!r.strikes[1].resourcePreserved);
-  assert.equal(s.spellUses.fire,2);assert.equal(draws(),8);g.applyCombat(r);
-  assert.equal(s.spellUses.fire,1);assert.equal(draws(),8);assert.throws(()=>g.applyCombat(r),/已结算/);
+  assert.equal(s.spellUses.miasma,2);assert.equal(draws(),8);g.applyCombat(r);
+  assert.equal(s.spellUses.miasma,1);assert.equal(draws(),8);assert.throws(()=>g.applyCombat(r),/已结算/);
 });
 test('一发剩余可在触发后追击，未触发则中断，预告无随机副作用且提示条件',()=>{
   for(const proc of [30,31]){
-    const {g,s,e}=fixture(15);s.spd=40;e.spd=0;e.cannotCounter=true;s.spellUses.fire=1;
+    const {g,s,e}=fixture(15);s.spd=40;e.spd=0;e.cannotCounter=true;s.spellUses.miasma=1;
     const draws=rolls(g,proc===30?[1,1,100,30,1,1,100,31]:[1,1,100,31]);
     const p=C.forecast(s,e,g.map);assert.equal(draws(),0);assert(p.order[1].resourceConditional);
-    const r=g.rollCombat(s,e);assert.equal(r.strikes.length,proc===30?2:1);g.applyCombat(r);assert.equal(s.spellUses.fire,0);
+    const r=g.rollCombat(s,e);assert.equal(r.strikes.length,proc===30?2:1);g.applyCombat(r);assert.equal(s.spellUses.miasma,0);
   }
 });
 test('落空和反击施法也判定保留，实体武器不判定',()=>{
-  const {g,s,e}=fixture(15);s.spd=e.spd=10;s.dex=-1000;s.spellUses.fire=1;
+  const {g,s,e}=fixture(15);s.spd=e.spd=10;s.dex=-1000;s.spellUses.miasma=1;
   const r=C.rollRound(e,s,g.map,{int:()=>25});const counter=r.strikes.find(x=>x.attackerId===s.id);
-  assert(counter);assert(!counter.hit);assert(counter.resourcePreserved);g.applyCombat(r);assert.equal(s.spellUses.fire,1);
+  assert(counter);assert(!counter.hit);assert(counter.resourcePreserved);g.applyCombat(r);assert.equal(s.spellUses.miasma,1);
   const f=fixture(15);f.s.weaponTypes=['sword'];f.s.inventory=[I.make('iron_sword')];f.s.equippedWeapon='iron_sword';I.sync(f.s);
   const p=C.rollRound(f.s,f.e,f.g.map,{int:()=>1});assert(!p.strikes.find(x=>x.attackerId===f.s.id).resourcePreserved);
 });
@@ -83,12 +83,12 @@ test('辅助魔法和各类药品正确保留最后一次，非法目标/满血�
 });
 test('魔力延伸影响攻击范围、反击、预告和实战，辅助/魔法武器/全局图鉴保持原范围',()=>{
   const {g,s,e}=fixture(19);Object.assign(e,{x:7,y:4});assert(!g.canAttack(s,e));
-  level(s,20);I.sync(s);assert.equal(s.weapon.range.join(','),'1,3');assert.equal(I.weapons.fire.range.join(','),'1,2');
+  level(s,20);I.sync(s);assert.equal(s.weapon.range.join(','),'1,3');assert.equal(I.weapons.miasma.range.join(','),'1,2');
   assert(g.canAttack(s,e));assert(g.getAttackTiles(s).some(t=>t.x===7&&t.y===4));assert.equal(C.counterReason(e,s),'');
   assert.equal(g.previewCombat(s,e).weaponType,'tome');assert(g.rollCombat(s,e).strikes.length);
   for(const spell of M.Magic.items){const r=M.Magic.rangeOf(spell,s);assert.equal(r[0],spell.range[0]);if(!spell.rangeText.includes('mag/'))assert.equal(r[1],spell.range[1]+(spell.support?0:1));}
   s.weaponTypes=['sword'];s.inventory=[I.make('levin_sword')];s.equippedWeapon='levin_sword';I.sync(s);assert.equal(s.weapon.range.join(','),'1,2');
-  M.Classes.apply(s,'mage');s.equippedWeapon='fire';I.sync(s);assert.equal(s.weapon.range[1],3);
+  M.Classes.apply(s,'mage');s.equippedWeapon='miasma';I.sync(s);assert.equal(s.weapon.range[1],3);
 });
 test('天使魔法必杀治疗我方15HP，包括自身，预演仅改副本，确认只结算一次',()=>{
   const {g,s,e,t}=fixture();const a=g.getUnit('anon'),dead=g.getUnit('soyo'),escaped=g.getUnit('rana');
@@ -117,7 +117,7 @@ test('当前击破升25级从下一次击破起发动，存档随机状态恢复
   const {g,s,e,t}=fixture(24);s.exp=G.required(24)-1;t.hp=1;e.hp=1;
   const r=g.rollCombat(s,e);g.applyCombat(r);assert.equal(s.level,25);assert(!r.strikes.some(x=>x.angel));assert.equal(t.hp,1);
   const h=game(),a=level(h.getUnit('subaru'),20),b=h.units.find(u=>u.side==='enemy');
-  Object.assign(a,{x:13,y:16});Object.assign(b,{x:13,y:15});a.equippedWeapon='fire';I.sync(a);
+  Object.assign(a,{x:13,y:16});Object.assign(b,{x:13,y:15});a.equippedWeapon='miasma';I.sync(a);
   const save=plain(h.serialize()),j=game();j.restore(save);
   const one=C.rollRound(a,b,h.map,h.rng),two=C.rollRound(j.getUnit(a.id),j.getUnit(b.id),j.map,j.rng);
   assert.deepEqual(plain(one.strikes.map(x=>[x.hitRoll,x.hitRoll2,x.critRoll,x.resourcePreserved])),plain(two.strikes.map(x=>[x.hitRoll,x.hitRoll2,x.critRoll,x.resourcePreserved])));

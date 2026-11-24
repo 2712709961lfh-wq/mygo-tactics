@@ -27,7 +27,7 @@ test('Boss kill clears palace, ordinary soldier does not; opening gates victory 
 });
 test('Palace marker distinguishes new chapter-ten saves from old chapter-ten rehearsal saves',()=>{
  const g=fresh();assert.equal(g.serialize().stage,10);assert.equal(g.serialize().palaceChapterVersion,1);assert.equal(g.serialize().rehearsalPart,undefined);assert.equal(reload(g).stage,11);assert(!reload(g).palaceIntroSeen);
- g.palaceIntroSeen=true;g.getUnit('gilded_cavalier').hp=11;g.getUnit('subaru').hp=8;g.getUnit('subaru').spellUses.fire=1;const h=reload(g);assert(h.palaceIntroSeen);assert.equal(h.getUnit('gilded_cavalier').hp,11);assert.equal(h.getUnit('subaru').hp,8);assert.equal(h.getUnit('subaru').spellUses.fire,1);assert.deepEqual(plain(reload(h).serialize()),plain(h.serialize()));
+ g.palaceIntroSeen=true;g.getUnit('gilded_cavalier').hp=11;g.getUnit('subaru').hp=8;g.getUnit('subaru').spellUses.miasma=1;const h=reload(g);assert(h.palaceIntroSeen);assert.equal(h.getUnit('gilded_cavalier').hp,11);assert.equal(h.getUnit('subaru').hp,8);assert.equal(h.getUnit('subaru').spellUses.miasma,1);assert.deepEqual(plain(reload(h).serialize()),plain(h.serialize()));
  const old=new M.Game({stage:10});old.completeTenthIntro();const legacy=plain(old.serialize());legacy.stage=10;delete legacy.rehearsalChapterVersion;delete legacy.rehearsalPart;delete legacy.rehearsalFirstDefeated;const k=new M.Game();k.restore(legacy);assert.equal(k.chapterNumber,9);assert(k.getUnit('dark_nina'));assert(!k.getUnit('gilded_cavalier'));
 });
 test('Chapter nine clear imports Subaru growth, latest talents, money and equipment exactly once',()=>{

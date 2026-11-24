@@ -107,20 +107,22 @@ test('舞者等级加舞者证，DLC最上级需30级和地下证',()=>{
   u.acted=false;g.convoy.push(I.make('abyssian_seal'));unchanged(g,()=>g.reclassUnit(u,'dark_flier'),/Lv.30/);level(u,30);g.reclassUnit(u,'dark_flier');assert(u.tags.includes('flying'));
 });
 test('升级按阈值逐步学习，初始只火焰圣疗，报告列出新魔法且满次数',()=>{
-  const g=new M.Game(),u=g.getUnit('soyo');assert.equal(u.learnedSpells.join(','),'fire,heal');level(u,7);assert(!u.learnedSpells.includes('wind'));
-  const r=G.award(u,G.required(7));assert.equal(u.level,8);assert(u.learnedSpells.includes('wind'));assert.equal(r.levels[0].learned.join(','),'wind');assert.equal(u.spellUses.wind,12);
-  u.spellUses.wind=2;I.learn(u);assert.equal(u.spellUses.wind,2);level(u,12);assert(u.learnedSpells.includes('physic'));assert(!u.learnedSpells.includes('bolganone'));
+  const g=new M.Game(),u=g.getUnit('soyo');assert.equal(u.learnedSpells.join(','),'fire,heal');level(u,7);assert(!u.learnedSpells.includes('torch'));
+  const r=G.award(u,G.required(7));assert.equal(u.level,8);assert(u.learnedSpells.includes('torch'));assert.equal(r.levels[0].learned.join(','),'torch');assert.equal(u.spellUses.torch,10);
+  u.spellUses.torch=2;I.learn(u);assert.equal(u.spellUses.torch,2);level(u,12);assert(u.learnedSpells.includes('thunder'));assert(!u.learnedSpells.includes('bolganone'));
 });
 test('高等级读档先恢复等级再重建法术，消耗次数不刷新，跨章恢复',()=>{
-  const g=new M.Game(),u=g.getUnit('soyo');level(u,20);u.spellUses.thoron=1;u.spellUses.fire=0;
-  const h=new M.Game();h.restore(g.serialize());assert.equal(h.getUnit('soyo').spellUses.thoron,1);assert.equal(h.getUnit('soyo').spellUses.fire,0);
-  const next=new M.Game({stage:2,loadout:g.exportLoadout()});assert.equal(next.getUnit('soyo').spellUses.thoron,4);assert.equal(next.getUnit('soyo').level,20);
+  const g=new M.Game(),u=g.getUnit('soyo');level(u,20);u.spellUses.bolganone=1;u.spellUses.fire=0;
+  const h=new M.Game();h.restore(g.serialize());assert.equal(h.getUnit('soyo').spellUses.bolganone,1);assert.equal(h.getUnit('soyo').spellUses.fire,0);
+  const next=new M.Game({stage:2,loadout:g.exportLoadout()});assert.equal(next.getUnit('soyo').spellUses.bolganone,5);assert.equal(next.getUnit('soyo').level,20);
 });
-test('物理角色转魔法职业按当前等级习得，转回物理不能施放但保留记录',()=>{
-  const g=new M.Game(),u=g.getUnit('tomori');level(u,10);g.convoy.push(I.make('intermediate_seal'));g.reclassUnit(u,'mage');assert(u.learnedSpells.includes('thunder'));assert(I.options(u).includes('fire'));
-  u.acted=false;g.reclassUnit(u,'myrmidon');assert(u.learnedSpells.includes('fire'));assert(!I.options(u).includes('fire'));assert.equal(g.supportTargets(u,'heal').length,0);
-  const h=new M.Game();h.restore(g.serialize());assert(h.getUnit('tomori').learnedSpells.includes('fire'));assert(!I.options(h.getUnit('tomori')).includes('fire'));
+test('未开放角色转魔法职业仍不学习法术，存档与跨章保持空表',()=>{
+  const g=new M.Game(),u=g.getUnit('tomori');level(u,10);g.convoy.push(I.make('intermediate_seal'));g.reclassUnit(u,'mage');
+  assert.equal(u.learnedSpells.length,0);assert(!I.options(u).includes('fire'));assert.equal(g.supportTargets(u,'heal').length,0);
+  const h=new M.Game();h.restore(g.serialize());assert.equal(h.getUnit(u.id).learnedSpells.length,0);
+  const next=new M.Game({stage:2,loadout:g.exportLoadout()});assert.equal(next.getUnit(u.id).learnedSpells.length,0);
 });
+
 test('旧档保留既有运输队，高级物品不被初始配置覆盖；旧职业和经济字段缺省可迁移',()=>{
   const g=new M.Game(),s=g.serialize();s.convoy=[I.make('silver_sword')];delete s.economy;for(const u of s.units){delete u.classState;delete u.mageTrained;}
   const h=new M.Game();h.restore(s);assert.equal(h.convoy.length,1);assert.equal(h.convoy[0].id,'silver_sword');assert.equal(h.gold,3000);

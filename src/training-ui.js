@@ -173,7 +173,12 @@
       <footer class="training-result-footer"><p role="status">${escape(saved.ok?'营地进度已自动保存。':saved.message)}</p>
       <button type="button" class="modal-btn primary" data-training-return>返回休憩之地</button></footer>`, 'training-result', false);
     const button=this.dom.overlayCard.querySelector('[data-training-return]');
-    button.onclick=()=>{
+    button.onclick=async()=>{
+      if(button.disabled)return;
+      button.disabled=true;
+      for(const member of result.party)if(member.growth?.levels.some(level=>level.learned?.length)){
+        await this.showLearnedSpells(battle.campaign.getUnit(member.growth.unitId),member.growth.levels);
+      }
       this.switchTrainingGame(battle.campaign);
       M.entry.openRetreat();
       M.entry.retreat.announce(saved.ok?(result.complete?'训练完成，奖励已记入队伍。':'已带着本次职业经验回到营地。'):saved.message);

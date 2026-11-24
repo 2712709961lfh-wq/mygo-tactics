@@ -32,7 +32,7 @@ test('Either first boss may fall, but both are required; opening must finish bef
 });
 test('Both new chapter-eleven and older palace snapshots round-trip without misclassification',()=>{
  const g=fresh();assert.equal(g.serialize().stage,11);assert.equal(g.serialize().royalGardenChapterVersion,1);assert.equal(g.serialize().palaceChapterVersion,undefined);assert.equal(reload(g).stage,12);assert.deepEqual(plain(reload(g).serialize()),plain(g.serialize()));
- g.royalGardenIntroSeen=true;g.getUnit('garden_rift_pegasus').hp=9;g.getUnit('subaru').hp=7;g.getUnit('subaru').spellUses.fire=1;g.retreat={chapterIntroPlayed:true};const h=reload(g);assert.equal(h.getUnit('garden_rift_pegasus').hp,9);assert.equal(h.getUnit('subaru').hp,7);assert.equal(h.getUnit('subaru').spellUses.fire,1);assert(h.retreat.chapterIntroPlayed);assert.deepEqual(plain(reload(h).serialize()),plain(h.serialize()));
+ g.royalGardenIntroSeen=true;g.getUnit('garden_rift_pegasus').hp=9;g.getUnit('subaru').hp=7;g.getUnit('subaru').spellUses.miasma=1;g.retreat={chapterIntroPlayed:true};const h=reload(g);assert.equal(h.getUnit('garden_rift_pegasus').hp,9);assert.equal(h.getUnit('subaru').hp,7);assert.equal(h.getUnit('subaru').spellUses.miasma,1);assert(h.retreat.chapterIntroPlayed);assert.deepEqual(plain(reload(h).serialize()),plain(h.serialize()));
  const palace=new M.Game({stage:11});palace.palaceIntroSeen=true;palace.getUnit('gilded_cavalier').hp=9;assert.equal(reload(palace).chapterNumber,10);assert.equal(reload(palace).getUnit('gilded_cavalier').hp,9);
 });
 test('Cross-chapter import retains growth, mastery, talents, convoy, gold and ticket budget',()=>{

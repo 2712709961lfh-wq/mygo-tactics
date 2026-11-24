@@ -5516,7 +5516,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.27.0</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.28.2</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -6145,7 +6145,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     ['fimbulvetr','芬布尔','Fimbulvetr','black','B',3,12,65,25,'1-2',10,'ice'],
     ['sagittae','箭雨','Sagittae','black','C',10,7,90,5,'1-2',6,'light'],
     ['meteor','陨石','Meteor','black','B',1,10,80,0,'3-10',19,'fire','noFollowup'],
-    ['agneas_arrow','阿格尼之箭','Agnea’s Arrow','black','A',2,16,70,5,'1-2',13,'light'],
+    ['agneas_arrow','阿格尼尔之箭','Agnea’s Arrow','black','A',2,16,70,5,'1-2',13,'light'],
     ['miasma','瘴气 Δ','Miasma Δ','dark','E',10,5,80,0,'1-2',5,'dark'],
     ['mire','沼泽 Β','Mire Β','dark','E',8,3,70,0,'1-3',5,'dark','defDown'],
     ['swarm','虫群 Ζ','Swarm Ζ','dark','E',8,4,70,0,'1-2',4,'dark','spdDown'],
@@ -6186,13 +6186,27 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     range:rangeText.includes('mag')?[1,1]:rangeText.split('-').map(Number).concat(rangeText.includes('-')?[]:[+rangeText]),
     source:school==='faith'?'https://serenesforest.net/three-houses/weapons-and-items/white-magic/':'https://serenesforest.net/three-houses/weapons-and-items/black-dark-magic/'
   }));
-  // Character-level progression is a local adaptation; FE3H normally teaches by skill rank.
+  // The former shared table is retained only to validate old saves.
+  // Live character-level progression uses personalLearning below.
   const learning=Object.freeze([
     [5,'fire'],[5,'heal'],[8,'wind'],[10,'thunder'],[12,'physic'],[15,'bolganone'],
     [18,'restore'],[20,'thoron'],[23,'ward'],[25,'recover'],[28,'ragnarok'],
-    [30,'rescue'],[35,'fortify'],[40,'warp']
+    [30,'rescue'],[32,'fortify'],[35,'warp']
   ].map(([level,id])=>Object.freeze({level,id})));
-  M.Magic = Object.freeze({items:Object.freeze(items),learning,get:id=>items.find(s=>s.id===id),
+  const personalLearning=Object.freeze(Object.fromEntries(Object.entries({
+    soyo:[[5,'fire'],[5,'heal'],[8,'torch'],[9,'thunder'],[12,'nosferatu'],[12,'wind'],[18,'bolganone'],[21,'excalibur'],[23,'fimbulvetr'],[26,'meteor'],[28,'ragnarok'],[32,'agneas_arrow']],
+    nijika:[[5,'heal'],[5,'nosferatu'],[10,'torch'],[12,'physic'],[15,'ward'],[18,'restore'],[18,'thoron'],[22,'recover'],[22,'seraphim'],[22,'rescue'],[25,'aura'],[25,'silence'],[26,'fortify'],[26,'bolting'],[28,'warp'],[33,'abraxas']],
+    subaru:[[5,'heal'],[5,'miasma'],[8,'nosferatu'],[12,'ward'],[14,'banshee'],[16,'physic'],[18,'dark_spikes'],[20,'seraphim'],[24,'death'],[25,'luna'],[27,'fimbulvetr'],[35,'hades']],
+    tomori:[],
+    anon:[],
+    rana:[],
+    taki:[],
+    xueyue:[],
+    nina:[]
+  }).map(([id,rows])=>[id,Object.freeze(rows.map(([level,id])=>Object.freeze({level,id})))])));
+  const noLearning=Object.freeze([]);
+  function learningFor(u){const id=typeof u==='string'?u:u?.id;return u?.side==='enemy'?noLearning:personalLearning[id]||noLearning;}
+  M.Magic = Object.freeze({items:Object.freeze(items),learning,personalLearning,learningFor,get:id=>items.find(s=>s.id===id),
     rangeOf:(s,u)=>{const r=s.rangeText.includes('mag/')?[1,Math.max(1,Math.floor(u.mag/Number(s.rangeText.split('/')[1])))]:s.range.slice();r[1]+=M.Talents?.rangeBonus(u,s)||0;return r;},
     healAmount:(s,u)=>{const amount=s.might+Math.floor(u.mag/3)+(u.gear?.heal||0);return M.Talents?.healingAmount(u,s,amount)??amount;},
     schoolName:s=>({black:'理学 · 黑魔法',dark:'理学 · 暗魔法',faith:'信仰 · 白魔法'}[s.school])});
@@ -6269,10 +6283,11 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     return (u.weaponTypes||[u.weaponType]).includes(e.category);
   }
   function learn(u){
-    if(u.side!=='player'||(!u.mageTrained&&u.id!=='soyo'&&!M.Classes?.get(u.classId)?.magic))return [];
+    if(u.side==='enemy')return [];
+    const rows=Magic.learningFor(u);if(!rows.length)return [];
     u.mageTrained=true;
     const added=[];
-    for(const row of Magic.learning)if(u.level>=row.level&&!u.learnedSpells.includes(row.id)){
+    for(const row of rows)if(u.level>=row.level&&!u.learnedSpells.includes(row.id)){
       u.learnedSpells.push(row.id);u.spellUses[row.id]=Magic.get(row.id).uses;added.push(row.id);
     }
     return added;
@@ -6311,7 +6326,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function init(u,t){
     const w=weapons[t.weapon];if(!w)throw Error('未知攻击手段：'+t.weapon);
     u.weaponType=w.type;u.inventory=w.kind==='spell'?[]:[make(w.id)];
-    u.learnedSpells=(t.spells|| (w.kind==='spell'?[w.id]:[])).slice();
+    u.learnedSpells=u.side!=='enemy'&&Magic.personalLearning[u.id]?[]:(t.spells|| (w.kind==='spell'?[w.id]:[])).slice();
     u.spellUses=Object.fromEntries(u.learnedSpells.map(id=>[id,Magic.get(id).uses]));
     u.status={};u.equippedWeapon=w.id;u.equippedAccessory=null;learn(u);sync(u);
   }
@@ -6331,25 +6346,33 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
   function pack(u){return{inventory:u.inventory.map(i=>({...i})),equippedWeapon:u.equippedWeapon,equippedAccessory:u.equippedAccessory,
     classMastery:M.Mastery?.pack(u),stolenDrops:(u.stolenDrops||[]).slice(),
     classState:{version:1,id:u.classId,certified:(u.certifiedClasses||[u.classId]).filter(Boolean)},mageTrained:!!u.mageTrained,
-    learnedSpells:u.learnedSpells.slice(),spellUses:{...u.spellUses},status:{...u.status}};}
+    spellLearningVersion:2,learnedSpells:u.learnedSpells.slice(),spellUses:{...u.spellUses},status:{...u.status}};}
   function validateBag(bag,max=5){
     if(!Array.isArray(bag)||bag.length>max)throw Error('背包格数无效');
     return bag.map(i=>{const e=i&&item(i.id);if(!e||!allowed.has(i.id))throw Error('存档包含未知物品');
       if(e.uses!==null&&(!Number.isInteger(i.uses)||i.uses<(['key','seal','consumable','ticket'].includes(e.kind)?1:0)||i.uses>e.uses))throw Error('存档耐久无效');return{id:i.id,uses:e.uses===null?null:i.uses};});
   }
   function restore(u,s,refresh){
-    if(!s||!Array.isArray(s.inventory))return;
+    if(!s||!Array.isArray(s.inventory)){learn(u);sync(u);return;}
     u.inventory=validateBag(s.inventory);
     const stolen=s.stolenDrops??[],authoredDrops=[...new Set([...(u.drops||[]),...(u.stolenDrops||[])])];
     if(!Array.isArray(stolen)||stolen.some(id=>!authoredDrops.includes(id))||new Set(stolen).size!==stolen.length)throw Error('存档偷窃记录无效');
     u.stolenDrops=stolen.slice();u.drops=authoredDrops.filter(id=>!stolen.includes(id));
     if(s.mageTrained!==undefined&&typeof s.mageTrained!=='boolean')throw Error('存档魔法训练无效');
     u.mageTrained=!!s.mageTrained||u.id==='soyo'||!!M.Classes?.get(u.classId)?.magic;
+    if(s.spellLearningVersion!==undefined&&![1,2].includes(s.spellLearningVersion))throw Error('存档魔法学习版本无效');
+    const personal=u.side!=='enemy'&&Magic.personalLearning[u.id];
+    if(personal){u.learnedSpells=[];u.spellUses={};}
     learn(u);
     if(!Array.isArray(s.learnedSpells)||new Set(s.learnedSpells).size!==s.learnedSpells.length||s.learnedSpells.some(id=>!Magic.get(id)))throw Error('存档魔法无效');
-    // Templates remain authoritative: discard Soyo's retired spells from old saves.
-    if(s.learnedSpells.some(id=>!u.learnedSpells.includes(id)&&!(u.id==='soyo'&&retiredSoyoSpells.has(id))))throw Error('角色尚未学会该魔法');
-    for(const id of u.learnedSpells){const n=s.spellUses?.[id];if(n!==undefined&&(!Number.isInteger(n)||n<0||n>Magic.get(id).uses))throw Error('存档魔法次数无效');u.spellUses[id]=refresh?Magic.get(id).uses:(n??Magic.get(id).uses);}
+    // Accept only authored spells and the old level table when migrating an old
+    // personal spell list. The new table controls what remains learned.
+    const legacy=new Set(s.spellLearningVersion!==2?[...Magic.learning.filter(r=>r.level<=u.level).map(r=>r.id),
+      ...(u.id==='subaru'?['fire','thunder','heal']:u.id==='nijika'?['nosferatu','heal']:[])]:[]);
+    if(s.learnedSpells.some(id=>!u.learnedSpells.includes(id)&&!(personal&&s.spellLearningVersion!==2&&
+      (legacy.has(id)||u.id==='soyo'&&retiredSoyoSpells.has(id)))))throw Error('角色尚未学会该魔法');
+    for(const id of s.learnedSpells){const n=s.spellUses?.[id];if(n!==undefined&&(!Number.isInteger(n)||n<0||n>Magic.get(id).uses))throw Error('存档魔法次数无效');}
+    for(const id of u.learnedSpells){const n=s.learnedSpells.includes(id)?s.spellUses?.[id]:undefined;u.spellUses[id]=refresh?Magic.get(id).uses:(n??Magic.get(id).uses);}
     u.equippedWeapon=s.equippedWeapon;u.equippedAccessory=s.equippedAccessory;
     u.status={};if(!refresh)for(const k of ['defDown','spdDown','moveDown','silence','ward','poison','talentResDown','masteryDance','masteryTransmute','masterySealDef','masterySealRes']){const n=s.status?.[k];if(Number.isInteger(n)&&n>0&&n<=7)u.status[k]=n;}
     if(!refresh){
@@ -8040,7 +8063,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 (function(global){
  'use strict';const C=global.MyGO.CONFIG,base=C.STAGE_NINE;
  C.SUBARU={id:'subaru',name:'安和昴',shortName:'昴',gender:'女',side:'ally',classId:'mage',className:'术师',level:12,
-  maxHp:30,str:6,mag:15,dex:13,spd:12,lck:12,def:7,res:13,hit:0,move:4,tags:[],weapon:'fire',spells:['fire','thunder','heal'],
+  maxHp:30,str:6,mag:15,dex:13,spd:12,lck:12,def:7,res:13,hit:0,move:4,tags:[],weapon:'miasma',spells:['miasma','heal','nosferatu','ward'],
   x:13,y:16,facing:'up',quote:'mmk叫我抓你回去训练……不过现在，还是先把这些家伙解决掉吧！',
   art:{kind:'girl',hair:'#303037',hairDark:'#16191e',hairStyle:'long',outfit:'#283049',outfitDark:'#171e2e',accent:'#b7bdd1',skin:'#f5d6c6',eye:'#785b9c'}};
  const sources=['rehearsal-sword-a','rehearsal-axe-a','rehearsal-bow-a','rehearsal-lance-a','rehearsal-mage-a','rehearsal-sword-b','rehearsal-bow-b'];
@@ -20200,6 +20223,21 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       return applied;
     }
 
+    async showLearnedSpells(unit,levels) {
+      const learned=levels.flatMap(l=>(l.learned||[]).map(id=>({level:l.level,spell:MyGO.Magic.get(id)})));
+      if(!learned.length)return;
+      await new Promise(resolve=>{
+        this.openOverlay('<div class="modal-kicker">NEW MAGIC</div><h2 class="modal-title" id="overlay-title">'+esc(unit.name)+' · 习得新魔法</h2>'+
+          '<p class="modal-sub">新的力量已加入「已学魔法」，不占用背包格。</p>'+learned.map(({level,spell:s})=>{
+            const range=MyGO.Magic.rangeOf(s,unit);
+            return '<section class="mastery-unlock"><h3>Lv.'+level+' · '+esc(s.name)+'</h3><p>'+esc(MyGO.Magic.schoolName(s))+' · '+(s.support?'辅助魔法':'攻击魔法')+
+              ' · 每章 '+s.uses+' 次 · 射程 '+range.join('–')+'</p><p>'+(s.support?'':'威力 '+s.might+' · 命中 '+s.hit+' · 必杀 '+s.crit+'<br>')+esc(s.description)+'</p></section>';
+          }).join('')+(!MyGO.Inventory.magicAllowed(unit)?'<p class="loadout-notice is-locked">当前职业不能施法，转为可使用魔法的职业后即可使用。</p>':'')+
+          '<div class="modal-actions"><button class="modal-btn primary" data-confirm>记住这份力量</button></div>','growth-modal',false);
+        this.confirmHandler=resolve;
+      });
+    }
+
     async showGrowthResults(reports) {
       if(!reports?.length)return;
       for(const report of reports){const u=this.game.getUnit(report.unitId);
@@ -20216,6 +20254,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           '<p class="modal-sub">成长与职业专精奖励已记录，会随存档与跨章保留。</p><div class="modal-actions"><button class="modal-btn primary" data-confirm>继续前行</button></div>','growth-modal',false);
         this.confirmHandler=resolve;
       });
+      for(const report of leveled)await this.showLearnedSpells(this.game.getUnit(report.unitId),report.levels);
     }
 
     showRecruitment(unit) {
@@ -22448,7 +22487,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           const s=Magic.get(id),selected=u.equippedWeapon===id;
           return '<article class="spell-card'+(selected?' is-equipped':'')+'"><span class="bag-icon">'+icon(s)+'</span><div class="bag-copy"><strong>'+esc(s.name)+' <small>'+esc(s.en)+'</small></strong><small>'+Magic.schoolName(s)+' · '+s.rank+' · '+esc(stats(s,u))+'</small><p>'+esc(s.description)+'</p></div><div class="spell-charge"><b>'+u.spellUses[id]+'<small>/'+s.uses+'</small></b>'+(s.support?'<small>战斗中使用辅助魔法</small>':'<button type="button" data-spell-equip="'+id+'"'+(dis||(!I.magicAllowed(u)||!u.spellUses[id]?' disabled':''))+'>'+(selected?'当前攻击':'设为攻击')+'</button>')+'</div></article>';
         }).join(''):'<p class="loadout-empty">该角色目前未学会魔法。法师的魔法记录在这里，无需领取魔法书。</p>')+'</div>'+
-        '<div class="loadout-section-title"><strong>等级学法术</strong><span>法师按等级自动习得；原作法术效果，等级安排为本作设定</span></div><div class="spell-reference">'+(u.mageTrained||M.Classes.get(u.classId)?.magic?Magic.learning.map(row=>'<article><strong>Lv.'+row.level+' · '+esc(Magic.get(row.id).name)+'</strong><p>'+(u.learnedSpells.includes(row.id)?'已习得':'达到等级后自动习得')+'</p></article>').join(''):'<p>转为可使用魔法的职业后开始学习。</p>')+'</div><details class="spell-codex"><summary>风花雪月魔法图鉴 · 36 种可学习魔法</summary><p class="loadout-footnote">数值来自 Serenes Forest。下表为参考图鉴；各角色只可使用已学魔法，当前职业须允许魔法。</p>'+['black','dark','faith'].map(school=>'<h4>'+Magic.schoolName({school})+'</h4><div class="spell-reference">'+Magic.items.filter(s=>s.school===school).map(s=>'<article><strong>'+esc(s.name)+' <small>'+s.rank+' · '+s.uses+'次</small></strong><small>'+esc(s.en)+' · '+esc(stats(s,u))+'</small><p>'+esc(s.description)+'</p></article>').join('')+'</div>').join('')+'</details>';
+        '<div class="loadout-section-title"><strong>等级学法术</strong><span>'+(Magic.learningFor(u).length?'角色专属学习表；按等级自动习得':'暂未开放魔法学习')+'；等级安排为本作设定</span></div><div class="spell-reference">'+(Magic.learningFor(u).length?Magic.learningFor(u).map(row=>'<article><strong>Lv.'+row.level+' · '+esc(Magic.get(row.id).name)+'</strong><p>'+(u.learnedSpells.includes(row.id)?'已习得':'达到等级后自动习得')+'</p></article>').join(''):'<p>该角色暂时不可学习任何魔法；转为魔法职业也不会自动习得。</p>')+'</div><details class="spell-codex"><summary>风花雪月魔法图鉴 · 36 种可学习魔法</summary><p class="loadout-footnote">数值来自 Serenes Forest。下表为参考图鉴；各角色只可使用已学魔法，当前职业须允许魔法。</p>'+['black','dark','faith'].map(school=>'<h4>'+Magic.schoolName({school})+'</h4><div class="spell-reference">'+Magic.items.filter(s=>s.school===school).map(s=>'<article><strong>'+esc(s.name)+' <small>'+s.rank+' · '+s.uses+'次</small></strong><small>'+esc(s.en)+' · '+esc(stats(s,u))+'</small><p>'+esc(s.description)+'</p></article>').join('')+'</div>').join('')+'</details>';
     }
     this.dom.formationDetail.innerHTML=header+body;
     this.drawPortrait(this.dom.formationDetail.querySelector('[data-loadout-portrait]'),u,true);this.renderPoseDock(u);
@@ -24280,7 +24319,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       <footer class="training-result-footer"><p role="status">${escape(saved.ok?'营地进度已自动保存。':saved.message)}</p>
       <button type="button" class="modal-btn primary" data-training-return>返回休憩之地</button></footer>`, 'training-result', false);
     const button=this.dom.overlayCard.querySelector('[data-training-return]');
-    button.onclick=()=>{
+    button.onclick=async()=>{
+      if(button.disabled)return;
+      button.disabled=true;
+      for(const member of result.party)if(member.growth?.levels.some(level=>level.learned?.length)){
+        await this.showLearnedSpells(battle.campaign.getUnit(member.growth.unitId),member.growth.levels);
+      }
       this.switchTrainingGame(battle.campaign);
       M.entry.openRetreat();
       M.entry.retreat.announce(saved.ok?(result.complete?'训练完成，奖励已记入队伍。':'已带着本次职业经验回到营地。'):saved.message);

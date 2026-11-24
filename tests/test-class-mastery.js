@@ -132,7 +132,7 @@ test('专精在交战结束后才解锁，不回头改变已锁定的本次交�
 test('战后封锁不受新版哈气阻止，与其他减益取最大且可被复原清除',()=>{
   const {g,u}=setup(),t=g.getUnit('rana');t.level=20;M.Talents.sync(t);t.status.masterySealDef=1;assert.equal(M.Talents.penalty(t,'masterySealDef',6),6);M.Talents.sync(t);assert.equal(t.status.masterySealDef,1);
   u.status={defDown:1,masterySealDef:1,masterySealRes:1,talentResDown:1};const physical=C.defenseOf(u,g.map,false),magic=C.defenseOf(u,g.map,true);u.status={};assert.equal(C.defenseOf(u,g.map,false)-physical,6);assert.equal(C.defenseOf(u,g.map,true)-magic,6);
-  const s=g.getUnit('soyo');Object.assign(s,{level:30,x:4,y:5});I.learn(s);u.status.masterySealDef=1;const r=g.castSupport(s,'restore',u);assert(r);assert.equal(u.status.masterySealDef,undefined);
+  const s=g.getUnit('soyo');Object.assign(s,{level:30,x:4,y:5});I.learn(s);s.learnedSpells.push('restore');s.spellUses.restore=10;u.status.masterySealDef=1;const r=g.castSupport(s,'restore',u);assert(r);assert.equal(u.status.masterySealDef,undefined);
 });
 test('DLC魔力转换不在主动进攻时触发；舞蹈幸运也参与魔法命中',()=>{
   const {g,u,e}=setup();skills(u,['dark_flier'],['transmute']);weapon(e,'levin_sword');u.hp=u.maxHp=300;

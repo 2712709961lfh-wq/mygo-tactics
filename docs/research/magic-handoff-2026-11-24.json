@@ -1,0 +1,198 @@
+{
+  "sourceWorkbook": "角色魔法学习交接表_v5.28.1.xlsx",
+  "sourceVersion": "5.28.1",
+  "date": "2026-11-24",
+  "priority": "Workbook learning levels plus explicit user message; unmentioned characters cannot learn spells.",
+  "additions": [
+    {
+      "character": "soyo",
+      "level": 12,
+      "id": "wind"
+    },
+    {
+      "character": "soyo",
+      "level": 26,
+      "id": "meteor"
+    },
+    {
+      "character": "subaru",
+      "level": 16,
+      "id": "physic"
+    }
+  ],
+  "learning": {
+    "soyo": [
+      {
+        "level": 5,
+        "id": "fire"
+      },
+      {
+        "level": 5,
+        "id": "heal"
+      },
+      {
+        "level": 8,
+        "id": "torch"
+      },
+      {
+        "level": 9,
+        "id": "thunder"
+      },
+      {
+        "level": 12,
+        "id": "nosferatu"
+      },
+      {
+        "level": 12,
+        "id": "wind"
+      },
+      {
+        "level": 18,
+        "id": "bolganone"
+      },
+      {
+        "level": 21,
+        "id": "excalibur"
+      },
+      {
+        "level": 23,
+        "id": "fimbulvetr"
+      },
+      {
+        "level": 26,
+        "id": "meteor"
+      },
+      {
+        "level": 28,
+        "id": "ragnarok"
+      },
+      {
+        "level": 32,
+        "id": "agneas_arrow"
+      }
+    ],
+    "nijika": [
+      {
+        "level": 5,
+        "id": "heal"
+      },
+      {
+        "level": 5,
+        "id": "nosferatu"
+      },
+      {
+        "level": 10,
+        "id": "torch"
+      },
+      {
+        "level": 12,
+        "id": "physic"
+      },
+      {
+        "level": 15,
+        "id": "ward"
+      },
+      {
+        "level": 18,
+        "id": "restore"
+      },
+      {
+        "level": 18,
+        "id": "thoron"
+      },
+      {
+        "level": 22,
+        "id": "recover"
+      },
+      {
+        "level": 22,
+        "id": "seraphim"
+      },
+      {
+        "level": 22,
+        "id": "rescue"
+      },
+      {
+        "level": 25,
+        "id": "aura"
+      },
+      {
+        "level": 25,
+        "id": "silence"
+      },
+      {
+        "level": 26,
+        "id": "fortify"
+      },
+      {
+        "level": 26,
+        "id": "bolting"
+      },
+      {
+        "level": 28,
+        "id": "warp"
+      },
+      {
+        "level": 33,
+        "id": "abraxas"
+      }
+    ],
+    "subaru": [
+      {
+        "level": 5,
+        "id": "heal"
+      },
+      {
+        "level": 5,
+        "id": "miasma"
+      },
+      {
+        "level": 8,
+        "id": "nosferatu"
+      },
+      {
+        "level": 12,
+        "id": "ward"
+      },
+      {
+        "level": 14,
+        "id": "banshee"
+      },
+      {
+        "level": 16,
+        "id": "physic"
+      },
+      {
+        "level": 18,
+        "id": "dark_spikes"
+      },
+      {
+        "level": 20,
+        "id": "seraphim"
+      },
+      {
+        "level": 24,
+        "id": "death"
+      },
+      {
+        "level": 25,
+        "id": "luna"
+      },
+      {
+        "level": 27,
+        "id": "fimbulvetr"
+      },
+      {
+        "level": 35,
+        "id": "hades"
+      }
+    ],
+    "tomori": [],
+    "anon": [],
+    "rana": [],
+    "taki": [],
+    "xueyue": [],
+    "nina": []
+  },
+  "notesInterpretation": "User confirmed only learning levels were edited; all 20 notes ignored; base spell stats unchanged."
+}

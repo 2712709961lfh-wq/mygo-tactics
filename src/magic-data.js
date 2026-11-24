@@ -17,7 +17,7 @@
     ['fimbulvetr','芬布尔','Fimbulvetr','black','B',3,12,65,25,'1-2',10,'ice'],
     ['sagittae','箭雨','Sagittae','black','C',10,7,90,5,'1-2',6,'light'],
     ['meteor','陨石','Meteor','black','B',1,10,80,0,'3-10',19,'fire','noFollowup'],
-    ['agneas_arrow','阿格尼之箭','Agnea’s Arrow','black','A',2,16,70,5,'1-2',13,'light'],
+    ['agneas_arrow','阿格尼尔之箭','Agnea’s Arrow','black','A',2,16,70,5,'1-2',13,'light'],
     ['miasma','瘴气 Δ','Miasma Δ','dark','E',10,5,80,0,'1-2',5,'dark'],
     ['mire','沼泽 Β','Mire Β','dark','E',8,3,70,0,'1-3',5,'dark','defDown'],
     ['swarm','虫群 Ζ','Swarm Ζ','dark','E',8,4,70,0,'1-2',4,'dark','spdDown'],
@@ -58,13 +58,27 @@
     range:rangeText.includes('mag')?[1,1]:rangeText.split('-').map(Number).concat(rangeText.includes('-')?[]:[+rangeText]),
     source:school==='faith'?'https://serenesforest.net/three-houses/weapons-and-items/white-magic/':'https://serenesforest.net/three-houses/weapons-and-items/black-dark-magic/'
   }));
-  // Character-level progression is a local adaptation; FE3H normally teaches by skill rank.
+  // The former shared table is retained only to validate old saves.
+  // Live character-level progression uses personalLearning below.
   const learning=Object.freeze([
     [5,'fire'],[5,'heal'],[8,'wind'],[10,'thunder'],[12,'physic'],[15,'bolganone'],
     [18,'restore'],[20,'thoron'],[23,'ward'],[25,'recover'],[28,'ragnarok'],
-    [30,'rescue'],[35,'fortify'],[40,'warp']
+    [30,'rescue'],[32,'fortify'],[35,'warp']
   ].map(([level,id])=>Object.freeze({level,id})));
-  M.Magic = Object.freeze({items:Object.freeze(items),learning,get:id=>items.find(s=>s.id===id),
+  const personalLearning=Object.freeze(Object.fromEntries(Object.entries({
+    soyo:[[5,'fire'],[5,'heal'],[8,'torch'],[9,'thunder'],[12,'nosferatu'],[12,'wind'],[18,'bolganone'],[21,'excalibur'],[23,'fimbulvetr'],[26,'meteor'],[28,'ragnarok'],[32,'agneas_arrow']],
+    nijika:[[5,'heal'],[5,'nosferatu'],[10,'torch'],[12,'physic'],[15,'ward'],[18,'restore'],[18,'thoron'],[22,'recover'],[22,'seraphim'],[22,'rescue'],[25,'aura'],[25,'silence'],[26,'fortify'],[26,'bolting'],[28,'warp'],[33,'abraxas']],
+    subaru:[[5,'heal'],[5,'miasma'],[8,'nosferatu'],[12,'ward'],[14,'banshee'],[16,'physic'],[18,'dark_spikes'],[20,'seraphim'],[24,'death'],[25,'luna'],[27,'fimbulvetr'],[35,'hades']],
+    tomori:[],
+    anon:[],
+    rana:[],
+    taki:[],
+    xueyue:[],
+    nina:[]
+  }).map(([id,rows])=>[id,Object.freeze(rows.map(([level,id])=>Object.freeze({level,id})))])));
+  const noLearning=Object.freeze([]);
+  function learningFor(u){const id=typeof u==='string'?u:u?.id;return u?.side==='enemy'?noLearning:personalLearning[id]||noLearning;}
+  M.Magic = Object.freeze({items:Object.freeze(items),learning,personalLearning,learningFor,get:id=>items.find(s=>s.id===id),
     rangeOf:(s,u)=>{const r=s.rangeText.includes('mag/')?[1,Math.max(1,Math.floor(u.mag/Number(s.rangeText.split('/')[1])))]:s.range.slice();r[1]+=M.Talents?.rangeBonus(u,s)||0;return r;},
     healAmount:(s,u)=>{const amount=s.might+Math.floor(u.mag/3)+(u.gear?.heal||0);return M.Talents?.healingAmount(u,s,amount)??amount;},
     schoolName:s=>({black:'理学 · 黑魔法',dark:'理学 · 暗魔法',faith:'信仰 · 白魔法'}[s.school])});

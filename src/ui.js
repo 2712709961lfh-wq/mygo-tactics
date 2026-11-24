@@ -1660,6 +1660,21 @@
       return applied;
     }
 
+    async showLearnedSpells(unit,levels) {
+      const learned=levels.flatMap(l=>(l.learned||[]).map(id=>({level:l.level,spell:MyGO.Magic.get(id)})));
+      if(!learned.length)return;
+      await new Promise(resolve=>{
+        this.openOverlay('<div class="modal-kicker">NEW MAGIC</div><h2 class="modal-title" id="overlay-title">'+esc(unit.name)+' · 习得新魔法</h2>'+
+          '<p class="modal-sub">新的力量已加入「已学魔法」，不占用背包格。</p>'+learned.map(({level,spell:s})=>{
+            const range=MyGO.Magic.rangeOf(s,unit);
+            return '<section class="mastery-unlock"><h3>Lv.'+level+' · '+esc(s.name)+'</h3><p>'+esc(MyGO.Magic.schoolName(s))+' · '+(s.support?'辅助魔法':'攻击魔法')+
+              ' · 每章 '+s.uses+' 次 · 射程 '+range.join('–')+'</p><p>'+(s.support?'':'威力 '+s.might+' · 命中 '+s.hit+' · 必杀 '+s.crit+'<br>')+esc(s.description)+'</p></section>';
+          }).join('')+(!MyGO.Inventory.magicAllowed(unit)?'<p class="loadout-notice is-locked">当前职业不能施法，转为可使用魔法的职业后即可使用。</p>':'')+
+          '<div class="modal-actions"><button class="modal-btn primary" data-confirm>记住这份力量</button></div>','growth-modal',false);
+        this.confirmHandler=resolve;
+      });
+    }
+
     async showGrowthResults(reports) {
       if(!reports?.length)return;
       for(const report of reports){const u=this.game.getUnit(report.unitId);
@@ -1676,6 +1691,7 @@
           '<p class="modal-sub">成长与职业专精奖励已记录，会随存档与跨章保留。</p><div class="modal-actions"><button class="modal-btn primary" data-confirm>继续前行</button></div>','growth-modal',false);
         this.confirmHandler=resolve;
       });
+      for(const report of leveled)await this.showLearnedSpells(this.game.getUnit(report.unitId),report.levels);
     }
 
     showRecruitment(unit) {

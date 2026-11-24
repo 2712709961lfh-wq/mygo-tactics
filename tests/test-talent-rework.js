@@ -83,12 +83,12 @@ test('自信者光芒主动和反击均生效，武器原始威力不变，魔�
 });
 
 test('天使每次魔法必杀各治疗15，包括自己和友军，连续必杀可改变本次交战后续存活',()=>{
-  const {g,a,e}=fixture('subaru');M.Classes.apply(a,'mage');a.equippedWeapon='fire';I.sync(a);
+  const {g,a,e}=fixture('subaru');M.Classes.apply(a,'mage');a.equippedWeapon='miasma';I.sync(a);
   Object.assign(a,{hp:1,maxHp:100,lck:400,dex:200,spd:30});Object.assign(e,{hp:999,maxHp:999,cannotCounter:true});
   const ally=g.getUnit('tomori'),other=g.getUnit('nijika');ally.hp=1;ally.maxHp=100;other.side='ally';other.hp=1;other.maxHp=100;
   const r=C.rollRound(a,e,g.map,{int:()=>1});assert.equal(r.strikes.length,2);assert(r.strikes.every(s=>s.angel));assert.equal(r.attackerHpAfter,31);assert.equal(ally.hp,1);
   g.applyCombat(r);assert.equal(a.hp,31);assert.equal(ally.hp,31);assert.equal(other.hp,31);assert.throws(()=>g.applyCombat(r));
-  const f=fixture('subaru');M.Classes.apply(f.a,'mage');f.a.equippedWeapon='fire';I.sync(f.a);
+  const f=fixture('subaru');M.Classes.apply(f.a,'mage');f.a.equippedWeapon='miasma';I.sync(f.a);
   Object.assign(f.a,{hp:1,maxHp:100,lck:400,dex:200,spd:10,def:0});Object.assign(f.e,{spd:10,str:0});
   const x=C.rollRound(f.a,f.e,f.g.map,{int:()=>1});assert(x.strikes[0].angel);assert(x.strikes.some(s=>s.attackerId===f.e.id));assert(x.attackerHpAfter>0);
 });
