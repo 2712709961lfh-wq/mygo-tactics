@@ -113,7 +113,7 @@
   line(c,w*.42,h*.56,w*.25,h,'#d4ae61',3);line(c,w*.58,h*.56,w*.75,h,'#d4ae61',3);
   for(const x of [w*.025,w*.21,w*.77,w*.955]){marble(c,x-12,h*.08,24,h*.49);rect(c,x-22,h*.06,44,14,'#bc9b57');rect(c,x-21,h*.55,42,12,'#c3a263');}
   rect(c,0,h*.025,w,8,'#bc9953');rect(c,0,h*.09,w,4,'#b08b4b');lamp(c,w*.5,h*.22);c.restore();}
- const isCavalry=id=>[M.CONFIG.STAGE_PALACE,M.CONFIG.STAGE_ROYAL_GARDEN].some(m=>m?.enemies.some(u=>u.id===id&&String(u.art).startsWith('palace-cavalier')));
+ const isCavalry=id=>String(M.CONFIG.STAGE_SCHOOL?.templateForId(id)?.art).startsWith('palace-cavalier')||[M.CONFIG.STAGE_PALACE,M.CONFIG.STAGE_ROYAL_GARDEN].some(m=>m?.enemies.some(u=>u.id===id&&String(u.art).startsWith('palace-cavalier')));
  const isElite=id=>id==='gilded_cavalier'||id==='garden_cavalier_boss';
  const actions={idle:[0,2],walk:[4,6],run:[8,6],attack:[12,8],hurt:[16,3],down:[20,6],jump:[24,5]};
  function pose(id,state='idle',frame=0,facing='left'){

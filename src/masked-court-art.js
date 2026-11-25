@@ -29,7 +29,7 @@
     aura(c,x,y,h,now,state==='summon');c.save();c.translate(x,y);if(facing==='left')c.scale(-1,1);
     c.imageSmoothingEnabled=true;c.drawImage(images.actions,k*256,spec[0]*160,256,160,-64*scale,-143*scale,256*scale,160*scale);c.restore();return true;
   }
-  const alias=id=>M.CONFIG.STAGE_ROYAL_GARDEN?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_PALACE?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_SIX.summonTemplates.find(u=>u.id===id)?.art||M.CONFIG.STAGE_EIGHT?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_NINE?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_TEN?.enemies.find(u=>u.id===id)?.art;
+  const alias=id=>M.CONFIG.STAGE_SCHOOL?.templateForId(id)?.art||M.CONFIG.STAGE_ROYAL_GARDEN?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_PALACE?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_SIX.summonTemplates.find(u=>u.id===id)?.art||M.CONFIG.STAGE_EIGHT?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_NINE?.enemies.find(u=>u.id===id)?.art||M.CONFIG.STAGE_TEN?.enemies.find(u=>u.id===id)?.art;
   const armored=M.WatercourtArt.isArmored;M.WatercourtArt.isArmored=id=>alias(id)==='park-armor'||armored(id);
   const has=C.has,hasActions=C.hasActions;C.has=id=>id==='masked_stranger'||['park-armor','park-pegasus'].includes(alias(id))||has(id);C.hasActions=id=>id==='masked_stranger'||['park-armor','park-pegasus'].includes(alias(id))||hasActions(id);
   const map=C.drawMap;C.drawMap=function(c,u,x,y,h,now,opts){

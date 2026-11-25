@@ -1317,6 +1317,7 @@
       ctx.imageSmoothingEnabled = false;
       ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
       if(this.stage===0&&MyGO.TrainingArt)MyGO.TrainingArt.drawBattleBackground(ctx,W,H);
+      else if(this.stage===13&&MyGO.SchoolMap)MyGO.SchoolMap.drawBattleBackground(ctx,W,H);
       else if(this.stage===12&&MyGO.RoyalGardenMap)MyGO.RoyalGardenMap.drawBattleBackground(ctx,W,H);
       else if(this.stage===11&&MyGO.PalaceMap)MyGO.PalaceMap.drawBattleBackground(ctx,W,H);
       else if(this.stage>=9&&MyGO.RehearsalMap)MyGO.RehearsalMap.drawBattleBackground(ctx,W,H);

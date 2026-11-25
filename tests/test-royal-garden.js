@@ -6,7 +6,7 @@ const M=w.MyGO,C=M.CONFIG,plain=x=>JSON.parse(JSON.stringify(x)),fresh=opts=>new
 const hit=(g,id)=>g.applyCombat({attackerId:'tomori',defenderId:id,hit:true,finalDamage:999});let cases=0;
 function test(name,f){f();cases++;console.log('✓ '+name);}
 test('Public chapter eleven follows palace ten, with original nine-part finale untouched',()=>{
- const g=fresh();assert.equal(g.chapterNumber,11);assert.equal(g.mission.chapter,'MISSION 11');assert.equal(g.nextChapterStage,null);assert.equal(new M.Game({stage:11}).nextChapterStage,12);assert.equal(new M.Game({stage:10}).chapterNumber,9);assert.equal(g.livingCount('player'),9);assert.equal(g.getUnit('subaru').side,'player');
+ const g=fresh();assert.equal(g.chapterNumber,11);assert.equal(g.mission.chapter,'MISSION 11');assert.equal(g.nextChapterStage,13);assert.equal(new M.Game({stage:11}).nextChapterStage,12);assert.equal(new M.Game({stage:10}).chapterNumber,9);assert.equal(g.livingCount('player'),9);assert.equal(g.getUnit('subaru').side,'player');
  assert(C.STAGE_PALACE.decor.some(o=>o.kind==='palace-rear-door'));assert(g.map.decor.some(o=>o.kind==='royal-palace-door'));
 });
 test('All units and both bosses are distinct, walkable and connected around walls and canals',()=>{

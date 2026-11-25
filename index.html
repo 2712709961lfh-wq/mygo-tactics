@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111e29" />
   <title>迷途回声 · MYGO!!!!!</title>
-  <link rel="stylesheet" href="styles.css?v=5.28.6" />
-  <link rel="stylesheet" href="entry.css?v=5.28.6" />
-  <link rel="stylesheet" href="soul-ui.css?v=5.28.6" />
-  <link rel="stylesheet" href="diary-ui.css?v=5.28.6" />
-  <link rel="stylesheet" href="equipment.css?v=5.28.6" />
-  <link rel="stylesheet" href="tactical-ui.css?v=5.28.6" />
-  <link rel="stylesheet" href="retreat.css?v=5.28.6" />
+  <link rel="stylesheet" href="styles.css?v=5.29.2" />
+  <link rel="stylesheet" href="entry.css?v=5.29.2" />
+  <link rel="stylesheet" href="soul-ui.css?v=5.29.2" />
+  <link rel="stylesheet" href="diary-ui.css?v=5.29.2" />
+  <link rel="stylesheet" href="equipment.css?v=5.29.2" />
+  <link rel="stylesheet" href="tactical-ui.css?v=5.29.2" />
+  <link rel="stylesheet" href="retreat.css?v=5.29.2" />
 </head>
 <body class="soul-ui">
   <div class="game-shell" id="game-shell">
@@ -100,7 +100,7 @@
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.28.6</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.29.2</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -205,6 +205,9 @@
               <span class="entry-index">14</span>
               <span class="entry-option-copy"><strong>第十一重 · 花墙水道的双骑士</strong><em>CHAPTER 11</em><small>穿过宫殿后门，绕墙过桥，击败裂空天马与战马统领</small></span>
               <span class="entry-arrow" aria-hidden="true">→</span>
+            </button>
+            <button class="entry-option" type="button" data-entry-action="chapter12">
+              <span class="entry-index">15</span><span class="entry-option-copy"><strong>第十二重 · 月之森校门的追击</strong><em>CHAPTER 12</em><small>从学校大门出发，突破骑兵与重装，迎击周期追兵</small></span><span class="entry-arrow" aria-hidden="true">→</span>
             </button>
           </nav>
           <p class="entry-footnote">心门会关闭，但她们仍然选择彼此。</p>
@@ -550,79 +553,83 @@
 
   </div><!-- /game-shell -->
 
-  <script src="src/equipment-data.js?v=5.28.6"></script>
-  <script src="src/magic-data.js?v=5.28.6"></script>
-  <script src="src/codex-data.js?v=5.28.6"></script>
-  <script src="src/inventory.js?v=5.28.6"></script>
-  <script src="src/class-data.js?v=5.28.6"></script>
-  <script src="src/class-mastery.js?v=5.28.6"></script>
-  <script src="src/config.js?v=5.28.6"></script>
-  <script src="src/chapter-three.js?v=5.28.6"></script>
-  <script src="src/chapter-four.js?v=5.28.6"></script>
-  <script src="src/chapter-five.js?v=5.28.6"></script>
-  <script src="src/chapter-six.js?v=5.28.6"></script>
-  <script src="src/chapter-seven.js?v=5.28.6"></script>
-  <script src="src/chapter-eight.js?v=5.28.6"></script>
-  <script src="src/chapter-nine.js?v=5.28.6"></script>
-  <script src="src/chapter-ten.js?v=5.28.6"></script>
-  <script src="src/chapter-palace.js?v=5.28.6"></script>
-  <script src="src/chapter-royal-garden.js?v=5.28.6"></script>
-  <script src="src/map-projection.js?v=5.28.6"></script>
-  <script src="src/rng.js?v=5.28.6"></script>
-  <script src="src/growth-data.js?v=5.28.6"></script>
-  <script src="src/talents.js?v=5.28.6"></script>
-  <script src="src/growth.js?v=5.28.6"></script>
-  <script src="src/grid.js?v=5.28.6"></script>
-  <script src="src/pathfinding.js?v=5.28.6"></script>
-  <script src="src/combat.js?v=5.28.6"></script>
-  <script src="src/game.js?v=5.28.6"></script>
-  <script src="src/training.js?v=5.28.6"></script>
-  <script src="src/ai.js?v=5.28.6"></script>
-  <script src="src/save.js?v=5.28.6"></script>
-  <script src="src/assets.js?v=5.28.6"></script>
-  <script src="src/training-art.js?v=5.28.6"></script>
-  <script src="src/garden-map.js?v=5.28.6"></script>
-  <script src="src/moon-map.js?v=5.28.6"></script>
-  <script src="src/park-map.js?v=5.28.6"></script>
-  <script src="src/characters.js?v=5.28.6"></script>
-  <script src="src/dark-soyo.js?v=5.28.6"></script>
-  <script src="src/watercourt-art.js?v=5.28.6"></script>
-  <script src="src/masked-court-art.js?v=5.28.6"></script>
-  <script src="src/livehouse-art.js?v=5.28.6"></script>
-  <script src="src/eighth-art.js?v=5.28.6"></script>
-  <script src="src/rehearsal-art.js?v=5.28.6"></script>
-  <script src="src/tenth-art.js?v=5.28.6"></script>
-  <script src="src/palace-art.js?v=5.28.6"></script>
-  <script src="src/royal-garden-art.js?v=5.28.6"></script>
-  <script src="src/renderer.js?v=5.28.6"></script>
-  <script src="src/combat-vfx.js?v=5.28.6"></script>
-  <script src="src/battle.js?v=5.28.6"></script>
-  <script src="src/viewport.js?v=5.28.6"></script>
-  <script src="src/ui.js?v=5.28.6"></script>
-  <script src="src/park-intro.js?v=5.28.6"></script>
-  <script src="src/masked-court-ui.js?v=5.28.6"></script>
-  <script src="src/livehouse-intro.js?v=5.28.6"></script>
-  <script src="src/eighth-intro.js?v=5.28.6"></script>
-  <script src="src/ninth-intro.js?v=5.28.6"></script>
-  <script src="src/tenth-intro.js?v=5.28.6"></script>
-  <script src="src/palace-intro.js?v=5.28.6"></script>
-  <script src="src/royal-garden-intro.js?v=5.28.6"></script>
-  <script src="src/equipment-ui.js?v=5.28.6"></script>
-  <script src="src/entry.js?v=5.28.6"></script>
-  <script src="src/loadout-ui.js?v=5.28.6"></script>
-  <script src="src/mastery-ui.js?v=5.28.6"></script>
-  <script src="src/shop-ui.js?v=5.28.6"></script>
-  <script src="src/retreat-layout.js?v=5.28.6"></script>
-  <script src="src/retreat-art.js?v=5.28.6"></script>
-  <script src="src/retreat-visitors.js?v=5.28.6"></script>
-  <script src="src/retreat.js?v=5.28.6"></script>
-  <script src="src/training-ui.js?v=5.28.6"></script>
-  <script src="src/tactical-ui.js?v=5.28.6"></script>
-  <script src="src/main.js?v=5.28.6"></script>
+  <script src="src/equipment-data.js?v=5.29.2"></script>
+  <script src="src/magic-data.js?v=5.29.2"></script>
+  <script src="src/codex-data.js?v=5.29.2"></script>
+  <script src="src/inventory.js?v=5.29.2"></script>
+  <script src="src/class-data.js?v=5.29.2"></script>
+  <script src="src/class-mastery.js?v=5.29.2"></script>
+  <script src="src/config.js?v=5.29.2"></script>
+  <script src="src/chapter-three.js?v=5.29.2"></script>
+  <script src="src/chapter-four.js?v=5.29.2"></script>
+  <script src="src/chapter-five.js?v=5.29.2"></script>
+  <script src="src/chapter-six.js?v=5.29.2"></script>
+  <script src="src/chapter-seven.js?v=5.29.2"></script>
+  <script src="src/chapter-eight.js?v=5.29.2"></script>
+  <script src="src/chapter-nine.js?v=5.29.2"></script>
+  <script src="src/chapter-ten.js?v=5.29.2"></script>
+  <script src="src/chapter-palace.js?v=5.29.2"></script>
+  <script src="src/chapter-royal-garden.js?v=5.29.2"></script>
+  <script src="src/chapter-school.js?v=5.29.2"></script>
+  <script src="src/map-projection.js?v=5.29.2"></script>
+  <script src="src/rng.js?v=5.29.2"></script>
+  <script src="src/growth-data.js?v=5.29.2"></script>
+  <script src="src/talents.js?v=5.29.2"></script>
+  <script src="src/growth.js?v=5.29.2"></script>
+  <script src="src/grid.js?v=5.29.2"></script>
+  <script src="src/pathfinding.js?v=5.29.2"></script>
+  <script src="src/combat.js?v=5.29.2"></script>
+  <script src="src/game.js?v=5.29.2"></script>
+  <script src="src/training.js?v=5.29.2"></script>
+  <script src="src/ai.js?v=5.29.2"></script>
+  <script src="src/save.js?v=5.29.2"></script>
+  <script src="src/assets.js?v=5.29.2"></script>
+  <script src="src/training-art.js?v=5.29.2"></script>
+  <script src="src/garden-map.js?v=5.29.2"></script>
+  <script src="src/moon-map.js?v=5.29.2"></script>
+  <script src="src/park-map.js?v=5.29.2"></script>
+  <script src="src/characters.js?v=5.29.2"></script>
+  <script src="src/dark-soyo.js?v=5.29.2"></script>
+  <script src="src/watercourt-art.js?v=5.29.2"></script>
+  <script src="src/masked-court-art.js?v=5.29.2"></script>
+  <script src="src/livehouse-art.js?v=5.29.2"></script>
+  <script src="src/eighth-art.js?v=5.29.2"></script>
+  <script src="src/rehearsal-art.js?v=5.29.2"></script>
+  <script src="src/tenth-art.js?v=5.29.2"></script>
+  <script src="src/palace-art.js?v=5.29.2"></script>
+  <script src="src/royal-garden-art.js?v=5.29.2"></script>
+  <script src="src/school-art.js?v=5.29.2"></script>
+  <script src="src/renderer.js?v=5.29.2"></script>
+  <script src="src/combat-vfx.js?v=5.29.2"></script>
+  <script src="src/battle.js?v=5.29.2"></script>
+  <script src="src/viewport.js?v=5.29.2"></script>
+  <script src="src/ui.js?v=5.29.2"></script>
+  <script src="src/park-intro.js?v=5.29.2"></script>
+  <script src="src/masked-court-ui.js?v=5.29.2"></script>
+  <script src="src/livehouse-intro.js?v=5.29.2"></script>
+  <script src="src/eighth-intro.js?v=5.29.2"></script>
+  <script src="src/ninth-intro.js?v=5.29.2"></script>
+  <script src="src/tenth-intro.js?v=5.29.2"></script>
+  <script src="src/palace-intro.js?v=5.29.2"></script>
+  <script src="src/royal-garden-intro.js?v=5.29.2"></script>
+  <script src="src/school-intro.js?v=5.29.2"></script>
+  <script src="src/equipment-ui.js?v=5.29.2"></script>
+  <script src="src/entry.js?v=5.29.2"></script>
+  <script src="src/loadout-ui.js?v=5.29.2"></script>
+  <script src="src/mastery-ui.js?v=5.29.2"></script>
+  <script src="src/shop-ui.js?v=5.29.2"></script>
+  <script src="src/retreat-layout.js?v=5.29.2"></script>
+  <script src="src/retreat-art.js?v=5.29.2"></script>
+  <script src="src/retreat-visitors.js?v=5.29.2"></script>
+  <script src="src/retreat.js?v=5.29.2"></script>
+  <script src="src/training-ui.js?v=5.29.2"></script>
+  <script src="src/tactical-ui.js?v=5.29.2"></script>
+  <script src="src/main.js?v=5.29.2"></script>
   <dialog id="terrain-credits" aria-labelledby="terrain-credits-title" style="width:min(680px,90vw);max-height:80vh;overflow:auto;background:#202b2c;color:#e1dfce;border:1px solid #8b987e;border-radius:8px;padding:24px;font:14px/1.8 system-ui">
     <form method="dialog" style="float:right"><button aria-label="关闭地图素材署名">关闭 ×</button></form>
     <h2 id="terrain-credits-title">地图素材与署名</h2>
     <p>第十一关新增装饰：<a href="https://opengameart.org/content/lpc-water-fountain" target="_blank" rel="noopener">LPC Water Fountain</a> — Sharm（Lanea Zimmerman）、Curt、William.Thompsonj，CC BY 3.0；<a href="https://opengameart.org/content/statues-fountains-collection" target="_blank" rel="noopener">Statues &amp; Fountains Collection</a> — AntumDeluge整理，雕像与底座包括Casper Nilsson、Rayane Félix、Wolthera van Hövell tot Westerflier、Hyptosis、mold等，整套CC BY-SA 3.0；<a href="https://opengameart.org/content/lpc-flowers-plants-fungi-wood" target="_blank" rel="noopener">LPC Flowers / Plants / Fungi / Wood</a> — bluecarrot16、Guido Bos、Ivan Voirol、SpiderDave、William.Thompsonj、Yar、Stephen Challener与Open Surge团队、Gaurav Munjal、Johann Charlot、Casper Nilsson、Jetrel、Zabin、Hyptosis、Surt、Lanea Zimmerman、George Bailey、ansimuz、Buch及Open Pixel Project贡献者，CC BY-SA 3.0。裁切并统一石材、金色与水色，花木适当降饱和，组合图集以CC BY-SA 3.0提供；完整逐项来源、作者、原包及加工说明见 assets/chapter-eleven/SOURCES.md。</p>
+    <p>第十二关月之森学园：欧式窗框、双开门与铁艺围栏来自bluecarrot16、Lanea Zimmerman（Sharm）、Casper Nilsson、Lyndsay Takacs（cyanowl）、Redshrike的LPC Victorian Buildings，按CC BY-SA 3.0裁切、调色与组合；植物、天马、重装和骑兵沿用既有免费素材。新增树冠来自bluecarrot16整理的LPC Trees Mega-Pack，按CC BY-SA 3.0使用，完整贡献者署名保留在原包CREDITS-trees.txt；校舍砖墙、拱券、屋顶侧面、入口台阶、石柱校门与花坛石沿为项目绘制，参考官方第十话的校园画面。完整作者、来源、修改与许可见 assets/chapter-twelve/SOURCES.md。</p>
     <p>第十一关王宫后花园：宫廷骑兵、石砖与雕像沿用第十关LPC组合图集，完整作者和CC BY-SA 3.0许可见 assets/chapter-ten/SOURCES.md；天马与重装沿用第五关既有素材及许可。围墙、水道、桥栏、花圃、宫门、凉亭与战斗远景为项目绘制，裂空天马沿用第九关苍蓝光环。完整说明见 docs/CHAPTER-ELEVEN.md。</p>
     <p>宫殿第十关：宫殿场景与马匹为原创绘制；战马骑手的头盔与上身裁自现有 LPC 重装图集，金色版本及组合效果沿用 CC BY-SA 3.0，完整作者及许可见 assets/chapter-five/SOURCES.md。天马与重装继续使用该章既有素材。地图、战斗和离线版使用相同资源。</p>
     <p>第九关后半段：延续同一张原创排练室地图与既有免费素材；安和昴使用用户提供的五张原图，去背、裁切并提取49帧动作、四方向地图与头像。仁菜幻影沿用仁菜原有动作并叠加暗紫光效。原始图片与处理说明见 assets/characters/subaru-source/SOURCES.md。</p>

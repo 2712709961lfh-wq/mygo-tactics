@@ -18,7 +18,7 @@
 
   // Keep core-only consumers independent of optional chapter modules.
   function missionForStage(stage) {
-    return stage===12?C.STAGE_ROYAL_GARDEN:stage===11?C.STAGE_PALACE:stage===10?C.STAGE_TEN:stage===9?C.STAGE_NINE:stage===8?C.STAGE_EIGHT:stage===7?C.STAGE_SEVEN:stage===6?C.STAGE_SIX:stage===5?C.STAGE_FIVE:stage===4?C.STAGE_FOUR:stage===3?C.STAGE_THREE:stage===2?C.STAGE_TWO:C.MISSION;
+    return stage===13?C.STAGE_SCHOOL:stage===12?C.STAGE_ROYAL_GARDEN:stage===11?C.STAGE_PALACE:stage===10?C.STAGE_TEN:stage===9?C.STAGE_NINE:stage===8?C.STAGE_EIGHT:stage===7?C.STAGE_SEVEN:stage===6?C.STAGE_SIX:stage===5?C.STAGE_FIVE:stage===4?C.STAGE_FOUR:stage===3?C.STAGE_THREE:stage===2?C.STAGE_TWO:C.MISSION;
   }
 
   function cloneMap() {
@@ -139,11 +139,11 @@
   class Game {
     // 10 remains an internal encounter key for old saves; both encounters are chapter 9.
     get chapterNumber(){return this.stage>=10?this.stage-1:this.stage;}
-    get nextChapterStage(){return this.stage===9||this.stage>=12?null:this.stage+1;}
+    get nextChapterStage(){return this.stage===9||this.stage>=13?null:this.stage+1;}
     get rehearsalTransitionPending(){return this.stage===9&&this.gateOpen&&this.stageNineIntroSeen&&!!this.getUnit('rift_pegasus')?.dead&&!this.isOver();}
     constructor(options) {
       const opts = options || {};
-      this.stage = [2,3,4,5,6,7,8,9,10,11,12].includes(opts.stage) ? opts.stage : 1;
+      this.stage = [2,3,4,5,6,7,8,9,10,11,12,13].includes(opts.stage) ? opts.stage : 1;
       this.retreat = null;
       this.recruited = Array.isArray(opts.recruited) ? ['xueyue','nina','nijika','subaru'].filter(id=>opts.recruited.includes(id)) : [];
       this.recruited=this.recruited.filter(id=>this.stage>=11||id!=='subaru');
@@ -163,7 +163,7 @@
       this.stageEightIntroSeen=false;
       this.stageNineIntroSeen=false;
       this.stageTenIntroSeen=false;this.subaruJoined=false;
-      this.palaceIntroSeen=false;this.royalGardenIntroSeen=false;
+      this.palaceIntroSeen=false;this.royalGardenIntroSeen=false;this.schoolIntroSeen=false;this.schoolWavesSpawned=0;
       if(this.stage>=11)this.subaruJoined=true;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       bindCombatMap(this);
@@ -461,7 +461,7 @@
 
     /** 切换静态关卡数据（不影响回合/单位状态，由 restore 重新填充）。 */
     _setupStage(stage) {
-      this.stage = [2,3,4,5,6,7,8,9,10,11,12].includes(stage) ? stage : 1;
+      this.stage = [2,3,4,5,6,7,8,9,10,11,12,13].includes(stage) ? stage : 1;
       this.map = this.stage >= 2 ? stageTwoMap(this.stage) : cloneMap();
       bindCombatMap(this);
       this.units = unitsForStage(this.stage, this.recruited);
@@ -523,7 +523,7 @@
       if(this.stage<4)return;
       const mission=missionForStage(this.stage),templates=mission.enemies.concat(this.stage===6?mission.summonTemplates:[]);
       for(const u of units.filter(u=>u.side==='enemy')){
-        const base=templates.find(t=>t.id===u.id),ratio=u.hp/u.maxHp;
+        const base=templates.find(t=>t.id===u.id)||(this.stage===13?C.STAGE_SCHOOL.templateForId(u.id):null),ratio=u.hp/u.maxHp;
         const job=base.classId?MyGO.Classes.get(base.classId):null;
         u.level=base.level;
         for(const key of ['maxHp','str','mag','dex','spd','lck','def','res'])u[key]=base[key]||0;
@@ -1035,7 +1035,7 @@
         result.keyRecipientId = attacker.id;
         result.storedForKey = this._awardGateKey(attacker);
       }
-      if(killed&&[5,8,9].includes(this.stage)&&defender.side==='enemy'&&attacker?.side==='player'&&!attacker.dead){
+      if(killed&&[5,8,9,13].includes(this.stage)&&defender.side==='enemy'&&attacker?.side==='player'&&!attacker.dead){
         result.drops=defender.drops.map(id=>this.awardLoot(attacker,id));
         for(const id of defender.drops){const at=defender.inventory.findIndex(i=>i.id===id);if(at>=0)defender.inventory.splice(at,1);}
       }
@@ -1081,7 +1081,7 @@
      */
     checkOutcome() {
       if (this.isOver()) return this.winner;
-      const victory=this.stage===12 ? this.royalGardenIntroSeen&&this.mission.bossIds.every(id=>this.getUnit(id)?.dead) : this.stage===11 ? this.palaceIntroSeen&&!!this.getUnit('gilded_cavalier')?.dead : this.stage===10 ? this.stageTenIntroSeen&&this.subaruJoined&&this.livingCount('enemy')===0 : this.stage===9 ? false : this.stage===8 ? this.stageEightIntroSeen&&this.mission.phantomIds.every(id=>this.getUnit(id)?.dead) : this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
+      const victory=this.stage===13 ? this.schoolIntroSeen&&!!this.getUnit(this.mission.bossId)?.dead : this.stage===12 ? this.royalGardenIntroSeen&&this.mission.bossIds.every(id=>this.getUnit(id)?.dead) : this.stage===11 ? this.palaceIntroSeen&&!!this.getUnit('gilded_cavalier')?.dead : this.stage===10 ? this.stageTenIntroSeen&&this.subaruJoined&&this.livingCount('enemy')===0 : this.stage===9 ? false : this.stage===8 ? this.stageEightIntroSeen&&this.mission.phantomIds.every(id=>this.getUnit(id)?.dead) : this.stage===7 ? this.nijikaJoined&&this.livingCount('enemy')===0 : this.stage===6 ? this.maskEscaped : this.stage===5 ? !!this.getUnit('iron_warden')?.dead : this.stage===4 ? !!this.getUnit('dark_soyo')?.dead : this.stage===2
         ? this.awakenedBells.length>=this.mission.requiredBells && !!this.getUnit('conductor')?.dead
         : this.livingCount('enemy')===0;
       if (this.livingCount('player') === 0) {
@@ -1150,7 +1150,24 @@
         const amount=Math.min(unit.maxHp-unit.hp, Math.ceil(unit.maxHp*.2));
         if(amount>0) { unit.hp+=amount; this.lastHealing.push({id:unit.id,amount}); }
       }
+      if(this.stage===13)this.spawnSchoolReinforcements();
       return true;
+    }
+
+    /** Gate pursuit: place a complete wave atomically, never on an occupied tile. */
+    spawnSchoolReinforcements() {
+      this.lastSchoolReinforcement=null;
+      if(this.stage!==13||!this.schoolIntroSeen||this.phase!=='player'||this.isOver()||this.getUnit(this.mission.bossId)?.dead||this.schoolWavesSpawned>=Math.floor(this.turn/3))return null;
+      const wave=this.schoolWavesSpawned+1,templates=this.mission.reinforcementTemplates(wave),blocked=new Set(this.units.filter(u=>!u.dead&&!u.escaped).map(u=>Grid.key(u.x,u.y))),placed=[];
+      for(const template of templates){
+        const cells=[];
+        for(let y=31;y<=35;y++)for(let x=12;x<=21;x++)if(!blocked.has(Grid.key(x,y))&&Number.isFinite(Grid.movementCost(this.map,template,x,y)))cells.push({x,y,d:Math.abs(x-template.x)+Math.abs(y-template.y)});
+        cells.sort((a,b)=>a.d-b.d||b.y-a.y||a.x-b.x);
+        if(!cells.length)return null;
+        const u=createUnit({...template,...cells[0]});u.alerted=true;u.growthRngState=MyGO.Growth.seed(u.id,this.rng.serialize());placed.push(u);blocked.add(Grid.key(u.x,u.y));
+      }
+      this.units.push(...placed);this.schoolWavesSpawned=wave;this.applyFixedEnemyStats(placed);
+      return this.lastSchoolReinforcement={wave,ids:placed.map(u=>u.id)};
     }
 
     /** 玩家全体存活单位是否都已行动。 */
@@ -1169,6 +1186,7 @@
         ...(this.stage>=4?{fixedEnemyStatsVersion:1}:{}),
         ...([9,10].includes(this.stage)?{rehearsalBalanceVersion:1,rehearsalBossBalanceVersion:1,rehearsalHpVersion:1}:{}),
         stage: this.chapterNumber,
+        ...(this.stage===13?{schoolChapterVersion:1,schoolRosterVersion:1,schoolIntroSeen:this.schoolIntroSeen,schoolWavesSpawned:this.schoolWavesSpawned,nijikaLevelVersion:1}:{}),
         ...(this.stage===12?{royalGardenChapterVersion:1,royalGardenIntroSeen:this.royalGardenIntroSeen,nijikaLevelVersion:1}:{}),
         ...(this.stage===11?{palaceChapterVersion:1,palaceIntroSeen:this.palaceIntroSeen,nijikaLevelVersion:1}:{}),
         ...([9,10].includes(this.stage)?{rehearsalChapterVersion:1,rehearsalPart:this.stage===10?2:1,
@@ -1225,6 +1243,20 @@
       if (snapshot.retreat !== undefined && (!snapshot.retreat ||
           typeof snapshot.retreat.chapterIntroPlayed !== 'boolean' ||
           !['player', 'victory'].includes(snapshot.phase))) throw new Error('休憩之地存档状态无效');
+      if(snapshot.schoolChapterVersion!==undefined){
+        if(snapshot.schoolChapterVersion!==1||snapshot.stage!==12||snapshot.royalGardenChapterVersion!==undefined||snapshot.palaceChapterVersion!==undefined||snapshot.rehearsalChapterVersion!==undefined||snapshot.rehearsalPart!==undefined)throw Error('第十二关校园进度无效');
+        snapshot={...snapshot,stage:13};
+        if(snapshot.schoolRosterVersion!==undefined&&snapshot.schoolRosterVersion!==1)throw Error('校园敌军编成版本无效');
+        if(snapshot.schoolRosterVersion===undefined){
+          snapshot={...snapshot,schoolRosterVersion:1,units:snapshot.units.map(saved=>{
+            const old=C.STAGE_SCHOOL.phantomReplacements[saved.id];if(!old)return saved;
+            const template=C.STAGE_SCHOOL.templateForId(saved.id),replacement=createUnit(template);
+            if(saved.classState&&(saved.classState.version!==1||saved.classState.id!==old.classId||!Array.isArray(saved.classState.certified)||saved.classState.certified.join(',')!==(old.classId||'')))throw Error('旧版校园敌方职业无效');
+            // Adopt the authored phantom weapon and job; retain battle progress and wounds.
+            return {...saved,...MyGO.Inventory.pack(replacement),status:saved.status,hp:saved.dead?0:Math.max(0,Math.min(replacement.maxHp,Math.ceil(replacement.maxHp*saved.hp/old.maxHp)))};
+          })};
+        }
+      }else if(snapshot.stage===13)throw Error('第十二关校园进度缺失');
       if(snapshot.royalGardenChapterVersion!==undefined){
         if(snapshot.royalGardenChapterVersion!==1||snapshot.stage!==11||snapshot.palaceChapterVersion!==undefined||snapshot.rehearsalChapterVersion!==undefined||snapshot.rehearsalPart!==undefined)throw Error('第十一关御苑进度无效');
         snapshot={...snapshot,stage:12};
@@ -1263,6 +1295,7 @@
       }
       if (snapshot.stage === 3 && snapshot.mapRevision !== C.STAGE_THREE.mapRevision) throw new Error('第三关地图版本不兼容');
       if(snapshot.stage===10&&snapshot.mapRevision!==C.STAGE_TEN.mapRevision)throw Error('第九关后半段地图版本不兼容');
+      if(snapshot.stage===13&&snapshot.mapRevision!==C.STAGE_SCHOOL.mapRevision)throw Error('第十二关校园地图版本不兼容');
       if(snapshot.stage===12&&snapshot.mapRevision!==C.STAGE_ROYAL_GARDEN.mapRevision)throw Error('第十一关御苑地图版本不兼容');
       if(snapshot.stage===11&&snapshot.mapRevision!==C.STAGE_PALACE.mapRevision)throw Error('第十关宫殿地图版本不兼容');
       if(snapshot.stage===9&&snapshot.mapRevision!==C.STAGE_NINE.mapRevision)throw Error('第九关地图版本不兼容');
@@ -1271,7 +1304,7 @@
       if (snapshot.stage === 6 && snapshot.mapRevision !== C.STAGE_SIX.mapRevision) throw Error('第六关地图版本不兼容');
       if (snapshot.stage === 5 && snapshot.mapRevision !== C.STAGE_FIVE.mapRevision) throw new Error('第五关地图版本不兼容');
       if (snapshot.stage === 4 && snapshot.mapRevision !== C.STAGE_FOUR.mapRevision) throw new Error('第四关地图版本不兼容');
-      if (![2,3,4,5,6,7,8,9,10,11,12].includes(snapshot.stage) && snapshot.mapRevision !== C.MAP_REVISION) {
+      if (![2,3,4,5,6,7,8,9,10,11,12,13].includes(snapshot.stage) && snapshot.mapRevision !== C.MAP_REVISION) {
         throw new Error('第一关地图已更新，请重开第一关；旧存档仍然保留。');
       }
       const bells=snapshot.stage===2 ? snapshot.awakenedBells || [] : [];
@@ -1279,7 +1312,7 @@
         bells.some(id=>!C.STAGE_TWO.bells.some(b=>b.id===id)))throw new Error('存档星铃数据无效');
 
       // 地图是可变的（大门开启后会换成 gateOpen），读档先恢复关卡与静态地图。
-      this.stage = [2,3,4,5,6,7,8,9,10,11,12].includes(snapshot.stage) ? snapshot.stage : 1;
+      this.stage = [2,3,4,5,6,7,8,9,10,11,12,13].includes(snapshot.stage) ? snapshot.stage : 1;
       if(this.stage===4){
         const lamps=snapshot.litLamps;
         if(!Array.isArray(lamps)||new Set(lamps).size!==lamps.length||lamps.some(id=>!C.STAGE_FOUR.lamps.some(l=>l.id===id)))throw Error('存档路灯数据无效');
@@ -1326,6 +1359,15 @@
       this.stageTenIntroSeen=this.stage===10&&snapshot.stageTenIntroSeen===true;
       this.subaruJoined=this.stage===10&&snapshot.subaruJoined===true;
       this.palaceIntroSeen=this.stage===11&&snapshot.palaceIntroSeen===true;
+      this.schoolIntroSeen=this.stage===13&&snapshot.schoolIntroSeen===true;this.schoolWavesSpawned=0;this.lastSchoolReinforcement=null;delete this._schoolReinforcement;
+      if(this.stage===13){
+        const waves=snapshot.schoolWavesSpawned;
+        if(!Number.isSafeInteger(snapshot.turn)||snapshot.turn<1||!Number.isSafeInteger(waves)||waves<0||waves>Math.floor(snapshot.turn/3)||waves>(snapshot.units.length/3))throw Error('校园援兵波次无效');
+        if(typeof snapshot.schoolIntroSeen!=='boolean'||!this.recruited.includes('subaru')||!this.recruited.includes('nijika')||snapshot.nijikaLevelVersion!==1||snapshot.fixedEnemyStatsVersion!==1||snapshot.gateOpen!==false)throw Error('第十二关校园状态无效');
+        if(!this.schoolIntroSeen&&(snapshot.phase!=='player'||snapshot.turn!==1||waves!==0))throw Error('校园开场尚未完成');
+        if(snapshot.phase==='victory'&&!snapshot.units.find(u=>u.id===C.STAGE_SCHOOL.bossId)?.dead)throw Error('校园裂空天马尚未击败');
+        this.schoolWavesSpawned=waves;this.subaruJoined=true;
+      }
       this.royalGardenIntroSeen=this.stage===12&&snapshot.royalGardenIntroSeen===true;
       if(this.stage===12){
         if(typeof snapshot.royalGardenIntroSeen!=='boolean'||!this.recruited.includes('subaru')||!this.recruited.includes('nijika')||snapshot.nijikaLevelVersion!==1||snapshot.fixedEnemyStatsVersion!==1||snapshot.gateOpen!==false)throw Error('第十一关御苑状态无效');
@@ -1377,6 +1419,11 @@
         this.openedChests=opened.slice();
       }
       const fresh = unitsForStage(this.stage, this.recruited);
+      if(this.stage===13){
+        for(let wave=1;wave<=this.schoolWavesSpawned;wave++)fresh.push(...C.STAGE_SCHOOL.reinforcementTemplates(wave).map(createUnit));
+        const ids=new Set(fresh.map(u=>u.id));
+        if(snapshot.units.length!==fresh.length||new Set(snapshot.units.map(u=>u.id)).size!==fresh.length||snapshot.units.some(u=>!ids.has(u.id)))throw Error('校园援兵单位数据无效');
+      }
       if(this.stage===6){
         const ids=snapshot.summonedWaves;
         if(!Array.isArray(ids)||ids.length>4||ids.some((id,i)=>id!==C.STAGE_SIX.waves[i].id))throw Error('存档召唤波次无效');
