@@ -167,6 +167,12 @@
      * 启动与基础界面
      * ============================================================ */
 
+    schoolObjectiveText() {
+      const g=this.game,limit=g.mission.reinforcementLimit,waves=g.schoolWavesSpawned;
+      const status=waves>=limit?'援兵已全部到场':Math.floor(g.turn/3)>waves?'校门援兵等待入场':'下波第 '+(3*(waves+1))+' 回合';
+      return '击败裂空天马 · 第 '+g.turn+' 回合 · 校门援兵 '+Math.min(waves,limit)+'/'+limit+' 波 · '+status;
+    }
+
     start() {
       const mission = this.game.mission;
       this.dom.missionChapter.textContent = mission.chapter;
@@ -174,7 +180,7 @@
       this.dom.missionSub.textContent = mission.subtitle;
       this.dom.objectiveText.textContent = mission.objective;
       if(this.game.isTraining)this.dom.objectiveText.textContent=this.trainingObjective();
-      if(this.game.stage===13)this.dom.objectiveText.textContent='击败裂空天马 · 第 '+this.game.turn+' 回合 · 校门援兵 '+this.game.schoolWavesSpawned+' 波 · '+(Math.floor(this.game.turn/3)>this.game.schoolWavesSpawned?'校门援兵等待入场':'下波第 '+(3*(this.game.schoolWavesSpawned+1))+' 回合');
+      if(this.game.stage===13)this.dom.objectiveText.textContent=this.schoolObjectiveText();
       if(this.game.stage===12)this.dom.objectiveText.textContent='击败双骑士 · '+this.game.mission.bossIds.filter(id=>this.game.getUnit(id)?.dead).length+'/2 · 敌军剩余 '+this.game.livingCount('enemy')+' 名';
       if(this.game.stage===11)this.dom.objectiveText.textContent='击败精英战马骑士 · '+(this.game.getUnit('gilded_cavalier')?.dead?'已击败':'北端王座厅')+' · 敌军剩余 '+this.game.livingCount('enemy')+' 名';
       if(this.game.stage===10)this.dom.objectiveText.textContent='后半段 · 全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.subaruJoined?' · 昴已入队':' · 与昴会合');
@@ -203,7 +209,7 @@
       this.dom.missionSub.textContent = mission.subtitle;
       this.dom.objectiveText.textContent = mission.objective;
       if(this.game.isTraining)this.dom.objectiveText.textContent=this.trainingObjective();
-      if(this.game.stage===13)this.dom.objectiveText.textContent='击败裂空天马 · 第 '+this.game.turn+' 回合 · 校门援兵 '+this.game.schoolWavesSpawned+' 波 · '+(Math.floor(this.game.turn/3)>this.game.schoolWavesSpawned?'校门援兵等待入场':'下波第 '+(3*(this.game.schoolWavesSpawned+1))+' 回合');
+      if(this.game.stage===13)this.dom.objectiveText.textContent=this.schoolObjectiveText();
       if(this.game.stage===12)this.dom.objectiveText.textContent='击败双骑士 · '+this.game.mission.bossIds.filter(id=>this.game.getUnit(id)?.dead).length+'/2 · 敌军剩余 '+this.game.livingCount('enemy')+' 名';
       if(this.game.stage===11)this.dom.objectiveText.textContent='击败精英战马骑士 · '+(this.game.getUnit('gilded_cavalier')?.dead?'已击败':'北端王座厅')+' · 敌军剩余 '+this.game.livingCount('enemy')+' 名';
       if(this.game.stage===10)this.dom.objectiveText.textContent='后半段 · 全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.subaruJoined?' · 昴已入队':' · 与昴会合');
@@ -540,7 +546,7 @@
       if(this.game.stage===4){
         this.dom.objectiveText.textContent=this.parkObjectiveText();
       }
-      if(this.game.stage===13)this.dom.objectiveText.textContent='击败裂空天马 · 第 '+this.game.turn+' 回合 · 校门援兵 '+this.game.schoolWavesSpawned+' 波 · '+(Math.floor(this.game.turn/3)>this.game.schoolWavesSpawned?'校门援兵等待入场':'下波第 '+(3*(this.game.schoolWavesSpawned+1))+' 回合');
+      if(this.game.stage===13)this.dom.objectiveText.textContent=this.schoolObjectiveText();
       if(this.game.stage===12)this.dom.objectiveText.textContent='击败双骑士 · '+this.game.mission.bossIds.filter(id=>this.game.getUnit(id)?.dead).length+'/2 · 敌军剩余 '+this.game.livingCount('enemy')+' 名';
       if(this.game.stage===11)this.dom.objectiveText.textContent='击败精英战马骑士 · '+(this.game.getUnit('gilded_cavalier')?.dead?'已击败':'北端王座厅')+' · 敌军剩余 '+this.game.livingCount('enemy')+' 名';
       if(this.game.stage===10)this.dom.objectiveText.textContent='后半段 · 全歼敌军 · 剩余 '+this.game.livingCount('enemy')+' / '+this.game.mission.enemyCount+' 名'+(this.game.subaruJoined?' · 昴已入队':' · 与昴会合');
@@ -1379,7 +1385,7 @@
         ['双人演练','前进接近史莱姆，利用柱子和休憩据点分散围攻。'],
         ['职业经验 ×'+this.game.masteryMultiplier,'每次交战按 '+this.game.masteryMultiplier+' 倍职业经验结算，途中不获得等级经验。'],
         ['清除全部史莱姆','完成后两位同伴各领取一次同级击破的等级经验；两位都倒下则提前结束。']
-      ]:this.game.stage===13?[['从学校大门出发','沿中央步道向主楼推进，利用花圃和两翼校舍分流骑兵。'],['留意身后追兵','第3、6、9……回合开始，校门出现两名天马与一名骑兵；援兵天马分别携带调合药和装备，点击查看掉落。'],['击败裂空天马','北侧主楼前的苍蓝天马为Boss，击败即可通关。无需全歼援军；用魔法突破重装，用弓应对天马。']]:this.game.stage===12?[['绕墙过桥','南侧两桥与中段错位桥相连，围墙切断直路。天马能越过水道，所有兵种均不能穿墙。'],['守住桥头','骑兵沿通道突击，天马可以跨水侧袭；使用威胁范围确认安全站位，圣泉可回复生命。'],['击败两名统领','北侧西翼裂空天马与东翼战马统领都要击败。弓对付飞行，魔法突破重装。']]:this.game.stage===11?[['突破宫门','沿中央红毯推进，或从立柱两侧回廊迂回。'],['防备骑兵突击','战马骑士移动7格，先查看威胁范围；魔法突破重装，弓应对天马。'],['击败金鬃卫长','王座前的金甲白马为精英Boss，击败即可通关。两侧圣泉可提供据点防护与回复。']]:this.game.stage===10?[['与昴会合','开场对话后昴直接入队，可施法攻击并支援队伍。'],['辨认真正的仁菜','紫黑色幻影是拳斗士，钢拳套具有连续攻击。保护脆弱后排，集中火力应对。'],['清除所有敌人','幻影倒下后仍须击败四周幻兵、重装与天马。右上角显示剩余敌人数量。']]:this.game.stage===9?[['向门推进','沿中央地毯北上，利用音箱与乐器架分流敌人。'],['击败裂空天马','苍蓝羽光与双环光晕标记 Boss。弓对飞行有效；击败后获得门的钥匙与钢枪。'],['打开奇怪的门','击败 Boss 后仍可行动。队员走到最北端门旁使用钥匙；运输队与暂存中的门钥匙也可直接使用。开门后继续本关，与昴会合并全歼后半段敌军。']]:this.game.stage===8?[['击败两名幻影','向舞台最深处推进，同时击败术士爽世之影与佣兵灯之影即可获胜。'],['破甲与防空','重装高守备低魔防，使用魔法；携钥天马机动很高，注意弓的飞行特效。'],['三个宝箱','三名携钥天马各掉一把钥匙。西箱中级转职证，东箱1500 G，后台钢剑。击败最后一名幻影前完成搜宝。']]:this.game.stage===7?[['回应求助','开场回应虹夏后，她立即成为可操控同伴。'],['清理演出厅','利用两侧通道绕过设备，逐组击败失真回声。'],['夺回舞台','舞台上的敌人也要全部击败；右上角显示剩余敌人。']]:this.game.stage===6?[
+      ]:this.game.stage===13?[['从学校大门出发','沿中央步道向主楼推进，利用花圃和两翼校舍分流骑兵。'],['留意身后追兵','第3、6、9、12回合开始，校门各出现两名天马与一名骑兵，最多4波；援兵天马分别携带调合药和装备，点击查看掉落。'],['击败裂空天马','北侧主楼前的苍蓝天马为Boss，击败即可通关。无需全歼援军；用魔法突破重装，用弓应对天马。']]:this.game.stage===12?[['绕墙过桥','南侧两桥与中段错位桥相连，围墙切断直路。天马能越过水道，所有兵种均不能穿墙。'],['守住桥头','骑兵沿通道突击，天马可以跨水侧袭；使用威胁范围确认安全站位，圣泉可回复生命。'],['击败两名统领','北侧西翼裂空天马与东翼战马统领都要击败。弓对付飞行，魔法突破重装。']]:this.game.stage===11?[['突破宫门','沿中央红毯推进，或从立柱两侧回廊迂回。'],['防备骑兵突击','战马骑士移动7格，先查看威胁范围；魔法突破重装，弓应对天马。'],['击败金鬃卫长','王座前的金甲白马为精英Boss，击败即可通关。两侧圣泉可提供据点防护与回复。']]:this.game.stage===10?[['与昴会合','开场对话后昴直接入队，可施法攻击并支援队伍。'],['辨认真正的仁菜','紫黑色幻影是拳斗士，钢拳套具有连续攻击。保护脆弱后排，集中火力应对。'],['清除所有敌人','幻影倒下后仍须击败四周幻兵、重装与天马。右上角显示剩余敌人数量。']]:this.game.stage===9?[['向门推进','沿中央地毯北上，利用音箱与乐器架分流敌人。'],['击败裂空天马','苍蓝羽光与双环光晕标记 Boss。弓对飞行有效；击败后获得门的钥匙与钢枪。'],['打开奇怪的门','击败 Boss 后仍可行动。队员走到最北端门旁使用钥匙；运输队与暂存中的门钥匙也可直接使用。开门后继续本关，与昴会合并全歼后半段敌军。']]:this.game.stage===8?[['击败两名幻影','向舞台最深处推进，同时击败术士爽世之影与佣兵灯之影即可获胜。'],['破甲与防空','重装高守备低魔防，使用魔法；携钥天马机动很高，注意弓的飞行特效。'],['三个宝箱','三名携钥天马各掉一把钥匙。西箱中级转职证，东箱1500 G，后台钢剑。击败最后一名幻影前完成搜宝。']]:this.game.stage===7?[['回应求助','开场回应虹夏后，她立即成为可操控同伴。'],['清理演出厅','利用两侧通道绕过设备，逐组击败失真回声。'],['夺回舞台','舞台上的敌人也要全部击败；右上角显示剩余敌人。']]:this.game.stage===6?[
         ['沿中央林荫道向北','从南部中央出发，穿过池塘、长椅与花圃，到达十八盏宫廷立灯围绕的王座。滚轮或触摸拖动纵向查看地图，点击同伴自动跟随。'],
         ['防备暗幕召唤','推进越过四个区段后，敌方阶段每轮最多召唤一波，混合普通兵、重装和天马。新援军当轮不行动。'],
         ['保持队形并应对兵种','援军会在队伍附近出现。用弓防空、用魔法破甲，保护后排并利用休憩据点恢复。'],

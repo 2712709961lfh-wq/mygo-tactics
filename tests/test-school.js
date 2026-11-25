@@ -23,13 +23,20 @@ test('Previous campus roster adopts phantoms while retaining positions, death, a
  for(const id of Object.keys(C.STAGE_SCHOOL.phantomReplacements)){const u=h.getUnit(id),s=snapshot.units.find(u=>u.id===id),t=C.STAGE_SCHOOL.templateForId(id);assert(u.name.startsWith('学园幻兵'));assert.equal(u.x,s.x);assert.equal(u.y,s.y);assert(u.acted&&u.alerted);assert.equal(u.dead,s.dead);assert.equal(u.hp,s.dead?0:Math.ceil(t.maxHp*s.hp/C.STAGE_SCHOOL.phantomReplacements[id].maxHp));assert.equal(u.weaponId,t.weapon);}
  assert.equal(h.schoolWavesSpawned,1);assert.equal(h.serialize().schoolRosterVersion,1);assert.deepEqual(plain(reload(h).serialize()),plain(h.serialize()));
 });
-test('Waves arrive at player-phase starts 3,6,9; never duplicate or act immediately',()=>{
+test('Only four waves arrive at 3,6,9,12; later turns and reload cannot add a fifth wave',()=>{
  const g=fresh();g.schoolIntroSeen=true;
- for(let turn=2;turn<=12;turn++){
-  g.phase='enemy';assert(g.beginNextPlayerPhase());assert.equal(g.phase,'player');assert.equal(g.schoolWavesSpawned,Math.floor(turn/3));assert.equal(g.units.filter(u=>/^school-wave-/.test(u.id)).length,3*Math.floor(turn/3));unique(g);
-  if(turn%3===0){const ids=g.lastSchoolReinforcement.ids,us=ids.map(id=>g.getUnit(id));assert.equal(us.filter(u=>u.tags.includes('flying')).length,2);assert.equal(us.filter(u=>u.tags.includes('cavalry')).length,1);assert(us.every(u=>u.alerted&&!u.acted&&u.y>=31&&u.y<=35));assert.equal(g.spawnSchoolReinforcements(),null);}
+ for(let turn=2;turn<=24;turn++){
+  g.phase='enemy';assert(g.beginNextPlayerPhase());assert.equal(g.phase,'player');assert.equal(g.schoolWavesSpawned,Math.min(4,Math.floor(turn/3)));assert.equal(g.units.filter(u=>/^school-wave-/.test(u.id)).length,3*Math.min(4,Math.floor(turn/3)));unique(g);
+  if(turn%3===0&&turn<=12){const ids=g.lastSchoolReinforcement.ids,us=ids.map(id=>g.getUnit(id));assert.equal(us.filter(u=>u.tags.includes('flying')).length,2);assert.equal(us.filter(u=>u.tags.includes('cavalry')).length,1);assert(us.every(u=>u.alerted&&!u.acted&&u.y>=31&&u.y<=35));assert.equal(g.spawnSchoolReinforcements(),null);}
   else assert.equal(g.lastSchoolReinforcement,null);
  }
+ const h=reload(g);advance(h,30);assert.equal(h.schoolWavesSpawned,4);assert.equal(h.units.filter(u=>/^school-wave-/.test(u.id)).length,12);
+ const text=M.UI.prototype.schoolObjectiveText.call({game:h});assert(text.includes('4/4'));assert(text.includes('援兵已全部到场'));assert(!text.includes('下波')&&!text.includes('等待入场'));
+});
+test('Older saves with more than four already-present waves retain progress without additional spawns',()=>{
+ const g=fresh();g.schoolIntroSeen=true;advance(g,15);
+ g.units.push(...g.mission.reinforcementTemplates(5).map((t,i)=>M.createUnit({...t,x:4+i,y:30})));g.schoolWavesSpawned=5;
+ const h=reload(g);advance(h,24);assert.equal(h.schoolWavesSpawned,5);assert.equal(h.units.filter(u=>/^school-wave-/.test(u.id)).length,15);assert.equal(h.spawnSchoolReinforcements(),null);
 });
 test('Opening and non-player phases cannot spawn reinforcements',()=>{
  const g=fresh();g.turn=3;assert.equal(g.spawnSchoolReinforcements(),null);g.schoolIntroSeen=true;g.phase='enemy';assert.equal(g.spawnSchoolReinforcements(),null);g.phase='player';assert(g.spawnSchoolReinforcements());

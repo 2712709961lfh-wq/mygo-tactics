@@ -9,7 +9,7 @@
   root.appendChild(scene);root.hidden=false;root.classList.remove('is-leaving');void root.offsetWidth;root.classList.add('is-visible');
   const c=scene.querySelector('.live-opening-canvas').getContext('2d'),face=scene.querySelector('.live-opening-caption canvas').getContext('2d'),speaker=scene.querySelector('.live-opening-caption small'),caption=scene.querySelector('.live-opening-caption p');
   const world=document.createElement('canvas');world.width=g.map.cols*T;world.height=g.map.rows*T;const wc=world.getContext('2d'),v={a:1,b:0,c:0,d:1,ox:0,oy:0};
-  const beats=[['长崎爽世','“这道校门……是月之森女子学园。为什么我的学校也出现在这里？”','soyo'],['千早爱音','“先别停在门口。前面的骑兵和重装，已经把路堵住了！”','anon'],['椎名立希','“后面也有动静。从第三回合开始，每隔三回合都会有追兵进来，别被夹住。”','taki'],['裂空天马骑士 · 月森守望','“学园的道路由我封锁。追兵会不断到来，你们还能走到这里吗？”','school_rift_pegasus'],['任务目标 · 击败裂空天马骑士','沿中央步道向主楼前推进，击败裂空天马即可通关。校门援兵每波两名天马与一名骑兵；天马携有可掉落的药品和装备。','tomori']];
+  const beats=[['长崎爽世','“这道校门……是月之森女子学园。为什么我的学校也出现在这里？”','soyo'],['千早爱音','“先别停在门口。前面的骑兵和重装，已经把路堵住了！”','anon'],['椎名立希','“后面也有动静。第三、六、九、十二回合，校门各有一波追兵，总共四波。别被夹住。”','taki'],['裂空天马骑士 · 月森守望','“学园的道路由我封锁。追兵即将到来，你们还能走到这里吗？”','school_rift_pegasus'],['任务目标 · 击败裂空天马骑士','沿中央步道向主楼前推进，击败裂空天马即可通关。校门援兵最多四波，每波两名天马与一名骑兵；天马携有可掉落的药品和装备。','tomori']];
   const bounds=[3600,7000,10400,13800,17700],positions=g.living('player').map(u=>({u,x:u.x,y:u.y})),oldView=r.view,start=performance.now(),camera={x:7,y:27,w:21,h:12};let stopped=false,raf=0,last=start,part=-1;
   r.setView({mode:'idle'});
   const draw=now=>{if(stopped||!ui.chapterOpen||ui.game!==g)return;const elapsed=now-start,step=bounds.findIndex(t=>elapsed<t);if(step<0){ui.finishChapterIntro();return;}

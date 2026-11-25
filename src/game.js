@@ -1157,7 +1157,7 @@
     /** Gate pursuit: place a complete wave atomically, never on an occupied tile. */
     spawnSchoolReinforcements() {
       this.lastSchoolReinforcement=null;
-      if(this.stage!==13||!this.schoolIntroSeen||this.phase!=='player'||this.isOver()||this.getUnit(this.mission.bossId)?.dead||this.schoolWavesSpawned>=Math.floor(this.turn/3))return null;
+      if(this.stage!==13||!this.schoolIntroSeen||this.phase!=='player'||this.isOver()||this.getUnit(this.mission.bossId)?.dead||this.schoolWavesSpawned>=Math.min(this.mission.reinforcementLimit,Math.floor(this.turn/3)))return null;
       const wave=this.schoolWavesSpawned+1,templates=this.mission.reinforcementTemplates(wave),blocked=new Set(this.units.filter(u=>!u.dead&&!u.escaped).map(u=>Grid.key(u.x,u.y))),placed=[];
       for(const template of templates){
         const cells=[];

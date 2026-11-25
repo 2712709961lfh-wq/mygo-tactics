@@ -36,8 +36,8 @@
  };
  C.STAGE_SCHOOL={id:'mission-12-tsukinomori',mapRevision:1,cols,rows,chapter:'MISSION 12',chapterJp:'第十二话',chapterEn:'CHAPTER 12',title:'月之森校门的追击',mapName:'月之森女子学园 · 校门与前庭',
   subtitle:'王宫后的道路尽头，出现了爽世熟悉的校门。浅色校舍前骑兵列阵，而追兵正从身后的入口逼近。',objective:'击败裂空天马骑士',
-  gateHint:'从南侧学校大门沿中央步道向北推进，利用庭园与两侧校舍分流骑兵。重装适合用魔法突破，天马怕弓。第3回合起，每3回合校门出现2名天马与1名骑兵；援兵天马携带调合药及轮换装备，击败后获得。尽快击败主楼前裂空天马即可通关，无需全歼追兵。',
-  terrain,decor,enemies,enemyCount:enemies.length,bossId:boss.id,reinforcementTemplates,phantomReplacements,
+  gateHint:'从南侧学校大门沿中央步道向北推进，利用庭园与两侧校舍分流骑兵。重装适合用魔法突破，天马怕弓。第3、6、9、12回合校门各出现2名天马与1名骑兵，最多4波；援兵天马携带调合药及轮换装备，击败后获得。尽快击败主楼前裂空天马即可通关，无需全歼追兵。',
+  terrain,decor,enemies,enemyCount:enemies.length,bossId:boss.id,reinforcementTemplates,reinforcementLimit:4,phantomReplacements,
   spawns:{tomori:{x:15,y:32},anon:{x:16,y:34},rana:{x:18,y:32},soyo:{x:15,y:34},taki:{x:18,y:34},xueyue:{x:14,y:33},nina:{x:16,y:31},nijika:{x:17,y:33},subaru:{x:19,y:33}}};
  C.STAGE_SCHOOL.templateForId=id=>{
   const authored=enemies.find(u=>u.id===id);if(authored)return authored;
