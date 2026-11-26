@@ -2,6 +2,8 @@
 'use strict';
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('node:assert/strict');
 const w={console,document:{readyState:'loading'},addEventListener(){}};w.window=w;vm.createContext(w);
+const storage=new Map();
+w.localStorage={getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,String(value)),removeItem:key=>storage.delete(key)};
 for(const f of ['equipment-data','magic-data','inventory','class-data','class-mastery','config','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','rng','growth-data','growth','grid','pathfinding','combat','game','ai','save','ui','entry'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../src',f+'.js'),'utf8'),w,{filename:f});
 const M=w.MyGO,C=M.CONFIG,I=M.Inventory,plain=x=>JSON.parse(JSON.stringify(x)),fresh=opts=>new M.Game({stage:8,seed:8811,...opts});
 const reload=g=>{const h=new M.Game();h.restore(plain(g.serialize()));return h;};
@@ -116,15 +118,16 @@ test('Title load restores the turn-six roster and keeps the current game on fail
  const entry=Object.create(M.EntryScreen.prototype);
  Object.assign(entry,{ui,hideToGame(){this.entered=ui.game;},refreshSaveHint:noop,setSaveStatus(message){this.status=message;}});
  const broken=plain(old);broken.units[0].growth.exp=-1;
- assert(saveManager.save({serialize:()=>broken},{automatic:true}).ok);
+ const brokenRaw=JSON.stringify({version:C.SAVE_VERSION,savedAt:new Date().toISOString(),snapshot:broken});
+ w.localStorage.setItem(C.SAVE_KEY+':checkpoint',brokenRaw);
  const active=ui.game,state=plain(active.serialize());
  ui.renderer.setGame(active);
  const previousConsole=w.console;w.console={error:noop};
  try{entry.loadSave('automatic');}finally{w.console=previousConsole;}
- assert.match(entry.status,/读档失败.*成长数据无效/);
+ assert.match(entry.status,/读取存档失败.*成长数据无效/);
  assert.equal(ui.game,active);assert.equal(ui.renderer.game,active);assert.equal(entry.entered,undefined);
  assert.deepEqual(plain(ui.game.serialize()),state);
- assert.deepEqual(plain(saveManager.load('automatic').snapshot),broken);
+ assert.equal(w.localStorage.getItem(C.SAVE_KEY+':checkpoint'),brokenRaw);
 
  entry.loadSave('manual');
  assert.equal(entry.entered,ui.game);assert.equal(ui.renderer.game,ui.game);

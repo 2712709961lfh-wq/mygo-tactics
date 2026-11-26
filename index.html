@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111e29" />
   <title>迷途回声 · MYGO!!!!!</title>
-  <link rel="stylesheet" href="styles.css?v=5.29.3" />
-  <link rel="stylesheet" href="entry.css?v=5.29.3" />
-  <link rel="stylesheet" href="soul-ui.css?v=5.29.3" />
-  <link rel="stylesheet" href="diary-ui.css?v=5.29.3" />
-  <link rel="stylesheet" href="equipment.css?v=5.29.3" />
-  <link rel="stylesheet" href="tactical-ui.css?v=5.29.3" />
-  <link rel="stylesheet" href="retreat.css?v=5.29.3" />
+  <link rel="stylesheet" href="styles.css?v=5.29.4" />
+  <link rel="stylesheet" href="entry.css?v=5.29.4" />
+  <link rel="stylesheet" href="soul-ui.css?v=5.29.4" />
+  <link rel="stylesheet" href="diary-ui.css?v=5.29.4" />
+  <link rel="stylesheet" href="equipment.css?v=5.29.4" />
+  <link rel="stylesheet" href="tactical-ui.css?v=5.29.4" />
+  <link rel="stylesheet" href="retreat.css?v=5.29.4" />
 </head>
 <body class="soul-ui">
   <div class="game-shell" id="game-shell">
@@ -100,7 +100,7 @@
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.29.3</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.29.4</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -241,6 +241,7 @@
         <button class="entry-save-btn primary" type="button" data-save-current>保存当前进度</button>
         <button class="entry-save-btn" type="button" data-save-load>读取存档</button>
         <button class="entry-save-btn" type="button" data-save-load-manual hidden>读取较早的手动存档</button>
+        <button class="entry-save-btn" type="button" data-save-load-backup hidden>读取上一次备份</button>
         <button class="entry-save-btn danger" type="button" data-save-delete>删除存档</button>
       </div>
       <p class="entry-save-note" id="entry-save-note">仅我方行动阶段、无单位行动中时可保存。</p>
@@ -553,78 +554,78 @@
 
   </div><!-- /game-shell -->
 
-  <script src="src/equipment-data.js?v=5.29.3"></script>
-  <script src="src/magic-data.js?v=5.29.3"></script>
-  <script src="src/codex-data.js?v=5.29.3"></script>
-  <script src="src/inventory.js?v=5.29.3"></script>
-  <script src="src/class-data.js?v=5.29.3"></script>
-  <script src="src/class-mastery.js?v=5.29.3"></script>
-  <script src="src/config.js?v=5.29.3"></script>
-  <script src="src/chapter-three.js?v=5.29.3"></script>
-  <script src="src/chapter-four.js?v=5.29.3"></script>
-  <script src="src/chapter-five.js?v=5.29.3"></script>
-  <script src="src/chapter-six.js?v=5.29.3"></script>
-  <script src="src/chapter-seven.js?v=5.29.3"></script>
-  <script src="src/chapter-eight.js?v=5.29.3"></script>
-  <script src="src/chapter-nine.js?v=5.29.3"></script>
-  <script src="src/chapter-ten.js?v=5.29.3"></script>
-  <script src="src/chapter-palace.js?v=5.29.3"></script>
-  <script src="src/chapter-royal-garden.js?v=5.29.3"></script>
-  <script src="src/chapter-school.js?v=5.29.3"></script>
-  <script src="src/map-projection.js?v=5.29.3"></script>
-  <script src="src/rng.js?v=5.29.3"></script>
-  <script src="src/growth-data.js?v=5.29.3"></script>
-  <script src="src/talents.js?v=5.29.3"></script>
-  <script src="src/growth.js?v=5.29.3"></script>
-  <script src="src/grid.js?v=5.29.3"></script>
-  <script src="src/pathfinding.js?v=5.29.3"></script>
-  <script src="src/combat.js?v=5.29.3"></script>
-  <script src="src/game.js?v=5.29.3"></script>
-  <script src="src/training.js?v=5.29.3"></script>
-  <script src="src/ai.js?v=5.29.3"></script>
-  <script src="src/save.js?v=5.29.3"></script>
-  <script src="src/assets.js?v=5.29.3"></script>
-  <script src="src/training-art.js?v=5.29.3"></script>
-  <script src="src/garden-map.js?v=5.29.3"></script>
-  <script src="src/moon-map.js?v=5.29.3"></script>
-  <script src="src/park-map.js?v=5.29.3"></script>
-  <script src="src/characters.js?v=5.29.3"></script>
-  <script src="src/dark-soyo.js?v=5.29.3"></script>
-  <script src="src/watercourt-art.js?v=5.29.3"></script>
-  <script src="src/masked-court-art.js?v=5.29.3"></script>
-  <script src="src/livehouse-art.js?v=5.29.3"></script>
-  <script src="src/eighth-art.js?v=5.29.3"></script>
-  <script src="src/rehearsal-art.js?v=5.29.3"></script>
-  <script src="src/tenth-art.js?v=5.29.3"></script>
-  <script src="src/palace-art.js?v=5.29.3"></script>
-  <script src="src/royal-garden-art.js?v=5.29.3"></script>
-  <script src="src/school-art.js?v=5.29.3"></script>
-  <script src="src/renderer.js?v=5.29.3"></script>
-  <script src="src/combat-vfx.js?v=5.29.3"></script>
-  <script src="src/battle.js?v=5.29.3"></script>
-  <script src="src/viewport.js?v=5.29.3"></script>
-  <script src="src/ui.js?v=5.29.3"></script>
-  <script src="src/park-intro.js?v=5.29.3"></script>
-  <script src="src/masked-court-ui.js?v=5.29.3"></script>
-  <script src="src/livehouse-intro.js?v=5.29.3"></script>
-  <script src="src/eighth-intro.js?v=5.29.3"></script>
-  <script src="src/ninth-intro.js?v=5.29.3"></script>
-  <script src="src/tenth-intro.js?v=5.29.3"></script>
-  <script src="src/palace-intro.js?v=5.29.3"></script>
-  <script src="src/royal-garden-intro.js?v=5.29.3"></script>
-  <script src="src/school-intro.js?v=5.29.3"></script>
-  <script src="src/equipment-ui.js?v=5.29.3"></script>
-  <script src="src/entry.js?v=5.29.3"></script>
-  <script src="src/loadout-ui.js?v=5.29.3"></script>
-  <script src="src/mastery-ui.js?v=5.29.3"></script>
-  <script src="src/shop-ui.js?v=5.29.3"></script>
-  <script src="src/retreat-layout.js?v=5.29.3"></script>
-  <script src="src/retreat-art.js?v=5.29.3"></script>
-  <script src="src/retreat-visitors.js?v=5.29.3"></script>
-  <script src="src/retreat.js?v=5.29.3"></script>
-  <script src="src/training-ui.js?v=5.29.3"></script>
-  <script src="src/tactical-ui.js?v=5.29.3"></script>
-  <script src="src/main.js?v=5.29.3"></script>
+  <script src="src/equipment-data.js?v=5.29.4"></script>
+  <script src="src/magic-data.js?v=5.29.4"></script>
+  <script src="src/codex-data.js?v=5.29.4"></script>
+  <script src="src/inventory.js?v=5.29.4"></script>
+  <script src="src/class-data.js?v=5.29.4"></script>
+  <script src="src/class-mastery.js?v=5.29.4"></script>
+  <script src="src/config.js?v=5.29.4"></script>
+  <script src="src/chapter-three.js?v=5.29.4"></script>
+  <script src="src/chapter-four.js?v=5.29.4"></script>
+  <script src="src/chapter-five.js?v=5.29.4"></script>
+  <script src="src/chapter-six.js?v=5.29.4"></script>
+  <script src="src/chapter-seven.js?v=5.29.4"></script>
+  <script src="src/chapter-eight.js?v=5.29.4"></script>
+  <script src="src/chapter-nine.js?v=5.29.4"></script>
+  <script src="src/chapter-ten.js?v=5.29.4"></script>
+  <script src="src/chapter-palace.js?v=5.29.4"></script>
+  <script src="src/chapter-royal-garden.js?v=5.29.4"></script>
+  <script src="src/chapter-school.js?v=5.29.4"></script>
+  <script src="src/map-projection.js?v=5.29.4"></script>
+  <script src="src/rng.js?v=5.29.4"></script>
+  <script src="src/growth-data.js?v=5.29.4"></script>
+  <script src="src/talents.js?v=5.29.4"></script>
+  <script src="src/growth.js?v=5.29.4"></script>
+  <script src="src/grid.js?v=5.29.4"></script>
+  <script src="src/pathfinding.js?v=5.29.4"></script>
+  <script src="src/combat.js?v=5.29.4"></script>
+  <script src="src/game.js?v=5.29.4"></script>
+  <script src="src/training.js?v=5.29.4"></script>
+  <script src="src/ai.js?v=5.29.4"></script>
+  <script src="src/save.js?v=5.29.4"></script>
+  <script src="src/assets.js?v=5.29.4"></script>
+  <script src="src/training-art.js?v=5.29.4"></script>
+  <script src="src/garden-map.js?v=5.29.4"></script>
+  <script src="src/moon-map.js?v=5.29.4"></script>
+  <script src="src/park-map.js?v=5.29.4"></script>
+  <script src="src/characters.js?v=5.29.4"></script>
+  <script src="src/dark-soyo.js?v=5.29.4"></script>
+  <script src="src/watercourt-art.js?v=5.29.4"></script>
+  <script src="src/masked-court-art.js?v=5.29.4"></script>
+  <script src="src/livehouse-art.js?v=5.29.4"></script>
+  <script src="src/eighth-art.js?v=5.29.4"></script>
+  <script src="src/rehearsal-art.js?v=5.29.4"></script>
+  <script src="src/tenth-art.js?v=5.29.4"></script>
+  <script src="src/palace-art.js?v=5.29.4"></script>
+  <script src="src/royal-garden-art.js?v=5.29.4"></script>
+  <script src="src/school-art.js?v=5.29.4"></script>
+  <script src="src/renderer.js?v=5.29.4"></script>
+  <script src="src/combat-vfx.js?v=5.29.4"></script>
+  <script src="src/battle.js?v=5.29.4"></script>
+  <script src="src/viewport.js?v=5.29.4"></script>
+  <script src="src/ui.js?v=5.29.4"></script>
+  <script src="src/park-intro.js?v=5.29.4"></script>
+  <script src="src/masked-court-ui.js?v=5.29.4"></script>
+  <script src="src/livehouse-intro.js?v=5.29.4"></script>
+  <script src="src/eighth-intro.js?v=5.29.4"></script>
+  <script src="src/ninth-intro.js?v=5.29.4"></script>
+  <script src="src/tenth-intro.js?v=5.29.4"></script>
+  <script src="src/palace-intro.js?v=5.29.4"></script>
+  <script src="src/royal-garden-intro.js?v=5.29.4"></script>
+  <script src="src/school-intro.js?v=5.29.4"></script>
+  <script src="src/equipment-ui.js?v=5.29.4"></script>
+  <script src="src/entry.js?v=5.29.4"></script>
+  <script src="src/loadout-ui.js?v=5.29.4"></script>
+  <script src="src/mastery-ui.js?v=5.29.4"></script>
+  <script src="src/shop-ui.js?v=5.29.4"></script>
+  <script src="src/retreat-layout.js?v=5.29.4"></script>
+  <script src="src/retreat-art.js?v=5.29.4"></script>
+  <script src="src/retreat-visitors.js?v=5.29.4"></script>
+  <script src="src/retreat.js?v=5.29.4"></script>
+  <script src="src/training-ui.js?v=5.29.4"></script>
+  <script src="src/tactical-ui.js?v=5.29.4"></script>
+  <script src="src/main.js?v=5.29.4"></script>
   <dialog id="terrain-credits" aria-labelledby="terrain-credits-title" style="width:min(680px,90vw);max-height:80vh;overflow:auto;background:#202b2c;color:#e1dfce;border:1px solid #8b987e;border-radius:8px;padding:24px;font:14px/1.8 system-ui">
     <form method="dialog" style="float:right"><button aria-label="关闭地图素材署名">关闭 ×</button></form>
     <h2 id="terrain-credits-title">地图素材与署名</h2>

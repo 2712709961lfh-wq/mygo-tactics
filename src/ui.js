@@ -311,9 +311,9 @@
       const requestedStage = [1,2,3,4,5,6,7,8,9,10,11,12,13].includes(stage) ? stage : this.game.stage>=11?this.game.stage:this.game.chapterNumber || this.game.stage || 1;
       const nextStage=requestedStage===10?11:requestedStage;
       this.game = new MyGO.Game({ seed: seed || Date.now(), stage: nextStage,
-        ninaLost:nextStage>=9&&this.game.ninaLost,
+        ninaLost:nextStage>=3&&this.game.ninaLost,
         recruited: nextStage >= 2 ? [...new Set(this.game.recruited.filter(id=>nextStage!==7||id!=='nijika').concat(nextStage>=9&&!this.game.ninaLost?['nina']:[]))] : [],
-        loadout: nextStage >= 2 && nextStage > this.game.stage ? this.game.exportLoadout() : undefined });
+        loadout: stage === undefined || nextStage === this.game.stage || nextStage >= 2 && nextStage > this.game.stage ? this.game.exportLoadout() : undefined });
       this.renderer.setGame(this.game);
       this.chapterPlayed = false;
       this.resetSelection({ silent: true });

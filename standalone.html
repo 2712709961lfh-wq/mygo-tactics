@@ -5516,7 +5516,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
             <span class="entry-logo">MYGO!!!!!</span>
             <span class="entry-game-title">迷途回声</span>
           </h1>
-          <p class="entry-version" data-game-version>游戏版本 · v5.29.3</p>
+          <p class="entry-version" data-game-version>游戏版本 · v5.29.4</p>
           <p class="entry-lead">被遗弃的声音，也有归来的路。</p>
           <div class="entry-mission-chip">
             <span class="entry-chip-label">MISSION 01</span>
@@ -5657,6 +5657,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         <button class="entry-save-btn primary" type="button" data-save-current>保存当前进度</button>
         <button class="entry-save-btn" type="button" data-save-load>读取存档</button>
         <button class="entry-save-btn" type="button" data-save-load-manual hidden>读取较早的手动存档</button>
+        <button class="entry-save-btn" type="button" data-save-load-backup hidden>读取上一次备份</button>
         <button class="entry-save-btn danger" type="button" data-save-delete>删除存档</button>
       </div>
       <p class="entry-save-note" id="entry-save-note">仅我方行动阶段、无单位行动中时可保存。</p>
@@ -10044,7 +10045,17 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       if(data.convoy)this.convoy=MyGO.Inventory.validateBag(data.convoy,500);
       this.collectReservedLoot();
       this.restoreEconomy(data.economy);
-      for(const saved of data.units||[]){const u=this.getUnit(saved.id);if(u&&u.side==='player'){MyGO.Growth.restore(u,saved.growth,true);MyGO.Classes.restore(u,saved.classState);MyGO.Mastery?.restore(u,saved.classMastery,true);MyGO.Inventory.restore(u,saved,true);}}
+      for(const saved of data.units||[]){
+        const u=this.getUnit(saved.id);
+        // Replaying a recruitment chapter starts its returning companion as an
+        // ally again. Keep the progression exported while they were a player.
+        if(u&&u.side!=='enemy'){
+          MyGO.Growth.restore(u,saved.growth,true);
+          MyGO.Classes.restore(u,saved.classState);
+          MyGO.Mastery?.restore(u,saved.classMastery,true);
+          MyGO.Inventory.restore(u,saved,true);
+        }
+      }
     }
 
     packEconomy(){return {version:1,gold:this.gold,chapter:this.shopChapter,purchases:{...this.shopPurchases},rewarded:this.rewardedChapters.slice(),
@@ -10969,6 +10980,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     serialize() {
       return {
         version: C.SAVE_VERSION,
+        growthVersion: 1,
         ...(this.stage>=4?{fixedEnemyStatsVersion:1}:{}),
         ...([9,10].includes(this.stage)?{rehearsalBalanceVersion:1,rehearsalBossBalanceVersion:1,rehearsalHpVersion:1}:{}),
         stage: this.chapterNumber,
@@ -11026,6 +11038,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         throw new Error('存档版本不兼容');
       }
       if (!Array.isArray(snapshot.units)) throw new Error('存档单位数据缺失');
+      if(snapshot.growthVersion!==undefined&&snapshot.growthVersion!==1)throw Error('存档成长版本不兼容');
+      const hasGrowth = snapshot.growthVersion === 1 || snapshot.units.some(u =>
+        u.growth !== undefined || u.spellLearningVersion !== undefined);
+      if(hasGrowth){
+        const missing=snapshot.units.find(u=>MyGO.GrowthData.personal[u.id]&&u.growth===undefined);
+        if(missing)throw Error('存档缺少'+MyGO.GrowthData.personal[missing.id].name+'的成长数据，请读取其他存档或备份');
+        if(snapshot.growthVersion===1&&!Array.isArray(snapshot.recruited))throw Error('存档缺少同伴入队记录，请读取其他存档或备份');
+      }
       if (snapshot.retreat !== undefined && (!snapshot.retreat ||
           typeof snapshot.retreat.chapterIntroPlayed !== 'boolean' ||
           !['player', 'victory'].includes(snapshot.phase))) throw new Error('休憩之地存档状态无效');
@@ -11292,6 +11312,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         }
       }
 
+      if(hasGrowth&&fresh.some(u=>MyGO.GrowthData.personal[u.id]&&!seen.has(u.id)))throw Error('存档缺少同伴数据，请读取其他存档或备份');
       if(this.stage===6){
         const boss=fresh.find(u=>u.id==='masked_stranger');
         if(boss.dead||boss.hp<1||(this.maskEscaped||this.maskRetreatPending)&&boss.hp!==1)throw Error('存档面具人生命无效');
@@ -11788,6 +11809,12 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     return true;
   }
 
+  function validateSnapshot(snapshot) {
+    const campaign=new MyGO.Game();
+    campaign.restore(snapshot);
+    if(snapshot.training)MyGO.Training.Game.fromSnapshot(campaign,snapshot.training);
+  }
+
   function readSlot(key,slot){
     try {
       const raw=readRaw(key);
@@ -11795,6 +11822,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const payload=JSON.parse(raw);
       if(!payload||payload.version!==C.SAVE_VERSION)return {ok:false,message:'存档版本不兼容'};
       if(!payload.snapshot)return {ok:false,message:'存档内容损坏'};
+      validateSnapshot(payload.snapshot);
       return {ok:true,snapshot:payload.snapshot,savedAt:payload.savedAt,slot,message:'读档成功'};
     }catch(err){
       return {ok:false,message:'读取存档失败：'+err.message};
@@ -11810,8 +11838,13 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           savedAt: new Date().toISOString(),
           snapshot: game.serialize()
         };
+        // Validate the complete written snapshot before replacing either slot.
+        validateSnapshot(payload.snapshot);
         const raw = JSON.stringify(payload);
-        if (!writeRaw(options?.automatic?checkpointKey:manualKey,raw)) throw new Error('浏览器拒绝写入本地存储');
+        const key=options?.automatic?checkpointKey:manualKey;
+        const previous=readSlot(key,options?.automatic?'automatic':'manual');
+        if(previous.ok&&!writeRaw(key+':backup',readRaw(key)))throw new Error('浏览器拒绝写入存档备份');
+        if (!writeRaw(key,raw)) throw new Error('浏览器拒绝写入本地存储');
         return {
           ok: true,
           message: '存档成功',
@@ -11824,21 +11857,34 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
 
     /** 读取快照。返回 {ok, snapshot, savedAt, message}。 */
     load(slot) {
+      if(slot==='backup'){
+        const backups=[readSlot(manualKey+':backup','backup'),readSlot(checkpointKey+':backup','backup')];
+        return backups.filter(s=>s.ok).sort((a,b)=>String(b.savedAt).localeCompare(String(a.savedAt)))[0]||
+          {ok:false,message:'没有可读取的完整备份'};
+      }
       const manual=readSlot(manualKey,'manual');
       if(slot==='manual')return manual;
       const checkpoint=readSlot(checkpointKey,'automatic');
       if(slot==='automatic')return checkpoint;
-      if(checkpoint.ok && (!manual.ok||checkpoint.savedAt>manual.savedAt))return checkpoint;
-      return manual.ok||readRaw(manualKey)?manual:checkpoint;
+      const latest=[manual,checkpoint].filter(s=>s.ok).sort((a,b)=>String(b.savedAt).localeCompare(String(a.savedAt)))[0];
+      if(latest){
+        if((!manual.ok&&readRaw(manualKey))||(!checkpoint.ok&&readRaw(checkpointKey))){
+          latest.recoveryMessage='部分存档损坏，已选用完整的'+(latest.slot==='manual'?'手动':'自动')+'存档';
+        }
+        return latest;
+      }
+      const backup=this.load('backup');
+      if(backup.ok)return {...backup,recoveryMessage:'当前存档损坏，已选用完整备份'};
+      return readRaw(manualKey)?manual:checkpoint;
     }
 
     hasSave() {
-      return !!(readRaw(manualKey)||readRaw(checkpointKey));
+      return !!(readRaw(manualKey)||readRaw(checkpointKey)||readRaw(manualKey+':backup')||readRaw(checkpointKey+':backup'));
     }
 
     delete() {
-      const manual=removeRaw(manualKey), checkpoint=removeRaw(checkpointKey);
-      return {ok:manual&&checkpoint};
+      const results=[manualKey,checkpointKey,manualKey+':backup',checkpointKey+':backup'].map(removeRaw);
+      return {ok:results.every(Boolean)};
     }
 
     get storageType() {
@@ -19151,9 +19197,9 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       const requestedStage = [1,2,3,4,5,6,7,8,9,10,11,12,13].includes(stage) ? stage : this.game.stage>=11?this.game.stage:this.game.chapterNumber || this.game.stage || 1;
       const nextStage=requestedStage===10?11:requestedStage;
       this.game = new MyGO.Game({ seed: seed || Date.now(), stage: nextStage,
-        ninaLost:nextStage>=9&&this.game.ninaLost,
+        ninaLost:nextStage>=3&&this.game.ninaLost,
         recruited: nextStage >= 2 ? [...new Set(this.game.recruited.filter(id=>nextStage!==7||id!=='nijika').concat(nextStage>=9&&!this.game.ninaLost?['nina']:[]))] : [],
-        loadout: nextStage >= 2 && nextStage > this.game.stage ? this.game.exportLoadout() : undefined });
+        loadout: stage === undefined || nextStage === this.game.stage || nextStage >= 2 && nextStage > this.game.stage ? this.game.exportLoadout() : undefined });
       this.renderer.setGame(this.game);
       this.chapterPlayed = false;
       this.resetSelection({ silent: true });
@@ -22069,6 +22115,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         saveCurrent: document.querySelector('[data-save-current]'),
         saveLoad: document.querySelector('[data-save-load]'),
         saveManual: document.querySelector('[data-save-load-manual]'),
+        saveBackup: document.querySelector('[data-save-load-backup]'),
         saveDelete: document.querySelector('[data-save-delete]'),
         formation: document.getElementById('formation-screen'),
         formationList: document.getElementById('formation-list'),
@@ -22201,6 +22248,10 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           this.loadSave('manual');
           return;
         }
+        if (target.closest('[data-save-load-backup]')) {
+          this.loadSave('backup');
+          return;
+        }
         if (target.closest('[data-save-delete]')) {
           this.deleteSave();
         }
@@ -22327,8 +22378,8 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       this.savePanelOpen = true;
       this.deleteArmed = false;
       this.dom.savePanel.hidden = false;
-      this.refreshSavePanel();
       if (this.dom.saveStatus) this.dom.saveStatus.textContent = '';
+      this.refreshSavePanel();
       if (this.dom.saveLoad) this.dom.saveLoad.focus();
     }
 
@@ -22366,7 +22417,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
           '  <div class="entry-save-slot-mark">' + esc(savedMission.chapter) + '</div>',
           '  <strong>' + esc(snapshot.training?'训练之塔':savedMission.title) + '</strong>',
           '  <span>' + (snapshot.training ? '训练第 '+esc(snapshot.training.turn)+' 回合' : snapshot.retreat ? '休憩之地 · 我方 ' + mine : ([9,10].includes(snapshot.stage)?(snapshot.stage===10?'后半段 · ':'前半段 · '):'')+'第 ' + esc(snapshot.turn) + ' 回合 · 我方 ' + mine + ' / 敌方 ' + foes) + '</span>',
-          '  <small>' + esc(fullTimeText(loaded.savedAt)) + ' · ' + esc(storage) + (loaded.slot==='automatic'?' · 自动存档':'') + '</small>',
+          '  <small>' + esc(fullTimeText(loaded.savedAt)) + ' · ' + esc(storage) + (loaded.slot==='automatic'?' · 自动存档':loaded.slot==='backup'?' · 备份':'') + '</small>',
           '</div>'
         ].join('');
         this.dom.saveLoad.disabled = false;
@@ -22384,11 +22435,14 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
       }
 
       if(this.dom.saveManual)this.dom.saveManual.hidden=!(info.loaded?.slot==='automatic'&&this.getSaveInfo('manual').ok);
+      if(this.dom.saveBackup)this.dom.saveBackup.hidden=!this.getSaveInfo('backup').ok;
 
       this.dom.saveCurrent.disabled = !canSave;
       this.dom.saveCurrent.title = canSave ? '保存当前战场进度' : '只能在无单位行动时保存';
       if (this.dom.saveStatus && !this.dom.saveStatus.textContent) {
-        this.dom.saveStatus.textContent = canSave ? '' : '当前无法保存：请先完成当前单位的行动。';
+        this.dom.saveStatus.textContent = !info.ok && this.ui.saveManager.hasSave()
+          ? this.ui.saveManager.load().message
+          : info.loaded?.recoveryMessage || (canSave ? '' : '当前无法保存：请先完成当前单位的行动。');
       }
     }
 
@@ -22417,7 +22471,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
     loadSave(slot) {
       const info = this.getSaveInfo(slot);
       if (!info.ok) {
-        this.setSaveStatus('没有可读取的存档。', 'warn');
+        this.setSaveStatus(this.ui.saveManager.load(slot).message || '没有可读取的存档。', 'warn');
         return;
       }
       try {
@@ -22425,7 +22479,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         if (this.retreat?.root.hidden !== false) this.hideToGame();
         if (applied) {
           this.refreshSaveHint();
-          this.ui.showToast('已读取存档 · 第 ' + this.ui.game.turn + ' 回合。', 'success', 1800);
+          this.ui.showToast((info.loaded.recoveryMessage || '已读取存档') + ' · 第 ' + this.ui.game.turn + ' 回合。', 'success', 3000);
         }
       } catch (err) {
         console.error(err);
@@ -22438,7 +22492,7 @@ body.soul-ui {font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px
         this.deleteArmed = true;
         this.dom.saveDelete.textContent = '再按一次确认删除';
         this.dom.saveDelete.classList.add('is-armed');
-        this.setSaveStatus('手动存档和自动存档都会删除，请再按一次确认。', 'warn');
+        this.setSaveStatus('手动存档、自动存档和备份都会删除，请再按一次确认。', 'warn');
         if (this.deleteTimer) clearTimeout(this.deleteTimer);
         this.deleteTimer = global.setTimeout(() => {
           this.deleteArmed = false;

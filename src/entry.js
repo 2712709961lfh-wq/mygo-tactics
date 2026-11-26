@@ -76,6 +76,7 @@
         saveCurrent: document.querySelector('[data-save-current]'),
         saveLoad: document.querySelector('[data-save-load]'),
         saveManual: document.querySelector('[data-save-load-manual]'),
+        saveBackup: document.querySelector('[data-save-load-backup]'),
         saveDelete: document.querySelector('[data-save-delete]'),
         formation: document.getElementById('formation-screen'),
         formationList: document.getElementById('formation-list'),
@@ -208,6 +209,10 @@
           this.loadSave('manual');
           return;
         }
+        if (target.closest('[data-save-load-backup]')) {
+          this.loadSave('backup');
+          return;
+        }
         if (target.closest('[data-save-delete]')) {
           this.deleteSave();
         }
@@ -334,8 +339,8 @@
       this.savePanelOpen = true;
       this.deleteArmed = false;
       this.dom.savePanel.hidden = false;
-      this.refreshSavePanel();
       if (this.dom.saveStatus) this.dom.saveStatus.textContent = '';
+      this.refreshSavePanel();
       if (this.dom.saveLoad) this.dom.saveLoad.focus();
     }
 
@@ -373,7 +378,7 @@
           '  <div class="entry-save-slot-mark">' + esc(savedMission.chapter) + '</div>',
           '  <strong>' + esc(snapshot.training?'训练之塔':savedMission.title) + '</strong>',
           '  <span>' + (snapshot.training ? '训练第 '+esc(snapshot.training.turn)+' 回合' : snapshot.retreat ? '休憩之地 · 我方 ' + mine : ([9,10].includes(snapshot.stage)?(snapshot.stage===10?'后半段 · ':'前半段 · '):'')+'第 ' + esc(snapshot.turn) + ' 回合 · 我方 ' + mine + ' / 敌方 ' + foes) + '</span>',
-          '  <small>' + esc(fullTimeText(loaded.savedAt)) + ' · ' + esc(storage) + (loaded.slot==='automatic'?' · 自动存档':'') + '</small>',
+          '  <small>' + esc(fullTimeText(loaded.savedAt)) + ' · ' + esc(storage) + (loaded.slot==='automatic'?' · 自动存档':loaded.slot==='backup'?' · 备份':'') + '</small>',
           '</div>'
         ].join('');
         this.dom.saveLoad.disabled = false;
@@ -391,11 +396,14 @@
       }
 
       if(this.dom.saveManual)this.dom.saveManual.hidden=!(info.loaded?.slot==='automatic'&&this.getSaveInfo('manual').ok);
+      if(this.dom.saveBackup)this.dom.saveBackup.hidden=!this.getSaveInfo('backup').ok;
 
       this.dom.saveCurrent.disabled = !canSave;
       this.dom.saveCurrent.title = canSave ? '保存当前战场进度' : '只能在无单位行动时保存';
       if (this.dom.saveStatus && !this.dom.saveStatus.textContent) {
-        this.dom.saveStatus.textContent = canSave ? '' : '当前无法保存：请先完成当前单位的行动。';
+        this.dom.saveStatus.textContent = !info.ok && this.ui.saveManager.hasSave()
+          ? this.ui.saveManager.load().message
+          : info.loaded?.recoveryMessage || (canSave ? '' : '当前无法保存：请先完成当前单位的行动。');
       }
     }
 
@@ -424,7 +432,7 @@
     loadSave(slot) {
       const info = this.getSaveInfo(slot);
       if (!info.ok) {
-        this.setSaveStatus('没有可读取的存档。', 'warn');
+        this.setSaveStatus(this.ui.saveManager.load(slot).message || '没有可读取的存档。', 'warn');
         return;
       }
       try {
@@ -432,7 +440,7 @@
         if (this.retreat?.root.hidden !== false) this.hideToGame();
         if (applied) {
           this.refreshSaveHint();
-          this.ui.showToast('已读取存档 · 第 ' + this.ui.game.turn + ' 回合。', 'success', 1800);
+          this.ui.showToast((info.loaded.recoveryMessage || '已读取存档') + ' · 第 ' + this.ui.game.turn + ' 回合。', 'success', 3000);
         }
       } catch (err) {
         console.error(err);
@@ -445,7 +453,7 @@
         this.deleteArmed = true;
         this.dom.saveDelete.textContent = '再按一次确认删除';
         this.dom.saveDelete.classList.add('is-armed');
-        this.setSaveStatus('手动存档和自动存档都会删除，请再按一次确认。', 'warn');
+        this.setSaveStatus('手动存档、自动存档和备份都会删除，请再按一次确认。', 'warn');
         if (this.deleteTimer) clearTimeout(this.deleteTimer);
         this.deleteTimer = global.setTimeout(() => {
           this.deleteArmed = false;

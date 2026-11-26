@@ -258,7 +258,17 @@
       if(data.convoy)this.convoy=MyGO.Inventory.validateBag(data.convoy,500);
       this.collectReservedLoot();
       this.restoreEconomy(data.economy);
-      for(const saved of data.units||[]){const u=this.getUnit(saved.id);if(u&&u.side==='player'){MyGO.Growth.restore(u,saved.growth,true);MyGO.Classes.restore(u,saved.classState);MyGO.Mastery?.restore(u,saved.classMastery,true);MyGO.Inventory.restore(u,saved,true);}}
+      for(const saved of data.units||[]){
+        const u=this.getUnit(saved.id);
+        // Replaying a recruitment chapter starts its returning companion as an
+        // ally again. Keep the progression exported while they were a player.
+        if(u&&u.side!=='enemy'){
+          MyGO.Growth.restore(u,saved.growth,true);
+          MyGO.Classes.restore(u,saved.classState);
+          MyGO.Mastery?.restore(u,saved.classMastery,true);
+          MyGO.Inventory.restore(u,saved,true);
+        }
+      }
     }
 
     packEconomy(){return {version:1,gold:this.gold,chapter:this.shopChapter,purchases:{...this.shopPurchases},rewarded:this.rewardedChapters.slice(),
@@ -1183,6 +1193,7 @@
     serialize() {
       return {
         version: C.SAVE_VERSION,
+        growthVersion: 1,
         ...(this.stage>=4?{fixedEnemyStatsVersion:1}:{}),
         ...([9,10].includes(this.stage)?{rehearsalBalanceVersion:1,rehearsalBossBalanceVersion:1,rehearsalHpVersion:1}:{}),
         stage: this.chapterNumber,
@@ -1240,6 +1251,14 @@
         throw new Error('存档版本不兼容');
       }
       if (!Array.isArray(snapshot.units)) throw new Error('存档单位数据缺失');
+      if(snapshot.growthVersion!==undefined&&snapshot.growthVersion!==1)throw Error('存档成长版本不兼容');
+      const hasGrowth = snapshot.growthVersion === 1 || snapshot.units.some(u =>
+        u.growth !== undefined || u.spellLearningVersion !== undefined);
+      if(hasGrowth){
+        const missing=snapshot.units.find(u=>MyGO.GrowthData.personal[u.id]&&u.growth===undefined);
+        if(missing)throw Error('存档缺少'+MyGO.GrowthData.personal[missing.id].name+'的成长数据，请读取其他存档或备份');
+        if(snapshot.growthVersion===1&&!Array.isArray(snapshot.recruited))throw Error('存档缺少同伴入队记录，请读取其他存档或备份');
+      }
       if (snapshot.retreat !== undefined && (!snapshot.retreat ||
           typeof snapshot.retreat.chapterIntroPlayed !== 'boolean' ||
           !['player', 'victory'].includes(snapshot.phase))) throw new Error('休憩之地存档状态无效');
@@ -1506,6 +1525,7 @@
         }
       }
 
+      if(hasGrowth&&fresh.some(u=>MyGO.GrowthData.personal[u.id]&&!seen.has(u.id)))throw Error('存档缺少同伴数据，请读取其他存档或备份');
       if(this.stage===6){
         const boss=fresh.find(u=>u.id==='masked_stranger');
         if(boss.dead||boss.hp<1||(this.maskEscaped||this.maskRetreatPending)&&boss.hp!==1)throw Error('存档面具人生命无效');

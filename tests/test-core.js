@@ -898,7 +898,7 @@ test('雪月：已招募随队进入第二关，直接开第二关不提前解�
 
 test('雪月：旧版首领存档迁移，击败后在通关时才招募', () => {
   for (const dead of [false, true]) {
-    const snapshot = newGame().serialize(); delete snapshot.recruited;
+    const snapshot = newGame().serialize(); delete snapshot.recruited; delete snapshot.growthVersion;
     const boss = snapshot.units.find(u => u.id === 'xueyue');
     Object.assign(boss, { id: 'conductor', hp: dead ? 0 : 12, dead });
     const restored = newGame(); restored.restore(snapshot);
